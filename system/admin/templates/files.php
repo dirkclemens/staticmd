@@ -152,7 +152,7 @@ function encodeUrlPath($path) {
                         <div class="d-flex gap-2">
                             <input type="text" class="form-control search-box" id="searchFiles" 
                                    placeholder="Dateien durchsuchen..." style="width: 250px;">
-                            <a href="/admin?action=new" class="btn btn-primary">
+                            <a href="/admin?action=new&return_url=<?= urlencode('/admin?action=files') ?>" class="btn btn-primary">
                                 <i class="bi bi-plus me-1"></i> Neue Seite
                             </a>
                         </div>
@@ -172,6 +172,65 @@ function encodeUrlPath($path) {
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Status Messages -->
+                    <?php if (isset($_GET['message'])): ?>
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="bi bi-check-circle me-2"></i>
+                            <?php
+                            switch ($_GET['message']) {
+                                case 'deleted':
+                                    echo 'Datei wurde erfolgreich gelöscht.';
+                                    break;
+                                case 'saved':
+                                    echo 'Datei wurde erfolgreich gespeichert.';
+                                    break;
+                                default:
+                                    echo htmlspecialchars($_GET['message']);
+                            }
+                            ?>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <?php if (isset($_GET['error'])): ?>
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            <?php
+                            switch ($_GET['error']) {
+                                case 'csrf_invalid':
+                                    echo 'Sicherheitstoken ungültig. Bitte versuchen Sie es erneut.';
+                                    break;
+                                case 'no_file':
+                                    echo 'Keine Datei angegeben.';
+                                    break;
+                                case 'invalid_file':
+                                    echo 'Ungültiger Dateiname.';
+                                    break;
+                                case 'file_not_found':
+                                    echo 'Datei wurde nicht gefunden.';
+                                    break;
+                                case 'no_permission':
+                                    echo 'Keine Berechtigung zum Löschen der Datei.';
+                                    break;
+                                case 'delete_failed':
+                                    echo 'Fehler beim Löschen der Datei.';
+                                    break;
+                                default:
+                                    echo htmlspecialchars($_GET['error']);
+                            }
+                            ?>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <?php if (isset($_GET['saved'])): ?>
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="bi bi-check-circle me-2"></i>
+                            Änderungen wurden gespeichert und Sie sind zum Dateimanager zurückgekehrt.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    <?php endif; ?>
                     
                     <div class="card-body p-0">
                         <?php if (!empty($filesByDir)): ?>
@@ -202,7 +261,7 @@ function encodeUrlPath($path) {
                                             <div class="d-flex justify-content-between align-items-start">
                                                 <div>
                                                     <h6 class="mb-1">
-                                                        <a href="/admin?action=edit&file=<?= urlencode($file['route']) ?>" 
+                                                        <a href="/admin?action=edit&file=<?= urlencode($file['route']) ?>&return_url=<?= urlencode('/admin?action=files') ?>" 
                                                            class="text-decoration-none">
                                                             <?= htmlspecialchars(basename($file['file'])) ?>
                                                         </a>
@@ -223,7 +282,7 @@ function encodeUrlPath($path) {
                                                            class="btn btn-outline-info" target="_blank" title="Ansehen">
                                                             <i class="bi bi-eye"></i>
                                                         </a>
-                                                        <a href="/admin?action=edit&file=<?= urlencode($file['route']) ?>" 
+                                                        <a href="/admin?action=edit&file=<?= urlencode($file['route']) ?>&return_url=<?= urlencode('/admin?action=files') ?>" 
                                                            class="btn btn-outline-primary" title="Bearbeiten">
                                                             <i class="bi bi-pencil"></i>
                                                         </a>
@@ -246,7 +305,7 @@ function encodeUrlPath($path) {
                             <i class="bi bi-folder-x display-1 text-muted mb-3"></i>
                             <h5>Keine Dateien vorhanden</h5>
                             <p class="text-muted">Erstellen Sie Ihre erste Seite, um zu beginnen.</p>
-                            <a href="/admin?action=new" class="btn btn-primary">
+                            <a href="/admin?action=new&return_url=<?= urlencode('/admin?action=files') ?>" class="btn btn-primary">
                                 <i class="bi bi-plus me-1"></i> Erste Seite erstellen
                             </a>
                         </div>
@@ -385,9 +444,14 @@ function encodeUrlPath($path) {
         // Einzelne Datei löschen
         function confirmDelete(fileName) {
             document.getElementById('deleteFileName').textContent = fileName;
-            document.getElementById('deleteConfirmBtn').href = 
-                `/admin?action=delete&file=${encodeURIComponent(fileName)}&token=<?= htmlspecialchars($this->auth->generateCSRFToken()) ?>`;
             
+            // Einfache, direkte URL-Konstruktion ohne komplexe Kodierung
+            const deleteUrl = `/admin?action=delete&file=${encodeURIComponent(fileName)}&token=<?= htmlspecialchars($this->auth->generateCSRFToken()) ?>&return_url=/admin%3Faction%3Dfiles`;
+            
+            console.log('Delete URL:', deleteUrl); // Debug output
+            console.log('Expected return to: /admin?action=files');
+            
+            document.getElementById('deleteConfirmBtn').href = deleteUrl;
             new bootstrap.Modal(document.getElementById('deleteModal')).show();
         }
         

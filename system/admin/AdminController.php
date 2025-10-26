@@ -297,29 +297,37 @@ class AdminController
     {
         $this->auth->requireLogin();
         
-        // Nur POST-Requests erlauben für Sicherheit
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /admin?error=invalid_request');
-            exit;
+        // GET oder POST erlauben für Dateimanager-Kompatibilität
+        $file = $_REQUEST['file'] ?? '';
+        $csrfToken = $_REQUEST['token'] ?? $_REQUEST['csrf_token'] ?? '';
+        
+        // Einfache Return-URL-Behandlung
+        $returnUrl = '/admin'; // Default
+        if (isset($_REQUEST['return_url'])) {
+            $returnUrl = urldecode($_REQUEST['return_url']);
+        } elseif (isset($_REQUEST['return'])) {
+            $returnUrl = urldecode($_REQUEST['return']);
         }
         
-        $file = $_POST['file'] ?? '';
-        $csrfToken = $_POST['csrf_token'] ?? '';
+        // Sicherheitscheck: Nur lokale URLs erlauben
+        if (!str_starts_with($returnUrl, '/admin')) {
+            $returnUrl = '/admin';
+        }
         
         if (!$this->auth->verifyCSRFToken($csrfToken)) {
-            header('Location: /admin?error=csrf_invalid');
+            header('Location: ' . $returnUrl . '?error=csrf_invalid');
             exit;
         }
         
         if (empty($file)) {
-            header('Location: /admin?error=no_file');
+            header('Location: ' . $returnUrl . '?error=no_file');
             exit;
         }
         
         // Sicherheit: Pfad-Traversal verhindern
         $file = $this->sanitizeFilename($file);
         if (strpos($file, '..') !== false) {
-            header('Location: /admin?error=invalid_file');
+            header('Location: ' . $returnUrl . '?error=invalid_file');
             exit;
         }
         
@@ -327,20 +335,20 @@ class AdminController
         
         // Prüfen ob Datei existiert und löschbar ist
         if (!file_exists($filePath)) {
-            header('Location: /admin?error=file_not_found');
+            header('Location: ' . $returnUrl . '?error=file_not_found');
             exit;
         }
         
         if (!is_writable(dirname($filePath))) {
-            header('Location: /admin?error=no_permission');
+            header('Location: ' . $returnUrl . '?error=no_permission');
             exit;
         }
         
         // Datei löschen
         if (unlink($filePath)) {
-            header('Location: /admin?message=deleted');
+            header('Location: ' . $returnUrl . '?message=deleted');
         } else {
-            header('Location: /admin?error=delete_failed');
+            header('Location: ' . $returnUrl . '?error=delete_failed');
         }
         
         exit;
