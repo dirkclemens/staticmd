@@ -253,11 +253,24 @@ class MarkdownParser
         $text = preg_replace('/\*(.*?)\*/', '<em>$1</em>', $text);
         $text = preg_replace('/_(.*?)_/', '<em>$1</em>', $text);
         
-        // Code: `Code`
-        $text = preg_replace('/`([^`]+)`/', '<code>$1</code>', $text);
+        // Code-Blöcke temporär durch Platzhalter ersetzen
+        $codeBlocks = [];
+        $codeIndex = 0;
+        $text = preg_replace_callback('/`([^`]+)`/', function($matches) use (&$codeBlocks, &$codeIndex) {
+            $placeholder = '___CODE_BLOCK_' . $codeIndex . '___';
+            $codeBlocks[$placeholder] = '<code>' . $matches[1] . '</code>';
+            $codeIndex++;
+            return $placeholder;
+        }, $text);
         
         // Durchgestrichen: ~~Text~~
         $text = preg_replace('/~~(.*?)~~/', '<del>$1</del>', $text);
+        
+        // Emojis: :emoji_name: -> 🎉 (jetzt sicher außerhalb von Code-Blöcken)
+        $text = preg_replace_callback('/:([a-z_+-]+):/', [$this, 'parseEmojiSafe'], $text);
+        
+        // Code-Blöcke wieder einsetzen
+        $text = str_replace(array_keys($codeBlocks), array_values($codeBlocks), $text);
         
         return $text;
     }
@@ -382,5 +395,98 @@ class MarkdownParser
         
         // Zellen trimmen
         return array_map('trim', $cells);
+    }
+    
+    /**
+     * Konvertiert Emoji-Codes zu Unicode-Emojis (sichere Version)
+     */
+    private function parseEmojiSafe(array $matches): string
+    {
+        $emojiCode = $matches[1];
+        
+        // Emoji-Mapping (die wichtigsten ~150 Emojis)
+        $emojiMap = [
+            // Gesichter & Menschen
+            'smile' => '😄', 'grin' => '😁', 'joy' => '😂', 'smiley' => '😃',
+            'blush' => '😊', 'relaxed' => '☺️', 'wink' => '😉', 'heart_eyes' => '😍',
+            'kissing_heart' => '😘', 'kissing' => '😗', 'stuck_out_tongue' => '😛',
+            'stuck_out_tongue_winking_eye' => '😜', 'sunglasses' => '😎', 'smirk' => '😏',
+            'unamused' => '😒', 'sweat_smile' => '😅', 'pensive' => '😔', 'confused' => '😕',
+            'disappointed' => '😞', 'cry' => '😢', 'sob' => '😭', 'angry' => '😠',
+            'rage' => '😡', 'tired_face' => '😫', 'sleeping' => '😴', 'mask' => '😷',
+            'innocent' => '😇', 'thumbsup' => '👍', 'thumbsdown' => '👎', '+1' => '👍',
+            '-1' => '👎', 'ok_hand' => '👌', 'wave' => '👋', 'clap' => '👏',
+            'pray' => '🙏', 'muscle' => '💪', 
+            
+            // Herzen & Liebe
+            'heart' => '❤️', 'blue_heart' => '💙', 'green_heart' => '💚', 'yellow_heart' => '💛',
+            'purple_heart' => '💜', 'broken_heart' => '💔', 'heartbeat' => '💓',
+            'two_hearts' => '💕', 'sparkling_heart' => '💖', 'cupid' => '💘',
+            
+            // Aktivitäten & Objekte
+            'fire' => '🔥', 'star' => '⭐', 'star2' => '🌟', 'sparkles' => '✨',
+            'tada' => '🎉', 'confetti_ball' => '🎊', 'balloon' => '🎈', 'gift' => '🎁',
+            'trophy' => '🏆', 'medal' => '🏅', 'crown' => '👑', 'gem' => '💎',
+            
+            // Technik & Arbeit
+            'computer' => '💻', 'phone' => '📱', 'email' => '📧', 'rocket' => '🚀',
+            'airplane' => '✈️', 'car' => '🚗', 'bike' => '🚴', 'gear' => '⚙️',
+            'wrench' => '🔧', 'hammer' => '🔨', 'bulb' => '💡', 'battery' => '🔋',
+            
+            // Essen & Trinken
+            'coffee' => '☕', 'tea' => '🍵', 'beer' => '🍺', 'wine_glass' => '🍷',
+            'pizza' => '🍕', 'hamburger' => '🍔', 'cake' => '🍰', 'cookie' => '🍪',
+            'apple' => '🍎', 'banana' => '🍌', 'strawberry' => '🍓', 'watermelon' => '🍉',
+            
+            // Natur & Tiere
+            'cat' => '🐱', 'dog' => '🐶', 'mouse' => '🐭', 'bear' => '🐻',
+            'panda_face' => '🐼', 'monkey_face' => '🐵', 'bird' => '🐦', 'penguin' => '🐧',
+            'fish' => '🐟', 'octopus' => '🐙', 'butterfly' => '🦋', 'bee' => '🐝',
+            'tree' => '🌳', 'palm_tree' => '🌴', 'cactus' => '🌵', 'rose' => '🌹',
+            'sunflower' => '🌻', 'tulip' => '🌷', 'cherry_blossom' => '🌸',
+            
+            // Wetter & Natur
+            'sunny' => '☀️', 'cloud' => '☁️', 'rain' => '🌧️', 'snow' => '❄️',
+            'lightning' => '⚡', 'rainbow' => '🌈', 'ocean' => '🌊', 'volcano' => '🌋',
+            
+            // Symbole & Zeichen
+            'checkmark' => '✅', 'x' => '❌', 'warning' => '⚠️', 'question' => '❓',
+            'exclamation' => '❗', 'information_source' => 'ℹ️', 'ok' => '🆗',
+            'new' => '🆕', 'cool' => '🆒', 'free' => '🆓', '100' => '💯',
+            
+            // Pfeile & Navigation
+            'arrow_up' => '⬆️', 'arrow_down' => '⬇️', 'arrow_left' => '⬅️', 'arrow_right' => '➡️',
+            'arrow_forward' => '▶️', 'arrow_backward' => '◀️', 'fast_forward' => '⏩',
+            'rewind' => '⏪', 'repeat' => '🔁', 'arrows_clockwise' => '🔃',
+            
+            // Aktivitäten & Sport
+            'soccer' => '⚽', 'basketball' => '🏀', 'football' => '🏈', 'tennis' => '🎾',
+            'golf' => '⛳', 'swimmer' => '🏊', 'runner' => '🏃', 'bicyclist' => '🚴',
+            
+            // Zeit & Kalender
+            'clock1' => '🕐', 'clock2' => '🕑', 'clock3' => '🕒', 'clock12' => '🕛',
+            'calendar' => '📅', 'date' => '📆', 'alarm_clock' => '⏰', 'watch' => '⌚',
+            
+            // Büro & Schule
+            'book' => '📖', 'books' => '📚', 'notebook' => '📓', 'pencil' => '✏️',
+            'pencil2' => '✏️', 'memo' => '📝', 'clipboard' => '📋', 'scissors' => '✂️',
+            'pushpin' => '📌', 'paperclip' => '📎', 'file_folder' => '📁',
+            
+            // Musik & Unterhaltung
+            'musical_note' => '🎵', 'notes' => '🎶', 'headphones' => '🎧',
+            'microphone' => '🎤', 'guitar' => '🎸', 'trumpet' => '🎺', 'violin' => '🎻',
+            'game_die' => '🎲', 'dart' => '🎯', 'video_game' => '🎮',
+            
+            // Fahrzeuge & Transport
+            'bus' => '🚌', 'taxi' => '🚕', 'truck' => '🚚', 'train' => '🚋',
+            'ship' => '🚢', 'boat' => '⛵', 'helicopter' => '🚁',
+            
+            // Gebäude & Orte
+            'house' => '🏠', 'office' => '🏢', 'hospital' => '🏥', 'school' => '🏫',
+            'hotel' => '🏨', 'bank' => '🏦', 'church' => '⛪', 'factory' => '🏭'
+        ];
+        
+        // Emoji zurückgeben oder ursprünglichen Code beibehalten
+        return $emojiMap[$emojiCode] ?? ':' . $emojiCode . ':';
     }
 }

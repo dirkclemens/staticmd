@@ -386,27 +386,126 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
                         
                         <!-- Editor Toolbar -->
                         <div class="toolbar">
+                            <!-- Text-Formatierung -->
                             <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('**', '**')" title="Fett">
                                 <i class="bi bi-type-bold"></i>
                             </button>
                             <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('*', '*')" title="Kursiv">
                                 <i class="bi bi-type-italic"></i>
                             </button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('# ', '')" title="Überschrift">
-                                <i class="bi bi-type-h1"></i>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('~~', '~~')" title="Durchgestrichen">
+                                <i class="bi bi-type-strikethrough"></i>
                             </button>
+                            
+                            <div class="vr mx-2"></div>
+                            
+                            <!-- Überschriften -->
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('# ', '')" title="Überschrift H1">
+                                    <i class="bi bi-type-h1"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('## ', '')" title="Überschrift H2">
+                                    <i class="bi bi-type-h2"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('### ', '')" title="Überschrift H3">
+                                    <i class="bi bi-type-h3"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('#### ', '')" title="Überschrift H4">
+                                    <span style="font-size: 0.75em; font-weight: bold;">H4</span>
+                                </button>
+                            </div>
+                            
+                            <div class="vr mx-2"></div>
+                            
+                            <!-- Listen -->
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('- ', '')" title="Aufzählung">
+                                <i class="bi bi-list-ul"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('1. ', '')" title="Nummerierte Liste">
+                                <i class="bi bi-list-ol"></i>
+                            </button>
+                            
+                            <div class="vr mx-2"></div>
+                            
+                            <!-- Links & Medien -->
                             <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('[', '](url)')" title="Link">
                                 <i class="bi bi-link"></i>
                             </button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('- ', '')" title="Liste">
-                                <i class="bi bi-list-ul"></i>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('![Alt-Text](', ')')" title="Bild">
+                                <i class="bi bi-image"></i>
                             </button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('`', '`')" title="Code">
+                            
+                            <div class="vr mx-2"></div>
+                            
+                            <!-- Code & Spezial -->
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('`', '`')" title="Inline-Code">
                                 <i class="bi bi-code"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertCodeBlock()" title="Code-Block">
+                                <i class="bi bi-code-square"></i>
                             </button>
                             <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('> ', '')" title="Zitat">
                                 <i class="bi bi-quote"></i>
                             </button>
+                            
+                            <div class="vr mx-2"></div>
+                            
+                            <!-- Struktur -->
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertTable()" title="Tabelle">
+                                <i class="bi bi-table"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('\\n---\\n', '')" title="Horizontale Linie">
+                                <i class="bi bi-hr"></i>
+                            </button>
+                            
+                            <div class="vr mx-2"></div>
+                            
+                            <!-- Emojis -->
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" title="Emoji">
+                                    😊
+                                </button>
+                                <ul class="dropdown-menu emoji-dropdown">
+                                    <li><h6 class="dropdown-header">Gesichter</h6></li>
+                                    <li><a class="dropdown-item" href="#" onclick="insertEmoji(':smile:')">😄 :smile:</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="insertEmoji(':grin:')">😁 :grin:</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="insertEmoji(':joy:')">😂 :joy:</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="insertEmoji(':blush:')">😊 :blush:</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="insertEmoji(':wink:')">😉 :wink:</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="insertEmoji(':heart_eyes:')">😍 :heart_eyes:</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="insertEmoji(':sunglasses:')">😎 :sunglasses:</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="insertEmoji(':cry:')">😢 :cry:</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><h6 class="dropdown-header">Reaktionen</h6></li>
+                                    <li><a class="dropdown-item" href="#" onclick="insertEmoji(':thumbsup:')">👍 :thumbsup:</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="insertEmoji(':thumbsdown:')">👎 :thumbsdown:</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="insertEmoji(':ok_hand:')">👌 :ok_hand:</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="insertEmoji(':clap:')">👏 :clap:</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="insertEmoji(':pray:')">🙏 :pray:</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="insertEmoji(':muscle:')">💪 :muscle:</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><h6 class="dropdown-header">Herzen</h6></li>
+                                    <li><a class="dropdown-item" href="#" onclick="insertEmoji(':heart:')">❤️ :heart:</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="insertEmoji(':blue_heart:')">💙 :blue_heart:</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="insertEmoji(':green_heart:')">💚 :green_heart:</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="insertEmoji(':broken_heart:')">💔 :broken_heart:</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><h6 class="dropdown-header">Aktivitäten</h6></li>
+                                    <li><a class="dropdown-item" href="#" onclick="insertEmoji(':fire:')">🔥 :fire:</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="insertEmoji(':star:')">⭐ :star:</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="insertEmoji(':rocket:')">🚀 :rocket:</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="insertEmoji(':tada:')">🎉 :tada:</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="insertEmoji(':trophy:')">🏆 :trophy:</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="insertEmoji(':gift:')">🎁 :gift:</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><h6 class="dropdown-header">Technik</h6></li>
+                                    <li><a class="dropdown-item" href="#" onclick="insertEmoji(':computer:')">💻 :computer:</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="insertEmoji(':phone:')">📱 :phone:</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="insertEmoji(':email:')">📧 :email:</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="insertEmoji(':gear:')">⚙️ :gear:</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="insertEmoji(':bulb:')">💡 :bulb:</a></li>
+                                </ul>
+                            </div>
                             
                             <div class="float-end">
                                 <button type="button" class="btn btn-outline-info btn-sm" id="fullscreenBtn" title="Vollbild">
@@ -623,6 +722,57 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
             }
             
             editor.focus();
+        }
+        
+        // Code-Block einfügen
+        function insertCodeBlock() {
+            const doc = editor.getDoc();
+            const cursor = doc.getCursor();
+            const selection = doc.getSelection();
+            
+            if (selection) {
+                const codeBlock = '```\n' + selection + '\n```';
+                doc.replaceSelection(codeBlock);
+            } else {
+                const codeBlock = '```\n\n```';
+                doc.replaceRange(codeBlock, cursor);
+                doc.setCursor({line: cursor.line + 1, ch: 0});
+            }
+            
+            editor.focus();
+        }
+        
+        // Tabelle einfügen
+        function insertTable() {
+            const doc = editor.getDoc();
+            const cursor = doc.getCursor();
+            
+            const table = [
+                '| Spalte 1 | Spalte 2 | Spalte 3 |',
+                '|----------|----------|----------|',
+                '| Zeile 1  | Daten    | Daten    |',
+                '| Zeile 2  | Daten    | Daten    |'
+            ].join('\n');
+            
+            doc.replaceRange(table, cursor);
+            
+            editor.focus();
+        }
+        
+        // Emoji einfügen
+        function insertEmoji(emojiCode) {
+            const doc = editor.getDoc();
+            const cursor = doc.getCursor();
+            
+            doc.replaceRange(emojiCode + ' ', cursor);
+            
+            editor.focus();
+            
+            // Dropdown schließen
+            const dropdown = bootstrap.Dropdown.getInstance(document.querySelector('.emoji-dropdown').previousElementSibling);
+            if (dropdown) dropdown.hide();
+            
+            return false; // Verhindert Standard-Link-Verhalten
         }
         
         // Vollbild-Modus
