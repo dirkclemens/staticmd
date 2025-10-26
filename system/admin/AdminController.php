@@ -504,6 +504,7 @@ class AdminController
         $settings = [
             'site_name' => trim($_POST['site_name'] ?? 'StaticMD'),
             'site_logo' => trim($_POST['site_logo'] ?? ''),
+            'frontend_theme' => $_POST['frontend_theme'] ?? 'bootstrap',
             'recent_files_count' => max(5, min(50, (int)($_POST['recent_files_count'] ?? 15))),
             'items_per_page' => max(10, min(100, (int)($_POST['items_per_page'] ?? 25))),
             'editor_theme' => $_POST['editor_theme'] ?? 'github',

@@ -65,7 +65,15 @@ class TemplateEngine
      */
     private function getTemplatePath(): string
     {
-        $themeName = $this->config['theme']['default'];
+        // Frontend-Theme aus Settings laden
+        $settingsFile = $this->config['paths']['system'] . '/settings.json';
+        $settings = [];
+        if (file_exists($settingsFile)) {
+            $settings = json_decode(file_get_contents($settingsFile), true) ?: [];
+        }
+        
+        // Theme aus Settings oder Fallback
+        $themeName = $settings['frontend_theme'] ?? $this->config['theme']['default'];
         $extension = $this->config['theme']['template_extension'];
         
         return $this->config['paths']['themes'] . '/' . $themeName . '/template' . $extension;

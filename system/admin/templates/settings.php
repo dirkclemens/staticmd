@@ -277,6 +277,43 @@ $timeRemaining = $this->auth->getTimeRemaining();
                                 </div>
                             </div>
                             
+                            <!-- Frontend-Theme -->
+                            <div class="settings-section">
+                                <h5><i class="bi bi-palette me-2"></i>Frontend-Theme</h5>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="frontend_theme" class="form-label">Website-Theme</label>
+                                            <select class="form-select" id="frontend_theme" name="frontend_theme">
+                                                <option value="bootstrap" <?= ($settings['frontend_theme'] ?? 'bootstrap') === 'bootstrap' ? 'selected' : '' ?>>Bootstrap (Standard)</option>
+                                                <option value="solarized-light" <?= ($settings['frontend_theme'] ?? '') === 'solarized-light' ? 'selected' : '' ?>>Solarized Light</option>
+                                                <option value="solarized-dark" <?= ($settings['frontend_theme'] ?? '') === 'solarized-dark' ? 'selected' : '' ?>>Solarized Dark</option>
+                                                <option value="monokai-light" <?= ($settings['frontend_theme'] ?? '') === 'monokai-light' ? 'selected' : '' ?>>Monokai Light</option>
+                                                <option value="monokai-dark" <?= ($settings['frontend_theme'] ?? '') === 'monokai-dark' ? 'selected' : '' ?>>Monokai Dark</option>
+                                                <option value="github-light" <?= ($settings['frontend_theme'] ?? '') === 'github-light' ? 'selected' : '' ?>>GitHub Light</option>
+                                                <option value="github-dark" <?= ($settings['frontend_theme'] ?? '') === 'github-dark' ? 'selected' : '' ?>>GitHub Dark</option>
+                                            </select>
+                                            <div class="form-text">
+                                                Wählen Sie das Aussehen Ihrer Website. Änderungen werden sofort auf der Frontend-Seite sichtbar.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Theme-Vorschau</label>
+                                            <div class="border rounded p-3" style="background: linear-gradient(45deg, #f8f9fa 25%, transparent 25%), linear-gradient(-45deg, #f8f9fa 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f8f9fa 75%), linear-gradient(-45deg, transparent 75%, #f8f9fa 75%); background-size: 20px 20px; background-position: 0 0, 0 10px, 10px -10px, -10px 0px;">
+                                                <div class="text-center text-muted">
+                                                    <i class="bi bi-eye fs-1"></i><br>
+                                                    <small>Theme-Vorschau</small><br>
+                                                    <small>Besuchen Sie die Frontend-Seite um das gewählte Theme zu sehen</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
                             <!-- Editor-Einstellungen -->
                             <div class="settings-section">
                                 <h5><i class="bi bi-pencil me-2"></i>Editor-Einstellungen</h5>
