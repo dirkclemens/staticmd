@@ -2,6 +2,14 @@
 $pageTitle = 'Editor';
 $currentUser = $this->auth->getUsername();
 $timeRemaining = $this->auth->getTimeRemaining();
+
+// Einstellungen für Editor-Theme laden
+$settingsFile = $this->config['paths']['system'] . '/settings.json';
+$settings = [];
+if (file_exists($settingsFile)) {
+    $settings = json_decode(file_get_contents($settingsFile), true) ?: [];
+}
+$editorTheme = $settings['editor_theme'] ?? 'github';
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -15,7 +23,12 @@ $timeRemaining = $this->auth->getTimeRemaining();
     
     <!-- CodeMirror CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css">
+    
+    <!-- CodeMirror Themes -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/github.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/monokai.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/solarized.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/material.min.css">
     
     <style>
         body { background-color: #f8f9fa; }
@@ -105,6 +118,98 @@ $timeRemaining = $this->auth->getTimeRemaining();
         .fullscreen .CodeMirror {
             height: calc(100vh - 150px);
         }
+        
+        /* Full height editor layout */
+        .editor-full-height {
+            height: calc(100vh - 200px); /* Subtract header and toolbar height */
+            min-height: 500px;
+        }
+        
+        .editor-container .card-body {
+            padding: 0;
+        }
+        
+        .tab-content {
+            height: 100%;
+        }
+        
+        #editorColumn, #previewColumn {
+            height: 100%;
+        }
+        
+        .preview-content {
+            height: calc(100vh - 200px);
+            min-height: 500px;
+            max-height: none;
+        }
+        
+        /* Custom Theme Enhancements */
+        .CodeMirror.cm-s-github {
+            background: #ffffff;
+            color: #24292e;
+        }
+        
+        .CodeMirror.cm-s-monokai {
+            background: #272822;
+            color: #f8f8f2;
+        }
+        
+        .CodeMirror.cm-s-solarized.cm-s-light {
+            background: #fdf6e3;
+            color: #657b83;
+        }
+        
+        .CodeMirror.cm-s-solarized.cm-s-dark {
+            background: #002b36;
+            color: #839496;
+        }
+        
+        .CodeMirror.cm-s-material {
+            background: #263238;
+            color: #eeffff;
+        }
+        
+        /* Theme-specific line number styling */
+        .CodeMirror.cm-s-github .CodeMirror-linenumber {
+            color: #6a737d;
+        }
+        
+        .CodeMirror.cm-s-monokai .CodeMirror-linenumber {
+            color: #90908a;
+        }
+        
+        .CodeMirror.cm-s-solarized.cm-s-light .CodeMirror-linenumber {
+            color: #93a1a1;
+        }
+        
+        .CodeMirror.cm-s-solarized.cm-s-dark .CodeMirror-linenumber {
+            color: #586e75;
+        }
+        
+        .CodeMirror.cm-s-material .CodeMirror-linenumber {
+            color: #546e7a;
+        }
+        
+        /* Ensure consistent cursor visibility across themes */
+        .CodeMirror-cursor {
+            border-left: 2px solid;
+        }
+        
+        .CodeMirror.cm-s-github .CodeMirror-cursor {
+            border-left-color: #24292e;
+        }
+        
+        .CodeMirror.cm-s-monokai .CodeMirror-cursor {
+            border-left-color: #f8f8f2;
+        }
+        
+        .CodeMirror.cm-s-solarized .CodeMirror-cursor {
+            border-left-color: #657b83;
+        }
+        
+        .CodeMirror.cm-s-material .CodeMirror-cursor {
+            border-left-color: #eeffff;
+        }
     </style>
 </head>
 <body>
@@ -149,6 +254,7 @@ $timeRemaining = $this->auth->getTimeRemaining();
     <div class="container-fluid mt-4">
         <form method="POST" action="/admin?action=save" id="editorForm">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($this->auth->generateCSRFToken()) ?>">
+            <input type="hidden" name="return_url" value="<?= htmlspecialchars($_GET['return_url'] ?? '') ?>">
             
             <div class="row">
                 <!-- Metadaten-Sidebar -->
@@ -162,7 +268,7 @@ $timeRemaining = $this->auth->getTimeRemaining();
                         </div>
                         <div class="card-body meta-form">
                             <div class="mb-3">
-                                <label for="file" class="form-label">Datei / Route</label>
+                                <label for="file" class="form-label fw-bold">Datei / Route</label>
                                 <input type="text" class="form-control" id="file" name="file" 
                                        value="<?= htmlspecialchars($file) ?>" 
                                        placeholder="z.B. meine-seite oder blog/artikel" required>
@@ -171,7 +277,7 @@ $timeRemaining = $this->auth->getTimeRemaining();
                             
                             <!-- Yellow CMS kompatible Felder -->
                             <div class="mb-3">
-                                <label for="title" class="form-label">Title / Titel</label>
+                                <label for="title" class="form-label fw-bold">Title / Titel</label>
                                 <input type="text" class="form-control" id="title" name="meta[Title]" 
                                        value="<?= htmlspecialchars($meta['Title'] ?? $meta['title'] ?? '') ?>" 
                                        placeholder="Seitentitel">
@@ -179,7 +285,7 @@ $timeRemaining = $this->auth->getTimeRemaining();
                             </div>
                             
                             <div class="mb-3">
-                                <label for="titleslug" class="form-label">TitleSlug</label>
+                                <label for="titleslug" class="form-label fw-bold">TitleSlug</label>
                                 <input type="text" class="form-control" id="titleslug" name="meta[TitleSlug]" 
                                        value="<?= htmlspecialchars($meta['TitleSlug'] ?? $meta['titleslug'] ?? '') ?>" 
                                        placeholder="Titel für Dateiname">
@@ -187,7 +293,7 @@ $timeRemaining = $this->auth->getTimeRemaining();
                             </div>
                             
                             <div class="mb-3">
-                                <label for="layout" class="form-label">Layout</label>
+                                <label for="layout" class="form-label fw-bold">Layout</label>
                                 <select class="form-select" id="layout" name="meta[Layout]">
                                     <option value="">Standard</option>
                                     <option value="wiki" <?= ($meta['Layout'] ?? $meta['layout'] ?? '') === 'wiki' ? 'selected' : '' ?>>Wiki</option>
@@ -198,7 +304,7 @@ $timeRemaining = $this->auth->getTimeRemaining();
                             </div>
                             
                             <div class="mb-3">
-                                <label for="author" class="form-label">Author / Autor</label>
+                                <label for="author" class="form-label fw-bold">Author / Autor</label>
                                 <input type="text" class="form-control" id="author" name="meta[Author]" 
                                        value="<?= htmlspecialchars($meta['Author'] ?? $meta['author'] ?? '') ?>" 
                                        placeholder="Autor(en), kommagetrennt">
@@ -206,24 +312,33 @@ $timeRemaining = $this->auth->getTimeRemaining();
                             </div>
                             
                             <div class="mb-3">
-                                <label for="tag" class="form-label">Tag / Tags</label>
+                                <label for="tag" class="form-label fw-bold">Tag / Tags</label>
                                 <input type="text" class="form-control" id="tag" name="meta[Tag]" 
                                        value="<?= htmlspecialchars($meta['Tag'] ?? $meta['tags'] ?? '') ?>" 
                                        placeholder="Tags, kommagetrennt">
                                 <div class="form-text">Yellow: Tag</div>
                             </div>
                             
+                            <div class="mb-3">
+                                <label for="visibility" class="form-label fw-bold">Sichtbarkeit</label>
+                                <select class="form-select" id="visibility" name="meta[Visibility]">
+                                    <option value="public" <?= ($meta['Visibility'] ?? $meta['visibility'] ?? 'public') === 'public' ? 'selected' : '' ?>>Öffentlich</option>
+                                    <option value="private" <?= ($meta['Visibility'] ?? $meta['visibility'] ?? 'public') === 'private' ? 'selected' : '' ?>>Privat (nur Admin)</option>
+                                </select>
+                                <div class="form-text">Private Seiten sind nur für angemeldete Admins sichtbar</div>
+                            </div>
+                            
                             <hr class="my-3">
                             <small class="text-muted">Zusätzliche Metadaten:</small>
                             
                             <div class="mb-3">
-                                <label for="date" class="form-label">Datum</label>
+                                <label for="date" class="form-label fw-bold">Datum</label>
                                 <input type="date" class="form-control" id="date" name="meta[date]" 
                                        value="<?= htmlspecialchars($meta['date'] ?? '') ?>">
                             </div>
                             
                             <div class="mb-3">
-                                <label for="description" class="form-label">Beschreibung (SEO)</label>
+                                <label for="description" class="form-label fw-bold">Beschreibung (SEO)</label>
                                 <textarea class="form-control" id="description" name="meta[description]" 
                                           rows="2" placeholder="SEO-Beschreibung"><?= htmlspecialchars($meta['description'] ?? '') ?></textarea>
                             </div>
@@ -233,6 +348,12 @@ $timeRemaining = $this->auth->getTimeRemaining();
                                 <a href="/<?= htmlspecialchars($file) ?>" class="btn btn-outline-info btn-sm w-100" target="_blank">
                                     <i class="bi bi-eye me-1"></i> Seite ansehen
                                 </a>
+                            </div>
+                            <div class="mb-3">
+                                <button type="button" class="btn btn-outline-danger btn-sm w-100" 
+                                        onclick="confirmDelete('<?= htmlspecialchars($file) ?>')">
+                                    <i class="bi bi-trash me-1"></i> Datei löschen
+                                </button>
                             </div>
                             <?php endif; ?>
                         </div>
@@ -291,7 +412,7 @@ $timeRemaining = $this->auth->getTimeRemaining();
                                 <button type="button" class="btn btn-outline-info btn-sm" id="fullscreenBtn" title="Vollbild">
                                     <i class="bi bi-arrows-fullscreen"></i>
                                 </button>
-                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="window.location.href='/admin'">
+                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="cancelEdit()">
                                     <i class="bi bi-x-circle me-1"></i> Abbrechen
                                 </button>
                                 <button type="submit" class="btn btn-success btn-sm">
@@ -334,9 +455,20 @@ $timeRemaining = $this->auth->getTimeRemaining();
         
         // CodeMirror Editor initialisieren
         document.addEventListener('DOMContentLoaded', function() {
+            // Theme-Name für CodeMirror anpassen
+            let cmTheme = '<?= htmlspecialchars($editorTheme) ?>';
+            switch(cmTheme) {
+                case 'solarized-light':
+                    cmTheme = 'solarized light';
+                    break;
+                case 'solarized-dark':
+                    cmTheme = 'solarized dark';
+                    break;
+            }
+            
             editor = CodeMirror.fromTextArea(document.getElementById('contentEditor'), {
                 mode: 'markdown',
-                theme: 'github',
+                theme: cmTheme,
                 lineNumbers: true,
                 lineWrapping: true,
                 autoCloseBrackets: true,
@@ -353,8 +485,9 @@ $timeRemaining = $this->auth->getTimeRemaining();
                 }
             });
             
-            // Editor-Höhe setzen
-            editor.setSize(null, '500px');
+            // Editor-Höhe auf volle verfügbare Höhe setzen
+            const editorHeight = Math.max(500, window.innerHeight - 200);
+            editor.setSize(null, editorHeight + 'px');
             
             // Auto-Preview bei Änderungen
             editor.on('change', debounce(updatePreview, 500));
@@ -417,7 +550,8 @@ $timeRemaining = $this->auth->getTimeRemaining();
                 
                 editorColumn.className = 'col-12';
                 previewColumn.className = 'col-6 d-none';
-                editor.setSize(null, '500px');
+                const editorHeight = Math.max(500, window.innerHeight - 200);
+                editor.setSize(null, editorHeight + 'px');
             } else if (view === 'preview') {
                 document.getElementById('previewTab').classList.remove('btn-outline-secondary');
                 document.getElementById('previewTab').classList.add('btn-primary');
@@ -431,7 +565,8 @@ $timeRemaining = $this->auth->getTimeRemaining();
                 
                 editorColumn.className = 'col-6';
                 previewColumn.className = 'col-6';
-                editor.setSize(null, '500px');
+                const editorHeight = Math.max(500, window.innerHeight - 200);
+                editor.setSize(null, editorHeight + 'px');
                 updatePreview();
             }
             
@@ -519,6 +654,14 @@ $timeRemaining = $this->auth->getTimeRemaining();
             }
         });
         
+        // Window resize handler - Editor-Höhe anpassen
+        window.addEventListener('resize', function() {
+            if (editor && !document.querySelector('.editor-container').classList.contains('fullscreen')) {
+                const editorHeight = Math.max(500, window.innerHeight - 200);
+                editor.setSize(null, editorHeight + 'px');
+            }
+        });
+        
         // Debounce-Funktion
         function debounce(func, wait) {
             let timeout;
@@ -539,6 +682,103 @@ $timeRemaining = $this->auth->getTimeRemaining();
                 console.log('Auto-save könnte hier implementiert werden');
             }
         }, 30000);
+        
+        // Datei löschen
+        function confirmDelete(fileName) {
+            document.getElementById('deleteFileName').textContent = fileName;
+            
+            // Delete-Form erstellen
+            const deleteForm = document.getElementById('deleteForm');
+            deleteForm.querySelector('input[name="file"]').value = fileName;
+            
+            new bootstrap.Modal(document.getElementById('deleteModal')).show();
+        }
+    </script>
+    
+    <!-- Lösch-Bestätigung Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-exclamation-triangle text-warning me-2"></i>
+                        Datei löschen
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Sind Sie sicher, dass Sie die Datei <strong id="deleteFileName"></strong> löschen möchten?</p>
+                    <p class="text-muted">Diese Aktion kann nicht rückgängig gemacht werden.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
+                    <button type="button" class="btn btn-danger" onclick="executeDelete()">
+                        <i class="bi bi-trash me-1"></i> Löschen
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Hidden Delete Form -->
+    <form method="POST" action="/admin?action=delete" id="deleteForm" style="display: none;">
+        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($this->auth->generateCSRFToken()) ?>">
+        <input type="hidden" name="file" value="">
+    </form>
+    
+    <script>
+        // Delete-Funktion ausführen
+        function executeDelete() {
+            document.getElementById('deleteForm').submit();
+        }
+        
+        // Abbrechen-Funktion - zurück zur ursprünglichen Seite
+        function cancelEdit() {
+            const returnUrl = '<?= htmlspecialchars($_GET['return_url'] ?? '') ?>';
+            if (returnUrl) {
+                window.location.href = returnUrl;
+            } else if ('<?= htmlspecialchars($file) ?>') {
+                window.location.href = '/<?= htmlspecialchars($file) ?>';
+            } else {
+                window.location.href = '/admin';
+            }
+        }
+        
+        // Theme-Wechsel-Funktionalität (für zukünftige Erweiterungen)
+        function changeEditorTheme(themeName) {
+            if (editor) {
+                editor.setOption('theme', themeName);
+                
+                // Theme-spezifische Anpassungen
+                const editorElement = document.querySelector('.CodeMirror');
+                if (editorElement) {
+                    // Entferne alte Theme-Klassen
+                    editorElement.classList.remove('cm-s-github', 'cm-s-monokai', 'cm-s-solarized', 'cm-s-material');
+                    
+                    // Füge neue Theme-Klasse hinzu
+                    switch(themeName) {
+                        case 'github':
+                            editorElement.classList.add('cm-s-github');
+                            break;
+                        case 'monokai':
+                            editorElement.classList.add('cm-s-monokai');
+                            break;
+                        case 'solarized-light':
+                            editorElement.classList.add('cm-s-solarized');
+                            break;
+                        case 'solarized-dark':
+                            editorElement.classList.add('cm-s-solarized');
+                            break;
+                        case 'material':
+                            editorElement.classList.add('cm-s-material');
+                            break;
+                    }
+                }
+                
+                // Editor refresh nach Theme-Änderung
+                setTimeout(() => editor.refresh(), 50);
+            }
+        }
     </script>
 </body>
 </html>

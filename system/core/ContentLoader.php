@@ -87,7 +87,8 @@ class ContentLoader
             'content' => $htmlContent,
             'meta' => $parsed['meta'],
             'route' => $route,
-            'file_path' => $contentPath
+            'file_path' => $contentPath,
+            'visibility' => $parsed['meta']['Visibility'] ?? $parsed['meta']['visibility'] ?? 'public'
         ];
     }
 
@@ -133,6 +134,12 @@ class ContentLoader
             
             $title = $parsed['meta']['Title'] ?? $parsed['meta']['title'] ?? $this->generateTitle(basename($fileRoute));
             $description = $parsed['meta']['description'] ?? '';
+            $visibility = $parsed['meta']['Visibility'] ?? $parsed['meta']['visibility'] ?? 'public';
+            
+            // Private Seiten ausblenden wenn nicht angemeldet
+            if ($visibility === 'private' && !$this->shouldShowPrivateContent()) {
+                continue;
+            }
             
             // Erste Zeilen des Inhalts als Vorschau
             if (empty($description)) {
@@ -157,13 +164,14 @@ class ContentLoader
                 'description' => $description,
                 'modified' => filemtime($filePath),
                 'tags' => $parsed['meta']['Tag'] ?? $parsed['meta']['tags'] ?? '',
-                'author' => $parsed['meta']['Author'] ?? $parsed['meta']['author'] ?? ''
+                'author' => $parsed['meta']['Author'] ?? $parsed['meta']['author'] ?? '',
+                'visibility' => $visibility
             ];
         }
         
-        // Alphabetisch sortieren
+        // Alphabetisch sortieren (case-insensitive)
         usort($files, function($a, $b) {
-            return strcmp($a['title'], $b['title']);
+            return strcasecmp($a['title'], $b['title']);
         });
         
         // HTML für Übersichtsseite generieren
@@ -269,13 +277,15 @@ class ContentLoader
     }
 
     /**
-     * Verarbeitet [pages /pfad/ limit] Shortcode
+     * Verarbeitet [pages /pfad/ limit layout] Shortcode
+     * Layout: 'columns' (spaltenweise) oder 'rows' (zeilenweise)
      */
     private function processPagesShortcode(array $params, string $currentRoute): string
     {
-        // Parameter parsen: [pages /treppen/ 1000]
+        // Parameter parsen: [pages /treppen/ 1000 rows]
         $targetPath = isset($params[0]) ? trim($params[0], '/') : $currentRoute;
         $limit = isset($params[1]) ? (int)$params[1] : 1000;
+        $layout = isset($params[2]) ? strtolower(trim($params[2])) : 'columns';
         
         // Folder Overview für den angegebenen Pfad generieren
         $folderOverview = $this->generateFolderOverview($targetPath);
@@ -292,7 +302,7 @@ class ContentLoader
         }
         
         // Kompakte Darstellung für Einbettung
-        return $this->generateEmbeddedFolderOverview($files, $targetPath);
+        return $this->generateEmbeddedFolderOverview($files, $targetPath, $layout);
     }
 
     /**
@@ -443,9 +453,9 @@ class ContentLoader
             $count++;
         }
         
-        // Alphabetisch sortieren
+        // Alphabetisch sortieren (case-insensitive)
         usort($files, function($a, $b) {
-            return strcmp($a['title'], $b['title']);
+            return strcasecmp($a['title'], $b['title']);
         });
         
         return $files;
@@ -471,8 +481,10 @@ class ContentLoader
             }
         }
         
-        // Nach Häufigkeit sortieren (häufigste zuerst)
-        arsort($tagCounts);
+        // Case-insensitive alphabetisch sortieren
+        uksort($tagCounts, function($a, $b) {
+            return strcasecmp($a, $b);
+        });
         
         return $tagCounts;
     }
@@ -480,12 +492,17 @@ class ContentLoader
     /**
      * Generiert eingebettete Ordner-Übersicht für Shortcodes
      */
-    private function generateEmbeddedFolderOverview(array $files, string $route): string
+    private function generateEmbeddedFolderOverview(array $files, string $route, string $layout = 'columns'): string
     {
         $html = '<div class="embedded-page-list">';
         
-        // Dateien spaltenweise in 4 Spalten aufteilen
-        $columns = $this->distributeItemsInColumns($files, 4);
+        if ($layout === 'rows') {
+            // Zeilenweise Sortierung, aber in Spalten angezeigt
+            $columns = $this->distributeItemsInRows($files, 4);
+        } else {
+            // Spaltenweise Sortierung (Standard)
+            $columns = $this->distributeItemsInColumns($files, 4);
+        }
         
         $html .= '<div class="row">';
         foreach ($columns as $column) {
@@ -505,7 +522,6 @@ class ContentLoader
             $html .= '</div>';
         }
         
-        $html .= '</div>';
         $html .= '</div>';
         
         return $html;
@@ -767,5 +783,36 @@ class ContentLoader
         }
         
         return $columns;
+    }
+    
+    /**
+     * Verteilt Items zeilenweise auf Spalten (A,B,C | D,E,F | G,H,I)
+     */
+    private function distributeItemsInRows(array $items, int $columnCount): array
+    {
+        $columns = array_fill(0, $columnCount, []);
+        $totalItems = count($items);
+        
+        for ($i = 0; $i < $totalItems; $i++) {
+            $columnIndex = $i % $columnCount;
+            $columns[$columnIndex][] = $items[$i];
+        }
+        
+        return $columns;
+    }
+    
+    /**
+     * Prüft ob private Seiten angezeigt werden sollen (Admin angemeldet)
+     */
+    private function shouldShowPrivateContent(): bool
+    {
+        // AdminAuth-Klasse laden für Session-Prüfung
+        $adminAuthFile = $this->config['paths']['system'] . '/admin/AdminAuth.php';
+        if (file_exists($adminAuthFile)) {
+            require_once $adminAuthFile;
+            $adminAuth = new \StaticMD\Admin\AdminAuth($this->config);
+            return $adminAuth->isLoggedIn();
+        }
+        return false;
     }
 }

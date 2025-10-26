@@ -57,6 +57,14 @@ class AdminController
                 $this->showFileManager();
                 break;
                 
+            case 'settings':
+                $this->showSettings();
+                break;
+                
+            case 'save_settings':
+                $this->saveSettings();
+                break;
+                
             default:
                 $this->showDashboard();
         }
@@ -106,10 +114,14 @@ class AdminController
         $contentLoader = new \StaticMD\Core\ContentLoader($this->config);
         $allFiles = $contentLoader->listAll();
         
+        // Einstellungen laden
+        $settings = $this->getSettings();
+        $recentFilesCount = $settings['recent_files_count'] ?? 15;
+        
         // Statistiken berechnen
         $stats = [
             'total_files' => count($allFiles),
-            'recent_files' => array_slice($allFiles, -5),
+            'recent_files' => array_slice($allFiles, -$recentFilesCount),
             'disk_usage' => $this->calculateDiskUsage(),
             'system_info' => [
                 'php_version' => PHP_VERSION,
@@ -244,7 +256,15 @@ class AdminController
         $fullContent = $frontMatter . $content;
         
         if (file_put_contents($filePath, $fullContent) !== false) {
-            header('Location: /admin?message=saved');
+            // Prüfen ob eine Return-URL angegeben wurde
+            $returnUrl = $_POST['return_url'] ?? '';
+            if (!empty($returnUrl)) {
+                // Zurück zur ursprünglichen Seite mit Erfolgsparameter
+                $separator = strpos($returnUrl, '?') !== false ? '&' : '?';
+                header('Location: ' . $returnUrl . $separator . 'saved=1');
+            } else {
+                header('Location: /admin?message=saved');
+            }
         } else {
             header('Location: /admin?action=edit&file=' . urlencode($file) . '&error=save_failed');
         }
@@ -297,8 +317,8 @@ class AdminController
         }
         
         // Sicherheit: Pfad-Traversal verhindern
-        $file = basename($file);
-        if (strpos($file, '..') !== false || strpos($file, '/') !== false) {
+        $file = $this->sanitizeFilename($file);
+        if (strpos($file, '..') !== false) {
             header('Location: /admin?error=invalid_file');
             exit;
         }
@@ -449,5 +469,92 @@ class AdminController
         $filename = str_replace(['..', './'], '', $filename);
         
         return $filename;
+    }
+
+    /**
+     * Zeigt Einstellungsseite
+     */
+    private function showSettings(): void
+    {
+        $this->auth->requireLogin();
+        
+        $settings = $this->getSettings();
+        
+        include __DIR__ . '/templates/settings.php';
+    }
+
+    /**
+     * Speichert Einstellungen
+     */
+    private function saveSettings(): void
+    {
+        $this->auth->requireLogin();
+        
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: /admin?action=settings');
+            exit;
+        }
+        
+        $csrfToken = $_POST['csrf_token'] ?? '';
+        if (!$this->auth->verifyCSRFToken($csrfToken)) {
+            header('Location: /admin?action=settings&error=csrf_invalid');
+            exit;
+        }
+        
+        $settings = [
+            'site_name' => trim($_POST['site_name'] ?? 'StaticMD'),
+            'site_logo' => trim($_POST['site_logo'] ?? ''),
+            'recent_files_count' => max(5, min(50, (int)($_POST['recent_files_count'] ?? 15))),
+            'items_per_page' => max(10, min(100, (int)($_POST['items_per_page'] ?? 25))),
+            'editor_theme' => $_POST['editor_theme'] ?? 'github',
+            'show_file_stats' => isset($_POST['show_file_stats']),
+            'auto_save_interval' => max(30, min(300, (int)($_POST['auto_save_interval'] ?? 60)))
+        ];
+        
+        if ($this->saveSettingsToFile($settings)) {
+            header('Location: /admin?action=settings&message=settings_saved');
+        } else {
+            header('Location: /admin?action=settings&error=save_failed');
+        }
+        exit;
+    }
+
+    /**
+     * Lädt Einstellungen aus Datei
+     */
+    private function getSettings(): array
+    {
+        $settingsFile = $this->config['paths']['system'] . '/settings.json';
+        
+        $defaultSettings = [
+            'site_name' => $this->config['system']['name'] ?? 'StaticMD',
+            'site_logo' => '',
+            'recent_files_count' => 15,
+            'items_per_page' => 25,
+            'editor_theme' => 'github',
+            'show_file_stats' => true,
+            'auto_save_interval' => 60
+        ];
+        
+        if (file_exists($settingsFile)) {
+            $savedSettings = json_decode(file_get_contents($settingsFile), true);
+            if (is_array($savedSettings)) {
+                return array_merge($defaultSettings, $savedSettings);
+            }
+        }
+        
+        return $defaultSettings;
+    }
+
+    /**
+     * Speichert Einstellungen in Datei
+     */
+    private function saveSettingsToFile(array $settings): bool
+    {
+        $settingsFile = $this->config['paths']['system'] . '/settings.json';
+        
+        $json = json_encode($settings, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        
+        return file_put_contents($settingsFile, $json) !== false;
     }
 }

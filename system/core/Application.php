@@ -56,6 +56,16 @@ class Application
                 'title' => 'Seite nicht gefunden',
                 'content' => '<h1>404 - Seite nicht gefunden</h1><p>Die angeforderte Seite konnte nicht gefunden werden.</p>'
             ];
+        } else {
+            // Prüfen ob Seite privat ist und Benutzer nicht angemeldet
+            $visibility = $content['meta']['Visibility'] ?? $content['meta']['visibility'] ?? 'public';
+            if ($visibility === 'private' && !$this->isAdminLoggedIn()) {
+                http_response_code(404);
+                $content = [
+                    'title' => 'Seite nicht gefunden',
+                    'content' => '<h1>404 - Seite nicht gefunden</h1><p>Die angeforderte Seite konnte nicht gefunden werden.</p>'
+                ];
+            }
         }
         
         // Template-Daten vorbereiten
@@ -207,5 +217,17 @@ class Application
     public function getConfig(): array
     {
         return $this->config;
+    }
+    
+    /**
+     * Prüft ob ein Admin angemeldet ist
+     */
+    private function isAdminLoggedIn(): bool
+    {
+        // AdminAuth-Klasse laden für Session-Prüfung
+        require_once $this->config['paths']['system'] . '/admin/AdminAuth.php';
+        $adminAuth = new \StaticMD\Admin\AdminAuth($this->config);
+        
+        return $adminAuth->isLoggedIn();
     }
 }

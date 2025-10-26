@@ -9,6 +9,15 @@ $siteName = $config['system']['name'] ?? 'StaticMD';
 $siteUrl = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']);
 $currentRoute = $_GET['route'] ?? 'index';
 
+// Einstellungen laden
+$settingsFile = $config['paths']['system'] . '/settings.json';
+$settings = [];
+if (file_exists($settingsFile)) {
+    $settings = json_decode(file_get_contents($settingsFile), true) ?: [];
+}
+$siteName = $settings['site_name'] ?? $siteName;
+$siteLogo = $settings['site_logo'] ?? '';
+
 // Helper-Funktion für pfad-sichere URL-Encoding
 function encodeUrlPath($path) {
     $parts = explode('/', $path);
@@ -267,7 +276,11 @@ foreach ($pages as $page) {
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <i class="bi bi-file-earmark-text me-2"></i>
+                <?php if (!empty($siteLogo)): ?>
+                    <img src="<?= htmlspecialchars($siteLogo) ?>" alt="Logo" style="height: 30px;" class="me-2">
+                <?php else: ?>
+                    <i class="bi bi-file-earmark-text me-2"></i>
+                <?php endif; ?>
                 <?= htmlspecialchars($siteName) ?>
             </a>
             
@@ -385,6 +398,26 @@ foreach ($pages as $page) {
                     </div>
                     <?php endif; ?>
                     
+                    <!-- Erfolgsmeldung nach Speichern -->
+                    <?php if (isset($_GET['saved'])): ?>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="bi bi-check-circle me-2"></i>
+                        Die Seite wurde erfolgreich gespeichert.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    <?php endif; ?>
+                    
+                    <!-- Private Seiten-Hinweis für Admins -->
+                    <?php 
+                    $visibility = $meta['Visibility'] ?? $meta['visibility'] ?? 'public';
+                    if ($visibility === 'private'): 
+                    ?>
+                    <div class="alert alert-warning" role="alert">
+                        <i class="bi bi-lock me-2"></i>
+                        <strong>Private Seite:</strong> Diese Seite ist nur für angemeldete Admins sichtbar.
+                    </div>
+                    <?php endif; ?>
+                    
                     <!-- Hauptcontent -->
                     <article class="content">
                         <?= $body ?>
@@ -450,7 +483,7 @@ foreach ($pages as $page) {
                 <i class="bi bi-gear"></i>
             </a>
             <?php if (isset($content['file_path'])): ?>
-            <a href="/admin?action=edit&file=<?= urlencode($content['route']) ?>" class="btn btn-warning btn-sm" title="Seite bearbeiten">
+            <a href="/admin?action=edit&file=<?= urlencode($content['route']) ?>&return_url=<?= urlencode($_SERVER['REQUEST_URI']) ?>" class="btn btn-warning btn-sm" title="Seite bearbeiten">
                 <i class="bi bi-pencil"></i>
             </a>
             <?php endif; ?>
