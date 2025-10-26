@@ -1,0 +1,56 @@
+# Apache .htaccess für StaticMD (Root-Deployment)
+# Aktiviert URL Rewriting für saubere URLs
+
+RewriteEngine On
+RewriteBase /
+
+# Verzeichnis-Zugriff verhindern für System-Ordner (nur bei direktem Zugriff)
+RewriteCond %{THE_REQUEST} \s/+system/
+RewriteRule ^system/ - [F,L]
+
+RewriteCond %{THE_REQUEST} \s/+content/
+RewriteRule ^content/ - [F,L]
+
+# Debug-Dateien temporär erlauben
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteCond %{REQUEST_URI} debug
+RewriteRule ^(.*)$ - [L]
+
+# Admin-Bereich weiterleiten
+RewriteRule ^admin/?$ system/admin/index.php [L]
+RewriteRule ^admin/(.+)$ system/admin/index.php?route=$1 [L,QSA]
+
+# Statische Dateien direkt ausliefern
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^public/(.*)$ public/$1 [L]
+
+# Alle anderen Anfragen an index.php weiterleiten
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?route=$1 [L,QSA]
+
+# Security Headers
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options nosniff
+    Header always set X-Frame-Options DENY
+    Header always set X-XSS-Protection "1; mode=block"
+</IfModule>
+
+# Disable server signature
+ServerSignature Off
+
+# Prevent access to sensitive files
+<Files "*.md">
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files "config.php">
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files "composer.json">
+    Order allow,deny
+    Deny from all
+</Files>

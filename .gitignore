@@ -1,0 +1,8 @@
+**/backup_*
+**/content/*
+**/*.code-workspace
+**/*.md
+**/debug_*.php
+**/test_*.php
+**/*_check.php
+**/*.sh
