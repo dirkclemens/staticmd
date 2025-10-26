@@ -18,7 +18,7 @@ class Application
         $this->config = $config;
         $this->router = new Router($config);
         $this->contentLoader = new ContentLoader($config);
-        $this->templateEngine = new TemplateEngine($config);
+        $this->templateEngine = new TemplateEngine($config, $this->contentLoader);
     }
 
     /**

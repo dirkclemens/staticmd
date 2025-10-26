@@ -118,7 +118,7 @@ function encodeUrlPath($path) {
                         <i class="bi bi-person-circle me-1"></i>
                         <?= htmlspecialchars($currentUser) ?>
                     </a>
-                    <ul class="dropdown-menu">
+                    <ul class="dropdown-menu" style="right: 0; left: auto;">
                         <li><a class="dropdown-item" href="/">
                             <i class="bi bi-house me-2"></i>Zur Website
                         </a></li>

@@ -138,7 +138,7 @@ $timeRemaining = $this->auth->getTimeRemaining();
                         <i class="bi bi-person-circle me-1"></i>
                         <?= htmlspecialchars($currentUser) ?>
                     </a>
-                    <ul class="dropdown-menu">
+                    <ul class="dropdown-menu" style="right: 0; left: auto;">
                         <li><a class="dropdown-item" href="/admin">
                             <i class="bi bi-speedometer2 me-2"></i>Dashboard
                         </a></li>
@@ -357,6 +357,107 @@ $timeRemaining = $this->auth->getTimeRemaining();
                                                    min="30" max="300" step="30" value="<?= $settings['auto_save_interval'] ?>"
                                                    oninput="document.getElementById('auto_save_value').textContent = this.value">
                                             <div class="form-text">30-300 Sekunden für automatisches Speichern</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Navigation-Sortierung -->
+                            <div class="settings-section">
+                                <h5><i class="bi bi-list-ol me-2"></i>Navigation-Sortierung</h5>
+                                <p class="text-muted">Bestimme die Reihenfolge der Hauptnavigation</p>
+                                
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="mb-3">
+                                            <label for="navigation_order" class="form-label">Navigation-Reihenfolge</label>
+                                            <textarea class="form-control" id="navigation_order" name="navigation_order" 
+                                                      rows="6" placeholder="about&#10;blog&#10;tech&#10;diy"><?php
+// Navigation-Order als Text formatieren
+$navOrder = $settings['navigation_order'] ?? [];
+$orderText = '';
+foreach ($navOrder as $section => $priority) {
+    $orderText .= $section . ':' . $priority . "\n";
+}
+echo htmlspecialchars(trim($orderText));
+?></textarea>
+                                            <div class="form-text">
+                                                <strong>Format:</strong> Ein Bereich pro Zeile<br>
+                                                <code>section</code> oder <code>section:priorität</code><br>
+                                                <strong>Beispiel:</strong><br>
+                                                <code>about:1</code><br>
+                                                <code>blog:2</code><br>
+                                                <code>tech</code> (automatische Priorität)<br>
+                                                <code>diy</code>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-4">
+                                        <div class="card bg-light">
+                                            <div class="card-header">
+                                                <small class="fw-bold">Aktuelle Navigation</small>
+                                            </div>
+                                            <div class="card-body">
+                                                <small class="text-muted">
+                                                    Aktuelle Reihenfolge (vor Änderungen):<br><br>
+                                                    <?php
+                                                    // Zeige aktuelle Navigation-Sortierung
+                                                    $contentPath = $this->config['paths']['content'];
+                                                    $currentOrder = $settings['navigation_order'] ?? [];
+                                                    
+                                                    if (is_dir($contentPath)) {
+                                                        $sections = [];
+                                                        
+                                                        // Sammle sowohl Ordner als auch Root-Dateien
+                                                        $items = glob($contentPath . '/*');
+                                                        foreach ($items as $item) {
+                                                            $basename = basename($item);
+                                                            
+                                                            if (is_dir($item)) {
+                                                                // Ordner hinzufügen
+                                                                $sections[] = $basename;
+                                                            } elseif (is_file($item) && str_ends_with($basename, '.md')) {
+                                                                // Markdown-Dateien hinzufügen (ohne .md Extension)
+                                                                $section = substr($basename, 0, -3);
+                                                                if ($section !== 'index') { // index.md ausschließen
+                                                                    $sections[] = $section;
+                                                                }
+                                                            }
+                                                        }
+                                                        
+                                                        // Duplikate entfernen (falls sowohl Ordner als auch Datei existieren)
+                                                        $sections = array_unique($sections);
+                                                        
+                                                        if (!empty($sections)) {
+                                                            // Sortiere Sections nach aktueller Navigation-Order
+                                                            usort($sections, function($a, $b) use ($currentOrder) {
+                                                                $orderA = $currentOrder[$a] ?? 999;
+                                                                $orderB = $currentOrder[$b] ?? 999;
+                                                                
+                                                                if ($orderA === $orderB) {
+                                                                    return strcasecmp($a, $b);
+                                                                }
+                                                                
+                                                                return $orderA <=> $orderB;
+                                                            });
+                                                            
+                                                            // Zeige sortierte Sections mit aktueller Priorität
+                                                            foreach ($sections as $section) {
+                                                                $priority = $currentOrder[$section] ?? 'auto';
+                                                                $badgeClass = isset($currentOrder[$section]) ? 'text-bg-primary' : 'text-bg-secondary';
+                                                                echo '<div class="d-flex justify-content-between align-items-center mb-1">';
+                                                                echo '<span class="badge ' . $badgeClass . '">' . htmlspecialchars($section) . '</span>';
+                                                                echo '<small class="text-muted ms-2">(' . $priority . ')</small>';
+                                                                echo '</div>';
+                                                            }
+                                                        } else {
+                                                            echo '<em>Keine Navigation-Bereiche gefunden</em>';
+                                                        }
+                                                    }
+                                                    ?>
+                                                </small>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

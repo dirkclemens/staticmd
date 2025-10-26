@@ -517,7 +517,8 @@ class AdminController
             'items_per_page' => max(10, min(100, (int)($_POST['items_per_page'] ?? 25))),
             'editor_theme' => $_POST['editor_theme'] ?? 'github',
             'show_file_stats' => isset($_POST['show_file_stats']),
-            'auto_save_interval' => max(30, min(300, (int)($_POST['auto_save_interval'] ?? 60)))
+            'auto_save_interval' => max(30, min(300, (int)($_POST['auto_save_interval'] ?? 60))),
+            'navigation_order' => $this->parseNavigationOrder($_POST['navigation_order'] ?? '')
         ];
         
         if ($this->saveSettingsToFile($settings)) {
@@ -542,7 +543,13 @@ class AdminController
             'items_per_page' => 25,
             'editor_theme' => 'github',
             'show_file_stats' => true,
-            'auto_save_interval' => 60
+            'auto_save_interval' => 60,
+            'navigation_order' => [
+                'about' => 1,
+                'blog' => 2,
+                'tech' => 3,
+                'diy' => 4
+            ]
         ];
         
         if (file_exists($settingsFile)) {
@@ -565,5 +572,30 @@ class AdminController
         $json = json_encode($settings, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
         
         return file_put_contents($settingsFile, $json) !== false;
+    }
+
+    /**
+     * Parst Navigation-Reihenfolge aus Eingabe
+     */
+    private function parseNavigationOrder(string $input): array
+    {
+        $order = [];
+        $lines = explode("\n", trim($input));
+        $priority = 1;
+        
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if (empty($line)) continue;
+            
+            // Format: "section" oder "section:priority"
+            if (strpos($line, ':') !== false) {
+                [$section, $prio] = explode(':', $line, 2);
+                $order[trim($section)] = (int)trim($prio);
+            } else {
+                $order[trim($line)] = $priority++;
+            }
+        }
+        
+        return $order;
     }
 }

@@ -9,10 +9,12 @@ namespace StaticMD\Core;
 class TemplateEngine
 {
     private array $config;
+    private ContentLoader $contentLoader;
 
-    public function __construct(array $config)
+    public function __construct(array $config, ContentLoader $contentLoader)
     {
         $this->config = $config;
+        $this->contentLoader = $contentLoader;
     }
 
     /**
@@ -50,14 +52,9 @@ class TemplateEngine
      */
     private function generateNavigation(): array
     {
-        // Einfache Navigation - kann später erweitert werden
-        return [
-            'index' => [
-                'title' => 'Startseite',
-                'route' => '',
-                'pages' => []
-            ]
-        ];
+        // Vollständige Navigation aus ContentLoader laden
+        $pages = $this->contentLoader->listAll();
+        return $pages;
     }
 
     /**

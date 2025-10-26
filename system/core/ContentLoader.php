@@ -282,8 +282,17 @@ class ContentLoader
      */
     private function processPagesShortcode(array $params, string $currentRoute): string
     {
-        // Parameter parsen: [pages /treppen/ 1000 rows]
-        $targetPath = isset($params[0]) ? trim($params[0], '/') : $currentRoute;
+        // Parameter parsen: [pages /treppen/ 1000 rows] oder [pages / 6]
+        $targetPath = isset($params[0]) ? trim($params[0], ' ') : $currentRoute;
+        
+        // Root-Pfad erkennen: "/", "", oder leer
+        if ($targetPath === '/' || empty($targetPath)) {
+            $targetPath = '';
+        } else {
+            // Normale Pfade von Slashes befreien
+            $targetPath = trim($targetPath, '/');
+        }
+        
         $limit = isset($params[1]) ? (int)$params[1] : 1000;
         $layout = isset($params[2]) ? strtolower(trim($params[2])) : 'columns';
         
@@ -310,8 +319,17 @@ class ContentLoader
      */
     private function processTagsShortcode(array $params, string $currentRoute): string
     {
-        // Parameter parsen: [tags /treppen/ 1000]
-        $targetPath = isset($params[0]) ? trim($params[0], '/') : $currentRoute;
+        // Parameter parsen: [tags /treppen/ 1000] oder [tags / 10]
+        $targetPath = isset($params[0]) ? trim($params[0], ' ') : $currentRoute;
+        
+        // Root-Pfad erkennen: "/", "", oder leer
+        if ($targetPath === '/' || empty($targetPath)) {
+            $targetPath = '';
+        } else {
+            // Normale Pfade von Slashes befreien
+            $targetPath = trim($targetPath, '/');
+        }
+        
         $limit = isset($params[1]) ? (int)$params[1] : 1000;
         
         // Alle Tags aus dem Ordner sammeln
@@ -434,7 +452,8 @@ class ContentLoader
             }
             
             $filePath = $file->getPathname();
-            $fileRoute = $route . '/' . substr($filename, 0, -strlen($extension));
+            $baseName = substr($filename, 0, -strlen($extension));
+            $fileRoute = empty($route) ? $baseName : $route . '/' . $baseName;
             
             // Metadaten lesen
             $rawContent = file_get_contents($filePath);
@@ -621,8 +640,8 @@ class ContentLoader
         // Für Startseite
         if ($route === 'index' || $route === '') {
             $indexPaths = [
-                $contentDir . '/index' . $extension,
-                $contentDir . '/home' . $extension
+                $contentDir . '/home' . $extension,    // home.md hat Priorität
+                $contentDir . '/index' . $extension
             ];
             
             foreach ($indexPaths as $path) {
@@ -814,5 +833,30 @@ class ContentLoader
             return $adminAuth->isLoggedIn();
         }
         return false;
+    }
+    
+    /**
+     * Lädt Navigation-Sortierung aus Settings
+     */
+    public function getNavigationOrder(): array
+    {
+        $settingsFile = $this->config['paths']['system'] . '/settings.json';
+        
+        // Standard-Navigation-Reihenfolge als Fallback
+        $defaultOrder = [
+            'about' => 1,
+            'blog' => 2,
+            'tech' => 3,
+            'diy' => 4
+        ];
+        
+        if (file_exists($settingsFile)) {
+            $settings = json_decode(file_get_contents($settingsFile), true);
+            if (isset($settings['navigation_order']) && is_array($settings['navigation_order'])) {
+                return $settings['navigation_order'];
+            }
+        }
+        
+        return $defaultOrder;
     }
 }

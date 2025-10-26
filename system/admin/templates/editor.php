@@ -234,7 +234,7 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
                         <i class="bi bi-person-circle me-1"></i>
                         <?= htmlspecialchars($currentUser) ?>
                     </a>
-                    <ul class="dropdown-menu">
+                    <ul class="dropdown-menu" style="right: 0; left: auto;">
                         <li><a class="dropdown-item" href="/admin">
                             <i class="bi bi-speedometer2 me-2"></i>Dashboard
                         </a></li>

@@ -47,6 +47,22 @@ foreach ($pages as $page) {
         $navItems[$section]['pages'][] = $page;
     }
 }
+
+// Navigation sortieren - aus Einstellungen laden
+$navigationOrder = $this->contentLoader->getNavigationOrder();
+
+// Sortierung anwenden
+uksort($navItems, function($a, $b) use ($navigationOrder) {
+    $orderA = $navigationOrder[$a] ?? 999;
+    $orderB = $navigationOrder[$b] ?? 999;
+    
+    if ($orderA === $orderB) {
+        // Bei gleicher Gewichtung alphabetisch sortieren
+        return strcasecmp($a, $b);
+    }
+    
+    return $orderA <=> $orderB;
+});
 ?>
 <!DOCTYPE html>
 <html lang="de" data-bs-theme="light">
@@ -297,24 +313,33 @@ foreach ($pages as $page) {
                     </li>
                     
                     <?php foreach ($navItems as $section => $nav): ?>
-                        <?php if ($section !== 'index'): ?>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle <?= strpos($currentRoute, $section) === 0 ? 'active' : '' ?>" 
-                               href="#" role="button" data-bs-toggle="dropdown">
-                                <?= htmlspecialchars($nav['title']) ?>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="/<?= encodeUrlPath($nav['route']) ?>">Übersicht</a></li>
-                                <?php if (!empty($nav['pages'])): ?>
-                                <li><hr class="dropdown-divider"></li>
-                                <?php foreach ($nav['pages'] as $page): ?>
-                                <li><a class="dropdown-item" href="/<?= encodeUrlPath($page['route']) ?>">
-                                    <?= htmlspecialchars(basename($page['route'])) ?>
-                                </a></li>
-                                <?php endforeach; ?>
-                                <?php endif; ?>
-                            </ul>
-                        </li>
+                        <?php if ($section !== 'index' && $section !== 'home'): ?>
+                            <?php if (!empty($nav['pages']) && count($nav['pages']) > 0): ?>
+                            <!-- Dropdown für Ordner mit Unterseiten -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle <?= strpos($currentRoute, $section) === 0 ? 'active' : '' ?>" 
+                                   href="#" role="button" data-bs-toggle="dropdown">
+                                    <?= htmlspecialchars($nav['title']) ?>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="/<?= encodeUrlPath($nav['route']) ?>">Übersicht</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <?php foreach ($nav['pages'] as $page): ?>
+                                    <li><a class="dropdown-item" href="/<?= encodeUrlPath($page['route']) ?>">
+                                        <?= htmlspecialchars(basename($page['route'])) ?>
+                                    </a></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </li>
+                            <?php else: ?>
+                            <!-- Normaler Link für einzelne Dateien -->
+                            <li class="nav-item">
+                                <a class="nav-link <?= $currentRoute === $section ? 'active' : '' ?>" 
+                                   href="/<?= encodeUrlPath($nav['route']) ?>">
+                                    <?= htmlspecialchars($nav['title']) ?>
+                                </a>
+                            </li>
+                            <?php endif; ?>
                         <?php endif; ?>
                     <?php endforeach; ?>
                 </ul>
