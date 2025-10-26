@@ -44,8 +44,71 @@ foreach ($pages as $page) {
     }
     
     if (count($parts) > 1) {
+        // Titel aus Front Matter laden
+        if (isset($page['path']) && file_exists($page['path'])) {
+            $content = file_get_contents($page['path']);
+            $page['title'] = parseTitle($content, $page['route']);
+        } else {
+            $page['title'] = generateTitle($page['route']);
+        }
+        
         $navItems[$section]['pages'][] = $page;
     }
+}
+
+// Dropdown-Seiten alphabetisch sortieren (case-insensitive)
+foreach ($navItems as $section => $nav) {
+    if (!empty($nav['pages'])) {
+        usort($navItems[$section]['pages'], function($a, $b) {
+            $titleA = $a['title'] ?? basename($a['route']);
+            $titleB = $b['title'] ?? basename($b['route']);
+            return strcasecmp($titleA, $titleB);
+        });
+    }
+}
+
+// Hilfsfunktion für Titel-Parsing
+function parseTitle($content, $route) {
+    // Front Matter erkennen (--- am Anfang)
+    if (strpos($content, '---') === 0) {
+        $parts = explode('---', $content, 3);
+        
+        if (count($parts) >= 3) {
+            $frontMatter = trim($parts[1]);
+            
+            // Einfaches Key-Value Parsing
+            $lines = explode("\n", $frontMatter);
+            foreach ($lines as $line) {
+                $line = trim($line);
+                if (empty($line) || strpos($line, ':') === false) {
+                    continue;
+                }
+                
+                [$key, $value] = explode(':', $line, 2);
+                $cleanKey = trim($key);
+                $cleanValue = trim($value, ' "\"');
+                
+                if (strtolower($cleanKey) === 'title') {
+                    return $cleanValue;
+                }
+            }
+        }
+    }
+    
+    // Fallback: Titel aus Route generieren
+    $title = str_replace(['/', '-', '_'], ' ', $route);
+    return ucwords($title);
+}
+
+// Titel aus Route generieren
+function generateTitle($route) {
+    if ($route === 'index') {
+        return 'StaticMD';
+    }
+    
+    // Route zu lesbarem Titel konvertieren
+    $title = str_replace(['/', '-', '_'], ' ', $route);
+    return ucwords($title);
 }
 
 // Navigation sortieren - aus Einstellungen laden
@@ -345,7 +408,7 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
                                     <li><a class="dropdown-item" href="/<?= encodeUrlPath($nav['route']) ?>">Übersicht</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <?php foreach ($nav['pages'] as $page): ?>
-                                    <li><a class="dropdown-item" href="/<?= encodeUrlPath($page['route']) ?>"><?= htmlspecialchars(basename($page['route'])) ?></a></li>
+                                    <li><a class="dropdown-item" href="/<?= encodeUrlPath($page['route']) ?>"><?= htmlspecialchars($page['title'] ?? basename($page['route'])) ?></a></li>
                                     <?php endforeach; ?>
                                 </ul>
                             </li>
