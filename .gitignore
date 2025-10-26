@@ -2,9 +2,9 @@
 **/.gitignore
 **/backup/*
 **/backup_*
-**/content/*
+**/content/tech/*
+**/content/test/*
 **/*.code-workspace
-**/*.md
 **/debug_*.php
 **/test_*.php
 **/test-*.php
