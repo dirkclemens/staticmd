@@ -18,87 +18,19 @@ if (file_exists($settingsFile)) {
 $siteName = $settings['site_name'] ?? $siteName;
 $siteLogo = $settings['site_logo'] ?? '';
 
-// Helper-Funktion für pfad-sichere URL-Encoding
-function encodeUrlPath($path) {
-    $parts = explode('/', $path);
-    $encodedParts = array_map('rawurlencode', $parts);
-    return implode('/', $encodedParts);
-}
+
 
 // Navigation aus Content-Verzeichnis generieren
 $contentLoader = new \StaticMD\Core\ContentLoader($config);
-$pages = $contentLoader->listAll();
 
-// Hauptnavigation erstellen
-$navItems = [];
-foreach ($pages as $page) {
-    $parts = explode('/', $page['route']);
-    $section = $parts[0];
-    
-    if (!isset($navItems[$section])) {
-        $navItems[$section] = [
-            'title' => ucwords(str_replace(['-', '_'], ' ', $section)),
-            'route' => $section,
-            'pages' => []
-        ];
-    }
-    
-    if (count($parts) > 1) {
-        // Titel aus Front Matter laden
-        if (isset($page['path']) && file_exists($page['path'])) {
-            $content = file_get_contents($page['path']);
-            $page['title'] = parseTitle($content, $page['route']);
-        } else {
-            $page['title'] = generateTitle($page['route']);
-        }
-        
-        $navItems[$section]['pages'][] = $page;
-    }
-}
+// Theme Helper für gemeinsame Funktionen
+require_once __DIR__ . '/../ThemeHelper.php';
+$themeHelper = new \StaticMD\Themes\ThemeHelper($contentLoader);
 
-// Dropdown-Seiten alphabetisch sortieren (case-insensitive)
-foreach ($navItems as $section => $nav) {
-    if (!empty($nav['pages'])) {
-        usort($navItems[$section]['pages'], function($a, $b) {
-            $titleA = $a['title'] ?? basename($a['route']);
-            $titleB = $b['title'] ?? basename($b['route']);
-            return strcasecmp($titleA, $titleB);
-        });
-    }
-}
+// Navigation erstellen
+$navItems = $themeHelper->buildNavigation();
 
-// Hilfsfunktion für Titel-Parsing
-function parseTitle($content, $route) {
-    // Front Matter erkennen (--- am Anfang)
-    if (strpos($content, '---') === 0) {
-        $parts = explode('---', $content, 3);
-        
-        if (count($parts) >= 3) {
-            $frontMatter = trim($parts[1]);
-            
-            // Einfaches Key-Value Parsing
-            $lines = explode("\n", $frontMatter);
-            foreach ($lines as $line) {
-                $line = trim($line);
-                if (empty($line) || strpos($line, ':') === false) {
-                    continue;
-                }
-                
-                [$key, $value] = explode(':', $line, 2);
-                $cleanKey = trim($key);
-                $cleanValue = trim($value, ' "\"');
-                
-                if (strtolower($cleanKey) === 'title') {
-                    return $cleanValue;
-                }
-            }
-        }
-    }
-    
-    // Fallback: Titel aus Route generieren
-    $title = str_replace(['/', '-', '_'], ' ', $route);
-    return ucwords($title);
-}
+
 
 // Titel aus Route generieren
 function generateTitle($route) {
@@ -335,10 +267,10 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
                                     <?= htmlspecialchars($nav['title']) ?>
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="/<?= encodeUrlPath($nav['route']) ?>">Übersicht</a></li>
+                                    <li><a class="dropdown-item" href="/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($nav['route']) ?>">Übersicht</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <?php foreach ($nav['pages'] as $page): ?>
-                                    <li><a class="dropdown-item" href="/<?= encodeUrlPath($page['route']) ?>"><?= htmlspecialchars($page['title'] ?? basename($page['route'])) ?></a></li>
+                                    <li><a class="dropdown-item" href="/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($page['route']) ?>"><?= htmlspecialchars($page['title'] ?? basename($page['route'])) ?></a></li>
                                     <?php endforeach; ?>
                                 </ul>
                             </li>
@@ -346,7 +278,7 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
                             <!-- Normaler Link für einzelne Dateien -->
                             <li class="nav-item">
                                 <a class="nav-link <?= $currentRoute === $section ? 'active' : '' ?>" 
-                                   href="/<?= encodeUrlPath($nav['route']) ?>">
+                                   href="/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($nav['route']) ?>">
                                     <?= htmlspecialchars($nav['title']) ?>
                                 </a>
                             </li>
@@ -407,7 +339,7 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
                     <?php if ($isLast): ?>
                         <li class="breadcrumb-item active"><?= ucwords(str_replace(['-', '_'], ' ', $parts[$i])) ?></li>
                     <?php else: ?>
-                        <li class="breadcrumb-item"><a href="/<?= encodeUrlPath($path) ?>"><?= ucwords(str_replace(['-', '_'], ' ', $parts[$i])) ?></a></li>
+                        <li class="breadcrumb-item"><a href="/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($path) ?>"><?= ucwords(str_replace(['-', '_'], ' ', $parts[$i])) ?></a></li>
                     <?php endif; ?>
                 <?php endfor; ?>
             </ol>
@@ -451,7 +383,7 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
                             <?php foreach (explode(',', $meta['tags']) as $tag): ?>
                                 <?php $cleanTag = trim($tag); ?>
                                 <?php if (!empty($cleanTag)): ?>
-                                <a href="/tag/<?= encodeUrlPath($cleanTag) ?>" class="badge bg-primary text-white text-decoration-none me-1 mb-1">
+                                <a href="/tag/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($cleanTag) ?>" class="badge bg-primary text-white text-decoration-none me-1 mb-1">
                                     <?= htmlspecialchars($cleanTag) ?>
                                 </a>
                                 <?php endif; ?>

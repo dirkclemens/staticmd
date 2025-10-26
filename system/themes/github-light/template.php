@@ -27,45 +27,13 @@ function encodeUrlPath($path) {
 
 // Navigation aus Content-Verzeichnis generieren
 $contentLoader = new \StaticMD\Core\ContentLoader($config);
-$pages = $contentLoader->listAll();
 
-// Hauptnavigation erstellen
-$navItems = [];
-foreach ($pages as $page) {
-    $parts = explode('/', $page['route']);
-    $section = $parts[0];
-    
-    if (!isset($navItems[$section])) {
-        $navItems[$section] = [
-            'title' => ucwords(str_replace(['-', '_'], ' ', $section)),
-            'route' => $section,
-            'pages' => []
-        ];
-    }
-    
-    if (count($parts) > 1) {
-        // Titel aus Front Matter laden
-        if (isset($page['path']) && file_exists($page['path'])) {
-            $content = file_get_contents($page['path']);
-            $page['title'] = parseTitle($content, $page['route']);
-        } else {
-            $page['title'] = generateTitle($page['route']);
-        }
-        
-        $navItems[$section]['pages'][] = $page;
-    }
-}
+// Theme Helper für gemeinsame Funktionen
+require_once __DIR__ . '/../ThemeHelper.php';
+$themeHelper = new \StaticMD\Themes\ThemeHelper($contentLoader);
 
-// Dropdown-Seiten alphabetisch sortieren (case-insensitive)
-foreach ($navItems as $section => $nav) {
-    if (!empty($nav['pages'])) {
-        usort($navItems[$section]['pages'], function($a, $b) {
-            $titleA = $a['title'] ?? basename($a['route']);
-            $titleB = $b['title'] ?? basename($b['route']);
-            return strcasecmp($titleA, $titleB);
-        });
-    }
-}
+// Navigation erstellen
+$navItems = $themeHelper->buildNavigation();
 
 // Hilfsfunktion für Titel-Parsing
 function parseTitle($content, $route) {
