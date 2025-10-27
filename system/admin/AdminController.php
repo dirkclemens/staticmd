@@ -192,6 +192,14 @@ class AdminController
      */
     private function saveContent(): void
     {
+        // DEBUG: Zeige die ersten und letzten Zeichen des Inhalts
+        if (isset($_POST['content'])) {
+            $debugContent = $_POST['content'];
+            error_log('DEBUG: Content-Start: ' . substr($debugContent, 0, 40));
+            error_log('DEBUG: Content-Ende: ' . substr($debugContent, -40));
+            error_log('DEBUG: Content-RAW: ' . bin2hex(substr($debugContent, -10)));
+        }
+    
         $this->auth->requireLogin();
         
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

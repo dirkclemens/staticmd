@@ -1,4 +1,8 @@
 <?php
+// DEBUG: PHP-Fehlermeldungen aktivieren
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 /**
  * StaticMD Admin - Haupteinstiegspunkt
  * Verwaltet alle Admin-Funktionen

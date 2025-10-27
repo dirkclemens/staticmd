@@ -25,7 +25,8 @@ class MarkdownParser
         
         for ($i = 0; $i < count($lines); $i++) {
             $line = $lines[$i];
-            $trimmedLine = trim($line);
+            $trimmedLine = rtrim($line, "\n");
+            //$trimmedLine = $line;
             
             // Code-Blöcke erkennen
             if (str_starts_with($trimmedLine, '```')) {
@@ -183,23 +184,21 @@ class MarkdownParser
             if ($inParagraph) {
                 // Zeile mit 3+ Leerzeichen = Hard Break
                 if (str_ends_with($line, '   ')) {
-                    // Prüfen ob Leerzeichen am Ende sind (mindestens 3)
                     $spaceCount = strlen($line) - strlen(rtrim($line));
                     if ($spaceCount >= 3) {
-                        $paragraphContent .= ' ' . $trimmedLine . '<br>';
+                        $paragraphContent .= $trimmedLine . "\n";
                     } else {
-                        $paragraphContent .= ' ' . $trimmedLine;
+                        $paragraphContent .= ($paragraphContent === '' ? '' : ' ') . $trimmedLine;
                     }
                 } else {
-                    $paragraphContent .= ' ' . $trimmedLine;
+                    $paragraphContent .= ($paragraphContent === '' ? '' : ' ') . $trimmedLine;
                 }
             } else {
                 $inParagraph = true;
                 if (str_ends_with($line, '   ')) {
-                    // Prüfen ob Leerzeichen am Ende sind (mindestens 3)
                     $spaceCount = strlen($line) - strlen(rtrim($line));
                     if ($spaceCount >= 3) {
-                        $paragraphContent = $trimmedLine . '<br>';
+                        $paragraphContent = $trimmedLine . "\n";
                     } else {
                         $paragraphContent = $trimmedLine;
                     }
@@ -233,26 +232,24 @@ class MarkdownParser
     private function parseInline(string $text): string
     {
         // Yellow CMS Bilder: [image dateiname.jpg - - 50%]
+        // [image name.jpg "Alt-Text" - 50%] oder [image name.jpg - - 50%]
         $text = preg_replace_callback(
-            '/\[image\s+([^\s\]]+)(?:\s+-\s+-\s+(\d+%?))?\]/',
+            '/\[image\s+([^\s"\]]+)(?:\s+(?:"([^"]*)"|-))?(?:\s+-\s*([0-9]+%?))?\]/',
             [$this, 'parseYellowImage'],
             $text
         );
         
-        // Links: [Text](URL)
-        $text = preg_replace('/\[([^\]]+)\]\(([^)]+)\)/', '<a href="$2">$1</a>', $text);
-        
         // Bilder: ![Alt](URL)
         $text = preg_replace('/!\[([^\]]*)\]\(([^)]+)\)/', '<img src="$2" alt="$1">', $text);
-        
+
         // Fett: **Text** oder __Text__
         $text = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $text);
         $text = preg_replace('/__(.*?)__/', '<strong>$1</strong>', $text);
-        
+
         // Kursiv: *Text* oder _Text_
         $text = preg_replace('/\*(.*?)\*/', '<em>$1</em>', $text);
         $text = preg_replace('/_(.*?)_/', '<em>$1</em>', $text);
-        
+
         // Code-Blöcke temporär durch Platzhalter ersetzen
         $codeBlocks = [];
         $codeIndex = 0;
@@ -262,16 +259,25 @@ class MarkdownParser
             $codeIndex++;
             return $placeholder;
         }, $text);
-        
+
         // Durchgestrichen: ~~Text~~
         $text = preg_replace('/~~(.*?)~~/', '<del>$1</del>', $text);
-        
+
         // Emojis: :emoji_name: -> 🎉 (jetzt sicher außerhalb von Code-Blöcken)
         $text = preg_replace_callback('/:([a-z_+-]+):/', [$this, 'parseEmojiSafe'], $text);
-        
+
+        // Auto-Links: URLs automatisch zu klickbaren Links konvertieren (außerhalb von Code-Blöcken)
+        $text = $this->parseAutoLinks($text, $codeBlocks);
+
+        // Links: [Text](URL) - jetzt auch für automatisch generierte Links
+        $text = preg_replace('/\[([^\]]+)\]\(([^)]+)\)/', '<a href="$2">$1</a>', $text);
+
+        // Hardbreaks: 3+ Leerzeichen am Zeilenende zu <br> (nach allen Inline-Konvertierungen)
+        $text = preg_replace('/ {3,}\n/', '<br>\n', $text);
+    
         // Code-Blöcke wieder einsetzen
         $text = str_replace(array_keys($codeBlocks), array_values($codeBlocks), $text);
-        
+
         return $text;
     }
     
@@ -281,29 +287,18 @@ class MarkdownParser
     private function parseYellowImage(array $matches): string
     {
         $filename = $matches[1];
-        $size = $matches[2] ?? '';
-        
-        // Bildpfad konstruieren
+        $altText = isset($matches[2]) && $matches[2] !== '' ? $matches[2] : '';
+        $size = $matches[3] ?? '';
+
         $imagePath = '/public/images/migration/' . $filename;
-        
-        // Alt-Text aus Dateiname generieren
-        $altText = pathinfo($filename, PATHINFO_FILENAME);
-        $altText = ucfirst(str_replace(['-', '_'], ' ', $altText));
-        
-        // HTML generieren
-        $html = '<img src="' . htmlspecialchars($imagePath) . '" alt="' . htmlspecialchars($altText) . '"';
-        
-        // Größe hinzufügen falls vorhanden
-        if (!empty($size)) {
-            if (str_ends_with($size, '%')) {
-                $html .= ' style="width: ' . htmlspecialchars($size) . ';"';
-            } else {
-                $html .= ' style="width: ' . htmlspecialchars($size) . 'px;"';
-            }
+        $html = '<img src="' . htmlspecialchars($imagePath) . '"';
+        if ($altText !== '') {
+            $html .= ' alt="' . htmlspecialchars($altText) . '"';
         }
-        
-        $html .= ' class="img-fluid">';
-        
+        if (!empty($size)) {
+            $html .= ' style="width: ' . htmlspecialchars($size) . ';"';
+        }
+        $html .= '>';
         return $html;
     }
     
@@ -488,5 +483,74 @@ class MarkdownParser
         
         // Emoji zurückgeben oder ursprünglichen Code beibehalten
         return $emojiMap[$emojiCode] ?? ':' . $emojiCode . ':';
+    }
+    
+    /**
+     * Konvertiert URLs automatisch zu klickbaren Links (sichere Version)
+     * Ignoriert bereits existierende Markdown-Links und Code-Inhalte
+     */
+    private function parseAutoLinks(string $text, array $codeBlocks = []): string
+    {
+        // Alle bestehenden Markdown-Links und HTML-Links temporär durch Platzhalter ersetzen
+        $existingLinks = [];
+        $linkIndex = 0;
+        
+        // 1. Markdown-Links temporär entfernen: [text](url)
+        $text = preg_replace_callback('/\[([^\]]*)\]\(([^)]+)\)/', function($matches) use (&$existingLinks, &$linkIndex) {
+            $placeholder = '___EXISTING_LINK_' . $linkIndex . '___';
+            $existingLinks[$placeholder] = $matches[0];
+            $linkIndex++;
+            return $placeholder;
+        }, $text);
+        
+        // 2. HTML-Links temporär entfernen: <a href="...">...</a>
+        $text = preg_replace_callback('/<a[^>]*href=["\']([^"\']*)["\'][^>]*>.*?<\/a>/i', function($matches) use (&$existingLinks, &$linkIndex) {
+            $placeholder = '___EXISTING_LINK_' . $linkIndex . '___';
+            $existingLinks[$placeholder] = $matches[0];
+            $linkIndex++;
+            return $placeholder;
+        }, $text);
+        
+        // 3. URL-Erkennung für nackte URLs - Zeile für Zeile verarbeiten
+        $lines = explode("\n", $text);
+        foreach ($lines as &$line) {
+            // Prüfen ob Zeile Code-Block-Platzhalter oder bereits verlinkte Inhalte enthält
+            $hasCodeBlocks = false;
+            $hasExistingLinks = strpos($line, '___EXISTING_LINK_') !== false;
+            
+            foreach (array_keys($codeBlocks) as $codeBlockPlaceholder) {
+                if (strpos($line, $codeBlockPlaceholder) !== false) {
+                    $hasCodeBlocks = true;
+                    break;
+                }
+            }
+            
+            // URLs nur konvertieren wenn keine Code-Blöcke oder bestehende Links vorhanden
+            if (!$hasCodeBlocks && !$hasExistingLinks) {
+                $line = preg_replace_callback('/(^|[\s\-:])((https?:\/\/|www\.|ftp:\/\/)[^\s<>"\'`]+)/i', function($matches) {
+                    $prefix = $matches[1];  // Whitespace oder Zeilenanfang behalten
+                    $url = $matches[2];
+                    $displayUrl = $url;
+                    
+                    // Für www-Links https:// hinzufügen
+                    if (strpos($url, 'www.') === 0) {
+                        $url = 'https://' . $url;
+                    }
+                    
+                    // URL kürzen für Anzeige wenn zu lang (über 60 Zeichen)
+                    if (strlen($displayUrl) > 60) {
+                        $displayUrl = substr($displayUrl, 0, 57) . '...';
+                    }
+                    
+                    return $prefix . '[' . htmlspecialchars($displayUrl) . '](' . htmlspecialchars($url) . ')';
+                }, $line);
+            }
+        }
+        $text = implode("\n", $lines);
+        
+        // 4. Alle bestehenden Links wieder einsetzen
+        $text = str_replace(array_keys($existingLinks), array_values($existingLinks), $text);
+        
+        return $text;
     }
 }
