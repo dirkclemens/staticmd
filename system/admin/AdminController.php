@@ -121,7 +121,8 @@ class AdminController
         // Statistiken berechnen
         $stats = [
             'total_files' => count($allFiles),
-            'recent_files' => array_slice($allFiles, -$recentFilesCount),
+            // Die ersten N Dateien sind die neuesten
+            'recent_files' => array_slice($allFiles, 0, $recentFilesCount),
             'disk_usage' => $this->calculateDiskUsage(),
             'system_info' => [
                 'php_version' => PHP_VERSION,

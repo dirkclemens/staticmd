@@ -733,7 +733,12 @@ class ContentLoader
         
         $files = [];
         $this->scanDirectory($contentDir, $contentDir, $extension, $files);
-        
+
+        // Nach Änderungsdatum (modified) absteigend sortieren
+        usort($files, function($a, $b) {
+            return $b['modified'] <=> $a['modified'];
+            //return $a['modified'] <=> $b['modified'];
+        });
         return $files;
     }
 

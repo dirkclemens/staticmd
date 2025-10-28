@@ -25,8 +25,8 @@ class MarkdownParser
         
         for ($i = 0; $i < count($lines); $i++) {
             $line = $lines[$i];
-            $trimmedLine = rtrim($line, "\n");
-            //$trimmedLine = $line;
+            //$trimmedLine = rtrim($line, "\n");
+            $trimmedLine = $line;
             
             // Code-Blöcke erkennen
             if (str_starts_with($trimmedLine, '```')) {
@@ -234,8 +234,32 @@ class MarkdownParser
         // Yellow CMS Bilder: [image dateiname.jpg - - 50%]
         // [image name.jpg "Alt-Text" - 50%] oder [image name.jpg - - 50%]
         $text = preg_replace_callback(
-            '/\[image\s+([^\s"\]]+)(?:\s+(?:"([^"]*)"|-))?(?:\s+-\s*([0-9]+%?))?\]/',
-            [$this, 'parseYellowImage'],
+            '/\[image\s+([^\s"\]]+)(?:\s+(?:"([^\"]*)"|-|([0-9]+%?)))?(?:\s+-\s*([0-9]+%?))?\]/',
+            function($matches) {
+                // [image name.jpg "Alt-Text" - 50%] => $matches[1]=name.jpg, $matches[2]=Alt-Text, $matches[4]=Größe
+                // [image name.jpg - - 50%] => $matches[1]=name.jpg, $matches[2]=null, $matches[4]=Größe
+                // [image name.jpg 50%] => $matches[1]=name.jpg, $matches[3]=Größe
+                // [image name.jpg] => $matches[1]=name.jpg
+                $filename = $matches[1];
+                $altText = isset($matches[2]) && $matches[2] !== '' ? $matches[2] : '';
+                $size = '';
+                if (isset($matches[4]) && $matches[4] !== '') {
+                    $size = $matches[4];
+                } elseif (isset($matches[3]) && $matches[3] !== '') {
+                    $size = $matches[3];
+                }
+                //$imagePath = '/public/images/migration/' . $filename;
+                $imagePath = '/media/images/' . $filename;
+                $html = '<img src="' . htmlspecialchars($imagePath) . '"';
+                if ($altText !== '') {
+                    $html .= ' alt="' . htmlspecialchars($altText) . '"';
+                }
+                if (!empty($size)) {
+                    $html .= ' style="width: ' . htmlspecialchars($size) . ';"';
+                }
+                $html .= '>';
+                return $html;
+            },
             $text
         );
         
@@ -269,20 +293,28 @@ class MarkdownParser
         // Auto-Links: URLs automatisch zu klickbaren Links konvertieren (außerhalb von Code-Blöcken)
         $text = $this->parseAutoLinks($text, $codeBlocks);
 
+        // Hardbreaks: 2+ Leerzeichen am Zeilenende zu <br> (vor Link-Konvertierung)
+        $text = preg_replace('/ {2,}\n/', '<br>', $text);
+
         // Links: [Text](URL) - jetzt auch für automatisch generierte Links
         $text = preg_replace('/\[([^\]]+)\]\(([^)]+)\)/', '<a href="$2">$1</a>', $text);
-
-        // Hardbreaks: 3+ Leerzeichen am Zeilenende zu <br> (nach allen Inline-Konvertierungen)
-        $text = preg_replace('/ {3,}\n/', '<br>\n', $text);
     
         // Code-Blöcke wieder einsetzen
         $text = str_replace(array_keys($codeBlocks), array_values($codeBlocks), $text);
+
+        // Debug-Ausgabe des aktuellen Textes
+        require_once __DIR__ . '/Logger.php';
+        \StaticMD\Core\Logger::debug("parseInline: " . $text);
 
         return $text;
     }
     
     /**
      * Konvertiert Yellow CMS Bild-Syntax zu HTML
+     * [image name.jpg "Alt-Text" - 50%]
+     * [image name.jpg - - 50%]
+     * [image name.jpg 50%]
+     * [image name.jpg]
      */
     private function parseYellowImage(array $matches): string
     {
