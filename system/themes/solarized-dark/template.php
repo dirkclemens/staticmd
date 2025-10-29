@@ -5,6 +5,7 @@
  */
 
 // Theme-Konfiguration
+$themeName = 'solarized-dark';
 $siteName = $config['system']['name'] ?? 'StaticMD';
 $siteUrl = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']);
 $currentRoute = $_GET['route'] ?? 'index';
@@ -18,8 +19,6 @@ if (file_exists($settingsFile)) {
 $siteName = $settings['site_name'] ?? $siteName;
 $siteLogo = $settings['site_logo'] ?? '';
 
-
-
 // Navigation aus Content-Verzeichnis generieren
 $contentLoader = new \StaticMD\Core\ContentLoader($config);
 
@@ -29,8 +28,6 @@ $themeHelper = new \StaticMD\Themes\ThemeHelper($contentLoader);
 
 // Navigation erstellen
 $navItems = $themeHelper->buildNavigation();
-
-
 
 // Titel aus Route generieren
 function generateTitle($route) {
@@ -60,248 +57,38 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
 });
 ?>
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= isset($meta['title']) ? htmlspecialchars($meta['title']) . ' - ' : '' ?><?= htmlspecialchars($siteName) ?></title>
+    <meta name="description" content="<?= htmlspecialchars($meta['description'] ?? 'Powered by StaticMD') ?>">
+    <meta name="author" content="<?= htmlspecialchars($meta['author'] ?? '') ?>">
     
-    <?php if (isset($meta['description'])): ?>
-    <meta name="description" content="<?= htmlspecialchars($meta['description']) ?>">
-    <?php endif; ?>
+    <title><?= htmlspecialchars($title) ?> - <?= htmlspecialchars($siteName) ?></title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     
-    <!-- Solarized Dark Theme CSS -->
-    <style>
-        :root {
-            /* Solarized Dark Colors */
-            --sol-base03: #002b36;
-            --sol-base02: #073642;
-            --sol-base01: #586e75;
-            --sol-base00: #657b83;
-            --sol-base0: #839496;
-            --sol-base1: #93a1a1;
-            --sol-base2: #eee8d5;
-            --sol-base3: #fdf6e3;
-            --sol-yellow: #b58900;
-            --sol-orange: #cb4b16;
-            --sol-red: #dc322f;
-            --sol-magenta: #d33682;
-            --sol-violet: #6c71c4;
-            --sol-blue: #268bd2;
-            --sol-cyan: #2aa198;
-            --sol-green: #859900;
-        }
-        
-        body {
-            background-color: var(--sol-base03);
-            color: var(--sol-base0);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        .navbar {
-            background-color: var(--sol-base02) !important;
-            border-bottom: 2px solid var(--sol-base01);
-        }
-        
-        .navbar-brand, .navbar-nav .nav-link {
-            color: var(--sol-base1) !important;
-        }
-        
-        .navbar-nav .nav-link:hover {
-            color: var(--sol-blue) !important;
-        }
-        
-        .btn-primary {
-            background-color: var(--sol-blue);
-            border-color: var(--sol-blue);
-        }
-        
-        .btn-primary:hover {
-            background-color: var(--sol-cyan);
-            border-color: var(--sol-cyan);
-        }
-        
-        .btn-warning {
-            background-color: var(--sol-yellow);
-            border-color: var(--sol-yellow);
-            color: var(--sol-base03);
-        }
-        
-        .btn-success {
-            background-color: var(--sol-green);
-            border-color: var(--sol-green);
-        }
-        
-        .btn-danger {
-            background-color: var(--sol-red);
-            border-color: var(--sol-red);
-        }
-        
-        .btn-outline-primary {
-            color: var(--sol-blue);
-            border-color: var(--sol-blue);
-        }
-        
-        .btn-outline-primary:hover {
-            background-color: var(--sol-blue);
-            border-color: var(--sol-blue);
-        }
-        
-        .card {
-            background-color: var(--sol-base02);
-            border: 1px solid var(--sol-base01);
-            color: var(--sol-base0);
-        }
-        
-        .card-header {
-            background-color: var(--sol-base01);
-            color: var(--sol-base1);
-            border-bottom: 1px solid var(--sol-base00);
-        }
-        
-        .breadcrumb {
-            background-color: var(--sol-base02);
-        }
-        
-        .breadcrumb-item a {
-            color: var(--sol-blue);
-        }
-        
-        .breadcrumb-item.active {
-            color: var(--sol-base1);
-        }
-        
-        .badge {
-            background-color: var(--sol-violet) !important;
-        }
-        
-        .badge.bg-primary {
-            background-color: var(--sol-blue) !important;
-        }
-        
-        .badge.bg-success {
-            background-color: var(--sol-green) !important;
-        }
-        
-        .badge.bg-warning {
-            background-color: var(--sol-yellow) !important;
-            color: var(--sol-base03) !important;
-        }
-        
-        .alert-info {
-            background-color: var(--sol-base02);
-            border-color: var(--sol-cyan);
-            color: var(--sol-base1);
-        }
-        
-        .alert-success {
-            background-color: rgba(133, 153, 0, 0.2);
-            border-color: var(--sol-green);
-            color: var(--sol-green);
-        }
-        
-        .dropdown-menu {
-            background-color: var(--sol-base02);
-            border: 1px solid var(--sol-base01);
-        }
-        
-        .dropdown-item {
-            color: var(--sol-base0);
-        }
-        
-        .dropdown-item:hover {
-            background-color: var(--sol-base01);
-            color: var(--sol-base1);
-        }
-        
-        .form-control {
-            background-color: var(--sol-base02);
-            border-color: var(--sol-base01);
-            color: var(--sol-base0);
-        }
-        
-        .form-control:focus {
-            background-color: var(--sol-base02);
-            border-color: var(--sol-blue);
-            color: var(--sol-base1);
-            box-shadow: 0 0 0 0.2rem rgba(38, 139, 210, 0.25);
-        }
-        
-        pre {
-            background-color: var(--sol-base02);
-            border: 1px solid var(--sol-base01);
-            color: var(--sol-base0);
-        }
-        
-        code {
-            background-color: var(--sol-base02);
-            color: var(--sol-base1);
-        }
-        
-        blockquote {
-            border-left: 4px solid var(--sol-blue);
-            background-color: var(--sol-base02);
-            color: var(--sol-base0);
-        }
-        
-        .admin-toolbar {
-            position: fixed;
-            top: 50%;
-            right: 20px;
-            transform: translateY(-50%);
-            z-index: 1000;
-        }
-        
-        footer {
-            background-color: var(--sol-base02);
-            color: var(--sol-base1);
-            border-top: 1px solid var(--sol-base01);
-        }
-        
-        a {
-            color: var(--sol-blue);
-        }
-        
-        a:hover {
-            color: var(--sol-cyan);
-        }
-        
-        /* Text Farben für bessere Lesbarkeit */
-        h1, h2, h3, h4, h5, h6 {
-            color: var(--sol-base1);
-        }
-        
-        .text-muted {
-            color: var(--sol-base01) !important;
-        }
-        
-        .text-light {
-            color: var(--sol-base1) !important;
-        }
-    </style>
-    
+    <!-- Custom Theme CSS -->
+    <link href="/theme-css.php?theme=<?= htmlspecialchars($themeName) ?>" rel="stylesheet">
+
     <?php if (isset($meta['css'])): ?>
     <style><?= $meta['css'] ?></style>
     <?php endif; ?>
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
         <div class="container">
-            <?php if (!empty($siteLogo)): ?>
-                <a class="navbar-brand d-flex align-items-center" href="/">
-                    <img src="<?= htmlspecialchars($siteLogo) ?>" alt="<?= htmlspecialchars($siteName) ?>" height="32" class="me-2">
-                    <?= htmlspecialchars($siteName) ?>
-                </a>
-            <?php else: ?>
-                <a class="navbar-brand" href="/">
-                    <i class="bi bi-file-earmark-text me-2"></i><?= htmlspecialchars($siteName) ?>
-                </a>
-            <?php endif; ?>
+            <a class="navbar-brand" href="/">
+                <?php if (!empty($siteLogo)): ?>
+                    <img src="<?= htmlspecialchars($siteLogo) ?>" alt="Logo" style="height: 30px;" class="me-2">
+                <?php else: ?>
+                    <i class="bi bi-file-earmark-text me-2"></i>
+                <?php endif; ?>
+                <?= htmlspecialchars($siteName) ?>
+            </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -310,7 +97,9 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link <?= $currentRoute === 'index' ? 'active' : '' ?>" href="/">Home</a>
+                        <a class="nav-link <?= $currentRoute === 'index' ? 'active' : '' ?>" href="/">
+                            <i class="bi bi-house me-1"></i> Startseite
+                        </a>
                     </li>
                     
                     <?php foreach ($navItems as $section => $nav): ?>
@@ -319,17 +108,16 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
                             <!-- Dropdown für Ordner mit Unterseiten -->
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle <?= strpos($currentRoute, $section) === 0 ? 'active' : '' ?>" 
-                                   href="#" 
-                                   id="navbarDropdown<?= $section ?>" 
-                                   role="button" 
-                                   data-bs-toggle="dropdown">
+                                   href="#" role="button" data-bs-toggle="dropdown">
                                     <?= htmlspecialchars($nav['title']) ?>
                                 </a>
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item" href="/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($nav['route']) ?>">Übersicht</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <?php foreach ($nav['pages'] as $page): ?>
-                                    <li><a class="dropdown-item" href="/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($page['route']) ?>"><?= htmlspecialchars($page['title'] ?? basename($page['route'])) ?></a></li>
+                                    <li><a class="dropdown-item" href="/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($page['route']) ?>">
+                                        <?= htmlspecialchars($page['title'] ?? basename($page['route'])) ?>
+                                    </a></li>
                                     <?php endforeach; ?>
                                 </ul>
                             </li>
@@ -346,93 +134,135 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
                     <?php endforeach; ?>
                 </ul>
                 
-                <!-- Suchfeld -->
-                <form class="d-flex" action="/search" method="get">
-                    <div class="input-group">
-                        <input class="form-control" type="search" name="q" placeholder="Suchen..." 
-                               value="<?= isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '' ?>">
-                        <button class="btn btn-outline-primary" type="submit">
-                            <i class="bi bi-search"></i>
-                        </button>
-                    </div>
+                <!-- Suchformular -->
+                <form class="d-flex me-3" action="/search" method="GET">
+                    <input class="form-control me-2" type="search" name="q" placeholder="Suchen..." 
+                           value="<?= htmlspecialchars($_GET['q'] ?? '') ?>" style="width: 250px;">
+                    <button class="btn btn-outline-primary" type="submit">
+                        <i class="bi bi-search"></i>
+                    </button>
                 </form>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin">
+                            <i class="bi bi-gear me-1"></i> Admin
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Success Message -->
-    <?php if (isset($_GET['success'])): ?>
-    <div class="container mt-3">
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle me-2"></i>
-            <?php 
-            switch ($_GET['success']) {
-                case 'saved':
-                    echo 'Datei wurde erfolgreich gespeichert!';
-                    break;
-                case 'deleted':
-                    echo 'Datei wurde erfolgreich gelöscht!';
-                    break;
-                default:
-                    echo 'Aktion erfolgreich ausgeführt!';
-            }
-            ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    </div>
-    <?php endif; ?>
-
-    <!-- Breadcrumb -->
-    <?php if ($currentRoute !== 'index'): ?>
-    <div class="container mt-3">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/">Home</a></li>
-                <?php 
-                $parts = explode('/', $currentRoute);
-                $path = '';
-                for ($i = 0; $i < count($parts); $i++): 
-                    $path .= ($path ? '/' : '') . $parts[$i];
-                    $isLast = ($i === count($parts) - 1);
-                ?>
-                    <?php if ($isLast): ?>
-                        <li class="breadcrumb-item active"><?= ucwords(str_replace(['-', '_'], ' ', $parts[$i])) ?></li>
-                    <?php else: ?>
-                        <li class="breadcrumb-item"><a href="/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($path) ?>"><?= ucwords(str_replace(['-', '_'], ' ', $parts[$i])) ?></a></li>
-                    <?php endif; ?>
-                <?php endfor; ?>
-            </ol>
-        </nav>
-    </div>
-    <?php endif; ?>
-
     <!-- Hauptinhalt -->
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-lg-8">
-                <div class="content">
-                    <?= $body ?>
-                </div>
-            </div>
+    <div class="content-wrapper">
+        <div class="container">
+            <!-- Breadcrumb Navigation -->
+            <?php if ($currentRoute !== 'index' && $currentRoute !== ''): ?>
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="/"><i class="bi bi-house"></i> Startseite</a>
+                    </li>
+                    <?php 
+                    $routeParts = explode('/', trim($currentRoute, '/'));
+                    $currentPath = '';
+                    foreach ($routeParts as $i => $part):
+                        $currentPath .= ($currentPath ? '/' : '') . $part;
+                        $isLast = ($i === count($routeParts) - 1);
+                    ?>
+                    <li class="breadcrumb-item <?= $isLast ? 'active' : '' ?>">
+                        <?php if ($isLast): ?>
+                            <?= htmlspecialchars(ucwords(str_replace(['-', '_'], ' ', $part))) ?>
+                        <?php else: ?>
+                            <a href="/<?= $currentPath ?>"><?= htmlspecialchars(ucwords(str_replace(['-', '_'], ' ', $part))) ?></a>
+                        <?php endif; ?>
+                    </li>
+                    <?php endforeach; ?>
+                </ol>
+            </nav>
+            <?php endif; ?>
             
-            <div class="col-lg-4">
-                <div class="sidebar-content">
-                    <!-- Content Info -->
-                    <?php if (isset($meta['author']) || isset($meta['date'])): ?>
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <i class="bi bi-info-circle me-2"></i>Informationen
-                        </div>
-                        <div class="card-body">
-                            <?php if (isset($meta['author'])): ?>
-                            <p class="mb-1"><strong>Autor:</strong> <?= htmlspecialchars($meta['author']) ?></p>
-                            <?php endif; ?>
-                            <?php if (isset($meta['date'])): ?>
-                            <p class="mb-0"><strong>Datum:</strong> <?= htmlspecialchars($meta['date']) ?></p>
+            <div class="row">
+                <div class="col-lg-8">
+                    <!-- Meta-Informationen -->
+                    <?php if (!empty($meta) && ($meta['author'] ?? $meta['date'] ?? null)): ?>
+                    <div class="meta-info">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <?php if (isset($meta['author'])): ?>
+                                <i class="bi bi-person me-1"></i>
+                                <span class="me-3"><?= htmlspecialchars($meta['author']) ?></span>
+                                <?php endif; ?>
+                                
+                                <?php if (isset($meta['date'])): ?>
+                                <i class="bi bi-calendar me-1"></i>
+                                <span><?= htmlspecialchars($meta['date']) ?></span>
+                                <?php endif; ?>
+                            </div>
+                            
+                            <?php if (isset($content['modified'])): ?>
+                            <div class="col-auto text-muted">
+                                <small>
+                                    <i class="bi bi-clock me-1"></i>
+                                    Aktualisiert: <?= date('d.m.Y H:i', $content['modified']) ?>
+                                </small>
+                            </div>
                             <?php endif; ?>
                         </div>
                     </div>
                     <?php endif; ?>
+                    
+                    <!-- Erfolgsmeldung nach Speichern -->
+                    <?php if (isset($_GET['saved'])): ?>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="bi bi-check-circle me-2"></i>
+                        Die Seite wurde erfolgreich gespeichert.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    <?php endif; ?>
+                    
+                    <!-- Private Seiten-Hinweis für Admins -->
+                    <?php 
+                    $visibility = $meta['Visibility'] ?? $meta['visibility'] ?? 'public';
+                    if ($visibility === 'private'): 
+                    ?>
+                    <div class="alert alert-warning" role="alert">
+                        <i class="bi bi-lock me-2"></i>
+                        <strong>Private Seite:</strong> Diese Seite ist nur für angemeldete Admins sichtbar.
+                    </div>
+                    <?php endif; ?>
+                    
+                    <!-- Hauptcontent -->
+                    <article class="content">
+                        <?= $body ?>
+                    </article>
+                </div>
+                
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    <div class="sidebar">
+                        <h5><i class="bi bi-list-ul me-2"></i>Navigation</h5>
+                        
+                        <?php if (!empty($navItems)): ?>
+                        <div class="list-group list-group-flush">
+                            <a href="/" class="list-group-item list-group-item-action <?= $currentRoute === 'index' ? 'active' : '' ?>">
+                                <i class="bi bi-house me-2"></i> Startseite
+                            </a>
+                            
+                            <?php foreach ($navItems as $section => $nav): ?>
+                                <?php if ($section !== 'index'): ?>
+                                <a href="/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($nav['route']) ?>" class="list-group-item list-group-item-action <?= strpos($currentRoute, $section) === 0 ? 'active' : '' ?>">
+                                    <i class="bi bi-folder me-2"></i> <?= htmlspecialchars($nav['title']) ?>
+                                    <?php if (!empty($nav['pages'])): ?>
+                                    <span class="badge bg-secondary float-end"><?= count($nav['pages']) ?></span>
+                                    <?php endif; ?>
+                                </a>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </div>
+                        <?php endif; ?>
+                    </div>
                     
                     <!-- Zusätzliche Sidebar-Inhalte -->
                     <?php if (isset($meta['tags'])): ?>
@@ -483,8 +313,7 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
                 <div class="col-md-8">
                     <p class="mb-1">&copy; <?= date('Y') ?> <?= htmlspecialchars($siteName) ?></p>
                     <p class="mb-0">
-                        <small class="text-light">
-                            Powered by <strong>StaticMD</strong> - Ein PHP Markdown CMS mit Bootstrap
+                        <small class="text-light">                        
                         </small>
                     </p>
                 </div>

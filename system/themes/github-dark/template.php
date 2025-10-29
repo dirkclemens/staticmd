@@ -5,6 +5,7 @@
  */
 
 // Theme-Konfiguration
+$themeName = 'github-dark';
 $siteName = $config['system']['name'] ?? 'StaticMD';
 $siteUrl = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']);
 $currentRoute = $_GET['route'] ?? 'index';
@@ -18,13 +19,6 @@ if (file_exists($settingsFile)) {
 $siteName = $settings['site_name'] ?? $siteName;
 $siteLogo = $settings['site_logo'] ?? '';
 
-// Helper-Funktion für pfad-sichere URL-Encoding
-function encodeUrlPath($path) {
-    $parts = explode('/', $path);
-    $encodedParts = array_map('rawurlencode', $parts);
-    return implode('/', $encodedParts);
-}
-
 // Navigation aus Content-Verzeichnis generieren
 $contentLoader = new \StaticMD\Core\ContentLoader($config);
 
@@ -34,39 +28,6 @@ $themeHelper = new \StaticMD\Themes\ThemeHelper($contentLoader);
 
 // Navigation erstellen
 $navItems = $themeHelper->buildNavigation();
-
-// Hilfsfunktion für Titel-Parsing
-function parseTitle($content, $route) {
-    // Front Matter erkennen (--- am Anfang)
-    if (strpos($content, '---') === 0) {
-        $parts = explode('---', $content, 3);
-        
-        if (count($parts) >= 3) {
-            $frontMatter = trim($parts[1]);
-            
-            // Einfaches Key-Value Parsing
-            $lines = explode("\n", $frontMatter);
-            foreach ($lines as $line) {
-                $line = trim($line);
-                if (empty($line) || strpos($line, ':') === false) {
-                    continue;
-                }
-                
-                [$key, $value] = explode(':', $line, 2);
-                $cleanKey = trim($key);
-                $cleanValue = trim($value, ' "\"');
-                
-                if (strtolower($cleanKey) === 'title') {
-                    return $cleanValue;
-                }
-            }
-        }
-    }
-    
-    // Fallback: Titel aus Route generieren
-    $title = str_replace(['/', '-', '_'], ' ', $route);
-    return ucwords($title);
-}
 
 // Titel aus Route generieren
 function generateTitle($route) {
@@ -96,299 +57,38 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
 });
 ?>
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= isset($meta['title']) ? htmlspecialchars($meta['title']) . ' - ' : '' ?><?= htmlspecialchars($siteName) ?></title>
+    <meta name="description" content="<?= htmlspecialchars($meta['description'] ?? 'Powered by StaticMD') ?>">
+    <meta name="author" content="<?= htmlspecialchars($meta['author'] ?? '') ?>">
     
-    <?php if (isset($meta['description'])): ?>
-    <meta name="description" content="<?= htmlspecialchars($meta['description']) ?>">
-    <?php endif; ?>
+    <title><?= htmlspecialchars($title) ?> - <?= htmlspecialchars($siteName) ?></title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     
-    <!-- GitHub Dark Theme CSS -->
-    <style>
-        :root {
-            /* GitHub Dark Colors */
-            --gh-canvas-default: #0d1117;
-            --gh-canvas-subtle: #161b22;
-            --gh-canvas-inset: #010409;
-            --gh-border-default: #30363d;
-            --gh-border-muted: #21262d;
-            --gh-fg-default: #e6edf3;
-            --gh-fg-muted: #848d97;
-            --gh-fg-subtle: #6e7681;
-            --gh-accent-fg: #2f81f7;
-            --gh-accent-emphasis: #1f6feb;
-            --gh-success-fg: #3fb950;
-            --gh-attention-fg: #d29922;
-            --gh-danger-fg: #f85149;
-            --gh-done-fg: #a5a5ff;
-            --gh-btn-primary-bg: #238636;
-            --gh-btn-primary-hover-bg: #2ea043;
-        }
-        
-        body {
-            background-color: var(--gh-canvas-default);
-            color: var(--gh-fg-default);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
-        }
-        
-        .navbar {
-            background-color: var(--gh-canvas-subtle) !important;
-            border-bottom: 1px solid var(--gh-border-default);
-        }
-        
-        .navbar-brand, .navbar-nav .nav-link {
-            color: var(--gh-fg-default) !important;
-        }
-        
-        .navbar-nav .nav-link:hover {
-            color: var(--gh-accent-fg) !important;
-        }
-        
-        .btn-primary {
-            background-color: var(--gh-btn-primary-bg);
-            border-color: var(--gh-btn-primary-bg);
-            color: #ffffff;
-        }
-        
-        .btn-primary:hover {
-            background-color: var(--gh-btn-primary-hover-bg);
-            border-color: var(--gh-btn-primary-hover-bg);
-        }
-        
-        .btn-warning {
-            background-color: var(--gh-attention-fg);
-            border-color: var(--gh-attention-fg);
-            color: var(--gh-canvas-default);
-        }
-        
-        .btn-success {
-            background-color: var(--gh-success-fg);
-            border-color: var(--gh-success-fg);
-            color: var(--gh-canvas-default);
-        }
-        
-        .btn-danger {
-            background-color: var(--gh-danger-fg);
-            border-color: var(--gh-danger-fg);
-        }
-        
-        .btn-outline-primary {
-            color: var(--gh-accent-fg);
-            border-color: var(--gh-border-default);
-        }
-        
-        .btn-outline-primary:hover {
-            background-color: var(--gh-accent-fg);
-            border-color: var(--gh-accent-fg);
-            color: #ffffff;
-        }
-        
-        .card {
-            background-color: var(--gh-canvas-subtle);
-            border: 1px solid var(--gh-border-default);
-            border-radius: 6px;
-            color: var(--gh-fg-default);
-        }
-        
-        .card-header {
-            background-color: var(--gh-canvas-inset);
-            color: var(--gh-fg-default);
-            border-bottom: 1px solid var(--gh-border-default);
-            font-weight: 600;
-        }
-        
-        .breadcrumb {
-            background-color: var(--gh-canvas-subtle);
-            border: 1px solid var(--gh-border-default);
-            border-radius: 6px;
-        }
-        
-        .breadcrumb-item a {
-            color: var(--gh-accent-fg);
-        }
-        
-        .breadcrumb-item.active {
-            color: var(--gh-fg-muted);
-        }
-        
-        .badge {
-            background-color: var(--gh-done-fg) !important;
-            border-radius: 12px;
-        }
-        
-        .badge.bg-primary {
-            background-color: var(--gh-accent-fg) !important;
-        }
-        
-        .badge.bg-success {
-            background-color: var(--gh-success-fg) !important;
-            color: var(--gh-canvas-default) !important;
-        }
-        
-        .badge.bg-warning {
-            background-color: var(--gh-attention-fg) !important;
-            color: var(--gh-canvas-default) !important;
-        }
-        
-        .alert-info {
-            background-color: rgba(47, 129, 247, 0.15);
-            border-color: var(--gh-accent-fg);
-            color: var(--gh-accent-fg);
-        }
-        
-        .alert-success {
-            background-color: rgba(63, 185, 80, 0.15);
-            border-color: var(--gh-success-fg);
-            color: var(--gh-success-fg);
-        }
-        
-        .dropdown-menu {
-            background-color: var(--gh-canvas-subtle);
-            border: 1px solid var(--gh-border-default);
-            border-radius: 6px;
-            box-shadow: 0 16px 32px rgba(1, 4, 9, 0.85);
-        }
-        
-        .dropdown-item {
-            color: var(--gh-fg-default);
-        }
-        
-        .dropdown-item:hover {
-            background-color: var(--gh-canvas-inset);
-            color: var(--gh-fg-default);
-        }
-        
-        .dropdown-divider {
-            border-color: var(--gh-border-muted);
-        }
-        
-        .form-control {
-            background-color: var(--gh-canvas-inset);
-            border: 1px solid var(--gh-border-default);
-            color: var(--gh-fg-default);
-            border-radius: 6px;
-        }
-        
-        .form-control:focus {
-            background-color: var(--gh-canvas-default);
-            border-color: var(--gh-accent-fg);
-            color: var(--gh-fg-default);
-            box-shadow: 0 0 0 3px rgba(47, 129, 247, 0.3);
-        }
-        
-        .form-control::placeholder {
-            color: var(--gh-fg-subtle);
-        }
-        
-        pre {
-            background-color: var(--gh-canvas-inset);
-            border: 1px solid var(--gh-border-default);
-            border-radius: 6px;
-            color: var(--gh-fg-default);
-        }
-        
-        code {
-            background-color: rgba(110, 118, 129, 0.4);
-            color: var(--gh-fg-default);
-            padding: 2px 4px;
-            border-radius: 3px;
-            font-size: 85%;
-        }
-        
-        blockquote {
-            border-left: 4px solid var(--gh-border-default);
-            background-color: var(--gh-canvas-subtle);
-            color: var(--gh-fg-muted);
-            padding: 16px;
-            margin: 16px 0;
-            border-radius: 0 6px 6px 0;
-        }
-        
-        .admin-toolbar {
-            position: fixed;
-            top: 50%;
-            right: 20px;
-            transform: translateY(-50%);
-            z-index: 1000;
-        }
-        
-        footer {
-            background-color: var(--gh-canvas-subtle);
-            color: var(--gh-fg-muted);
-            border-top: 1px solid var(--gh-border-default);
-        }
-        
-        a {
-            color: var(--gh-accent-fg);
-        }
-        
-        a:hover {
-            color: var(--gh-accent-emphasis);
-        }
-        
-        h1, h2, h3, h4, h5, h6 {
-            color: var(--gh-fg-default);
-            font-weight: 600;
-            line-height: 1.25;
-        }
-        
-        .text-muted {
-            color: var(--gh-fg-muted) !important;
-        }
-        
-        .text-light {
-            color: var(--gh-fg-default) !important;
-        }
-        
-        table {
-            border-collapse: collapse;
-        }
-        
-        table th, table td {
-            border: 1px solid var(--gh-border-default);
-            padding: 6px 13px;
-        }
-        
-        table th {
-            background-color: var(--gh-canvas-subtle);
-            font-weight: 600;
-        }
-        
-        /* Navbar Toggler für Dark Theme */
-        .navbar-toggler {
-            border-color: var(--gh-border-default);
-        }
-        
-        .navbar-toggler-icon {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28230, 237, 243, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='m4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-        }
-    </style>
-    
+    <!-- Custom Theme CSS -->
+    <link href="/theme-css.php?theme=<?= htmlspecialchars($themeName) ?>" rel="stylesheet">
+
     <?php if (isset($meta['css'])): ?>
     <style><?= $meta['css'] ?></style>
     <?php endif; ?>
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
         <div class="container">
-            <?php if (!empty($siteLogo)): ?>
-                <a class="navbar-brand d-flex align-items-center" href="/">
-                    <img src="<?= htmlspecialchars($siteLogo) ?>" alt="<?= htmlspecialchars($siteName) ?>" height="32" class="me-2">
-                    <?= htmlspecialchars($siteName) ?>
-                </a>
-            <?php else: ?>
-                <a class="navbar-brand" href="/">
-                    <i class="bi bi-file-earmark-text me-2"></i><?= htmlspecialchars($siteName) ?>
-                </a>
-            <?php endif; ?>
+            <a class="navbar-brand" href="/">
+                <?php if (!empty($siteLogo)): ?>
+                    <img src="<?= htmlspecialchars($siteLogo) ?>" alt="Logo" style="height: 30px;" class="me-2">
+                <?php else: ?>
+                    <i class="bi bi-file-earmark-text me-2"></i>
+                <?php endif; ?>
+                <?= htmlspecialchars($siteName) ?>
+            </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -397,7 +97,9 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link <?= $currentRoute === 'index' ? 'active' : '' ?>" href="/">Home</a>
+                        <a class="nav-link <?= $currentRoute === 'index' ? 'active' : '' ?>" href="/">
+                            <i class="bi bi-house me-1"></i> Startseite
+                        </a>
                     </li>
                     
                     <?php foreach ($navItems as $section => $nav): ?>
@@ -406,17 +108,16 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
                             <!-- Dropdown für Ordner mit Unterseiten -->
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle <?= strpos($currentRoute, $section) === 0 ? 'active' : '' ?>" 
-                                   href="#" 
-                                   id="navbarDropdown<?= $section ?>" 
-                                   role="button" 
-                                   data-bs-toggle="dropdown">
+                                   href="#" role="button" data-bs-toggle="dropdown">
                                     <?= htmlspecialchars($nav['title']) ?>
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="/<?= encodeUrlPath($nav['route']) ?>">Übersicht</a></li>
+                                    <li><a class="dropdown-item" href="/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($nav['route']) ?>">Übersicht</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <?php foreach ($nav['pages'] as $page): ?>
-                                    <li><a class="dropdown-item" href="/<?= encodeUrlPath($page['route']) ?>"><?= htmlspecialchars($page['title'] ?? basename($page['route'])) ?></a></li>
+                                    <li><a class="dropdown-item" href="/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($page['route']) ?>">
+                                        <?= htmlspecialchars($page['title'] ?? basename($page['route'])) ?>
+                                    </a></li>
                                     <?php endforeach; ?>
                                 </ul>
                             </li>
@@ -424,7 +125,7 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
                             <!-- Normaler Link für einzelne Dateien -->
                             <li class="nav-item">
                                 <a class="nav-link <?= $currentRoute === $section ? 'active' : '' ?>" 
-                                   href="/<?= encodeUrlPath($nav['route']) ?>">
+                                   href="/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($nav['route']) ?>">
                                     <?= htmlspecialchars($nav['title']) ?>
                                 </a>
                             </li>
@@ -433,93 +134,135 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
                     <?php endforeach; ?>
                 </ul>
                 
-                <!-- Suchfeld -->
-                <form class="d-flex" action="/search" method="get">
-                    <div class="input-group">
-                        <input class="form-control" type="search" name="q" placeholder="Suchen..." 
-                               value="<?= isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '' ?>">
-                        <button class="btn btn-outline-primary" type="submit">
-                            <i class="bi bi-search"></i>
-                        </button>
-                    </div>
+                <!-- Suchformular -->
+                <form class="d-flex me-3" action="/search" method="GET">
+                    <input class="form-control me-2" type="search" name="q" placeholder="Suchen..." 
+                           value="<?= htmlspecialchars($_GET['q'] ?? '') ?>" style="width: 250px;">
+                    <button class="btn btn-outline-primary" type="submit">
+                        <i class="bi bi-search"></i>
+                    </button>
                 </form>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin">
+                            <i class="bi bi-gear me-1"></i> Admin
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Success Message -->
-    <?php if (isset($_GET['success'])): ?>
-    <div class="container mt-3">
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle me-2"></i>
-            <?php 
-            switch ($_GET['success']) {
-                case 'saved':
-                    echo 'Datei wurde erfolgreich gespeichert!';
-                    break;
-                case 'deleted':
-                    echo 'Datei wurde erfolgreich gelöscht!';
-                    break;
-                default:
-                    echo 'Aktion erfolgreich ausgeführt!';
-            }
-            ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    </div>
-    <?php endif; ?>
-
-    <!-- Breadcrumb -->
-    <?php if ($currentRoute !== 'index'): ?>
-    <div class="container mt-3">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/">Home</a></li>
-                <?php 
-                $parts = explode('/', $currentRoute);
-                $path = '';
-                for ($i = 0; $i < count($parts); $i++): 
-                    $path .= ($path ? '/' : '') . $parts[$i];
-                    $isLast = ($i === count($parts) - 1);
-                ?>
-                    <?php if ($isLast): ?>
-                        <li class="breadcrumb-item active"><?= ucwords(str_replace(['-', '_'], ' ', $parts[$i])) ?></li>
-                    <?php else: ?>
-                        <li class="breadcrumb-item"><a href="/<?= encodeUrlPath($path) ?>"><?= ucwords(str_replace(['-', '_'], ' ', $parts[$i])) ?></a></li>
-                    <?php endif; ?>
-                <?php endfor; ?>
-            </ol>
-        </nav>
-    </div>
-    <?php endif; ?>
-
     <!-- Hauptinhalt -->
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-lg-8">
-                <div class="content">
-                    <?= $body ?>
-                </div>
-            </div>
+    <div class="content-wrapper">
+        <div class="container">
+            <!-- Breadcrumb Navigation -->
+            <?php if ($currentRoute !== 'index' && $currentRoute !== ''): ?>
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="/"><i class="bi bi-house"></i> Startseite</a>
+                    </li>
+                    <?php 
+                    $routeParts = explode('/', trim($currentRoute, '/'));
+                    $currentPath = '';
+                    foreach ($routeParts as $i => $part):
+                        $currentPath .= ($currentPath ? '/' : '') . $part;
+                        $isLast = ($i === count($routeParts) - 1);
+                    ?>
+                    <li class="breadcrumb-item <?= $isLast ? 'active' : '' ?>">
+                        <?php if ($isLast): ?>
+                            <?= htmlspecialchars(ucwords(str_replace(['-', '_'], ' ', $part))) ?>
+                        <?php else: ?>
+                            <a href="/<?= $currentPath ?>"><?= htmlspecialchars(ucwords(str_replace(['-', '_'], ' ', $part))) ?></a>
+                        <?php endif; ?>
+                    </li>
+                    <?php endforeach; ?>
+                </ol>
+            </nav>
+            <?php endif; ?>
             
-            <div class="col-lg-4">
-                <div class="sidebar-content">
-                    <!-- Content Info -->
-                    <?php if (isset($meta['author']) || isset($meta['date'])): ?>
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <i class="bi bi-info-circle me-2"></i>Informationen
-                        </div>
-                        <div class="card-body">
-                            <?php if (isset($meta['author'])): ?>
-                            <p class="mb-1"><strong>Autor:</strong> <?= htmlspecialchars($meta['author']) ?></p>
-                            <?php endif; ?>
-                            <?php if (isset($meta['date'])): ?>
-                            <p class="mb-0"><strong>Datum:</strong> <?= htmlspecialchars($meta['date']) ?></p>
+            <div class="row">
+                <div class="col-lg-8">
+                    <!-- Meta-Informationen -->
+                    <?php if (!empty($meta) && ($meta['author'] ?? $meta['date'] ?? null)): ?>
+                    <div class="meta-info">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <?php if (isset($meta['author'])): ?>
+                                <i class="bi bi-person me-1"></i>
+                                <span class="me-3"><?= htmlspecialchars($meta['author']) ?></span>
+                                <?php endif; ?>
+                                
+                                <?php if (isset($meta['date'])): ?>
+                                <i class="bi bi-calendar me-1"></i>
+                                <span><?= htmlspecialchars($meta['date']) ?></span>
+                                <?php endif; ?>
+                            </div>
+                            
+                            <?php if (isset($content['modified'])): ?>
+                            <div class="col-auto text-muted">
+                                <small>
+                                    <i class="bi bi-clock me-1"></i>
+                                    Aktualisiert: <?= date('d.m.Y H:i', $content['modified']) ?>
+                                </small>
+                            </div>
                             <?php endif; ?>
                         </div>
                     </div>
                     <?php endif; ?>
+                    
+                    <!-- Erfolgsmeldung nach Speichern -->
+                    <?php if (isset($_GET['saved'])): ?>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="bi bi-check-circle me-2"></i>
+                        Die Seite wurde erfolgreich gespeichert.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    <?php endif; ?>
+                    
+                    <!-- Private Seiten-Hinweis für Admins -->
+                    <?php 
+                    $visibility = $meta['Visibility'] ?? $meta['visibility'] ?? 'public';
+                    if ($visibility === 'private'): 
+                    ?>
+                    <div class="alert alert-warning" role="alert">
+                        <i class="bi bi-lock me-2"></i>
+                        <strong>Private Seite:</strong> Diese Seite ist nur für angemeldete Admins sichtbar.
+                    </div>
+                    <?php endif; ?>
+                    
+                    <!-- Hauptcontent -->
+                    <article class="content">
+                        <?= $body ?>
+                    </article>
+                </div>
+                
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    <div class="sidebar">
+                        <h5><i class="bi bi-list-ul me-2"></i>Navigation</h5>
+                        
+                        <?php if (!empty($navItems)): ?>
+                        <div class="list-group list-group-flush">
+                            <a href="/" class="list-group-item list-group-item-action <?= $currentRoute === 'index' ? 'active' : '' ?>">
+                                <i class="bi bi-house me-2"></i> Startseite
+                            </a>
+                            
+                            <?php foreach ($navItems as $section => $nav): ?>
+                                <?php if ($section !== 'index'): ?>
+                                <a href="/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($nav['route']) ?>" class="list-group-item list-group-item-action <?= strpos($currentRoute, $section) === 0 ? 'active' : '' ?>">
+                                    <i class="bi bi-folder me-2"></i> <?= htmlspecialchars($nav['title']) ?>
+                                    <?php if (!empty($nav['pages'])): ?>
+                                    <span class="badge bg-secondary float-end"><?= count($nav['pages']) ?></span>
+                                    <?php endif; ?>
+                                </a>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </div>
+                        <?php endif; ?>
+                    </div>
                     
                     <!-- Zusätzliche Sidebar-Inhalte -->
                     <?php if (isset($meta['tags'])): ?>
@@ -529,7 +272,7 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
                             <?php foreach (explode(',', $meta['tags']) as $tag): ?>
                                 <?php $cleanTag = trim($tag); ?>
                                 <?php if (!empty($cleanTag)): ?>
-                                <a href="/tag/<?= encodeUrlPath($cleanTag) ?>" class="badge bg-primary text-white text-decoration-none me-1 mb-1">
+                                <a href="/tag/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($cleanTag) ?>" class="badge bg-primary text-white text-decoration-none me-1 mb-1">
                                     <?= htmlspecialchars($cleanTag) ?>
                                 </a>
                                 <?php endif; ?>
@@ -570,13 +313,12 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
                 <div class="col-md-8">
                     <p class="mb-1">&copy; <?= date('Y') ?> <?= htmlspecialchars($siteName) ?></p>
                     <p class="mb-0">
-                        <small class="text-muted">
-                            Powered by <strong>StaticMD</strong> - Ein PHP Markdown CMS mit Bootstrap
+                        <small class="text-light">                        
                         </small>
                     </p>
                 </div>
                 <div class="col-md-4 text-md-end">
-                    <a href="/admin" class="text-muted text-decoration-none">
+                    <a href="/admin" class="text-light text-decoration-none">
                         <i class="bi bi-shield-lock me-1"></i> Admin-Bereich
                     </a>
                 </div>

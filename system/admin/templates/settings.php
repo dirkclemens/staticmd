@@ -293,6 +293,7 @@ $timeRemaining = $this->auth->getTimeRemaining();
                                                 <option value="monokai-dark" <?= ($settings['frontend_theme'] ?? '') === 'monokai-dark' ? 'selected' : '' ?>>Monokai Dark</option>
                                                 <option value="github-light" <?= ($settings['frontend_theme'] ?? '') === 'github-light' ? 'selected' : '' ?>>GitHub Light</option>
                                                 <option value="github-dark" <?= ($settings['frontend_theme'] ?? '') === 'github-dark' ? 'selected' : '' ?>>GitHub Dark</option>
+                                                <option value="static-md" <?= ($settings['frontend_theme'] ?? '') === 'static-md' ? 'selected' : '' ?>>StaticMD</option>
                                             </select>
                                             <div class="form-text">
                                                 Wählen Sie das Aussehen Ihrer Website. Änderungen werden sofort auf der Frontend-Seite sichtbar.

@@ -5,6 +5,7 @@
  */
 
 // Theme-Konfiguration
+$themeName = 'bootstrap';
 $siteName = $config['system']['name'] ?? 'StaticMD';
 $siteUrl = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']);
 $currentRoute = $_GET['route'] ?? 'index';
@@ -18,8 +19,6 @@ if (file_exists($settingsFile)) {
 $siteName = $settings['site_name'] ?? $siteName;
 $siteLogo = $settings['site_logo'] ?? '';
 
-
-
 // Navigation aus Content-Verzeichnis generieren
 $contentLoader = new \StaticMD\Core\ContentLoader($config);
 
@@ -29,8 +28,6 @@ $themeHelper = new \StaticMD\Themes\ThemeHelper($contentLoader);
 
 // Navigation erstellen
 $navItems = $themeHelper->buildNavigation();
-
-
 
 // Titel aus Route generieren
 function generateTitle($route) {
@@ -74,210 +71,8 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     
     <!-- Custom Theme CSS -->
-    <style>
-        :root {
-            --bs-primary: #0d6efd;
-            --bs-secondary: #6c757d;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-        }
-        
-        .navbar-brand {
-            font-weight: 600;
-            font-size: 1.5rem;
-        }
-        
-        .content-wrapper {
-            min-height: calc(100vh - 200px);
-            padding: 2rem 0;
-        }
-        
-        .content h1 {
-            color: var(--bs-primary);
-            border-bottom: 3px solid var(--bs-primary);
-            padding-bottom: 0.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        .content h2 {
-            color: var(--bs-secondary);
-            margin-top: 2rem;
-            margin-bottom: 1rem;
-        }
-        
-        .content blockquote {
-            border-left: 4px solid var(--bs-primary);
-            margin: 1.5rem 0;
-            padding-left: 1.5rem;
-            color: var(--bs-secondary);
-            font-style: italic;
-        }
-        
-        .content pre {
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 0.5rem;
-            padding: 1rem;
-            overflow-x: auto;
-        }
-        
-        .content code:not(pre code) {
-            background-color: #f8f9fa;
-            color: #d63384;
-            padding: 0.125rem 0.375rem;
-            border-radius: 0.25rem;
-            font-size: 0.875em;
-        }
-        
-        .content table {
-            margin: 1.5rem 0;
-        }
-        
-        .sidebar {
-            background-color: #f8f9fa;
-            border-radius: 0.5rem;
-            padding: 1.5rem;
-        }
-        
-        .sidebar h5 {
-            color: var(--bs-primary);
-            border-bottom: 2px solid var(--bs-primary);
-            padding-bottom: 0.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .meta-info {
-            background-color: #f8f9fa;
-            border-radius: 0.5rem;
-            padding: 1rem;
-            margin-bottom: 2rem;
-            font-size: 0.9rem;
-        }
-        
-        /* Ordner-Übersicht Styles */
-        .folder-overview .overview-header {
-            text-align: center;
-            border-bottom: 2px solid var(--bs-primary);
-            padding-bottom: 1rem;
-            margin-bottom: 2rem;
-        }
-        
-        .folder-overview .overview-header h1 {
-            color: var(--bs-primary);
-        }
-        
-        .folder-item {
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            border: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .folder-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
-        
-        .folder-item .card-title a {
-            color: var(--bs-primary);
-        }
-        
-        .folder-item .card-title a:hover {
-            color: var(--bs-dark);
-        }
-        
-        .folder-meta {
-            border-top: 1px solid #dee2e6;
-            padding-top: 0.75rem;
-            margin-top: 0.75rem;
-        }
-        
-        .folder-meta .badge {
-            font-size: 0.75em;
-        }
-        
-        .overview-navigation {
-            text-align: center;
-            border-top: 1px solid #dee2e6;
-            padding-top: 1rem;
-        }
-        
-        .admin-toolbar {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1000;
-        }
-        
-        /* Suchergebnisse Styles */
-        .search-results .search-result {
-            transition: box-shadow 0.2s ease;
-        }
-        
-        .search-results .search-result:hover {
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        
-        .search-results .search-result h3 a {
-            color: var(--bs-primary);
-        }
-        
-        .search-results .search-result h3 a:hover {
-            color: var(--bs-dark);
-        }
-        
-        .search-results .search-url {
-            font-family: monospace;
-        }
-        
-        .search-results .search-preview mark {
-            background-color: #fff3cd;
-            padding: 0.125rem 0.25rem;
-            border-radius: 0.25rem;
-        }
-        
-        .embedded-page-list {
-            background-color: #f8f9fa;
-            border-radius: 0.5rem;
-            padding: 1rem;
-            margin: 1.5rem 0;
-        }
-        
-        .tag-cloud .badge {
-            margin: 0.125rem;
-            font-size: 0.8rem;
-        }
-        
-        /* Tag-Seiten Styles */
-        .tag-page .tag-result {
-            transition: box-shadow 0.2s ease;
-        }
-        
-        .tag-page .tag-result:hover {
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        
-        .tag-page .tag-result h3 a {
-            color: var(--bs-primary);
-        }
-        
-        .tag-page .tag-result h3 a:hover {
-            color: var(--bs-dark);
-        }
-        
-        .tag-page .tag-url {
-            font-family: monospace;
-        }
+    <link href="/theme-css.php?theme=<?= htmlspecialchars($themeName) ?>" rel="stylesheet">
 
-        footer {
-            background-color: var(--bs-secondary);
-            color: white;
-            margin-top: 3rem;
-        }
-    </style>
-    
     <?php if (isset($meta['css'])): ?>
     <style><?= $meta['css'] ?></style>
     <?php endif; ?>
@@ -518,8 +313,7 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
                 <div class="col-md-8">
                     <p class="mb-1">&copy; <?= date('Y') ?> <?= htmlspecialchars($siteName) ?></p>
                     <p class="mb-0">
-                        <small class="text-light">
-                            Powered by <strong>StaticMD</strong> - Ein PHP Markdown CMS mit Bootstrap
+                        <small class="text-light">                        
                         </small>
                     </p>
                 </div>

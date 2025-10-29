@@ -1,0 +1,148 @@
+/* Solarized Light Theme - Styles */
+:root {
+    /* Solarized Light Colors */
+    --sol-base03: #002b36;
+    --sol-base02: #073642;
+    --sol-base01: #586e75;
+    --sol-base00: #657b83;
+    --sol-base0: #839496;
+    --sol-base1: #93a1a1;
+    --sol-base2: #eee8d5;
+    --sol-base3: #fdf6e3;
+    --sol-yellow: #b58900;
+    --sol-orange: #cb4b16;
+    --sol-red: #dc322f;
+    --sol-magenta: #d33682;
+    --sol-violet: #6c71c4;
+    --sol-blue: #268bd2;
+    --sol-cyan: #2aa198;
+    --sol-green: #859900;
+}
+
+body {
+    background-color: var(--sol-base3);
+    color: var(--sol-base00);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.navbar {
+    background-color: var(--sol-base2) !important;
+    border-bottom: 2px solid var(--sol-base1);
+}
+
+.navbar-brand, .navbar-nav .nav-link {
+    color: var(--sol-base01) !important;
+}
+
+.navbar-nav .nav-link:hover {
+    color: var(--sol-blue) !important;
+}
+
+.btn-primary {
+    background-color: var(--sol-blue);
+    border-color: var(--sol-blue);
+}
+
+.btn-primary:hover {
+    background-color: var(--sol-cyan);
+    border-color: var(--sol-cyan);
+}
+
+.btn-warning {
+    background-color: var(--sol-yellow);
+    border-color: var(--sol-yellow);
+    color: var(--sol-base3);
+}
+
+.btn-success {
+    background-color: var(--sol-green);
+    border-color: var(--sol-green);
+}
+
+.btn-danger {
+    background-color: var(--sol-red);
+    border-color: var(--sol-red);
+}
+
+.card {
+    background-color: var(--sol-base2);
+    border: 1px solid var(--sol-base1);
+}
+
+.card-header {
+    background-color: var(--sol-base1);
+    color: var(--sol-base3);
+}
+
+.breadcrumb {
+    background-color: var(--sol-base2);
+}
+
+.breadcrumb-item a {
+    color: var(--sol-blue);
+}
+
+.badge {
+    background-color: var(--sol-violet) !important;
+}
+
+.badge.bg-primary {
+    background-color: var(--sol-blue) !important;
+}
+
+.badge.bg-success {
+    background-color: var(--sol-green) !important;
+}
+
+.badge.bg-warning {
+    background-color: var(--sol-yellow) !important;
+    color: var(--sol-base3) !important;
+}
+
+.alert-info {
+    background-color: var(--sol-base2);
+    border-color: var(--sol-cyan);
+    color: var(--sol-base01);
+}
+
+.alert-success {
+    background-color: rgba(133, 153, 0, 0.1);
+    border-color: var(--sol-green);
+    color: var(--sol-green);
+}
+
+pre {
+    background-color: var(--sol-base2);
+    border: 1px solid var(--sol-base1);
+}
+
+code {
+    background-color: var(--sol-base2);
+    color: var(--sol-base01);
+}
+
+blockquote {
+    border-left: 4px solid var(--sol-blue);
+    background-color: var(--sol-base2);
+}
+
+.admin-toolbar {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+footer {
+    background-color: var(--sol-base01);
+    color: var(--sol-base2);
+    margin-top: 3rem;
+}
+
+a {
+    color: var(--sol-blue);
+}
+
+a:hover {
+    color: var(--sol-cyan);
+}

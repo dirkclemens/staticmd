@@ -1,11 +1,11 @@
 <?php
 /**
- * Monokai Dark Theme - Haupt-Template
- * Verwendet Bootstrap 5 mit Monokai Dark Farbschema
+ * StaticMD Theme - Haupt-Template
+ * Verwendet Bootstrap 5 für modernes, responsives Design
  */
 
 // Theme-Konfiguration
-$themeName = 'monokai-dark';
+$themeName = 'static-md';
 $siteName = $config['system']['name'] ?? 'StaticMD';
 $siteUrl = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']);
 $currentRoute = $_GET['route'] ?? 'index';
