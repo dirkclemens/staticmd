@@ -380,6 +380,9 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
                         
                         <!-- Editor Toolbar -->
                         <div class="toolbar">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertAccordion()" title="Accordion">
+                                <i class="bi bi-arrows-collapse"></i> Accordion
+                            </button>
                             <!-- Text-Formatierung -->
                             <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('**', '**')" title="Fett">
                                 <i class="bi bi-type-bold"></i>
@@ -545,6 +548,14 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/markdown/markdown.min.js"></script>
     
     <script>
+        // Accordion-Shortcode einfügen
+        function insertAccordion() {
+            if (!editor) return;
+            const doc = editor.getDoc();
+            const accordionText = '[accordionstart id "Titel"]\n...\n[accordionstop]\n';
+            doc.replaceSelection(accordionText);
+            editor.focus();
+        }
         let editor;
         let currentView = 'editor';
         let timeRemaining = <?= $timeRemaining ?>;
