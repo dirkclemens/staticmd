@@ -25,18 +25,15 @@ class MarkdownParser
         
         for ($i = 0; $i < count($lines); $i++) {
             $line = $lines[$i];
-            //$trimmedLine = rtrim($line, "\n");
             $trimmedLine = $line;
-            
+
             // Code-Blöcke erkennen
             if (str_starts_with($trimmedLine, '```')) {
-                // Paragraph beenden falls aktiv
                 if ($inParagraph) {
                     $html .= '<p>' . $this->parseInline($paragraphContent) . "</p>\n";
                     $inParagraph = false;
                     $paragraphContent = '';
                 }
-                
                 if ($inCodeBlock) {
                     $html .= "</code></pre>\n";
                     $inCodeBlock = false;
@@ -47,13 +44,13 @@ class MarkdownParser
                 }
                 continue;
             }
-            
+
             // In Code-Block: Zeile unverändert ausgeben
             if ($inCodeBlock) {
                 $html .= htmlspecialchars($line) . "\n";
                 continue;
             }
-            
+
             // Listen beenden wenn nötig
             if ($inList && !$this->isListItem($trimmedLine)) {
                 $html .= "</$listType>\n";
@@ -99,9 +96,24 @@ class MarkdownParser
                 }
             }
             
-            // Horizontale Linie
-            if (preg_match('/^[-*_]{3,}$/', $trimmedLine)) {
-                // Paragraph beenden falls aktiv
+            // Hardbreaks: Zeile endet mit 2+ Leerzeichen
+            if (preg_match('/[\s]{2,}$/u', $trimmedLine)) {
+                // Wenn Zeile nach Whitespace wirklich leer ist, nur <br> einfügen
+                if (strlen(trim($trimmedLine)) === 0) {
+                    $html .= "<br>\n";
+                    continue;
+                }
+                if ($inParagraph) {
+                    $paragraphContent .= rtrim($trimmedLine) . '<br>';
+                } else {
+                    $inParagraph = true;
+                    $paragraphContent = rtrim($trimmedLine) . '<br>';
+                }
+                continue;
+            }
+            
+            // Horizontale Linie: Zeile mit 3+ Bindestrichen
+            if (preg_match('/^\s*-{3,}\s*$/', $trimmedLine)) {
                 if ($inParagraph) {
                     $html .= '<p>' . $this->parseInline($paragraphContent) . "</p>\n";
                     $inParagraph = false;
@@ -182,29 +194,10 @@ class MarkdownParser
             
             // Normaler Text - sammeln für Paragraph
             if ($inParagraph) {
-                // Zeile mit 3+ Leerzeichen = Hard Break
-                if (str_ends_with($line, '   ')) {
-                    $spaceCount = strlen($line) - strlen(rtrim($line));
-                    if ($spaceCount >= 3) {
-                        $paragraphContent .= $trimmedLine . "\n";
-                    } else {
-                        $paragraphContent .= ($paragraphContent === '' ? '' : ' ') . $trimmedLine;
-                    }
-                } else {
-                    $paragraphContent .= ($paragraphContent === '' ? '' : ' ') . $trimmedLine;
-                }
+                $paragraphContent .= ($paragraphContent === '' ? '' : ' ') . $trimmedLine;
             } else {
                 $inParagraph = true;
-                if (str_ends_with($line, '   ')) {
-                    $spaceCount = strlen($line) - strlen(rtrim($line));
-                    if ($spaceCount >= 3) {
-                        $paragraphContent = $trimmedLine . "\n";
-                    } else {
-                        $paragraphContent = $trimmedLine;
-                    }
-                } else {
-                    $paragraphContent = $trimmedLine;
-                }
+                $paragraphContent = $trimmedLine;
             }
         }
         
@@ -293,9 +286,6 @@ class MarkdownParser
         // Auto-Links: URLs automatisch zu klickbaren Links konvertieren (außerhalb von Code-Blöcken)
         $text = $this->parseAutoLinks($text, $codeBlocks);
 
-        // Hardbreaks: 2+ Leerzeichen am Zeilenende zu <br> (vor Link-Konvertierung)
-        $text = preg_replace('/ {2,}\n/', '<br>', $text);
-
         // Links: [Text](URL) - jetzt auch für automatisch generierte Links
         $text = preg_replace('/\[([^\]]+)\]\(([^)]+)\)/', '<a href="$2">$1</a>', $text);
     
@@ -303,8 +293,8 @@ class MarkdownParser
         $text = str_replace(array_keys($codeBlocks), array_values($codeBlocks), $text);
 
         // Debug-Ausgabe des aktuellen Textes
-        require_once __DIR__ . '/Logger.php';
-        \StaticMD\Core\Logger::debug("parseInline: " . $text);
+        // require_once __DIR__ . '/Logger.php';
+        // \StaticMD\Core\Logger::debug("parseInline: " . $text);
 
         return $text;
     }
