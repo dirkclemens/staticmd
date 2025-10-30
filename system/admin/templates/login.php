@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #ffffffff 0%, #c2c2c2ff 100%);
             height: 100vh;
             display: flex;
             align-items: center;
@@ -22,7 +22,7 @@
         }
         
         .login-header {
-            background: linear-gradient(45deg, #007bff, #0056b3);
+            background: linear-gradient(45deg, #AC1200, #940f00ff);
             color: white;
             padding: 2rem;
             text-align: center;
@@ -33,19 +33,19 @@
         }
         
         .form-control:focus {
-            border-color: #007bff;
+            border-color: #AC1200;
             box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
         }
         
         .btn-login {
-            background: linear-gradient(45deg, #007bff, #0056b3);
+            background: linear-gradient(45deg, #AC1200, #940f00ff);
             border: none;
             padding: 12px 0;
             font-weight: 600;
         }
         
         .btn-login:hover {
-            background: linear-gradient(45deg, #0056b3, #004085);
+            background: linear-gradient(45deg, #AC1200, #940f00ff);
         }
         
         .alert {
@@ -120,7 +120,6 @@
                         
                         <div class="mt-3 text-center">
                             <small class="text-muted">
-                                Standard-Login: <strong>admin</strong> / <strong>admin123</strong>
                             </small>
                         </div>
                     </div>

@@ -31,6 +31,10 @@ a {
 a.nav-link {
     color: var(--sMD-primary);
 }
+a.nav-link.active {
+    /* background-color: var(--sMD-base0); */
+    color: var(--sMD-primary);
+}
 .list-group-item.active {
     background-color: var(--sMD-primary);
 }

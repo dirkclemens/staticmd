@@ -23,7 +23,7 @@ function encodeUrlPath($path) {
     
     <style>
         :root {
-            --admin-primary: #0d6efd;
+            --admin-primary: #AC1200;
             --admin-secondary: #6c757d;
             --admin-success: #198754;
             --admin-danger: #dc3545;
@@ -35,7 +35,7 @@ function encodeUrlPath($path) {
         }
         
         .admin-header {
-            background: linear-gradient(90deg, var(--admin-primary), #0a58ca);
+            background: linear-gradient(90deg, var(--admin-primary), #AC1200);
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         

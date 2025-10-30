@@ -33,7 +33,7 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
     <style>
         body { background-color: #f8f9fa; }
         .admin-header {
-            background: linear-gradient(90deg, #0d6efd, #0a58ca);
+            background: linear-gradient(45deg, #AC1200, #940f00ff);
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
@@ -52,7 +52,7 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
         }
         
         .CodeMirror-focused {
-            border-color: #0d6efd;
+            border-color: #AC1200;
             box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
         }
         
