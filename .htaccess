@@ -29,6 +29,10 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php?route=$1 [L,QSA]
 
+# nur die logo.png darf ausgeliefert werden
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^(logo\\.png)$ $1 [L]
+
 # Security Headers
 <IfModule mod_headers.c>
     Header always set X-Content-Type-Options nosniff

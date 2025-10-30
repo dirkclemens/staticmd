@@ -83,7 +83,7 @@ function encodeUrlPath($path) {
         
         .search-box:focus {
             border-color: #AC1200;
-            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+            box-shadow: 0 0 0 0.2rem rgba(100, 100, 100, 0.25);
         }
         
         .bulk-actions {

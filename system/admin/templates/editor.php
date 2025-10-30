@@ -126,7 +126,7 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
         }
         
         .editor-container .card-body {
-            padding: 0;
+            padding: 10px;
         }
         
         .tab-content {
@@ -275,13 +275,11 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
                                 <div class="form-text">URL der Seite (ohne .md)</div>
                             </div>
                             
-                            <!-- Yellow CMS kompatible Felder -->
                             <div class="mb-3">
                                 <label for="title" class="form-label fw-bold">Title / Titel</label>
                                 <input type="text" class="form-control" id="title" name="meta[Title]" 
                                        value="<?= htmlspecialchars($meta['Title'] ?? $meta['title'] ?? '') ?>" 
-                                       placeholder="Seitentitel">
-                                <div class="form-text">Yellow: Title</div>
+                                       placeholder="Seitentitel">                                
                             </div>
                             
                             <div class="mb-3">
@@ -289,7 +287,6 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
                                 <input type="text" class="form-control" id="titleslug" name="meta[TitleSlug]" 
                                        value="<?= htmlspecialchars($meta['TitleSlug'] ?? $meta['titleslug'] ?? '') ?>" 
                                        placeholder="Titel für Dateiname">
-                                <div class="form-text">Yellow: TitleSlug</div>
                             </div>
                             
                             <div class="mb-3">
@@ -300,7 +297,6 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
                                     <option value="blog" <?= ($meta['Layout'] ?? $meta['layout'] ?? '') === 'blog' ? 'selected' : '' ?>>Blog</option>
                                     <option value="page" <?= ($meta['Layout'] ?? $meta['layout'] ?? '') === 'page' ? 'selected' : '' ?>>Page</option>
                                 </select>
-                                <div class="form-text">Yellow: Layout</div>
                             </div>
                             
                             <div class="mb-3">
@@ -308,7 +304,6 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
                                 <input type="text" class="form-control" id="author" name="meta[Author]" 
                                        value="<?= htmlspecialchars($meta['Author'] ?? $meta['author'] ?? '') ?>" 
                                        placeholder="Autor(en), kommagetrennt">
-                                <div class="form-text">Yellow: Author</div>
                             </div>
                             
                             <div class="mb-3">
@@ -316,7 +311,6 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
                                 <input type="text" class="form-control" id="tag" name="meta[Tag]" 
                                        value="<?= htmlspecialchars($meta['Tag'] ?? $meta['tags'] ?? '') ?>" 
                                        placeholder="Tags, kommagetrennt">
-                                <div class="form-text">Yellow: Tag</div>
                             </div>
                             
                             <div class="mb-3">
@@ -424,6 +418,9 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
                             <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('1. ', '')" title="Nummerierte Liste">
                                 <i class="bi bi-list-ol"></i>
                             </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('- [ ]', '')" title="Checkliste">
+                                <i class="bi bi-list-check"></i>
+                            </button>
                             
                             <div class="vr mx-2"></div>
                             
@@ -454,7 +451,7 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
                             <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertTable()" title="Tabelle">
                                 <i class="bi bi-table"></i>
                             </button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('\\n---\\n', '')" title="Horizontale Linie">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('---', '')" title="Horizontale Linie">
                                 <i class="bi bi-hr"></i>
                             </button>
                             
@@ -698,13 +695,16 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
             text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/gim, '<a href="$2">$1</a>');
             
             // Zeilenumbrüche zu Paragraphen
-            text = text.replace(/\n\n/gim, '</p><p>');
-            text = '<p>' + text + '</p>';
+            // text = text.replace(/\n\n/gim, '</p><p>');
+            // text = '<p>' + text + '</p>';
             
             // Listen (einfach)
             text = text.replace(/^\- (.*$)/gim, '<li>$1</li>');
             text = text.replace(/(<li>.*<\/li>)/gims, '<ul>$1</ul>');
             
+            // Horizontale Linie
+            text = text.replace(/^---?$/gim, '<hr />');
+
             return text;
         }
         
@@ -731,10 +731,10 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
             const selection = doc.getSelection();
             
             if (selection) {
-                const codeBlock = '```\n' + selection + '\n```';
+                const codeBlock = '```' + selection + '```';
                 doc.replaceSelection(codeBlock);
             } else {
-                const codeBlock = '```\n\n```';
+                const codeBlock = '``````';
                 doc.replaceRange(codeBlock, cursor);
                 doc.setCursor({line: cursor.line + 1, ch: 0});
             }
@@ -748,11 +748,11 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
             const cursor = doc.getCursor();
             
             const table = [
-                '| Spalte 1 | Spalte 2 | Spalte 3 |',
-                '|----------|----------|----------|',
-                '| Zeile 1  | Daten    | Daten    |',
-                '| Zeile 2  | Daten    | Daten    |'
-            ].join('\n');
+                '| Spalte 1 | Spalte 2 | Spalte 3 |\n',
+                '|----------|----------|----------|\n',
+                '| Zeile 1  | Daten    | Daten    |\n',
+                '| Zeile 2  | Daten    | Daten    |\n'
+            ].join('');
             
             doc.replaceRange(table, cursor);
             
