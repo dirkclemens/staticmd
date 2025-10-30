@@ -16,7 +16,7 @@ $timeRemaining = $this->auth->getTimeRemaining();
     <style>
         body { background-color: #f8f9fa; }
         .admin-header {
-            background: linear-gradient(90deg, #0d6efd, #0a58ca);
+            background: linear-gradient(45deg, #AC1200, #940f00ff); 
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
@@ -46,7 +46,7 @@ $timeRemaining = $this->auth->getTimeRemaining();
         
         .range-value {
             font-weight: bold;
-            color: #0d6efd;
+            color: #AC1200;
         }
         
         /* Theme Preview Styles */
@@ -252,6 +252,7 @@ $timeRemaining = $this->auth->getTimeRemaining();
                                         </div>
                                     </div>
                                     
+                                    <!-- deactivated, for later use
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="items_per_page" class="form-label">
@@ -264,6 +265,7 @@ $timeRemaining = $this->auth->getTimeRemaining();
                                             <div class="form-text">10-100 Dateien im Datei-Manager</div>
                                         </div>
                                     </div>
+                                    -->
                                 </div>
                                 
                                 <div class="mb-3">

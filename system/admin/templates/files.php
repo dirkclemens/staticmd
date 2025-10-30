@@ -31,12 +31,14 @@ function encodeUrlPath($path) {
             background: white;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+            padding: 10px;
         }
         
         .file-item {
             transition: all 0.2s ease;
             border: none;
             border-bottom: 1px solid #f0f0f0;
+            padding: 6px;
         }
         
         .file-item:hover {
@@ -146,7 +148,7 @@ function encodeUrlPath($path) {
                                 <i class="bi bi-folder me-2"></i>
                                 Datei-Manager
                             </h5>
-                            <small class="text-muted">Verwalten Sie alle Ihre Markdown-Dateien</small>
+                            <small class="text-muted">Verwalten Sie alle Ihre Markdown-Dateien<br />&nbsp;</small>
                         </div>
                         
                         <div class="d-flex gap-2">
@@ -234,72 +236,72 @@ function encodeUrlPath($path) {
                     
                     <div class="card-body p-0">
                         <?php if (!empty($filesByDir)): ?>
-                            <?php foreach ($filesByDir as $dirName => $files): ?>
-                            <div class="folder-section mb-4" data-folder="<?= htmlspecialchars($dirName) ?>">
-                                <div class="folder-header p-3">
-                                    <h6 class="mb-0">
-                                        <i class="bi bi-folder-fill me-2 text-primary"></i>
-                                        <?= htmlspecialchars($dirName) ?>
-                                        <span class="badge bg-secondary ms-2"><?= count($files) ?></span>
-                                    </h6>
-                                </div>
-                                
-                                <div class="files-list">
-                                    <?php foreach ($files as $file): ?>
-                                    <div class="file-item p-3 d-flex align-items-center" data-filename="<?= htmlspecialchars($file['route']) ?>">
-                                        <div class="form-check me-3">
-                                            <input class="form-check-input file-checkbox" type="checkbox" 
-                                                   value="<?= htmlspecialchars($file['route']) ?>" 
-                                                   id="file_<?= md5($file['route']) ?>">
-                                        </div>
-                                        
-                                        <div class="file-icon bg-primary bg-opacity-10 text-primary me-3">
-                                            <i class="bi bi-file-earmark-text"></i>
-                                        </div>
-                                        
-                                        <div class="flex-grow-1">
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <div>
-                                                    <h6 class="mb-1">
-                                                        <a href="/admin?action=edit&file=<?= urlencode($file['route']) ?>&return_url=<?= urlencode('/admin?action=files') ?>" 
-                                                           class="text-decoration-none">
-                                                            <?= htmlspecialchars(basename($file['file'])) ?>
-                                                        </a>
-                                                    </h6>
-                                                    <small class="text-muted">
-                                                        Route: <code>/<?= htmlspecialchars($file['route']) ?></code>
-                                                    </small>
-                                                    <br>
-                                                    <small class="text-muted">
-                                                        <i class="bi bi-clock me-1"></i>
-                                                        Geändert: <?= date('d.m.Y H:i', $file['modified']) ?>
-                                                    </small>
+                            <div class="accordion" id="foldersAccordion">
+                            <?php $i = 0; foreach ($filesByDir as $dirName => $files): $i++; ?>
+                                <div class="accordion-item folder-section mb-4" data-folder="<?= htmlspecialchars($dirName) ?>">
+                                    <h2 class="accordion-header" id="heading<?= $i ?>">
+                                        <button class="accordion-button folder-header p-3 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= $i ?>" aria-expanded="false" aria-controls="collapse<?= $i ?>">
+                                            <i class="bi bi-folder-fill me-2 text-primary"></i>
+                                            <?= htmlspecialchars($dirName) ?>
+                                            <span class="badge bg-secondary ms-2"><?= count($files) ?></span>
+                                        </button>
+                                    </h2>
+                                    <div id="collapse<?= $i ?>" class="accordion-collapse collapse" aria-labelledby="heading<?= $i ?>" data-bs-parent="#foldersAccordion">
+                                        <div class="accordion-body files-list">
+                                            <?php foreach ($files as $file): ?>
+                                            <div class="file-item p-1 d-flex align-items-center" data-filename="<?= htmlspecialchars($file['route']) ?>">
+                                                <div class="form-check me-3">
+                                                    <input class="form-check-input file-checkbox" type="checkbox" 
+                                                           value="<?= htmlspecialchars($file['route']) ?>" 
+                                                           id="file_<?= md5($file['route']) ?>">
                                                 </div>
-                                                
-                                                <div class="file-actions">
-                                                    <div class="btn-group btn-group-sm" role="group">
-                                                        <a href="/<?= encodeUrlPath($file['route']) ?>" 
-                                                           class="btn btn-outline-info" target="_blank" title="Ansehen">
-                                                            <i class="bi bi-eye"></i>
-                                                        </a>
-                                                        <a href="/admin?action=edit&file=<?= urlencode($file['route']) ?>&return_url=<?= urlencode('/admin?action=files') ?>" 
-                                                           class="btn btn-outline-primary" title="Bearbeiten">
-                                                            <i class="bi bi-pencil"></i>
-                                                        </a>
-                                                        <button class="btn btn-outline-danger" 
-                                                                onclick="confirmDelete('<?= htmlspecialchars($file['route']) ?>')" 
-                                                                title="Löschen">
-                                                            <i class="bi bi-trash"></i>
-                                                        </button>
+                                                <div class="file-icon bg-primary bg-opacity-10 text-primary me-3">
+                                                    <i class="bi bi-file-earmark-text"></i>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <div class="d-flex justify-content-between align-items-start">
+                                                        <div>
+                                                            <h6 class="mb-1">
+                                                                <a href="/admin?action=edit&file=<?= urlencode($file['route']) ?>&return_url=<?= urlencode('/admin?action=files') ?>" 
+                                                                   class="text-decoration-none">
+                                                                    <?= htmlspecialchars(basename($file['file'])) ?>
+                                                                </a>
+                                                            </h6>
+                                                            <small class="text-muted">
+                                                                Route: <code>/<?= htmlspecialchars($file['route']) ?></code>
+                                                            </small>
+                                                            <br>
+                                                            <small class="text-muted">
+                                                                <i class="bi bi-clock me-1"></i>
+                                                                Geändert: <?= date('d.m.Y H:i', $file['modified']) ?>
+                                                            </small>
+                                                        </div>
+                                                        <div class="file-actions">
+                                                            <div class="btn-group btn-group-sm" role="group">
+                                                                <a href="/<?= encodeUrlPath($file['route']) ?>" 
+                                                                   class="btn btn-outline-info" target="_blank" title="Ansehen">
+                                                                    <i class="bi bi-eye"></i>
+                                                                </a>
+                                                                <a href="/admin?action=edit&file=<?= urlencode($file['route']) ?>&return_url=<?= urlencode('/admin?action=files') ?>" 
+                                                                   class="btn btn-outline-primary" title="Bearbeiten">
+                                                                    <i class="bi bi-pencil"></i>
+                                                                </a>
+                                                                <button class="btn btn-outline-danger" 
+                                                                        onclick="confirmDelete('<?= htmlspecialchars($file['route']) ?>')" 
+                                                                        title="Löschen">
+                                                                    <i class="bi bi-trash"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                            <?php endforeach; ?>
                                         </div>
                                     </div>
-                                    <?php endforeach; ?>
                                 </div>
-                            </div>
                             <?php endforeach; ?>
+                            </div>
                         <?php else: ?>
                         <div class="text-center py-5">
                             <i class="bi bi-folder-x display-1 text-muted mb-3"></i>
