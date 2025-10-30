@@ -380,9 +380,6 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
                         
                         <!-- Editor Toolbar -->
                         <div class="toolbar">
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertAccordion()" title="Accordion">
-                                <i class="bi bi-arrows-collapse"></i> Accordion
-                            </button>
                             <!-- Text-Formatierung -->
                             <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('**', '**')" title="Fett">
                                 <i class="bi bi-type-bold"></i>
@@ -460,6 +457,11 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
                             
                             <div class="vr mx-2"></div>
                             
+                            <!-- Accordion -->
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertAccordion()" title="Accordion">
+                                <i class="bi bi-arrows-collapse"></i>
+                            </button>
+
                             <!-- Emojis -->
                             <div class="btn-group" role="group">
                                 <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" title="Emoji">
