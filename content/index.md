@@ -26,9 +26,9 @@ StaticMD ist ein professionelles, PHP-basiertes CMS für Markdown-Inhalte. Es bi
 ## Schnellstart
 
 - **Admin-Login:** [admin](admin)
-- **Hilfe & Dokumentation:** [help/README.md](help/README.md)
-- **Feature-Übersicht:** [help/features.md](help/features.md)
-- **Installationsanleitung:** [help/installation.md](help/installation.md)
+- **Hilfe & Dokumentation:** [help/README.md](help/README)
+- **Feature-Übersicht:** [help/features.md](help/features)
+- **Installationsanleitung:** [help/installation.md](help/installation)
 
 ---
 
