@@ -55,5 +55,5 @@ StaticMD ist ein professionelles, PHP-basiertes CMS für Markdown-Inhalte. Es bi
 ---
 
 ## Kontakt & Support
-- [GitHub Projektseite](https://github.com/adcore/staticMD)
-- [Live-Demo](https://flat.adcore.de/)
+- [GitHub Projektseite](https://github.com/dirkclemens/staticMD)
+- [Live-Demo](https://staticmd.adcore.de/)
