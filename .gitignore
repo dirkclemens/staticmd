@@ -10,4 +10,5 @@
 **/test-*.php
 **/*_check.php
 **/*.sh
-**/*.md
+/*.md
+!public/downloads/README.md
