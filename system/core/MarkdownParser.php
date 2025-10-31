@@ -259,13 +259,15 @@ class MarkdownParser
         // Bilder: ![Alt](URL)
         $text = preg_replace('/!\[([^\]]*)\]\(([^)]+)\)/', '<img src="$2" alt="$1">', $text);
 
-        // Fett: **Text** oder __Text__
+        // Fett: **Text** 
         $text = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $text);
-        $text = preg_replace('/__(.*?)__/', '<strong>$1</strong>', $text);
+        // Fett: oder __Text__ (hier nicht aktiviert, um Konflikte mit Unterstrichen in Wörtern zu vermeiden)
+        //$text = preg_replace('/__(.*?)__/', '<strong>$1</strong>', $text);
 
-        // Kursiv: *Text* oder _Text_
+        // Kursiv: *Text*
         $text = preg_replace('/\*(.*?)\*/', '<em>$1</em>', $text);
-        $text = preg_replace('/_(.*?)_/', '<em>$1</em>', $text);
+        // Kursiv: oder _Text_ (hier nicht aktiviert, um Konflikte mit Unterstrichen in Wörtern zu vermeiden)
+        //$text = preg_replace('/_(.*?)_/', '<em>$1</em>', $text);
 
         // Code-Blöcke temporär durch Platzhalter ersetzen
         $codeBlocks = [];

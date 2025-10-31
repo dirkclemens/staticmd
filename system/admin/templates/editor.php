@@ -29,6 +29,7 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/monokai.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/solarized.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/material.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/dialog/dialog.min.css">
     
     <style>
         body { background-color: #f8f9fa; }
@@ -548,6 +549,9 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
     <!-- CodeMirror JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/markdown/markdown.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/search/search.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/search/searchcursor.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/dialog/dialog.min.js"></script>
     
     <script>
         // Accordion-Shortcode einfügen
@@ -585,12 +589,10 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
                 indentUnit: 4,
                 tabSize: 4,
                 extraKeys: {
-                    "Ctrl-S": function() {
-                        document.getElementById('editorForm').submit();
-                    },
-                    "F11": function() {
-                        toggleFullscreen();
-                    }
+                    "Ctrl-S": function() { document.getElementById('editorForm').submit(); },
+                    "F11": function() { toggleFullscreen(); },
+                    "Ctrl-F": "find",
+                    "Ctrl-H": "replace"                    
                 }
             });
             
