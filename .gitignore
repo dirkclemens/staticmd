@@ -12,3 +12,5 @@
 **/*.sh
 /*.md
 !public/downloads/README.md
+scope_final.md
+scope.md
