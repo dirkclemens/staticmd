@@ -27,23 +27,23 @@ Kopieren Sie den generierten Hash in `config.php`:
 #### Verbindung aufbauen
 ```bash
 # Terminal/SSH:
-ssh mbx@arend.uberspace.de
+ssh     @space.uberspace.de
 
 # SFTP (z.B. FileZilla):
-# Host: arend.uberspace.de
+# Host: space.uberspace.de
 # Port: 22
 # Protocol: SFTP
-# Username: mbx
+# Username:     
 # Password: IHR_PASSWORT
 ```
 
 #### Dateien hochladen
 ```bash
 # Zielordner auf Uberspace (wird automatisch bei Subdomain-Erstellung angelegt):
-/var/www/virtual/mbx/flat.adcore.de/
+/var/www/virtual/USER/staticmd.adcore.de/
 
 # WICHTIG: Korrekt mit rsync (beachte die Trailing-Slashes!):
-rsync -avh --progress /Users/dirk/Projekte/php/staticMD/ /Users/dirk/Library/CloudStorage/CloudMounter-uberspaceweb/flat.adcore.de/
+rsync -avh --progress /source/ /target/staticmd.adcore.de/
 
 # Alle Projektdateien aus lokalem staticMD/ Ordner hochladen:
 - index.php
@@ -58,20 +58,20 @@ rsync -avh --progress /Users/dirk/Projekte/php/staticMD/ /Users/dirk/Library/Clo
 
 ```bash
 # SSH auf Uberspace:
-ssh mbx@arend.uberspace.de
+ssh USER@space.uberspace.de
 
 # Domain hinzufügen:
-uberspace web domain add flat.adcore.de
+uberspace web domain add staticmd.adcore.de
 
 # Optional: DocumentRoot setzen (falls Unterordner):
-# uberspace web documentroot set /var/www/virtual/mbx/html/flat/
+# uberspace web documentroot set /var/www/virtual/USER/html/staticmd/
 ```
 
 ### 4. Berechtigungen setzen
 
 ```bash
 # Auf dem Uberspace-Server:
-cd /var/www/virtual/mbx/flat.adcore.de/
+cd /var/www/virtual/USER/staticmd.adcore.de/
 
 # Berechtigungen:
 chmod 755 content/ system/ public/
@@ -92,8 +92,8 @@ chmod 755 logs
 ### 5. Testen
 
 #### Website aufrufen
-- **Frontend**: `https://flat.adcore.de/`
-- **Admin**: `https://flat.adcore.de/admin`
+- **Frontend**: `https://staticmd.adcore.de/`
+- **Admin**: `https://staticmd.adcore.de/admin`
 
 #### Login testen
 - Benutzername: `admin` (oder Ihr gewählter Name)
@@ -126,7 +126,7 @@ RewriteBase /
 ```
 
 ### Problem: "Falscher Upload-Pfad" (häufiger Fehler)
-**Symptom:** Admin funktioniert nicht, Dateien liegen in `/flat.adcore.de/staticMD/`
+**Symptom:** Admin funktioniert nicht, Dateien liegen in `/staticmd.adcore.de/staticMD/`
 
 **Ursache:** Rsync ohne Trailing-Slash kopiert Ordner statt Inhalt
 ```bash
@@ -139,7 +139,7 @@ rsync /pfad/staticMD/ /ziel/
 
 **Lösung:** Dateien eine Ebene nach oben verschieben:
 ```bash
-cd /var/www/virtual/mbx/flat.adcore.de/
+cd /var/www/virtual/USER/staticmd.adcore.de/
 mv staticMD/* .
 mv staticMD/.* . 2>/dev/null
 rm -rf staticMD/
@@ -160,7 +160,7 @@ RewriteRule ^system/ - [F,L]
 ### Problem: Admin-Login funktioniert nicht  
 ```bash
 # System-Check ausführen:
-cd /var/www/virtual/mbx/flat.adcore.de/
+cd /var/www/virtual/USER/staticmd.adcore.de/
 php system_check.php
 ```
 
