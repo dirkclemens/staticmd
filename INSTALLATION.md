@@ -54,6 +54,9 @@ chmod +x upload.sh
         AllowOverride All
         Require all granted
     </Directory>
+    # Download-Verzeichnis als statisch ausliefern
+    # RewriteCond %{REQUEST_FILENAME} -f
+    # RewriteRule ^downloads/(.*)$ public/downloads/$1 [L]
     
     # Optional: HTTPS Redirect
     # RewriteEngine On
@@ -68,6 +71,9 @@ chmod 755 /var/www/html/staticMD
 chmod -R 644 /var/www/html/staticMD/*
 chmod -R 755 /var/www/html/staticMD/content/
 
+# Download-Verzeichnis
+chmod -R 755 /var/www/html/staticMD/public/downloads/
+
 # Spezielle Berechtigungen
 chmod 644 /var/www/html/staticMD/.htaccess
 chmod 644 /var/www/html/staticMD/config.php
@@ -76,6 +82,8 @@ chmod 644 /var/www/html/staticMD/config.php
 ---
 
 ## 🔧 Konfiguration
+### Download-Tag und Download-Verzeichnis
+PDF- und ZIP-Dateien werden per Drag&Drop nach `/public/downloads/` hochgeladen und mit `[download datei.pdf "Alt-Text"]` verlinkt. Der Parser zeigt das passende Bootstrap-Icon.
 
 ### Admin-Zugangsdaten ändern
 ```php

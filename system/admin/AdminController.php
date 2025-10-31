@@ -25,6 +25,50 @@ class AdminController
         $action = $_GET['action'] ?? 'dashboard';
         
         switch ($action) {
+            case 'upload_file':
+                // Nur POST erlauben
+                if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                    echo json_encode(['success' => false, 'error' => 'Invalid request method']);
+                    exit;
+                }
+
+                // Prüfe ob Datei vorhanden ist
+                if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
+                    echo json_encode(['success' => false, 'error' => 'No file uploaded']);
+                    exit;
+                }
+
+                $file = $_FILES['file'];
+                $allowedTypes = ['application/pdf', 'application/zip', 'application/x-zip-compressed'];
+                $allowedExts = ['pdf', 'zip'];
+                $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+                if (!in_array($file['type'], $allowedTypes) || !in_array($ext, $allowedExts)) {
+                    echo json_encode(['success' => false, 'error' => 'Invalid file type']);
+                    exit;
+                }
+
+                // Zielverzeichnis
+                $uploadDir = $this->config['paths']['public'] . '/downloads';
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0755, true);
+                }
+
+                // Sicheren Dateinamen generieren
+                $baseName = preg_replace('/[^a-zA-Z0-9_-]/', '', pathinfo($file['name'], PATHINFO_FILENAME));
+                $filename = $baseName . '_' . date('Ymd_His') . '_' . bin2hex(random_bytes(2)) . '.' . $ext;
+                $targetPath = $uploadDir . '/' . $filename;
+
+                // Datei verschieben
+                if (move_uploaded_file($file['tmp_name'], $targetPath)) {
+                    // Rückgabe: nur Dateiname für Editor-Tag
+                    echo json_encode(['success' => true, 'filename' => $filename]);
+                } else {
+                    echo json_encode(['success' => false, 'error' => 'Upload failed']);
+                }
+                exit;
+            case 'upload_image':
+                $this->handleImageUpload();
+                break;
             case 'login':
                 $this->handleLogin();
                 break;
@@ -145,18 +189,36 @@ class AdminController
         $content = '';
         $meta = [];
         $isNewFile = false;
-        
+
         if (!empty($file)) {
             require_once __DIR__ . '/../core/MarkdownParser.php';
             require_once __DIR__ . '/../core/ContentLoader.php';
             $contentLoader = new \StaticMD\Core\ContentLoader($this->config);
-            
+
+            // Debug: Zeige alle getesteten Pfade
+            $extension = $this->config['markdown']['file_extension'];
+            $contentDir = $this->config['paths']['content'];
+            $possiblePaths = [
+                $contentDir . '/' . $file . $extension,
+                $contentDir . '/' . $file . '/index' . $extension,
+                $contentDir . '/' . $file . '/page' . $extension
+            ];
+            if ($file === 'index') {
+                array_unshift($possiblePaths, $contentDir . '/index' . $extension);
+                array_push($possiblePaths, $contentDir . '/home' . $extension);
+            }
+            //error_log('DEBUG: Datei-Suche für "' . $file . '":');
+            // foreach ($possiblePaths as $p) {
+            //     error_log('DEBUG: Teste Pfad: ' . $p . ' => ' . (file_exists($p) ? 'EXISTIERT' : 'FEHLT'));
+            // }
+
             // Direkt den Dateipfad finden
             $contentPath = $this->findContentFile($file);
-            
+            //error_log('DEBUG: Gefundener Pfad: ' . ($contentPath ?: 'KEIN TREFFER'));
+
             if ($contentPath && is_readable($contentPath)) {
                 $rawContent = file_get_contents($contentPath);
-                
+
                 // Front Matter und Content trennen
                 if (strpos($rawContent, '---') === 0) {
                     $parts = explode('---', $rawContent, 3);
@@ -174,6 +236,7 @@ class AdminController
                     $content = $rawContent;
                 }
             } else {
+                //error_log('DEBUG: Datei konnte nicht gelesen werden oder existiert nicht!');
                 $isNewFile = true;
                 $meta = [
                     'title' => ucwords(str_replace(['/', '-', '_'], ' ', $file)),
@@ -193,12 +256,12 @@ class AdminController
      */
     private function saveContent(): void
     {
-        // DEBUG: Zeige die ersten und letzten Zeichen des Inhalts
+        //DEBUG: Zeige die ersten und letzten Zeichen des Inhalts
         if (isset($_POST['content'])) {
             $debugContent = $_POST['content'];
-            error_log('DEBUG: Content-Start: ' . substr($debugContent, 0, 40));
-            error_log('DEBUG: Content-Ende: ' . substr($debugContent, -40));
-            error_log('DEBUG: Content-RAW: ' . bin2hex(substr($debugContent, -10)));
+            // error_log('DEBUG: Content-Start: ' . substr($debugContent, 0, 40));
+            // error_log('DEBUG: Content-Ende: ' . substr($debugContent, -40));
+            // error_log('DEBUG: Content-RAW: ' . bin2hex(substr($debugContent, -10)));
         }
     
         $this->auth->requireLogin();
@@ -606,5 +669,54 @@ class AdminController
         }
         
         return $order;
+    }
+
+    /**
+     * Behandelt Bild-Upload für Editor (AJAX)
+     */
+    private function handleImageUpload(): void
+    {
+        $this->auth->requireLogin();
+        header('Content-Type: application/json; charset=utf-8');
+
+        // Nur POST erlauben
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            echo json_encode(['success' => false, 'error' => 'Invalid request method']);
+            exit;
+        }
+
+        // Prüfe ob Datei vorhanden ist
+        if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
+            echo json_encode(['success' => false, 'error' => 'No file uploaded']);
+            exit;
+        }
+
+        $file = $_FILES['image'];
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        if (!in_array($file['type'], $allowedTypes)) {
+            echo json_encode(['success' => false, 'error' => 'Invalid file type']);
+            exit;
+        }
+
+        // Zielverzeichnis
+        $uploadDir = $this->config['paths']['public'] . '/images'; // Physisch
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0755, true);
+        }
+
+        // Sicheren Dateinamen generieren
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        $baseName = preg_replace('/[^a-zA-Z0-9_-]/', '', pathinfo($file['name'], PATHINFO_FILENAME));
+        $filename = $baseName . '_' . date('Ymd_His') . '_' . bin2hex(random_bytes(2)) . '.' . $ext;
+        $targetPath = $uploadDir . '/' . $filename;
+
+        // Datei verschieben
+        if (move_uploaded_file($file['tmp_name'], $targetPath)) {
+            // Rückgabe: nur Dateiname für Editor-Tag
+            echo json_encode(['success' => true, 'filename' => $filename]);
+        } else {
+            echo json_encode(['success' => false, 'error' => 'Upload failed']);
+        }
+        exit;
     }
 }

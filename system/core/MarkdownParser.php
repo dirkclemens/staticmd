@@ -224,6 +224,26 @@ class MarkdownParser
      */
     private function parseInline(string $text): string
     {
+        // Download-Tag: [download datei.zip "Alt-Text"] oder [download datei.pdf "Alt-Text"]
+        $text = preg_replace_callback(
+            '/\[download\s+([^\s"\]]+)\s*(?:"([^"]*)")?\]/',
+            function($matches) {
+                $filename = $matches[1];
+                $altText = isset($matches[2]) && $matches[2] !== '' ? $matches[2] : $filename;
+                $downloadPath = '/public/downloads/' . $filename;
+                $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+                if ($ext === 'pdf') {
+                    $icon = '<i class="bi bi-file-earmark-pdf" style="font-size:1.1em;color:#d63333;vertical-align:middle;margin-right:4px;"></i>';
+                } else if ($ext === 'zip') {
+                    $icon = '<i class="bi bi-file-earmark-zip" style="font-size:1.1em;color:#0d6efd;vertical-align:middle;margin-right:4px;"></i>';
+                } else {
+                    $icon = '<i class="bi bi-file-earmark-arrow-down" style="font-size:1.1em;vertical-align:middle;margin-right:4px;"></i>';
+                }
+                return '<a href="' . htmlspecialchars($downloadPath) . '" download>' . $icon . htmlspecialchars($altText) . '</a>';
+            },
+            $text
+        );
+    
         // Yellow CMS Bilder: [image dateiname.jpg - - 50%]
         // [image name.jpg "Alt-Text" - 50%] oder [image name.jpg - - 50%]
         $text = preg_replace_callback(
@@ -241,8 +261,7 @@ class MarkdownParser
                 } elseif (isset($matches[3]) && $matches[3] !== '') {
                     $size = $matches[3];
                 }
-                //$imagePath = '/public/images/migration/' . $filename;
-                $imagePath = '/media/images/' . $filename;
+                $imagePath = '/public/images/' . $filename; // Physisch 
                 $html = '<img src="' . htmlspecialchars($imagePath) . '"';
                 if ($altText !== '') {
                     $html .= ' alt="' . htmlspecialchars($altText) . '"';
@@ -295,8 +314,7 @@ class MarkdownParser
         $text = str_replace(array_keys($codeBlocks), array_values($codeBlocks), $text);
 
         // Debug-Ausgabe des aktuellen Textes
-        // require_once __DIR__ . '/Logger.php';
-        // \StaticMD\Core\Logger::debug("parseInline: " . $text);
+        //error_log("parseInline: " . $text);
 
         return $text;
     }

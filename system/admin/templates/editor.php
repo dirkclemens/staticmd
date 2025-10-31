@@ -432,6 +432,9 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
                             <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('![Alt-Text](', ')')" title="Bild">
                                 <i class="bi bi-image"></i>
                             </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertDownloadTag()" title="Download-Link">
+                                <i class="bi bi-file-earmark-arrow-down"></i>
+                            </button>
                             
                             <div class="vr mx-2"></div>
                             
@@ -457,7 +460,10 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
                             </button>
                             
                             <div class="vr mx-2"></div>
-                            
+                            <!--Sprungmarke-->
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertAnchor()" title="Anchor / Sprungmarke">
+                                <i class="bi bi-bookmark"></i> 
+                            </button>                            
                             <!-- Accordion -->
                             <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertAccordion()" title="Accordion">
                                 <i class="bi bi-arrows-collapse"></i>
@@ -554,11 +560,27 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/dialog/dialog.min.js"></script>
     
     <script>
+        // Download-Tag einfügen
+        function insertDownloadTag() {
+            if (!editor) return;
+            const doc = editor.getDoc();
+            const tag = '[download datei.pdf "Alt-Text"]';
+            doc.replaceSelection(tag);
+            editor.focus();
+        }
+        // Sprungmarke einfügen
+        function insertAnchor() {
+            if (!editor) return;
+            const doc = editor.getDoc();
+            const anchorText = '(#anchor)\n...\n{#anchor}\n';
+            doc.replaceSelection(anchorText);
+            editor.focus();
+        }
         // Accordion-Shortcode einfügen
         function insertAccordion() {
             if (!editor) return;
             const doc = editor.getDoc();
-            const accordionText = '[accordionstart id "Titel"]\n...\n[accordionstop]\n';
+            const accordionText = '[accordionstart id "Titel"]\n...\n[accordionstop id]\n';
             doc.replaceSelection(accordionText);
             editor.focus();
         }
@@ -593,6 +615,56 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
                     "F11": function() { toggleFullscreen(); },
                     "Ctrl-F": "find",
                     "Ctrl-H": "replace"                    
+                }
+            });
+
+            // Drag&Drop-Upload für Bilder (jetzt nach Initialisierung)
+            editor.getWrapperElement().addEventListener('drop', function(e) {
+                e.preventDefault();
+                if (!e.dataTransfer || !e.dataTransfer.files || e.dataTransfer.files.length === 0) return;
+                const file = e.dataTransfer.files[0];
+                const formData = new FormData();
+                if (file.type.match(/^image\//)) {
+                    formData.append('image', file);
+                    fetch('/admin?action=upload_image', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success && data.filename) {
+                            const doc = editor.getDoc();
+                            const tag = `[image ${data.filename} "Alt-Text" - 50%]`;
+                            doc.replaceSelection(tag);
+                            editor.focus();
+                        } else {
+                            alert('Upload fehlgeschlagen: ' + (data.error || 'Unbekannter Fehler'));
+                        }
+                    })
+                    .catch(() => alert('Upload fehlgeschlagen.'));
+                } else if (
+                    file.type === 'application/pdf' ||
+                    file.type === 'application/zip' ||
+                    file.name.endsWith('.pdf') ||
+                    file.name.endsWith('.zip')
+                ) {
+                    formData.append('file', file);
+                    fetch('/admin?action=upload_file', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success && data.filename) {
+                            const doc = editor.getDoc();
+                            const tag = `[download ${data.filename} "${file.name}"]`;
+                            doc.replaceSelection(tag);
+                            editor.focus();
+                        } else {
+                            alert('Upload fehlgeschlagen: ' + (data.error || 'Unbekannter Fehler'));
+                        }
+                    })
+                    .catch(() => alert('Upload fehlgeschlagen.'));
                 }
             });
             

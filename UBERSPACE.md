@@ -1,4 +1,6 @@
 # StaticMD auf Uberspace deployen 🚀
+## 📥 Download-Tag und Download-Verzeichnis
+PDF- und ZIP-Dateien werden per Drag&Drop nach `/public/downloads/` hochgeladen und mit `[download datei.pdf "Alt-Text"]` verlinkt. Der Parser zeigt das passende Bootstrap-Icon.
 
 ## 📋 Schritt-für-Schritt Anleitung
 
@@ -75,7 +77,7 @@ cd /var/www/virtual/mbx/flat.adcore.de/
 chmod 755 content/ system/ public/
 chmod 755 system/core/ system/admin/ system/themes/
 chmod 755 system/admin/templates/
-chmod 755 public/images/ public/images/migration/ public/images/uploads/
+chmod 755 public/images/ public/images/migration/ public/images/uploads/ public/downloads/
 chmod 644 system/admin/*.php system/core/*.php system/themes/*/*.php
 chmod 644 content/*.md content/*/*.md
 chmod 644 public/images/*/* 2>/dev/null || true

@@ -26,7 +26,7 @@ Nutzen Sie dieses PHP-Script zum Generieren des Hashes:
 ### 3. Datei-Berechtigungen setzen
 ```bash
 # Auf dem Server ausführen:
-chmod 755 content/ system/
+chmod 755 content/ system/ public/downloads/
 chmod 644 content/*.md content/*/*.md
 chmod 600 config.php  # Config-Datei schützen
 ```
@@ -44,6 +44,8 @@ In `config.php` hinzufügen:
 ```
 
 ## 🌐 Uberspace Server-Konfiguration
+### Download-Verzeichnis
+Statische Downloads werden unter `/public/downloads/` gespeichert und über `/downloads/datei.pdf` ausgeliefert.
 
 ### 🚀 Uberspace Setup (Einfach & Empfohlen!)
 Bei Uberspace läuft StaticMD **out-of-the-box** mit der vorhandenen Apache-Konfiguration!
