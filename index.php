@@ -43,7 +43,7 @@ try {
 } catch (Exception $e) {
     // Fehlerbehandlung
     http_response_code(500);
-    echo "<h1>Fehler</h1>";
+    echo "<h1>Error</h1>";
     echo "<p>" . htmlspecialchars($e->getMessage()) . "</p>";
     
     // In der Entwicklung: Vollständigen Stack-Trace anzeigen
