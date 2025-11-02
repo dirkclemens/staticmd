@@ -2,6 +2,7 @@
 Title: StaticMD Blog - News & Tutorials
 Author: StaticMD Team
 Date: 2025-10-26
+Layout: Standard
 Tag: blog, news, tutorials, cms, markdown
 Description: Offizieller StaticMD Blog mit Updates, Tutorials und Best Practices
 Visibility: public

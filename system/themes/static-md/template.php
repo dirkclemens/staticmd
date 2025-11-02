@@ -98,7 +98,8 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a class="nav-link <?= $currentRoute === 'index' ? 'active' : '' ?>" href="/">
-                            <i class="bi bi-house me-1"></i> Startseite
+                            <i class="bi bi-house me-1"></i> 
+                            <!-- Startseite -->
                         </a>
                     </li>
                     
@@ -162,7 +163,9 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
             <nav aria-label="breadcrumb" class="mb-4">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item">
-                        <a href="/"><i class="bi bi-house"></i> Startseite</a>
+                        <a href="/"><i class="bi bi-house"></i> 
+                        <!-- Startseite -->
+                    </a>
                     </li>
                     <?php 
                     $routeParts = explode('/', trim($currentRoute, '/'));
@@ -247,7 +250,8 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
                         <?php if (!empty($navItems)): ?>
                         <div class="list-group list-group-flush">
                             <a href="/" class="list-group-item list-group-item-action <?= $currentRoute === 'index' ? 'active' : '' ?>">
-                                <i class="bi bi-house me-2"></i> Startseite
+                                <i class="bi bi-house me-2"></i> 
+                                <!-- Startseite -->
                             </a>
                             
                             <?php foreach ($navItems as $section => $nav): ?>

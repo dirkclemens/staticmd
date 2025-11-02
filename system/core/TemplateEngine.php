@@ -2,6 +2,7 @@
 
 namespace StaticMD\Core;
 
+require_once __DIR__ . '/Logger.php';
 /**
  * Template-Engine
  * Rendert HTML-Templates mit Bootstrap
@@ -22,7 +23,8 @@ class TemplateEngine
      */
     public function render(string $template, array $templateData): void
     {
-        $templatePath = $this->getTemplatePath();
+        $meta = $templateData['content']['meta'] ?? [];
+        $templatePath = $this->getTemplatePath($meta);
         
         if (!file_exists($templatePath)) {
             // Fallback: Einfaches HTML generieren
@@ -125,19 +127,40 @@ class TemplateEngine
     /**
      * Ermittelt den Template-Pfad
      */
-    private function getTemplatePath(): string
+    private function getTemplatePath(array $meta = []): string
     {
         // Frontend-Theme aus Settings laden
         $settingsFile = $this->config['paths']['system'] . '/settings.json';
+        \StaticMD\Core\Logger::info("########### Using settingsFile: $settingsFile");
         $settings = [];
         if (file_exists($settingsFile)) {
             $settings = json_decode(file_get_contents($settingsFile), true) ?: [];
         }
-        
+
         // Theme aus Settings oder Fallback
         $themeName = $settings['frontend_theme'] ?? $this->config['theme']['default'];
         $extension = $this->config['theme']['template_extension'];
-        
+
+        // Layout aus Metadaten ermitteln
+        $layout = '';
+        if (!empty($meta['Layout'])) {
+            $layout = strtolower($meta['Layout']);
+        } elseif (!empty($meta['layout'])) {
+            $layout = strtolower($meta['layout']);
+        }
+        \StaticMD\Core\Logger::info("1) Using layout: $layout");
+
+        // Erlaubte Layouts
+        $allowedLayouts = ['wiki', 'blog', 'page', 'gallery'];
+        if ($layout && in_array($layout, $allowedLayouts, true)) {
+            $layoutFile = $this->config['paths']['themes'] . '/' . $themeName . '/' . $layout . $extension;
+            if (file_exists($layoutFile)) {
+                \StaticMD\Core\Logger::info("2) Using layout template: $layoutFile");
+                return $layoutFile;
+            }
+        }
+
+        // Fallback: Standard-Template
         return $this->config['paths']['themes'] . '/' . $themeName . '/template' . $extension;
     }
 
