@@ -4,11 +4,11 @@ $currentUser = $this->auth->getUsername();
 $timeRemaining = $this->auth->getTimeRemaining();
 ?>
 <!DOCTYPE html>
-<html lang="de">
+<html lang="<?= htmlspecialchars(\StaticMD\Core\I18n::getLanguage()) ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StaticMD Admin - Einstellungen</title>
+    <title><?= __('admin.brand') ?> - <?= __('admin.common.settings') ?></title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
@@ -122,14 +122,14 @@ $timeRemaining = $this->auth->getTimeRemaining();
         <div class="container-fluid">
             <a href="/admin" class="navbar-brand mb-0 h1 text-decoration-none">
                 <i class="bi bi-shield-lock me-2"></i>
-                StaticMD Admin
+                <?= __('admin.brand') ?>
             </a>
             
             <div class="d-flex align-items-center text-white">
                 <div class="me-3">
                     <small class="session-timer">
                         <i class="bi bi-clock me-1"></i>
-                        Session: <span id="timer"><?= gmdate('H:i:s', $timeRemaining) ?></span>
+                        <?= __('admin.common.session') ?>: <span id="timer"><?= gmdate('H:i:s', $timeRemaining) ?></span>
                     </small>
                 </div>
                 
@@ -140,14 +140,14 @@ $timeRemaining = $this->auth->getTimeRemaining();
                     </a>
                     <ul class="dropdown-menu" style="right: 0; left: auto;">
                         <li><a class="dropdown-item" href="/admin">
-                            <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                            <i class="bi bi-speedometer2 me-2"></i><?= __('admin.common.dashboard') ?>
                         </a></li>
                         <li><a class="dropdown-item" href="/">
-                            <i class="bi bi-house me-2"></i>Zur Website
+                            <i class="bi bi-house me-2"></i><?= __('admin.common.view_site') ?>
                         </a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="/admin?action=logout">
-                            <i class="bi bi-box-arrow-right me-2"></i>Abmelden
+                            <i class="bi bi-box-arrow-right me-2"></i><?= __('admin.common.logout') ?>
                         </a></li>
                     </ul>
                 </div>
@@ -161,7 +161,7 @@ $timeRemaining = $this->auth->getTimeRemaining();
                 <!-- Navigation zurück -->
                 <div class="mb-3">
                     <a href="/admin" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-left me-1"></i> Zurück zum Dashboard
+                        <i class="bi bi-arrow-left me-1"></i> <?= __('admin.common.back_to_dashboard') ?>
                     </a>
                 </div>
             </div>
@@ -171,7 +171,7 @@ $timeRemaining = $this->auth->getTimeRemaining();
                     <div class="card-header">
                         <h4 class="card-title mb-0">
                             <i class="bi bi-gear me-2"></i>
-                            System-Einstellungen
+                            <?= __('admin.settings.title') ?>
                         </h4>
                     </div>
                     
@@ -182,8 +182,8 @@ $timeRemaining = $this->auth->getTimeRemaining();
                             <i class="bi bi-check-circle me-2"></i>
                             <?php
                             switch ($_GET['message']) {
-                                case 'settings_saved': echo 'Einstellungen wurden erfolgreich gespeichert.'; break;
-                                default: echo 'Aktion wurde erfolgreich ausgeführt.';
+                                case 'settings_saved': echo __('admin.alerts.settings_saved'); break;
+                                default: echo __('admin.alerts.success');
                             }
                             ?>
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -195,9 +195,9 @@ $timeRemaining = $this->auth->getTimeRemaining();
                             <i class="bi bi-exclamation-triangle me-2"></i>
                             <?php
                             switch ($_GET['error']) {
-                                case 'save_failed': echo 'Fehler beim Speichern der Einstellungen.'; break;
-                                case 'csrf_invalid': echo 'Sicherheitstoken ungültig.'; break;
-                                default: echo 'Ein Fehler ist aufgetreten.';
+                                case 'save_failed': echo __('admin.errors.settings_save_failed'); break;
+                                case 'csrf_invalid': echo __('admin.errors.csrf_invalid'); break;
+                                default: echo __('admin.errors.generic');
                             }
                             ?>
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -209,12 +209,12 @@ $timeRemaining = $this->auth->getTimeRemaining();
                             
                             <!-- Seiten-Einstellungen -->
                             <div class="settings-section">
-                                <h5><i class="bi bi-globe me-2"></i>Website-Einstellungen</h5>
+                                <h5><i class="bi bi-globe me-2"></i><?= __('admin.settings.website') ?></h5>
                                 
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="site_name" class="form-label">Website-Name</label>
+                                            <label for="site_name" class="form-label"><?= __('admin.settings.website_name') ?></label>
                                             <input type="text" class="form-control" id="site_name" name="site_name" 
                                                    value="<?= htmlspecialchars($settings['site_name']) ?>" 
                                                    placeholder="StaticMD" required>
@@ -224,7 +224,7 @@ $timeRemaining = $this->auth->getTimeRemaining();
                                     
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="site_logo" class="form-label">Logo-URL</label>
+                                            <label for="site_logo" class="form-label"><?= __('admin.settings.logo_url') ?></label>
                                             <input type="url" class="form-control" id="site_logo" name="site_logo" 
                                                    value="<?= htmlspecialchars($settings['site_logo']) ?>" 
                                                    placeholder="https://example.com/logo.png">
@@ -232,17 +232,30 @@ $timeRemaining = $this->auth->getTimeRemaining();
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="language" class="form-label"><?= __('admin.settings.language') ?></label>
+                                            <select class="form-select" id="language" name="language">
+                                                <option value="en" <?= ($settings['language'] ?? 'en') === 'en' ? 'selected' : '' ?>>English</option>
+                                                <option value="de" <?= ($settings['language'] ?? 'en') === 'de' ? 'selected' : '' ?>>Deutsch</option>
+                                            </select>
+                                            <div class="form-text"><?= __('admin.settings.language_help') ?></div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             
                             <!-- Dashboard-Einstellungen -->
                             <div class="settings-section">
-                                <h5><i class="bi bi-speedometer2 me-2"></i>Dashboard-Einstellungen</h5>
+                                <h5><i class="bi bi-speedometer2 me-2"></i><?= __('admin.settings.dashboard') ?></h5>
                                 
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="recent_files_count" class="form-label">
-                                                Anzahl zuletzt bearbeiteter Dateien: 
+                                                <?= __('admin.settings.recent_files_count') ?>: 
                                                 <span class="range-value" id="recent_files_value"><?= $settings['recent_files_count'] ?></span>
                                             </label>
                                             <input type="range" class="form-range" id="recent_files_count" name="recent_files_count" 
@@ -273,7 +286,7 @@ $timeRemaining = $this->auth->getTimeRemaining();
                                         <input class="form-check-input" type="checkbox" id="show_file_stats" name="show_file_stats" 
                                                <?= $settings['show_file_stats'] ? 'checked' : '' ?>>
                                         <label class="form-check-label" for="show_file_stats">
-                                            Datei-Statistiken im Dashboard anzeigen
+                                            <?= __('admin.settings.show_file_stats') ?>
                                         </label>
                                     </div>
                                 </div>
@@ -281,12 +294,12 @@ $timeRemaining = $this->auth->getTimeRemaining();
                             
                             <!-- Frontend-Theme -->
                             <div class="settings-section">
-                                <h5><i class="bi bi-palette me-2"></i>Frontend-Theme</h5>
+                                <h5><i class="bi bi-palette me-2"></i><?= __('admin.settings.frontend_theme') ?></h5>
                                 
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="frontend_theme" class="form-label">Website-Theme</label>
+                                            <label for="frontend_theme" class="form-label"><?= __('admin.settings.frontend_theme') ?></label>
                                             <select class="form-select" id="frontend_theme" name="frontend_theme">
                                                 <option value="bootstrap" <?= ($settings['frontend_theme'] ?? 'bootstrap') === 'bootstrap' ? 'selected' : '' ?>>Bootstrap (Standard)</option>
                                                 <option value="solarized-light" <?= ($settings['frontend_theme'] ?? '') === 'solarized-light' ? 'selected' : '' ?>>Solarized Light</option>
@@ -308,8 +321,8 @@ $timeRemaining = $this->auth->getTimeRemaining();
                                             <div class="border rounded p-3" style="background: linear-gradient(45deg, #f8f9fa 25%, transparent 25%), linear-gradient(-45deg, #f8f9fa 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f8f9fa 75%), linear-gradient(-45deg, transparent 75%, #f8f9fa 75%); background-size: 20px 20px; background-position: 0 0, 0 10px, 10px -10px, -10px 0px;">
                                                 <div class="text-center text-muted">
                                                     <i class="bi bi-eye fs-1"></i><br>
-                                                    <small>Theme-Vorschau</small><br>
-                                                    <small>Besuchen Sie die Frontend-Seite um das gewählte Theme zu sehen</small>
+                                                    <small><?= __('admin.settings.theme_preview') ?></small><br>
+                                                    <small><?= __('admin.settings.visit_frontend') ?></small>
                                                 </div>
                                             </div>
                                         </div>
@@ -319,12 +332,12 @@ $timeRemaining = $this->auth->getTimeRemaining();
                             
                             <!-- Editor-Einstellungen -->
                             <div class="settings-section">
-                                <h5><i class="bi bi-pencil me-2"></i>Editor-Einstellungen</h5>
+                                <h5><i class="bi bi-pencil me-2"></i><?= __('admin.settings.editor') ?></h5>
                                 
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="editor_theme" class="form-label">Editor-Theme</label>
+                                            <label for="editor_theme" class="form-label"><?= __('admin.settings.editor_theme') ?></label>
                                             <select class="form-select" id="editor_theme" name="editor_theme" onchange="previewTheme(this.value)">
                                                 <option value="github" <?= $settings['editor_theme'] === 'github' ? 'selected' : '' ?>>GitHub (hell)</option>
                                                 <option value="monokai" <?= $settings['editor_theme'] === 'monokai' ? 'selected' : '' ?>>Monokai (dunkel)</option>
@@ -353,7 +366,7 @@ $timeRemaining = $this->auth->getTimeRemaining();
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="auto_save_interval" class="form-label">
-                                                Auto-Save Intervall: 
+                                                <?= __('admin.settings.auto_save_interval') ?>: 
                                                 <span class="range-value" id="auto_save_value"><?= $settings['auto_save_interval'] ?></span>s
                                             </label>
                                             <input type="range" class="form-range" id="auto_save_interval" name="auto_save_interval" 
@@ -367,13 +380,13 @@ $timeRemaining = $this->auth->getTimeRemaining();
                             
                             <!-- Navigation-Sortierung -->
                             <div class="settings-section">
-                                <h5><i class="bi bi-list-ol me-2"></i>Navigation-Sortierung</h5>
-                                <p class="text-muted">Bestimme die Reihenfolge der Hauptnavigation</p>
+                                <h5><i class="bi bi-list-ol me-2"></i><?= __('admin.settings.navigation') ?></h5>
+                                <p class="text-muted"><?= __('admin.settings.navigation_hint') ?></p>
                                 
                                 <div class="row">
                                     <div class="col-md-8">
                                         <div class="mb-3">
-                                            <label for="navigation_order" class="form-label">Navigation-Reihenfolge</label>
+                                            <label for="navigation_order" class="form-label"><?= __('admin.settings.navigation_order') ?></label>
                                             <textarea class="form-control" id="navigation_order" name="navigation_order" 
                                                       rows="6" placeholder="about&#10;blog&#10;tech&#10;diy"><?php
 // Navigation-Order als Text formatieren
@@ -471,14 +484,14 @@ echo htmlspecialchars(trim($orderText));
                                 <div>
                                     <small class="text-muted">
                                         <i class="bi bi-info-circle me-1"></i>
-                                        Einstellungen werden in <code>system/settings.json</code> gespeichert
+                                        <?= __('admin.settings.actions_saved_in') ?> <code>system/settings.json</code>
                                     </small>
                                 </div>
                                 
                                 <div>
-                                    <a href="/admin" class="btn btn-secondary me-2">Abbrechen</a>
+                                    <a href="/admin" class="btn btn-secondary me-2"><?= __('admin.common.cancel') ?></a>
                                     <button type="submit" class="btn btn-primary">
-                                        <i class="bi bi-floppy me-1"></i> Einstellungen speichern
+                                        <i class="bi bi-floppy me-1"></i> <?= __('admin.settings.save_settings') ?>
                                     </button>
                                 </div>
                             </div>
@@ -497,7 +510,7 @@ echo htmlspecialchars(trim($orderText));
         // Session-Timer
         function updateTimer() {
             if (timeRemaining <= 0) {
-                alert('Ihre Session ist abgelaufen. Sie werden zur Login-Seite weitergeleitet.');
+                alert('<?= __('admin.session.expired_alert') ?>');
                 window.location.href = '/admin?action=login';
                 return;
             }

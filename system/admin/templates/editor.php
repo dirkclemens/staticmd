@@ -1,5 +1,5 @@
 <?php
-$pageTitle = 'Editor';
+$pageTitle = __('admin.common.editor');
 $currentUser = $this->auth->getUsername();
 $timeRemaining = $this->auth->getTimeRemaining();
 
@@ -12,11 +12,11 @@ if (file_exists($settingsFile)) {
 $editorTheme = $settings['editor_theme'] ?? 'github';
 ?>
 <!DOCTYPE html>
-<html lang="de">
+<html lang="<?= htmlspecialchars(\StaticMD\Core\I18n::getLanguage()) ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StaticMD Admin - Editor</title>
+    <title><?= __('admin.brand') ?> - <?= __('admin.common.editor') ?></title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
@@ -219,14 +219,14 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
         <div class="container-fluid">
             <a href="/admin" class="navbar-brand mb-0 h1 text-decoration-none">
                 <i class="bi bi-shield-lock me-2"></i>
-                StaticMD Admin
+                <?= __('admin.brand') ?>
             </a>
             
             <div class="d-flex align-items-center text-white">
                 <div class="me-3">
                     <small class="session-timer">
                         <i class="bi bi-clock me-1"></i>
-                        Session: <span id="timer"><?= gmdate('H:i:s', $timeRemaining) ?></span>
+                        <?= __('admin.common.session') ?>: <span id="timer"><?= gmdate('H:i:s', $timeRemaining) ?></span>
                     </small>
                 </div>
                 
@@ -237,14 +237,14 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
                     </a>
                     <ul class="dropdown-menu" style="right: 0; left: auto;">
                         <li><a class="dropdown-item" href="/admin">
-                            <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                            <i class="bi bi-speedometer2 me-2"></i><?= __('admin.common.dashboard') ?>
                         </a></li>
                         <li><a class="dropdown-item" href="/">
-                            <i class="bi bi-house me-2"></i>Zur Website
+                            <i class="bi bi-house me-2"></i><?= __('admin.common.view_site') ?>
                         </a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="/admin?action=logout">
-                            <i class="bi bi-box-arrow-right me-2"></i>Abmelden
+                            <i class="bi bi-box-arrow-right me-2"></i><?= __('admin.common.logout') ?>
                         </a></li>
                     </ul>
                 </div>
@@ -682,7 +682,7 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
         // Session-Timer
         function updateTimer() {
             if (timeRemaining <= 0) {
-                alert('Ihre Session ist abgelaufen. Sie werden zur Login-Seite weitergeleitet.');
+                alert('<?= __('admin.session.expired_alert') ?>');
                 window.location.href = '/admin?action=login';
                 return;
             }

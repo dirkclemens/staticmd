@@ -128,7 +128,7 @@ class AdminController
                 header('Location: /admin');
                 exit;
             } else {
-                $error = 'Ungültige Anmeldedaten oder CSRF-Token.';
+                $error = \StaticMD\Core\I18n::t('admin.login.invalid');
             }
         }
         
@@ -581,6 +581,9 @@ class AdminController
             exit;
         }
         
+        $lang = $_POST['language'] ?? 'en';
+        $lang = in_array($lang, ['en', 'de'], true) ? $lang : 'en';
+
         $settings = [
             'site_name' => trim($_POST['site_name'] ?? 'StaticMD'),
             'site_logo' => trim($_POST['site_logo'] ?? ''),
@@ -590,7 +593,8 @@ class AdminController
             'editor_theme' => $_POST['editor_theme'] ?? 'github',
             'show_file_stats' => isset($_POST['show_file_stats']),
             'auto_save_interval' => max(30, min(300, (int)($_POST['auto_save_interval'] ?? 60))),
-            'navigation_order' => $this->parseNavigationOrder($_POST['navigation_order'] ?? '')
+            'navigation_order' => $this->parseNavigationOrder($_POST['navigation_order'] ?? ''),
+            'language' => $lang
         ];
         
         if ($this->saveSettingsToFile($settings)) {
@@ -621,7 +625,8 @@ class AdminController
                 'blog' => 2,
                 'tech' => 3,
                 'diy' => 4
-            ]
+            ],
+            'language' => 'en'
         ];
         
         if (file_exists($settingsFile)) {

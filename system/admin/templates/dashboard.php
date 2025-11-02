@@ -12,11 +12,11 @@ function encodeUrlPath($path) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="de">
+<html lang="<?= htmlspecialchars(\StaticMD\Core\I18n::getLanguage()) ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StaticMD Admin - <?= htmlspecialchars($pageTitle) ?></title>
+    <title><?= __('admin.brand') ?> - <?= htmlspecialchars($pageTitle) ?></title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
@@ -102,14 +102,14 @@ function encodeUrlPath($path) {
         <div class="container-fluid">
             <span class="navbar-brand mb-0 h1">
                 <i class="bi bi-shield-lock me-2"></i>
-                StaticMD Admin
+                <?= __('admin.brand') ?>
             </span>
             
             <div class="d-flex align-items-center text-white">
                 <div class="me-3">
                     <small class="session-timer">
                         <i class="bi bi-clock me-1"></i>
-                        Session: <span id="timer"><?= gmdate('H:i:s', $timeRemaining) ?></span>
+                        <?= __('admin.common.session') ?>: <span id="timer"><?= gmdate('H:i:s', $timeRemaining) ?></span>
                     </small>
                 </div>
                 
@@ -120,11 +120,11 @@ function encodeUrlPath($path) {
                     </a>
                     <ul class="dropdown-menu" style="right: 0; left: auto;">
                         <li><a class="dropdown-item" href="/">
-                            <i class="bi bi-house me-2"></i>Zur Website
+                            <i class="bi bi-house me-2"></i><?= __('admin.common.view_site') ?>
                         </a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="/admin?action=logout">
-                            <i class="bi bi-box-arrow-right me-2"></i>Abmelden
+                            <i class="bi bi-box-arrow-right me-2"></i><?= __('admin.common.logout') ?>
                         </a></li>
                     </ul>
                 </div>
@@ -142,7 +142,7 @@ function encodeUrlPath($path) {
                             <a class="nav-link <?= ($_GET['action'] ?? 'dashboard') === 'dashboard' ? 'active' : '' ?>" 
                                href="/admin">
                                 <i class="bi bi-speedometer2 me-2"></i>
-                                Dashboard
+                                <?= __('admin.common.dashboard') ?>
                             </a>
                         </li>
                         
@@ -150,7 +150,7 @@ function encodeUrlPath($path) {
                             <a class="nav-link <?= ($_GET['action'] ?? '') === 'files' ? 'active' : '' ?>" 
                                href="/admin?action=files">
                                 <i class="bi bi-folder me-2"></i>
-                                Dateien
+                                <?= __('admin.common.files') ?>
                             </a>
                         </li>
                         
@@ -158,7 +158,7 @@ function encodeUrlPath($path) {
                             <a class="nav-link <?= ($_GET['action'] ?? '') === 'new' ? 'active' : '' ?>" 
                                href="/admin?action=new">
                                 <i class="bi bi-file-earmark-plus me-2"></i>
-                                Neue Seite
+                                <?= __('admin.common.new_page') ?>
                             </a>
                         </li>
                         
@@ -166,7 +166,7 @@ function encodeUrlPath($path) {
                             <a class="nav-link <?= ($_GET['action'] ?? '') === 'edit' ? 'active' : '' ?>" 
                                href="/admin?action=edit">
                                 <i class="bi bi-pencil me-2"></i>
-                                Editor
+                                <?= __('admin.common.editor') ?>
                             </a>
                         </li>
                         
@@ -176,21 +176,21 @@ function encodeUrlPath($path) {
                             <a class="nav-link <?= ($_GET['action'] ?? '') === 'settings' ? 'active' : '' ?>" 
                                href="/admin?action=settings">
                                 <i class="bi bi-gear me-2"></i>
-                                Einstellungen
+                                <?= __('admin.common.settings') ?>
                             </a>
                         </li>
                         
                         <li class="nav-item">
                             <a class="nav-link" href="/">
                                 <i class="bi bi-eye me-2"></i>
-                                Website ansehen
+                                <?= __('admin.common.view_site') ?>
                             </a>
                         </li>
                         
                         <li class="nav-item">
                             <a class="nav-link" href="/admin?action=logout">
                                 <i class="bi bi-box-arrow-right me-2"></i>
-                                Abmelden
+                                <?= __('admin.common.logout') ?>
                             </a>
                         </li>
                     </ul>
@@ -204,9 +204,9 @@ function encodeUrlPath($path) {
                     <i class="bi bi-check-circle me-2"></i>
                     <?php
                     switch ($_GET['message']) {
-                        case 'saved': echo 'Datei wurde erfolgreich gespeichert.'; break;
-                        case 'deleted': echo 'Datei wurde erfolgreich gelöscht.'; break;
-                        default: echo 'Aktion wurde erfolgreich ausgeführt.';
+                        case 'saved': echo __('admin.alerts.saved'); break;
+                        case 'deleted': echo __('admin.alerts.deleted'); break;
+                        default: echo __('admin.alerts.success');
                     }
                     ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -218,15 +218,15 @@ function encodeUrlPath($path) {
                     <i class="bi bi-exclamation-triangle me-2"></i>
                     <?php
                     switch ($_GET['error']) {
-                        case 'save_failed': echo 'Fehler beim Speichern der Datei.'; break;
-                        case 'delete_failed': echo 'Fehler beim Löschen der Datei.'; break;
-                        case 'no_file': echo 'Keine Datei angegeben.'; break;
-                        case 'file_not_found': echo 'Datei wurde nicht gefunden.'; break;
-                        case 'no_permission': echo 'Keine Berechtigung zum Löschen.'; break;
-                        case 'invalid_file': echo 'Ungültiger Dateiname.'; break;
-                        case 'csrf_invalid': echo 'Sicherheitstoken ungültig.'; break;
-                        case 'invalid_request': echo 'Ungültige Anfrage.'; break;
-                        default: echo 'Ein Fehler ist aufgetreten.';
+                        case 'save_failed': echo __('admin.errors.save_failed'); break;
+                        case 'delete_failed': echo __('admin.errors.delete_failed'); break;
+                        case 'no_file': echo __('admin.errors.no_file'); break;
+                        case 'file_not_found': echo __('admin.errors.file_not_found'); break;
+                        case 'no_permission': echo __('admin.errors.no_permission'); break;
+                        case 'invalid_file': echo __('admin.errors.invalid_file'); break;
+                        case 'csrf_invalid': echo __('admin.errors.csrf_invalid'); break;
+                        case 'invalid_request': echo __('admin.errors.invalid_request'); break;
+                        default: echo __('admin.errors.generic');
                     }
                     ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -237,14 +237,14 @@ function encodeUrlPath($path) {
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h1 class="h3 mb-0">
                         <i class="bi bi-speedometer2 me-2 text-primary"></i>
-                        Dashboard
+                        <?= __('admin.common.dashboard') ?>
                     </h1>
                     <div class="btn-group" role="group">
                         <a href="/admin?action=new" class="btn btn-primary">
-                            <i class="bi bi-plus me-1"></i> Neue Seite
+                            <i class="bi bi-plus me-1"></i> <?= __('admin.dashboard.buttons.new_page') ?>
                         </a>
                         <a href="/admin?action=files" class="btn btn-outline-primary">
-                            <i class="bi bi-folder me-1"></i> Dateien
+                            <i class="bi bi-folder me-1"></i> <?= __('admin.dashboard.buttons.files') ?>
                         </a>
                     </div>
                 </div>
@@ -260,7 +260,7 @@ function encodeUrlPath($path) {
                                     </div>
                                     <div>
                                         <h5 class="card-title mb-1"><?= $stats['total_files'] ?></h5>
-                                        <p class="card-text text-muted small mb-0">Gesamt Seiten</p>
+                                        <p class="card-text text-muted small mb-0"><?= __('admin.dashboard.stats.total_pages') ?></p>
                                     </div>
                                 </div>
                             </div>
@@ -276,7 +276,7 @@ function encodeUrlPath($path) {
                                     </div>
                                     <div>
                                         <h5 class="card-title mb-1"><?= $stats['disk_usage'] ?></h5>
-                                        <p class="card-text text-muted small mb-0">Speicherplatz</p>
+                                        <p class="card-text text-muted small mb-0"><?= __('admin.dashboard.stats.disk_usage') ?></p>
                                     </div>
                                 </div>
                             </div>
@@ -292,7 +292,7 @@ function encodeUrlPath($path) {
                                     </div>
                                     <div>
                                         <h5 class="card-title mb-1"><?= $stats['system_info']['php_version'] ?></h5>
-                                        <p class="card-text text-muted small mb-0">PHP Version</p>
+                                        <p class="card-text text-muted small mb-0"><?= __('admin.dashboard.stats.php_version') ?></p>
                                     </div>
                                 </div>
                             </div>
@@ -308,7 +308,7 @@ function encodeUrlPath($path) {
                                     </div>
                                     <div>
                                         <h5 class="card-title mb-1"><?= $stats['system_info']['memory_limit'] ?></h5>
-                                        <p class="card-text text-muted small mb-0">Memory Limit</p>
+                                        <p class="card-text text-muted small mb-0"><?= __('admin.dashboard.stats.memory_limit') ?></p>
                                     </div>
                                 </div>
                             </div>
@@ -323,7 +323,7 @@ function encodeUrlPath($path) {
                             <div class="card-header">
                                 <h5 class="card-title mb-0">
                                     <i class="bi bi-clock-history me-2"></i>
-                                    Zuletzt bearbeitet
+                                    <?= __('admin.dashboard.recent') ?>
                                 </h5>
                             </div>
                             <div class="card-body">
@@ -332,10 +332,10 @@ function encodeUrlPath($path) {
                                     <table class="table table-hover">
                                         <thead>
                                             <tr>
-                                                <th>Datei</th>
-                                                <th>Route</th>
-                                                <th>Geändert</th>
-                                                <th width="120">Aktionen</th>
+                                                <th><?= __('admin.dashboard.columns.file') ?></th>
+                                                <th><?= __('admin.dashboard.columns.route') ?></th>
+                                                <th><?= __('admin.dashboard.columns.modified') ?></th>
+                                                <th width="120"><?= __('admin.dashboard.columns.actions') ?></th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -357,16 +357,16 @@ function encodeUrlPath($path) {
                                                 </td>
                                                 <td class="table-actions">
                                                     <a href="/admin?action=edit&file=<?= urlencode($file['route']) ?>" 
-                                                       class="btn btn-sm btn-outline-primary" title="Bearbeiten">
+                                                       class="btn btn-sm btn-outline-primary" title="<?= __('admin.dashboard.buttons.edit') ?>">
                                                         <i class="bi bi-pencil"></i>
                                                     </a>
                                                     <a href="/<?= encodeUrlPath($file['route']) ?>" 
-                                                       class="btn btn-sm btn-outline-info" target="_blank" title="Ansehen">
+                                                       class="btn btn-sm btn-outline-info" target="_blank" title="<?= __('admin.dashboard.buttons.view') ?>">
                                                         <i class="bi bi-eye"></i>
                                                     </a>
                                                     <button type="button" class="btn btn-sm btn-outline-danger" 
                                                             onclick="confirmDelete('<?= htmlspecialchars($file['route']) ?>', '<?= htmlspecialchars(basename($file['file'])) ?>')" 
-                                                            title="Löschen">
+                                                            title="<?= __('admin.dashboard.buttons.delete') ?>">
                                                         <i class="bi bi-trash"></i>
                                                     </button>
                                                 </td>
@@ -376,7 +376,7 @@ function encodeUrlPath($path) {
                                     </table>
                                 </div>
                                 <?php else: ?>
-                                <p class="text-muted mb-0">Noch keine Dateien vorhanden.</p>
+                                <p class="text-muted mb-0"><?= __('admin.dashboard.empty') ?></p>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -393,24 +393,24 @@ function encodeUrlPath($path) {
                 <div class="modal-header">
                     <h5 class="modal-title">
                         <i class="bi bi-exclamation-triangle text-danger me-2"></i>
-                        Datei löschen
+                        <?= __('admin.delete_modal.title') ?>
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p class="mb-3">Sind Sie sicher, dass Sie diese Datei löschen möchten?</p>
+                    <p class="mb-3"><?= __('admin.delete_modal.question') ?></p>
                     <div class="alert alert-warning">
                         <i class="bi bi-info-circle me-2"></i>
                         <strong id="deleteFileName"></strong><br>
-                        <small>Diese Aktion kann nicht rückgängig gemacht werden!</small>
+                        <small><?= __('admin.delete_modal.warning') ?></small>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="bi bi-x-circle me-1"></i> Abbrechen
+                        <i class="bi bi-x-circle me-1"></i> <?= __('admin.delete_modal.cancel') ?>
                     </button>
                     <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
-                        <i class="bi bi-trash me-1"></i> Ja, löschen
+                        <i class="bi bi-trash me-1"></i> <?= __('admin.delete_modal.confirm') ?>
                     </button>
                 </div>
             </div>
@@ -431,7 +431,7 @@ function encodeUrlPath($path) {
         
         function updateTimer() {
             if (timeRemaining <= 0) {
-                alert('Ihre Session ist abgelaufen. Sie werden zur Login-Seite weitergeleitet.');
+                alert('<?= __('admin.session.expired_alert') ?>');
                 window.location.href = '/admin?action=login';
                 return;
             }

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="<?= htmlspecialchars(\StaticMD\Core\I18n::getLanguage()) ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StaticMD Admin - Login</title>
+    <title><?= __('admin.brand') ?> - <?= __('admin.login.signin') ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -62,9 +62,9 @@
                     <div class="login-header">
                         <h3 class="mb-2">
                             <i class="bi bi-shield-lock me-2"></i>
-                            StaticMD Admin
+                            <?= __('admin.brand') ?>
                         </h3>
-                        <p class="mb-0">Bitte melden Sie sich an</p>
+                        <p class="mb-0"><?= __('admin.login.title') ?></p>
                     </div>
                     
                     <div class="login-form">
@@ -78,7 +78,7 @@
                         <?php if (isset($_GET['message']) && $_GET['message'] === 'logged_out'): ?>
                         <div class="alert alert-success" role="alert">
                             <i class="bi bi-check-circle me-2"></i>
-                            Sie wurden erfolgreich abgemeldet.
+                            <?= __('admin.login.logged_out') ?>
                         </div>
                         <?php endif; ?>
                         
@@ -88,7 +88,7 @@
                             <div class="mb-3">
                                 <label for="username" class="form-label">
                                     <i class="bi bi-person me-1"></i>
-                                    Benutzername
+                                    <?= __('admin.login.username') ?>
                                 </label>
                                 <input type="text" class="form-control" id="username" name="username" 
                                        required autocomplete="username" autofocus>
@@ -97,7 +97,7 @@
                             <div class="mb-4">
                                 <label for="password" class="form-label">
                                     <i class="bi bi-lock me-1"></i>
-                                    Passwort
+                                    <?= __('admin.login.password') ?>
                                 </label>
                                 <input type="password" class="form-control" id="password" name="password" 
                                        required autocomplete="current-password">
@@ -105,7 +105,7 @@
                             
                             <button type="submit" class="btn btn-primary btn-login w-100">
                                 <i class="bi bi-box-arrow-in-right me-2"></i>
-                                Anmelden
+                                <?= __('admin.login.signin') ?>
                             </button>
                         </form>
                         
@@ -114,7 +114,7 @@
                         <div class="text-center">
                             <a href="/" class="text-decoration-none">
                                 <i class="bi bi-arrow-left me-1"></i>
-                                Zurück zur Website
+                                <?= __('admin.login.back_to_site') ?>
                             </a>
                         </div>
                         
