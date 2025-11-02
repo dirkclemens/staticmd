@@ -1,5 +1,5 @@
 <?php
-$pageTitle = 'Einstellungen';
+$pageTitle = __('admin.common.settings');
 $currentUser = $this->auth->getUsername();
 $timeRemaining = $this->auth->getTimeRemaining();
 ?>
@@ -218,7 +218,7 @@ $timeRemaining = $this->auth->getTimeRemaining();
                                             <input type="text" class="form-control" id="site_name" name="site_name" 
                                                    value="<?= htmlspecialchars($settings['site_name']) ?>" 
                                                    placeholder="StaticMD" required>
-                                            <div class="form-text">Wird in der Navigation und im Titel angezeigt</div>
+                                            <div class="form-text"><?= __('admin.settings.website_name_help') ?></div>
                                         </div>
                                     </div>
                                     
@@ -228,7 +228,7 @@ $timeRemaining = $this->auth->getTimeRemaining();
                                             <input type="url" class="form-control" id="site_logo" name="site_logo" 
                                                    value="<?= htmlspecialchars($settings['site_logo']) ?>" 
                                                    placeholder="https://example.com/logo.png">
-                                            <div class="form-text">Optional: URL zu einem Logo-Bild</div>
+                                            <div class="form-text"><?= __('admin.settings.logo_url_help') ?></div>
                                         </div>
                                     </div>
                                 </div>
@@ -261,7 +261,7 @@ $timeRemaining = $this->auth->getTimeRemaining();
                                             <input type="range" class="form-range" id="recent_files_count" name="recent_files_count" 
                                                    min="5" max="50" value="<?= $settings['recent_files_count'] ?>"
                                                    oninput="document.getElementById('recent_files_value').textContent = this.value">
-                                            <div class="form-text">5-50 Dateien im "Zuletzt bearbeitet" Bereich</div>
+                                            <div class="form-text"><?= __('admin.settings.recent_files_count_help') ?></div>
                                         </div>
                                     </div>
                                     
@@ -275,7 +275,7 @@ $timeRemaining = $this->auth->getTimeRemaining();
                                             <input type="range" class="form-range" id="items_per_page" name="items_per_page" 
                                                    min="10" max="100" step="5" value="<?= $settings['items_per_page'] ?>"
                                                    oninput="document.getElementById('items_per_page_value').textContent = this.value">
-                                            <div class="form-text">10-100 Dateien im Datei-Manager</div>
+                                            <div class="form-text"><?= __('admin.settings.items_per_page_help') ?></div>
                                         </div>
                                     </div>
                                     -->
@@ -311,13 +311,13 @@ $timeRemaining = $this->auth->getTimeRemaining();
                                                 <option value="static-md" <?= ($settings['frontend_theme'] ?? '') === 'static-md' ? 'selected' : '' ?>>StaticMD</option>
                                             </select>
                                             <div class="form-text">
-                                                Wählen Sie das Aussehen Ihrer Website. Änderungen werden sofort auf der Frontend-Seite sichtbar.
+                                                <?= __('admin.settings.frontend_theme_help') ?>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label class="form-label">Theme-Vorschau</label>
+                                            <label class="form-label"><?= __('admin.settings.theme_preview') ?></label>
                                             <div class="border rounded p-3" style="background: linear-gradient(45deg, #f8f9fa 25%, transparent 25%), linear-gradient(-45deg, #f8f9fa 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f8f9fa 75%), linear-gradient(-45deg, transparent 75%, #f8f9fa 75%); background-size: 20px 20px; background-position: 0 0, 0 10px, 10px -10px, -10px 0px;">
                                                 <div class="text-center text-muted">
                                                     <i class="bi bi-eye fs-1"></i><br>
@@ -372,7 +372,7 @@ $timeRemaining = $this->auth->getTimeRemaining();
                                             <input type="range" class="form-range" id="auto_save_interval" name="auto_save_interval" 
                                                    min="30" max="300" step="30" value="<?= $settings['auto_save_interval'] ?>"
                                                    oninput="document.getElementById('auto_save_value').textContent = this.value">
-                                            <div class="form-text">30-300 Sekunden für automatisches Speichern</div>
+                                            <div class="form-text"><?= __('admin.settings.auto_save_interval_help') ?></div>
                                         </div>
                                     </div>
                                 </div>
@@ -398,12 +398,12 @@ foreach ($navOrder as $section => $priority) {
 echo htmlspecialchars(trim($orderText));
 ?></textarea>
                                             <div class="form-text">
-                                                <strong>Format:</strong> Ein Bereich pro Zeile<br>
-                                                <code>section</code> oder <code>section:priorität</code><br>
-                                                <strong>Beispiel:</strong><br>
+                                                <strong><?= __('admin.settings.navigation_format') ?></strong><br>
+                                                <code>section</code> <?= __('admin.settings.navigation_or') ?> <code>section:priorität</code><br>
+                                                <strong><?= __('admin.settings.navigation_example') ?></strong><br>
                                                 <code>about:1</code><br>
                                                 <code>blog:2</code><br>
-                                                <code>tech</code> (automatische Priorität)<br>
+                                                <code>tech</code> <?= __('admin.settings.navigation_auto') ?><br>
                                                 <code>diy</code>
                                             </div>
                                         </div>
@@ -412,11 +412,11 @@ echo htmlspecialchars(trim($orderText));
                                     <div class="col-md-4">
                                         <div class="card bg-light">
                                             <div class="card-header">
-                                                <small class="fw-bold">Aktuelle Navigation</small>
+                                                <small class="fw-bold"><?= __('admin.settings.current_navigation') ?></small>
                                             </div>
                                             <div class="card-body">
                                                 <small class="text-muted">
-                                                    Aktuelle Reihenfolge (vor Änderungen):<br><br>
+                                                    <?= __('admin.settings.current_order') ?><br><br>
                                                     <?php
                                                     // Zeige aktuelle Navigation-Sortierung
                                                     $contentPath = $this->config['paths']['content'];
@@ -468,7 +468,7 @@ echo htmlspecialchars(trim($orderText));
                                                                 echo '</div>';
                                                             }
                                                         } else {
-                                                            echo '<em>Keine Navigation-Bereiche gefunden</em>';
+                                                            echo '<em>' . __('admin.settings.no_navigation_found') . '</em>';
                                                         }
                                                     }
                                                     ?>

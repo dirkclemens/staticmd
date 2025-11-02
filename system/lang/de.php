@@ -1,7 +1,5 @@
 <?php
-
 return [
-    'lang_code' => 'de',
     'admin' => [
         'brand' => 'StaticMD Admin',
         'common' => [
@@ -80,6 +78,19 @@ return [
         ],
         'settings' => [
             'title' => 'System-Einstellungen',
+            'website_name_help' => 'Wird in der Navigation und im Seitentitel angezeigt',
+            'logo_url_help' => 'Optional: URL zu einem Logo-Bild',
+            'recent_files_count_help' => '5-50 Dateien im Bereich "Zuletzt bearbeitet"',
+            'items_per_page_help' => '10-100 Dateien im Datei-Manager',
+            'frontend_theme_help' => 'Wählen Sie das Aussehen Ihrer Website. Änderungen sind sofort sichtbar.',
+            'auto_save_interval_help' => '30-300 Sekunden für automatisches Speichern',
+            'navigation_format' => 'Format:',
+            'navigation_or' => 'oder',
+            'navigation_example' => 'Beispiel:',
+            'navigation_auto' => '(automatische Priorität)',
+            'current_navigation' => 'Aktuelle Navigation',
+            'current_order' => 'Aktuelle Reihenfolge (vor Änderungen):',
+            'no_navigation_found' => 'Keine Navigation-Bereiche gefunden',
             'website' => 'Website-Einstellungen',
             'website_name' => 'Website-Name',
             'logo_url' => 'Logo-URL',
@@ -99,6 +110,67 @@ return [
             'save_settings' => 'Einstellungen speichern',
             'language' => 'Sprache',
             'language_help' => 'Sprache für die Admin-Oberfläche wählen'
+        ],
+        'error' => [
+            'title' => 'Fehler',
+            'oops' => 'Oops! Ein Fehler ist aufgetreten',
+            'sorry' => 'Es tut uns leid, aber etwas ist schiefgelaufen.',
+            'details' => 'Fehlerdetails:',
+            'message' => 'Nachricht:',
+            'file' => 'Datei:',
+            'line' => 'Zeile',
+            'back_to_admin' => 'Zurück zum Admin',
+            'back_to_home' => 'Zur Startseite'
+        ],
+        'files' => [
+            'title' => 'Datei-Manager',
+            'manage_description' => 'Verwalten Sie alle Ihre Markdown-Dateien',
+            'search_placeholder' => 'Dateien durchsuchen...',
+            'new_page' => 'Neue Seite',
+            'selected_count' => 'Dateien ausgewählt',
+            'delete_selected' => 'Ausgewählte löschen',
+            'no_file_specified' => 'Keine Datei angegeben.',
+            'invalid_filename' => 'Ungültiger Dateiname.',
+            'no_delete_permission' => 'Keine Berechtigung zum Löschen der Datei.',
+            'changes_saved' => 'Änderungen wurden gespeichert und Sie sind zum Dateimanager zurückgekehrt.',
+            'view' => 'Ansehen',
+            'edit' => 'Bearbeiten'
+        ],
+        'editor' => [
+            'file_route_placeholder' => 'z.B. meine-seite oder blog/artikel',
+            'title_placeholder' => 'Seitentitel',
+            'titleslug_placeholder' => 'Titel für Dateiname',
+            'author_placeholder' => 'Autor(en), kommagetrennt',
+            'tags_placeholder' => 'Tags, kommagetrennt',      
+            'page_settings' => 'Seiten-Einstellungen',
+            'file_route' => 'Datei / Route',
+            'file_route_help' => 'URL der Seite (ohne .md)',
+            'title' => 'Title / Titel',
+            'titleslug' => 'TitleSlug',
+            'layout' => 'Layout',
+            'layout_standard' => 'Standard',
+            'layout_wiki' => 'Wiki',
+            'layout_blog' => 'Blog',
+            'layout_page' => 'Page',
+            'author' => 'Author / Autor',
+            'tags' => 'Tag / Tags',
+            'visibility' => 'Sichtbarkeit',
+            'visibility_public' => 'Öffentlich',
+            'visibility_private' => 'Privat (nur Admin)',
+            'visibility_help' => 'Private Seiten sind nur für angemeldete Admins sichtbar',
+            'additional_meta' => 'Zusätzliche Metadaten:',
+            'date' => 'Datum',
+            'description' => 'Beschreibung (SEO)',
+            'description_placeholder' => 'SEO-Beschreibung',
+            'view_page' => 'Seite ansehen',
+            'delete_file' => 'Datei löschen',
+            'new_page_create' => 'Neue Seite erstellen',
+            'page_edit' => 'Seite bearbeiten',
+            'preview' => 'Vorschau',
+            'toolbar' => 'Editor Toolbar',
+            'fullscreen' => 'Vollbild',
+            'preview_loading' => 'Vorschau wird geladen...',
+            'delete_confirm' => 'Sind Sie sicher, dass Sie die Datei löschen möchten?'
         ]
     ]
 ];

@@ -262,92 +262,92 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
                 <div class="col-lg-3">
                     <div class="card editor-container mb-4">
                         <div class="card-header">
-                            <h5 class="card-title mb-0">
-                                <i class="bi bi-gear me-2"></i>
-                                Seiten-Einstellungen
-                            </h5>
+                                <h5 class="card-title mb-0">
+                                    <i class="bi bi-gear me-2"></i>
+                                    <?= __('admin.editor.page_settings') ?>
+                                </h5>
                         </div>
                         <div class="card-body meta-form">
                             <div class="mb-3">
-                                <label for="file" class="form-label fw-bold">Datei / Route</label>
+                                <label for="file" class="form-label fw-bold"><?= __('admin.editor.file_route') ?></label>
                                 <input type="text" class="form-control" id="file" name="file" 
                                        value="<?= htmlspecialchars($file) ?>" 
-                                       placeholder="z.B. meine-seite oder blog/artikel" required>
-                                <div class="form-text">URL der Seite (ohne .md)</div>
+                                       placeholder="<?= __('admin.editor.file_route_placeholder') ?>" required>
+                                <div class="form-text"><?= __('admin.editor.file_route_help') ?></div>
                             </div>
                             
                             <div class="mb-3">
-                                <label for="title" class="form-label fw-bold">Title / Titel</label>
+                                <label for="title" class="form-label fw-bold"><?= __('admin.editor.title') ?></label>
                                 <input type="text" class="form-control" id="title" name="meta[Title]" 
                                        value="<?= htmlspecialchars($meta['Title'] ?? $meta['title'] ?? '') ?>" 
-                                       placeholder="Seitentitel">                                
+                                       placeholder="<?= __('admin.editor.title_placeholder') ?>">
                             </div>
                             
                             <div class="mb-3">
-                                <label for="titleslug" class="form-label fw-bold">TitleSlug</label>
+                                <label for="titleslug" class="form-label fw-bold"><?= __('admin.editor.titleslug') ?></label>
                                 <input type="text" class="form-control" id="titleslug" name="meta[TitleSlug]" 
                                        value="<?= htmlspecialchars($meta['TitleSlug'] ?? $meta['titleslug'] ?? '') ?>" 
-                                       placeholder="Titel für Dateiname">
+                                       placeholder="<?= __('admin.editor.titleslug_placeholder') ?>">
                             </div>
                             
                             <div class="mb-3">
-                                <label for="layout" class="form-label fw-bold">Layout</label>
+                                <label for="layout" class="form-label fw-bold"><?= __('admin.editor.layout') ?></label>
                                 <select class="form-select" id="layout" name="meta[Layout]">
-                                    <option value="">Standard</option>
-                                    <option value="wiki" <?= ($meta['Layout'] ?? $meta['layout'] ?? '') === 'wiki' ? 'selected' : '' ?>>Wiki</option>
-                                    <option value="blog" <?= ($meta['Layout'] ?? $meta['layout'] ?? '') === 'blog' ? 'selected' : '' ?>>Blog</option>
-                                    <option value="page" <?= ($meta['Layout'] ?? $meta['layout'] ?? '') === 'page' ? 'selected' : '' ?>>Page</option>
+                                    <option value=""><?= __('admin.editor.layout_standard') ?></option>
+                                    <option value="wiki" <?= ($meta['Layout'] ?? $meta['layout'] ?? '') === 'wiki' ? 'selected' : '' ?>><?= __('admin.editor.layout_wiki') ?></option>
+                                    <option value="blog" <?= ($meta['Layout'] ?? $meta['layout'] ?? '') === 'blog' ? 'selected' : '' ?>><?= __('admin.editor.layout_blog') ?></option>
+                                    <option value="page" <?= ($meta['Layout'] ?? $meta['layout'] ?? '') === 'page' ? 'selected' : '' ?>><?= __('admin.editor.layout_page') ?></option>
                                 </select>
                             </div>
                             
                             <div class="mb-3">
-                                <label for="author" class="form-label fw-bold">Author / Autor</label>
+                                <label for="author" class="form-label fw-bold"><?= __('admin.editor.author') ?></label>
                                 <input type="text" class="form-control" id="author" name="meta[Author]" 
                                        value="<?= htmlspecialchars($meta['Author'] ?? $meta['author'] ?? '') ?>" 
-                                       placeholder="Autor(en), kommagetrennt">
+                                       placeholder="<?= __('admin.editor.author_placeholder') ?>">
                             </div>
                             
                             <div class="mb-3">
-                                <label for="tag" class="form-label fw-bold">Tag / Tags</label>
+                                <label for="tag" class="form-label fw-bold"><?= __('admin.editor.tags') ?></label>
                                 <input type="text" class="form-control" id="tag" name="meta[Tag]" 
                                        value="<?= htmlspecialchars($meta['Tag'] ?? $meta['tags'] ?? '') ?>" 
-                                       placeholder="Tags, kommagetrennt">
+                                       placeholder="<?= __('admin.editor.tags_placeholder') ?>">
                             </div>
                             
                             <div class="mb-3">
-                                <label for="visibility" class="form-label fw-bold">Sichtbarkeit</label>
+                                <label for="visibility" class="form-label fw-bold"><?= __('admin.editor.visibility') ?></label>
                                 <select class="form-select" id="visibility" name="meta[Visibility]">
-                                    <option value="public" <?= ($meta['Visibility'] ?? $meta['visibility'] ?? 'public') === 'public' ? 'selected' : '' ?>>Öffentlich</option>
-                                    <option value="private" <?= ($meta['Visibility'] ?? $meta['visibility'] ?? 'public') === 'private' ? 'selected' : '' ?>>Privat (nur Admin)</option>
+                                    <option value="public" <?= ($meta['Visibility'] ?? $meta['visibility'] ?? 'public') === 'public' ? 'selected' : '' ?>><?= __('admin.editor.visibility_public') ?></option>
+                                    <option value="private" <?= ($meta['Visibility'] ?? $meta['visibility'] ?? 'public') === 'private' ? 'selected' : '' ?>><?= __('admin.editor.visibility_private') ?></option>
                                 </select>
-                                <div class="form-text">Private Seiten sind nur für angemeldete Admins sichtbar</div>
+                                <div class="form-text"><?= __('admin.editor.visibility_help') ?></div>
                             </div>
                             
                             <hr class="my-3">
-                            <small class="text-muted">Zusätzliche Metadaten:</small>
+                            <small class="text-muted"><?= __('admin.editor.additional_meta') ?></small>
                             
                             <div class="mb-3">
-                                <label for="date" class="form-label fw-bold">Datum</label>
+                                <label for="date" class="form-label fw-bold"><?= __('admin.editor.date') ?></label>
                                 <input type="date" class="form-control" id="date" name="meta[date]" 
                                        value="<?= htmlspecialchars($meta['date'] ?? '') ?>">
                             </div>
                             
                             <div class="mb-3">
-                                <label for="description" class="form-label fw-bold">Beschreibung (SEO)</label>
+                                <label for="description" class="form-label fw-bold"><?= __('admin.editor.description') ?></label>
                                 <textarea class="form-control" id="description" name="meta[description]" 
-                                          rows="2" placeholder="SEO-Beschreibung"><?= htmlspecialchars($meta['description'] ?? '') ?></textarea>
+                                          rows="2" placeholder="<?= __('admin.editor.description_placeholder') ?>"><?= htmlspecialchars($meta['description'] ?? '') ?></textarea>
                             </div>
                             
                             <?php if (!$isNewFile): ?>
                             <div class="mb-3">
                                 <a href="/<?= htmlspecialchars($file) ?>" class="btn btn-outline-info btn-sm w-100" target="_blank">
-                                    <i class="bi bi-eye me-1"></i> Seite ansehen
+                                    <i class="bi bi-eye me-1"></i> <?= __('admin.editor.view_page') ?>
                                 </a>
                             </div>
                             <div class="mb-3">
                                 <button type="button" class="btn btn-outline-danger btn-sm w-100" 
                                         onclick="confirmDelete('<?= htmlspecialchars($file) ?>')">
-                                    <i class="bi bi-trash me-1"></i> Datei löschen
+                                    <i class="bi bi-trash me-1"></i> <?= __('admin.editor.delete_file') ?>
                                 </button>
                             </div>
                             <?php endif; ?>
@@ -362,7 +362,7 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
                             <div>
                                 <h5 class="card-title mb-0">
                                     <i class="bi bi-pencil me-2"></i>
-                                    <?= $isNewFile ? 'Neue Seite erstellen' : 'Seite bearbeiten' ?>
+                                    <?= $isNewFile ? __('admin.editor.new_page_create') : __('admin.editor.page_edit') ?>
                                 </h5>
                             </div>
                             
@@ -371,7 +371,7 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
                                     <i class="bi bi-code me-1"></i> Editor
                                 </button>
                                 <button type="button" class="btn btn-outline-secondary btn-sm" id="previewTab">
-                                    <i class="bi bi-eye me-1"></i> Vorschau
+                                    <i class="bi bi-eye me-1"></i> <?= __('admin.editor.preview') ?>
                                 </button>
                                 <button type="button" class="btn btn-outline-info btn-sm" id="splitTab">
                                     <i class="bi bi-layout-split me-1"></i> Split
@@ -517,14 +517,14 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
                             </div>
                             
                             <div class="float-end">
-                                <button type="button" class="btn btn-outline-info btn-sm" id="fullscreenBtn" title="Vollbild">
+                                <button type="button" class="btn btn-outline-info btn-sm" id="fullscreenBtn" title="<?= __('admin.editor.fullscreen') ?>">
                                     <i class="bi bi-arrows-fullscreen"></i>
                                 </button>
                                 <button type="button" class="btn btn-outline-secondary btn-sm" onclick="cancelEdit()">
-                                    <i class="bi bi-x-circle me-1"></i> Abbrechen
+                                    <i class="bi bi-x-circle me-1"></i> <?= __('admin.common.cancel') ?>
                                 </button>
                                 <button type="submit" class="btn btn-success btn-sm">
-                                    <i class="bi bi-floppy me-1"></i> Speichern
+                                    <i class="bi bi-floppy me-1"></i> <?= __('admin.common.save') ?>
                                 </button>
                             </div>
                         </div>
@@ -536,10 +536,10 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
                                     <textarea id="contentEditor" name="content" style="display:none;"><?= htmlspecialchars($content) ?></textarea>
                                 </div>
                                 
-                                <!-- Vorschau -->
+                                <!-- <?= __('admin.editor.preview') ?> -->
                                 <div class="col-6 d-none" id="previewColumn">
                                     <div class="preview-content" id="previewContent">
-                                        <p class="text-muted">Vorschau wird geladen...</p>
+                                        <p class="text-muted"><?= __('admin.editor.preview_loading') ?></p>
                                     </div>
                                 </div>
                             </div>
@@ -939,18 +939,18 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
                 <div class="modal-header">
                     <h5 class="modal-title">
                         <i class="bi bi-exclamation-triangle text-warning me-2"></i>
-                        Datei löschen
+                        <?= __('admin.delete_modal.title') ?>
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Sind Sie sicher, dass Sie die Datei <strong id="deleteFileName"></strong> löschen möchten?</p>
-                    <p class="text-muted">Diese Aktion kann nicht rückgängig gemacht werden.</p>
+                    <p><?= __('admin.editor.delete_confirm') ?> <strong id="deleteFileName"></strong>?</p>
+                    <p class="text-muted"><?= __('admin.delete_modal.warning') ?></p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= __('admin.common.cancel') ?></button>
                     <button type="button" class="btn btn-danger" onclick="executeDelete()">
-                        <i class="bi bi-trash me-1"></i> Löschen
+                        <i class="bi bi-trash me-1"></i> <?= __('admin.common.delete') ?>
                     </button>
                 </div>
             </div>

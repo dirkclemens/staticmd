@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="<?= htmlspecialchars(\StaticMD\Core\I18n::getLanguage()) ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StaticMD Admin - Fehler</title>
+    <title><?= __('admin.brand') ?> - <?= __('admin.error.title') ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -43,25 +43,25 @@
                         <i class="bi bi-exclamation-triangle"></i>
                     </div>
                     
-                    <h1 class="display-4 mb-3">Oops! Ein Fehler ist aufgetreten</h1>
-                    <p class="lead">Es tut uns leid, aber etwas ist schiefgelaufen.</p>
+                    <h1 class="display-4 mb-3"><?= __('admin.error.oops') ?></h1>
+                    <p class="lead"><?= __('admin.error.sorry') ?></p>
                     
                     <?php if (isset($e)): ?>
                     <div class="error-details">
-                        <h5>Fehlerdetails:</h5>
-                        <p class="mb-2"><strong>Nachricht:</strong> <?= htmlspecialchars($e->getMessage()) ?></p>
-                        <p class="mb-0"><strong>Datei:</strong> <?= htmlspecialchars($e->getFile()) ?> (Zeile <?= $e->getLine() ?>)</p>
+                        <h5><?= __('admin.error.details') ?></h5>
+                        <p class="mb-2"><strong><?= __('admin.error.message') ?></strong> <?= htmlspecialchars($e->getMessage()) ?></p>
+                        <p class="mb-0"><strong><?= __('admin.error.file') ?>:</strong> <?= htmlspecialchars($e->getFile()) ?> (<?= __('admin.error.line') ?> <?= $e->getLine() ?>)</p>
                     </div>
                     <?php endif; ?>
                     
                     <div class="mt-4">
                         <a href="/admin" class="btn btn-light btn-lg me-3">
                             <i class="bi bi-arrow-left me-2"></i>
-                            Zurück zum Admin
+                            <?= __('admin.error.back_to_admin') ?>
                         </a>
                         <a href="/" class="btn btn-outline-light btn-lg">
                             <i class="bi bi-house me-2"></i>
-                            Zur Startseite
+                            <?= __('admin.error.back_to_home') ?>
                         </a>
                     </div>
                 </div>

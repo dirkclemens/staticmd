@@ -1,7 +1,5 @@
 <?php
-
 return [
-    'lang_code' => 'en',
     'admin' => [
         'brand' => 'StaticMD Admin',
         'common' => [
@@ -80,6 +78,19 @@ return [
         ],
         'settings' => [
             'title' => 'System settings',
+            'website_name_help' => 'Displayed in navigation and page title',
+            'logo_url_help' => 'Optional: URL to a logo image',
+            'recent_files_count_help' => '5-50 files in "Recently edited" section',
+            'items_per_page_help' => '10-100 files in file manager',
+            'frontend_theme_help' => 'Choose the look of your website. Changes are visible immediately.',
+            'auto_save_interval_help' => '30-300 seconds for auto-save',
+            'navigation_format' => 'Format:',
+            'navigation_or' => 'or',
+            'navigation_example' => 'Example:',
+            'navigation_auto' => '(automatic priority)',
+            'current_navigation' => 'Current navigation',
+            'current_order' => 'Current order (before changes):',
+            'no_navigation_found' => 'No navigation sections found',
             'website' => 'Website settings',
             'website_name' => 'Website name',
             'logo_url' => 'Logo URL',
@@ -99,6 +110,67 @@ return [
             'save_settings' => 'Save settings',
             'language' => 'Language',
             'language_help' => 'Choose the language for the admin interface'
+        ],
+        'error' => [
+            'title' => 'Error',
+            'oops' => 'Oops! An error occurred',
+            'sorry' => 'We\'re sorry, but something went wrong.',
+            'details' => 'Error details:',
+            'message' => 'Message:',
+            'file' => 'File:',
+            'line' => 'Line',
+            'back_to_admin' => 'Back to Admin',
+            'back_to_home' => 'Back to Homepage'
+        ],
+        'files' => [
+            'title' => 'File Manager',
+            'manage_description' => 'Manage all your Markdown files',
+            'search_placeholder' => 'Search files...',
+            'new_page' => 'New page',
+            'selected_count' => 'files selected',
+            'delete_selected' => 'Delete selected',
+            'no_file_specified' => 'No file specified.',
+            'invalid_filename' => 'Invalid filename.',
+            'no_delete_permission' => 'No permission to delete the file.',
+            'changes_saved' => 'Changes have been saved and you have returned to the file manager.',
+            'view' => 'View',
+            'edit' => 'Edit'
+        ],
+        'editor' => [
+            'file_route_placeholder' => 'e.g. my-page or blog/article',
+            'title_placeholder' => 'Page title',
+            'titleslug_placeholder' => 'Title for filename',
+            'author_placeholder' => 'Author(s), comma separated',
+            'tags_placeholder' => 'Tags, comma separated',
+            'page_settings' => 'Page settings',
+            'file_route' => 'File / Route',
+            'file_route_help' => 'URL of the page (without .md)',
+            'title' => 'Title',
+            'titleslug' => 'TitleSlug',
+            'layout' => 'Layout',
+            'layout_standard' => 'Standard',
+            'layout_wiki' => 'Wiki',
+            'layout_blog' => 'Blog',
+            'layout_page' => 'Page',
+            'author' => 'Author',
+            'tags' => 'Tag / Tags',
+            'visibility' => 'Visibility',
+            'visibility_public' => 'Public',
+            'visibility_private' => 'Private (admin only)',
+            'visibility_help' => 'Private pages are only visible to logged-in admins',
+            'additional_meta' => 'Additional metadata:',
+            'date' => 'Date',
+            'description' => 'Description (SEO)',
+            'description_placeholder' => 'SEO description',
+            'view_page' => 'View page',
+            'delete_file' => 'Delete file',
+            'new_page_create' => 'Create new page',
+            'page_edit' => 'Edit page',
+            'preview' => 'Preview',
+            'toolbar' => 'Editor Toolbar',
+            'fullscreen' => 'Fullscreen',
+            'preview_loading' => 'Preview loading...',
+            'delete_confirm' => 'Are you sure you want to delete the file?'
         ]
     ]
 ];

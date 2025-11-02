@@ -1,5 +1,5 @@
 <?php
-$pageTitle = 'Datei-Manager';
+$pageTitle = __('admin.files.title');
 $currentUser = $this->auth->getUsername();
 $timeRemaining = $this->auth->getTimeRemaining();
 
@@ -11,11 +11,11 @@ function encodeUrlPath($path) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="de">
+<html lang="<?= htmlspecialchars(\StaticMD\Core\I18n::getLanguage()) ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StaticMD Admin - Dateien</title>
+    <title><?= __('admin.brand') ?> - <?= __('admin.common.files') ?></title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
@@ -146,16 +146,16 @@ function encodeUrlPath($path) {
                         <div>
                             <h5 class="card-title mb-0">
                                 <i class="bi bi-folder me-2"></i>
-                                Datei-Manager
+                                <?= __('admin.files.title') ?>
                             </h5>
-                            <small class="text-muted">Verwalten Sie alle Ihre Markdown-Dateien<br />&nbsp;</small>
+                            <small class="text-muted"><?= __('admin.files.manage_description') ?><br />&nbsp;</small>
                         </div>
                         
                         <div class="d-flex gap-2">
                             <input type="text" class="form-control search-box" id="searchFiles" 
-                                   placeholder="Dateien durchsuchen..." style="width: 250px;">
+                                   placeholder="<?= __('admin.files.search_placeholder') ?>" style="width: 250px;">
                             <a href="/admin?action=new&return_url=<?= urlencode('/admin?action=files') ?>" class="btn btn-primary">
-                                <i class="bi bi-plus me-1"></i> Neue Seite
+                                <i class="bi bi-plus me-1"></i> <?= __('admin.files.new_page') ?>
                             </a>
                         </div>
                     </div>
@@ -163,10 +163,10 @@ function encodeUrlPath($path) {
                     <!-- Bulk Actions -->
                     <div class="bulk-actions" id="bulkActions">
                         <div class="d-flex justify-content-between align-items-center">
-                            <span id="selectedCount">0 Dateien ausgewählt</span>
+                            <span id="selectedCount">0 <?= __('admin.files.selected_count') ?></span>
                             <div>
                                 <button class="btn btn-outline-danger btn-sm" id="bulkDelete">
-                                    <i class="bi bi-trash me-1"></i> Ausgewählte löschen
+                                    <i class="bi bi-trash me-1"></i> <?= __('admin.files.delete_selected') ?>
                                 </button>
                                 <button class="btn btn-outline-secondary btn-sm" id="deselectAll">
                                     <i class="bi bi-x-circle me-1"></i> Auswahl aufheben
@@ -201,22 +201,22 @@ function encodeUrlPath($path) {
                             <?php
                             switch ($_GET['error']) {
                                 case 'csrf_invalid':
-                                    echo 'Sicherheitstoken ungültig. Bitte versuchen Sie es erneut.';
+                                    echo __('admin.errors.csrf_invalid');
                                     break;
                                 case 'no_file':
-                                    echo 'Keine Datei angegeben.';
+                                    echo __('admin.files.no_file_specified');
                                     break;
                                 case 'invalid_file':
-                                    echo 'Ungültiger Dateiname.';
+                                    echo __('admin.files.invalid_filename');
                                     break;
                                 case 'file_not_found':
-                                    echo 'Datei wurde nicht gefunden.';
+                                    echo __('admin.errors.file_not_found');
                                     break;
                                 case 'no_permission':
-                                    echo 'Keine Berechtigung zum Löschen der Datei.';
+                                    echo __('admin.files.no_delete_permission');
                                     break;
                                 case 'delete_failed':
-                                    echo 'Fehler beim Löschen der Datei.';
+                                    echo __('admin.errors.delete_failed');
                                     break;
                                 default:
                                     echo htmlspecialchars($_GET['error']);
@@ -229,7 +229,7 @@ function encodeUrlPath($path) {
                     <?php if (isset($_GET['saved'])): ?>
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
                             <i class="bi bi-check-circle me-2"></i>
-                            Änderungen wurden gespeichert und Sie sind zum Dateimanager zurückgekehrt.
+                            <?= __('admin.files.changes_saved') ?>
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
                     <?php endif; ?>
@@ -279,16 +279,16 @@ function encodeUrlPath($path) {
                                                         <div class="file-actions">
                                                             <div class="btn-group btn-group-sm" role="group">
                                                                 <a href="/<?= encodeUrlPath($file['route']) ?>" 
-                                                                   class="btn btn-outline-info" target="_blank" title="Ansehen">
+                                                                   class="btn btn-outline-info" target="_blank" title="<?= __('admin.files.view') ?>">
                                                                     <i class="bi bi-eye"></i>
                                                                 </a>
                                                                 <a href="/admin?action=edit&file=<?= urlencode($file['route']) ?>&return_url=<?= urlencode('/admin?action=files') ?>" 
-                                                                   class="btn btn-outline-primary" title="Bearbeiten">
+                                                                   class="btn btn-outline-primary" title="<?= __('admin.files.edit') ?>">
                                                                     <i class="bi bi-pencil"></i>
                                                                 </a>
                                                                 <button class="btn btn-outline-danger" 
                                                                         onclick="confirmDelete('<?= htmlspecialchars($file['route']) ?>')" 
-                                                                        title="Löschen">
+                                                                        title="<?= __('admin.common.delete') ?>">
                                                                     <i class="bi bi-trash"></i>
                                                                 </button>
                                                             </div>
@@ -416,7 +416,7 @@ function encodeUrlPath($path) {
             
             if (count > 0) {
                 bulkActions.classList.add('show');
-                selectedCount.textContent = `${count} Datei${count > 1 ? 'en' : ''} ausgewählt`;
+                selectedCount.textContent = `${count} <?= __('admin.files.selected_count') ?>`;
             } else {
                 bulkActions.classList.remove('show');
             }
