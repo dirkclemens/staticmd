@@ -25,7 +25,7 @@ return [
     'admin' => [
         'username' => 'dirk',
         'password' => '$2y$10$/lqmtxQzJatB6r5/lEQGf.6McMaRpwNCCiF0QTep3jQlewqW1JO9G',
-        'session_timeout' => 28800
+        'session_timeout' => 7200 // 2 Stunden
     ],
     
     // Theme Einstellungen

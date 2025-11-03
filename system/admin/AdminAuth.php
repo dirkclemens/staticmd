@@ -79,6 +79,8 @@ class AdminAuth
             header('Location: /admin?action=login');
             exit;
         }
+        // Timeout bei jedem Request zurücksetzen
+        $_SESSION['admin_login_time'] = time();
     }
 
     /**
