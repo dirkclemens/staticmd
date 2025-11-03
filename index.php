@@ -27,12 +27,24 @@ date_default_timezone_set($config['system']['timezone']);
 // Session starten
 session_start();
 
+
 // Core-Klassen einbinden
+require_once __DIR__ . '/system/core/I18n.php';
 require_once __DIR__ . '/system/core/Router.php';
 require_once __DIR__ . '/system/core/MarkdownParser.php';
 require_once __DIR__ . '/system/core/ContentLoader.php';
 require_once __DIR__ . '/system/core/TemplateEngine.php';
 require_once __DIR__ . '/system/core/Application.php';
+
+// Settings laden
+$settingsFile = __DIR__ . '/system/settings.json';
+$settings = [];
+if (file_exists($settingsFile)) {
+    $settings = json_decode(file_get_contents($settingsFile), true);
+}
+$language = $settings['language'] ?? ($config['admin']['language'] ?? 'de');
+// I18n initialisieren
+\StaticMD\Core\I18n::init($language, __DIR__ . '/system/lang');
 
 use StaticMD\Core\Application;
 

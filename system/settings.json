@@ -14,5 +14,6 @@
         "help": 4,
         "about": 5
     },
-    "language": "en"
+    "language": "en",
+    "search_result_limit": 200
 }

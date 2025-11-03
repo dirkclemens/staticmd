@@ -1,5 +1,17 @@
 <?php
 return [
+    'core' => [
+        '404_title' => 'Page not found',
+        '404_message' => 'The requested page could not be found.',
+        'search_title' => 'Search',
+        'search_results_title' => 'Search results for "%s"',
+        'search_description' => 'Search all content for keywords',
+        'tags_title' => 'All tags',
+        'tags_overview_title' => 'All tags - overview',
+        'tags_overview_description' => 'Overview of all used tags with number of pages',
+        'tag_title' => 'Tag: %s',
+        'tag_description' => 'All pages with the tag "%s"',
+    ],
     'admin' => [
         'brand' => 'StaticMD Admin',
         'common' => [
@@ -30,6 +42,10 @@ return [
             'deleted' => 'File deleted successfully.',
             'success' => 'Action completed successfully.',
             'settings_saved' => 'Settings have been saved successfully.'
+            ],
+        'search' => [
+            'result_limit_label' => 'Maximum number of search results',
+            'result_limit_help' => 'Limits the number of search results shown per query.'
         ],
         'errors' => [
             'save_failed' => 'Error saving file.',

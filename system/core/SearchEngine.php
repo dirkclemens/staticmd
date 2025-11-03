@@ -29,7 +29,7 @@ class SearchEngine
     /**
      * Durchsucht alle Markdown-Dateien nach einem Begriff
      */
-    public function search(string $query, int $limit = 50): array
+    public function search(string $query, int $limit = null): array
     {
         if (empty(trim($query))) {
             return [];
@@ -39,6 +39,21 @@ class SearchEngine
         $results = [];
         $contentDir = $this->config['paths']['content'];
         $extension = $this->config['markdown']['file_extension'];
+
+        // Limit aus Settings holen, falls nicht explizit übergeben
+        if ($limit === null) {
+            $settingsFile = $this->config['paths']['system'] . '/settings.json';
+            if (file_exists($settingsFile)) {
+                $settings = json_decode(file_get_contents($settingsFile), true);
+                if (isset($settings['search_result_limit'])) {
+                    $limit = (int)$settings['search_result_limit'];
+                } else {
+                    $limit = 50;
+                }
+            } else {
+                $limit = 50;
+            }
+        }
 
         // Alle Dateien rekursiv durchsuchen
         $this->searchInDirectory($contentDir, $contentDir, $extension, $query, $results, $limit);

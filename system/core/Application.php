@@ -53,8 +53,8 @@ class Application
         if ($content === null) {
             http_response_code(404);
             $content = [
-                'title' => 'Seite nicht gefunden',
-                'content' => '<h1>404 - Seite nicht gefunden</h1><p>Die angeforderte Seite konnte nicht gefunden werden.</p>'
+                'title' => I18n::t('core.404_title'),
+                'content' => '<h1>404 - ' . I18n::t('core.404_title') . '</h1><p>' . I18n::t('core.404_message') . '</p>'
             ];
         } else {
             // Prüfen ob Seite privat ist und Benutzer nicht angemeldet
@@ -62,8 +62,8 @@ class Application
             if ($visibility === 'private' && !$this->isAdminLoggedIn()) {
                 http_response_code(404);
                 $content = [
-                    'title' => 'Seite nicht gefunden',
-                    'content' => '<h1>404 - Seite nicht gefunden</h1><p>Die angeforderte Seite konnte nicht gefunden werden.</p>'
+                    'title' => I18n::t('core.404_title'),
+                    'content' => '<h1>404 - ' . I18n::t('core.404_title') . '</h1><p>' . I18n::t('core.404_message') . '</p>'
                 ];
             }
         }
@@ -92,10 +92,20 @@ class Application
         
         $results = [];
         $searchTime = 0;
-        
+
+        // Limit aus Settings laden
+        $settingsFile = $this->config['paths']['system'] . '/settings.json';
+        $limit = 50;
+        if (file_exists($settingsFile)) {
+            $settings = json_decode(file_get_contents($settingsFile), true);
+            if (isset($settings['search_result_limit'])) {
+                $limit = (int)$settings['search_result_limit'];
+            }
+        }
+
         if (!empty(trim($query))) {
             $startTime = microtime(true);
-            $results = $searchEngine->search($query, 50);
+            $results = $searchEngine->search($query, $limit);
             $searchTime = microtime(true) - $startTime;
         }
         
@@ -103,11 +113,11 @@ class Application
         $searchHTML = $searchEngine->generateSearchResultsHTML($results, $query, $searchTime);
         
         $content = [
-            'title' => empty($query) ? 'Suche' : 'Suchergebnisse für "' . $query . '"',
+            'title' => empty($query) ? I18n::t('core.search_title') : sprintf(I18n::t('core.search_results_title'), $query),
             'content' => $searchHTML,
             'meta' => [
-                'title' => empty($query) ? 'Suche' : 'Suchergebnisse für "' . $query . '"',
-                'description' => 'Durchsuchen Sie alle Inhalte nach Begriffen',
+                'title' => empty($query) ? I18n::t('core.search_title') : sprintf(I18n::t('core.search_results_title'), $query),
+                'description' => I18n::t('core.search_description'),
                 'search_results' => true,
                 'search_query' => $query,
                 'search_count' => count($results)
@@ -142,11 +152,11 @@ class Application
         $tagHTML = $searchEngine->generateAllTagsHTML($allTags, $searchTime);
         
         $content = [
-            'title' => 'Alle Tags',
+            'title' => I18n::t('core.tags_title'),
             'content' => $tagHTML,
             'meta' => [
-                'title' => 'Alle Tags - Übersicht',
-                'description' => 'Übersicht aller verwendeten Tags mit Anzahl der Seiten',
+                'title' => I18n::t('core.tags_overview_title'),
+                'description' => I18n::t('core.tags_overview_description'),
                 'tag_overview' => true,
                 'tag_count' => count($allTags)
             ]
@@ -189,11 +199,11 @@ class Application
         $tagHTML = $searchEngine->generateTagPageHTML($results, $tagName, $searchTime);
         
         $content = [
-            'title' => 'Tag: ' . $tagName,
+            'title' => sprintf(I18n::t('core.tag_title'), $tagName),
             'content' => $tagHTML,
             'meta' => [
-                'title' => 'Tag: ' . $tagName,
-                'description' => 'Alle Seiten mit dem Tag "' . $tagName . '"',
+                'title' => sprintf(I18n::t('core.tag_title'), $tagName),
+                'description' => sprintf(I18n::t('core.tag_description'), $tagName),
                 'tag_page' => true,
                 'tag_name' => $tagName,
                 'result_count' => count($results)

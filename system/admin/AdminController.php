@@ -594,7 +594,8 @@ class AdminController
             'show_file_stats' => isset($_POST['show_file_stats']),
             'auto_save_interval' => max(30, min(300, (int)($_POST['auto_save_interval'] ?? 60))),
             'navigation_order' => $this->parseNavigationOrder($_POST['navigation_order'] ?? ''),
-            'language' => $lang
+            'language' => $lang,
+            'search_result_limit' => max(10, min(200, (int)($_POST['search_result_limit'] ?? 50)))
         ];
         
         if ($this->saveSettingsToFile($settings)) {
@@ -626,7 +627,8 @@ class AdminController
                 'tech' => 3,
                 'diy' => 4
             ],
-            'language' => 'en'
+            'language' => 'en',
+            'search_result_limit' => 50
         ];
         
         if (file_exists($settingsFile)) {

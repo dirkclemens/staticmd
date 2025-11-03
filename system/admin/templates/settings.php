@@ -173,6 +173,12 @@ $timeRemaining = $this->auth->getTimeRemaining();
                             <i class="bi bi-gear me-2"></i>
                             <?= __('admin.settings.title') ?>
                         </h4>
+                        <div class="d-flex justify-content-end align-items-center mt-2 mb-1">
+                            <a href="/admin" class="btn btn-secondary me-2"><?= __('admin.common.cancel') ?></a>
+                            <button type="submit" form="settings-form" class="btn btn-primary">
+                                <i class="bi bi-floppy me-1"></i> <?= __('admin.settings.save_settings') ?>
+                            </button>
+                        </div>
                     </div>
                     
                     <div class="card-body">
@@ -205,6 +211,7 @@ $timeRemaining = $this->auth->getTimeRemaining();
                         <?php endif; ?>
                         
                         <form method="POST" action="/admin?action=save_settings">
+                            <form method="POST" action="/admin?action=save_settings" id="settings-form">
                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($this->auth->generateCSRFToken()) ?>">
                             
                             <!-- Seiten-Einstellungen -->
@@ -250,40 +257,35 @@ $timeRemaining = $this->auth->getTimeRemaining();
                             <!-- Dashboard-Einstellungen -->
                             <div class="settings-section">
                                 <h5><i class="bi bi-speedometer2 me-2"></i><?= __('admin.settings.dashboard') ?></h5>
-                                
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="recent_files_count" class="form-label">
-                                                <?= __('admin.settings.recent_files_count') ?>: 
+                                                <?= __('admin.settings.recent_files_count') ?>:
                                                 <span class="range-value" id="recent_files_value"><?= $settings['recent_files_count'] ?></span>
                                             </label>
-                                            <input type="range" class="form-range" id="recent_files_count" name="recent_files_count" 
+                                            <input type="range" class="form-range" id="recent_files_count" name="recent_files_count"
                                                    min="5" max="50" value="<?= $settings['recent_files_count'] ?>"
                                                    oninput="document.getElementById('recent_files_value').textContent = this.value">
                                             <div class="form-text"><?= __('admin.settings.recent_files_count_help') ?></div>
                                         </div>
                                     </div>
-                                    
-                                    <!-- deactivated, for later use
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="items_per_page" class="form-label">
-                                                Dateien pro Seite: 
-                                                <span class="range-value" id="items_per_page_value"><?= $settings['items_per_page'] ?></span>
+                                            <label for="search_result_limit" class="form-label">
+                                                <?= __('admin.search.result_limit_label') ?>:
+                                                <span class="range-value" id="search_result_limit_value"><?= $settings['search_result_limit'] ?? 50 ?></span>
                                             </label>
-                                            <input type="range" class="form-range" id="items_per_page" name="items_per_page" 
-                                                   min="10" max="100" step="5" value="<?= $settings['items_per_page'] ?>"
-                                                   oninput="document.getElementById('items_per_page_value').textContent = this.value">
-                                            <div class="form-text"><?= __('admin.settings.items_per_page_help') ?></div>
+                                            <input type="range" class="form-range" id="search_result_limit" name="search_result_limit"
+                                                   min="10" max="200" step="10" value="<?= $settings['search_result_limit'] ?? 50 ?>"
+                                                   oninput="document.getElementById('search_result_limit_value').textContent = this.value">
+                                            <div class="form-text"><?= __('admin.search.result_limit_help') ?></div>
                                         </div>
                                     </div>
-                                    -->
                                 </div>
-                                
                                 <div class="mb-3">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="show_file_stats" name="show_file_stats" 
+                                        <input class="form-check-input" type="checkbox" id="show_file_stats" name="show_file_stats"
                                                <?= $settings['show_file_stats'] ? 'checked' : '' ?>>
                                         <label class="form-check-label" for="show_file_stats">
                                             <?= __('admin.settings.show_file_stats') ?>
