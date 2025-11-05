@@ -24,7 +24,7 @@ class ThemeHelper
     {
         $pages = $this->contentLoader->listAll();
         
-        // Hauptnavigation erstellen
+    // Create main navigation
         $navItems = [];
         foreach ($pages as $page) {
             $parts = explode('/', $page['route']);
@@ -39,7 +39,7 @@ class ThemeHelper
             }
             
             if (count($parts) > 1) {
-                // Titel aus Front Matter laden
+                // Load title from front matter
                 if (isset($page['path']) && file_exists($page['path'])) {
                     $content = file_get_contents($page['path']);
                     $page['title'] = $this->parseTitle($content, $page['route']);
@@ -51,7 +51,7 @@ class ThemeHelper
             }
         }
         
-        // Dropdown-Seiten alphabetisch sortieren (case-insensitive)
+    // Sort dropdown pages alphabetically (case-insensitive)
         foreach ($navItems as $section => $nav) {
             if (!empty($nav['pages'])) {
                 usort($navItems[$section]['pages'], function($a, $b) {
@@ -62,16 +62,16 @@ class ThemeHelper
             }
         }
         
-        // Navigation sortieren - aus Einstellungen laden
+    // Sort navigation - load from settings
         $navigationOrder = $this->contentLoader->getNavigationOrder();
         
-        // Sortierung anwenden
+    // Apply sorting
         uksort($navItems, function($a, $b) use ($navigationOrder) {
             $orderA = $navigationOrder[$a] ?? 999;
             $orderB = $navigationOrder[$b] ?? 999;
             
             if ($orderA === $orderB) {
-                // Bei gleicher Gewichtung alphabetisch sortieren
+                // If same weight, sort alphabetically
                 return strcmp($a, $b);
             }
             
@@ -86,14 +86,14 @@ class ThemeHelper
      */
     public function parseTitle(string $content, string $route): string
     {
-        // Front Matter erkennen (--- am Anfang)
+    // Detect front matter (--- at the beginning)
         if (strpos($content, '---') === 0) {
             $parts = explode('---', $content, 3);
             
             if (count($parts) >= 3) {
                 $frontMatter = trim($parts[1]);
                 
-                // Einfaches Key-Value Parsing
+                // Simple key-value parsing
                 $lines = explode("\n", $frontMatter);
                 foreach ($lines as $line) {
                     $line = trim($line);
@@ -112,7 +112,7 @@ class ThemeHelper
             }
         }
         
-        // Fallback: Titel aus Route generieren
+    // Fallback: generate title from route
         return $this->generateTitle($route);
     }
     
@@ -125,7 +125,7 @@ class ThemeHelper
             return 'StaticMD';
         }
         
-        // Route zu lesbarem Titel konvertieren
+    // Convert route to readable title
         $title = str_replace(['/', '-', '_'], ' ', $route);
         return ucwords($title);
     }

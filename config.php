@@ -4,7 +4,7 @@
  */
 
 return [
-    // System Einstellungen
+    // System settings
     'system' => [
         'name' => 'StaticMD',
         'version' => '1.0.0',
@@ -12,7 +12,7 @@ return [
         'charset' => 'UTF-8'
     ],
     
-    // Verzeichnis-Struktur
+    // Directory structure
     'paths' => [
         'content' => __DIR__ . '/content',
         'system' => __DIR__ . '/system',
@@ -21,27 +21,27 @@ return [
         'public' => __DIR__ . '/public'
     ],
     
-    // Admin Konfiguration
+    // Admin configuration
     'admin' => [
         'username' => 'dirk',
         'password' => '$2y$10$/lqmtxQzJatB6r5/lEQGf.6McMaRpwNCCiF0QTep3jQlewqW1JO9G',
-        'session_timeout' => 7200 // 2 Stunden
+    'session_timeout' => 7200 // 2 hours
     ],
     
-    // Theme Einstellungen
+    // Theme settings
     'theme' => [
         'default' => 'bootstrap',
         'template_extension' => '.php'
     ],
     
-    // Markdown Einstellungen
+    // Markdown settings
     'markdown' => [
         'file_extension' => '.md',
         'auto_line_breaks' => true,
         'markup_escaped' => false
     ],
     
-    // URL Einstellungen
+    // URL settings
     'url' => [
         'clean_urls' => true,
         'admin_path' => '/admin'

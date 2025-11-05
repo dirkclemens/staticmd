@@ -4,13 +4,13 @@
  * Verwendet Bootstrap 5 mit GitHub Dark Farbschema
  */
 
-// Theme-Konfiguration
+// Theme configuration
 $themeName = 'github-dark';
 $siteName = $config['system']['name'] ?? 'StaticMD';
 $siteUrl = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']);
 $currentRoute = $_GET['route'] ?? 'index';
 
-// Einstellungen laden
+// Load settings
 $settingsFile = $config['paths']['system'] . '/settings.json';
 $settings = [];
 if (file_exists($settingsFile)) {
@@ -19,23 +19,23 @@ if (file_exists($settingsFile)) {
 $siteName = $settings['site_name'] ?? $siteName;
 $siteLogo = $settings['site_logo'] ?? '';
 
-// Navigation aus Content-Verzeichnis generieren
+// Generate navigation from content directory
 $contentLoader = new \StaticMD\Core\ContentLoader($config);
 
-// Theme Helper für gemeinsame Funktionen
+// Theme helper for shared functions
 require_once __DIR__ . '/../ThemeHelper.php';
 $themeHelper = new \StaticMD\Themes\ThemeHelper($contentLoader);
 
-// Navigation erstellen
+// Create navigation
 $navItems = $themeHelper->buildNavigation();
 
-// Titel aus Route generieren
+// Generate title from route
 function generateTitle($route) {
     if ($route === 'index') {
         return 'StaticMD';
     }
     
-    // Route zu lesbarem Titel konvertieren
+    // Convert route to readable title
     $title = str_replace(['/', '-', '_'], ' ', $route);
     return ucwords($title);
 }

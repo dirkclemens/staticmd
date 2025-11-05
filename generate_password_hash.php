@@ -6,7 +6,7 @@
 
 echo "=== StaticMD Passwort-Hash Generator ===\n\n";
 
-// Passwort eingeben
+// Enter password
 echo "Geben Sie Ihr neues Admin-Passwort ein: ";
 $handle = fopen("php://stdin", "r");
 $password = trim(fgets($handle));
@@ -21,7 +21,7 @@ if (strlen($password) < 8) {
     echo "Warnung: Passwort sollte mindestens 8 Zeichen haben.\n";
 }
 
-// Hash generieren
+// Generate hash
 $hash = password_hash($password, PASSWORD_DEFAULT);
 
 echo "\n=== Ergebnis ===\n";

@@ -3,8 +3,8 @@
 namespace StaticMD\Core;
 
 /**
- * Hauptanwendungsklasse
- * Koordiniert alle Komponenten des Systems
+ * Main application class
+ * Coordinates all system components
  */
 class Application
 {
@@ -22,32 +22,32 @@ class Application
     }
 
     /**
-     * Führt die Anwendung aus
+     * Runs the application
      */
     public function run(): void
     {
-        // Route ermitteln
+    // Determine route
         $route = $this->router->getRoute();
         
-        // Such-Route behandeln
+    // Handle search route
         if ($route === 'search') {
             $this->handleSearch();
             return;
         }
         
-        // Tag-Übersicht behandeln
+    // Handle tag overview
         if ($route === 'tag') {
             $this->handleTagOverview();
             return;
         }
         
-        // Tag-Route behandeln
+    // Handle tag route
         if (str_starts_with($route, 'tag/')) {
             $this->handleTagPage($route);
             return;
         }
         
-        // Content laden
+    // Load content
         $content = $this->contentLoader->load($route);
         
         if ($content === null) {
@@ -57,7 +57,7 @@ class Application
                 'content' => '<h1>404 - ' . I18n::t('core.404_title') . '</h1><p>' . I18n::t('core.404_message') . '</p>'
             ];
         } else {
-            // Prüfen ob Seite privat ist und Benutzer nicht angemeldet
+            // Check if page is private and user is not logged in
             $visibility = $content['meta']['Visibility'] ?? $content['meta']['visibility'] ?? 'public';
             if ($visibility === 'private' && !$this->isAdminLoggedIn()) {
                 http_response_code(404);
@@ -68,7 +68,7 @@ class Application
             }
         }
         
-        // Template-Daten vorbereiten
+    // Prepare template data
         $template = $this->config['theme']['template'] ?? 'default';
         $templateData = [
             'config' => $this->config,
@@ -76,12 +76,12 @@ class Application
             'current_route' => $route
         ];
         
-        // Template rendern und ausgeben
+    // Render and output template
         $this->templateEngine->render($template, $templateData);
     }
     
     /**
-     * Behandelt Such-Anfragen
+     * Handles search requests
      */
     private function handleSearch(): void
     {
@@ -93,7 +93,7 @@ class Application
         $results = [];
         $searchTime = 0;
 
-        // Limit aus Settings laden
+    // Load limit from settings
         $settingsFile = $this->config['paths']['system'] . '/settings.json';
         $limit = 50;
         if (file_exists($settingsFile)) {
@@ -109,7 +109,7 @@ class Application
             $searchTime = microtime(true) - $startTime;
         }
         
-        // Suchergebnisse als Content darstellen
+    // Display search results as content
         $searchHTML = $searchEngine->generateSearchResultsHTML($results, $query, $searchTime);
         
         $content = [
@@ -124,7 +124,7 @@ class Application
             ]
         ];
         
-        // Template-Daten vorbereiten
+    // Prepare template data
         $template = $this->config['theme']['template'] ?? 'default';
         $templateData = [
             'config' => $this->config,
@@ -136,7 +136,7 @@ class Application
     }
     
     /**
-     * Behandelt Tag-Übersichtsseite
+     * Handles tag overview page
      */
     private function handleTagOverview(): void
     {
@@ -148,7 +148,7 @@ class Application
         $allTags = $searchEngine->getAllTags();
         $searchTime = microtime(true) - $startTime;
         
-        // Tag-Übersicht als Content darstellen
+    // Display tag overview as content
         $tagHTML = $searchEngine->generateAllTagsHTML($allTags, $searchTime);
         
         $content = [
@@ -162,7 +162,7 @@ class Application
             ]
         ];
         
-        // Template-Daten vorbereiten
+    // Prepare template data
         $template = $this->config['theme']['template'] ?? 'default';
         $templateData = [
             'config' => $this->config,
@@ -174,13 +174,13 @@ class Application
     }
     
     /**
-     * Behandelt Tag-Seiten
+     * Handles tag pages
      */
     private function handleTagPage(string $route): void
     {
         require_once __DIR__ . '/SearchEngine.php';
         
-        // Tag aus Route extrahieren: tag/tagname
+    // Extract tag from route: tag/tagname
         $tagName = substr($route, 4); // Entferne "tag/"
         $tagName = urldecode($tagName);
         
@@ -195,7 +195,7 @@ class Application
         $results = $searchEngine->searchByTag($tagName);
         $searchTime = microtime(true) - $startTime;
         
-        // Tag-Ergebnisse als Content darstellen
+    // Display tag results as content
         $tagHTML = $searchEngine->generateTagPageHTML($results, $tagName, $searchTime);
         
         $content = [
@@ -210,7 +210,7 @@ class Application
             ]
         ];
         
-        // Template-Daten vorbereiten
+    // Prepare template data
         $template = $this->config['theme']['template'] ?? 'default';
         $templateData = [
             'config' => $this->config,
@@ -222,7 +222,7 @@ class Application
     }
 
     /**
-     * Gibt die aktuelle Konfiguration zurück
+     * Returns the current configuration
      */
     public function getConfig(): array
     {
@@ -230,11 +230,11 @@ class Application
     }
     
     /**
-     * Prüft ob ein Admin angemeldet ist
+     * Checks if an admin is logged in
      */
     private function isAdminLoggedIn(): bool
     {
-        // AdminAuth-Klasse laden für Session-Prüfung
+    // Load AdminAuth class for session check
         require_once $this->config['paths']['system'] . '/admin/AdminAuth.php';
         $adminAuth = new \StaticMD\Admin\AdminAuth($this->config);
         

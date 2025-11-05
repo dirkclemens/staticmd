@@ -4,13 +4,13 @@
  * Verwendet Bootstrap 5 mit Solarized Light Farbschema
  */
 
-// Theme-Konfiguration
+// Theme configuration
 $themeName = 'solarized-light';
 $siteName = $config['system']['name'] ?? 'StaticMD';
 $siteUrl = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']);
 $currentRoute = $_GET['route'] ?? 'index';
 
-// Einstellungen laden
+// Load settings
 $settingsFile = $config['paths']['system'] . '/settings.json';
 $settings = [];
 if (file_exists($settingsFile)) {
@@ -19,37 +19,37 @@ if (file_exists($settingsFile)) {
 $siteName = $settings['site_name'] ?? $siteName;
 $siteLogo = $settings['site_logo'] ?? '';
 
-// Navigation aus Content-Verzeichnis generieren
+// Generate navigation from content directory
 $contentLoader = new \StaticMD\Core\ContentLoader($config);
 
-// Theme Helper für gemeinsame Funktionen
+// Theme helper for shared functions
 require_once __DIR__ . '/../ThemeHelper.php';
 $themeHelper = new \StaticMD\Themes\ThemeHelper($contentLoader);
 
-// Navigation erstellen
+// Create navigation
 $navItems = $themeHelper->buildNavigation();
 
-// Titel aus Route generieren
+// Generate title from route
 function generateTitle($route) {
     if ($route === 'index') {
         return 'StaticMD';
     }
     
-    // Route zu lesbarem Titel konvertieren
+    // Convert route to readable title
     $title = str_replace(['/', '-', '_'], ' ', $route);
     return ucwords($title);
 }
 
-// Navigation sortieren - aus Einstellungen laden
+// Sort navigation - load from settings
 $navigationOrder = $this->contentLoader->getNavigationOrder();
 
-// Sortierung anwenden
+// Apply sorting
 uksort($navItems, function($a, $b) use ($navigationOrder) {
     $orderA = $navigationOrder[$a] ?? 999;
     $orderB = $navigationOrder[$b] ?? 999;
     
     if ($orderA === $orderB) {
-        // Bei gleicher Gewichtung alphabetisch sortieren
+    // If same weight, sort alphabetically
         return strcasecmp($a, $b);
     }
     
@@ -331,7 +331,7 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
     
     <!-- Custom JS -->
     <script>
-        // Smooth scrolling für Anker-Links
+    // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -344,7 +344,7 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
             });
         });
         
-        // Code-Syntax-Highlighting (einfach)
+    // Code syntax highlighting (simple)
         document.querySelectorAll('pre code').forEach(block => {
             block.classList.add('language-' + (block.className.match(/language-(\w+)/) || ['', 'text'])[1]);
         });

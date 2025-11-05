@@ -5,16 +5,16 @@
  */
 
 return [
-    // System Einstellungen
+    // System settings
     'system' => [
-        'name' => 'StaticMD', // Ändern Sie den Site-Namen
+    'name' => 'StaticMD', // Change the site name
         'version' => '1.0.0',
         'timezone' => 'Europe/Berlin',
         'charset' => 'UTF-8',
-        'debug' => false // WICHTIG: Auf false für Produktion!
+    'debug' => false // IMPORTANT: Set to false for production!
     ],
     
-    // Verzeichnis-Struktur
+    // Directory structure
     'paths' => [
         'content' => __DIR__ . '/content',
         'system' => __DIR__ . '/system',
@@ -23,45 +23,45 @@ return [
         'public' => __DIR__ . '/public'
     ],
     
-    // Admin Konfiguration - ÄNDERN SIE DIESE WERTE!
+    // Admin configuration - CHANGE THESE VALUES!
     'admin' => [
-        'username' => 'admin', // TODO: Eigenen Username wählen
-        'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // TODO: Eigenen Hash generieren!
-        'session_timeout' => 3600 // 1 Stunde (anpassen nach Bedarf)
+    'username' => 'admin', // TODO: Choose your own username
+    'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // TODO: Generate your own hash!
+    'session_timeout' => 3600 // 1 hour (adjust as needed)
     ],
     
-    // Theme Einstellungen
+    // Theme settings
     'theme' => [
         'default' => 'bootstrap',
         'template_extension' => '.php'
     ],
     
-    // Markdown Einstellungen
+    // Markdown settings
     'markdown' => [
         'file_extension' => '.md',
         'auto_line_breaks' => true,
         'markup_escaped' => false
     ],
     
-    // URL Einstellungen
+    // URL settings
     'url' => [
         'clean_urls' => true,
         'admin_path' => '/admin'
     ],
     
-    // Sicherheits-Einstellungen (Neu für Produktion)
+    // Security settings (new for production)
     'security' => [
         'max_login_attempts' => 5,
-        'lockout_duration' => 900, // 15 Minuten
-        'session_cookie_secure' => true, // Nur über HTTPS (bei SSL/TLS)
+    'lockout_duration' => 900, // 15 minutes
+    'session_cookie_secure' => true, // Only via HTTPS (with SSL/TLS)
         'session_cookie_httponly' => true,
         'csrf_token_lifetime' => 3600
     ],
     
-    // Logging (Optional)
+    // Logging (optional)
     'logging' => [
         'enabled' => true,
         'log_file' => __DIR__ . '/logs/staticmd.log',
-        'log_level' => 'ERROR' // ERROR, WARNING, INFO, DEBUG
+    'log_level' => 'ERROR' // ERROR, WARNING, INFO, DEBUG
     ]
 ];

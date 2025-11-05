@@ -1,14 +1,14 @@
 <?php
 // theme-css.php
-// Liefert das CSS eines Themes aus /system/themes/{theme}/template.css
+// Delivers the CSS of a theme from /system/themes/{theme}/template.css
 
 $theme = $_GET['theme'] ?? 'bootstrap';
-$theme = preg_replace('/[^a-zA-Z0-9_-]/', '', $theme); // Sicherheit
+$theme = preg_replace('/[^a-zA-Z0-9_-]/', '', $theme); // Security
 $cssFile = __DIR__ . "/system/themes/$theme/template.css";
 
 if (!file_exists($cssFile)) {
     header('HTTP/1.0 404 Not Found');
-    echo "/* Theme-CSS nicht gefunden */";
+    echo "/* Theme CSS not found */";
     exit;
 }
 
