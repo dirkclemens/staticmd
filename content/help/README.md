@@ -67,6 +67,6 @@ staticMD/
 ---
 
 ## 🔗 Links
-- **Demo**: https://staticMD.adcore.de/
+- **Demo**: https://staticMD.adcore.de/ (login: admin/admin123)
 - **Projektseite**: https://github.com/dirkclemens/staticMD
 - **Uberspace Doku**: https://manual.uberspace.de/
