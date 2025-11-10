@@ -266,6 +266,11 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
                             <?php endforeach; ?>
                         </div>
                         <?php endif; ?>
+                        <div class="mt-2">
+                            <a href="/tag" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-tags me-1"></i>Alle Tags anzeigen
+                            </a>
+                        </div>
                     </div>
                     
                     <!-- Zusätzliche Sidebar-Inhalte -->
@@ -281,11 +286,6 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
                                 </a>
                                 <?php endif; ?>
                             <?php endforeach; ?>
-                        </div>
-                        <div class="mt-2">
-                            <a href="/tag" class="btn btn-outline-primary btn-sm">
-                                <i class="bi bi-tags me-1"></i>Alle Tags anzeigen
-                            </a>
                         </div>
                     </div>
                     <?php endif; ?>

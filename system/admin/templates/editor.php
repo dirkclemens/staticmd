@@ -572,7 +572,7 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
         function insertAnchor() {
             if (!editor) return;
             const doc = editor.getDoc();
-            const anchorText = '(#anchor)\n...\n{#anchor}\n';
+            const anchorText = '\n[Title](#anchor)\n\n{#anchor}\n';
             doc.replaceSelection(anchorText);
             editor.focus();
         }
@@ -580,7 +580,7 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
         function insertAccordion() {
             if (!editor) return;
             const doc = editor.getDoc();
-            const accordionText = '[accordionstart id "Titel"]\n...\n[accordionstop id]\n';
+            const accordionText = '\n[accordionstart id "Titel"]\n\n[accordionstop id]\n';
             doc.replaceSelection(accordionText);
             editor.focus();
         }

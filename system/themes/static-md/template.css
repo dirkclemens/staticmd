@@ -68,28 +68,28 @@ a.nav-link.active {
     border-bottom: 3px solid var(--sMD-primary);
     padding-bottom: 0.5rem;
     margin-bottom: 2rem;
-    font-size: 2em;
+    font-size: 1.6em;
 }
 
 .content h2 {
     color: var(--sMD-secondary);
     margin-top: 2rem;
     margin-bottom: 1rem;
-    font-size: 1.8em;
+    font-size: 1.5em;
 }
 
 .content h3 {
     color: var(--sMD-secondary);
     margin-top: 1.5rem;
     margin-bottom: 1rem;
-    font-size: 1.6em;
+    font-size: 1.4em;
 }
 
 .content h4 {
     color: var(--sMD-secondary);
     margin-top: 1.2rem;
     margin-bottom: 0.8rem;
-    font-size: 1.4em;
+    font-size: 1.3em;
 }
 
 .content h5 {
@@ -201,6 +201,15 @@ a.nav-link.active {
     bottom: 20px;
     right: 20px;
     z-index: 1000;
+}
+
+.mb-2 {
+    margin-bottom: 0rem !important;
+}
+
+.badge {
+    font-size: 0.8em;
+    font-weight: 400;
 }
 
 /* Suchergebnisse Styles */
