@@ -559,11 +559,12 @@ class ContentLoader
             $badgeClass = $size === 1 ? 'bg-secondary' : ($size === 2 ? 'bg-primary' : 'bg-success');
             
             $fontSize = number_format(0.7 + $size * 0.1, 2);
-            $html .= '<a href="/tag/' . urlencode($tag) . '" class="badge ' . $badgeClass . ' me-2 mb-1 text-decoration-none" style="font-size: ' . $fontSize . 'rem;">';
+            //$html .= '<a href="/tag/' . urlencode($tag) . '" class="badge ' . $badgeClass . ' me-2 mb-1 text-decoration-none" style="font-size: ' . $fontSize . 'rem;">';
+            $html .= '<a href="/tag/' . urlencode($tag) . '" class="badge ' . $badgeClass . ' me-2 mb-2 text-decoration-none">';
             $html .= htmlspecialchars($tag);
-            if ($count > 1) {
-                $html .= ' <span class="badge bg-light text-dark ms-1">' . $count . '</span>';
-            }
+            //if ($count > 1) {
+            $html .= ' <span class="badge bg-light text-dark ms-1">' . $count . '</span>';
+            //}
             $html .= '</a>';
         }
         

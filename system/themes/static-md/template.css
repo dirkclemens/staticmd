@@ -20,8 +20,28 @@
     --sMD-green: #859900;
 }
 
+@font-face {
+	font-family:UltimaPro;
+	font-style:normal;
+	font-weight:300;
+	src:url('UltimaProLt.woff') format('woff');
+}
+@font-face {
+	font-family:UltimaPro;
+	font-style:normal;
+	font-weight:400;
+	src:url('UltimaPro.woff') format('woff');
+}
+@font-face {
+	font-family:UltimaPro;
+	font-style:normal;
+	font-weight:700;
+	src:url('UltimaProBlack.woff') format('woff');
+}
+
 body {
-    font-family: Tahoma, Geneva, Verdana, sans-serif;
+    font-family: UltimaPro, Helvetica, sans-serif;
+    color: #303030;
     line-height: 1.6;
 }
 
@@ -203,15 +223,6 @@ a.nav-link.active {
     z-index: 1000;
 }
 
-.mb-2 {
-    margin-bottom: 0rem !important;
-}
-
-.badge {
-    font-size: 0.8em;
-    font-weight: 400;
-}
-
 /* Suchergebnisse Styles */
 .search-results .search-result {
     transition: box-shadow 0.2s ease;
@@ -246,9 +257,13 @@ a.nav-link.active {
     margin: 1.5rem 0;
 }
 
-.tag-cloud .badge {
-    margin: 0.125rem;
-    font-size: 0.8rem;
+.mb-2 {
+    margin-bottom: 0rem !important;
+}
+
+.tag-cloud .badge, .badge {
+    font-size: 0.8em;
+    font-weight: 400;
 }
 
 /* Tag-Seiten Styles */
