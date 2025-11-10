@@ -20,27 +20,8 @@
     --sMD-green: #859900;
 }
 
-@font-face {
-	font-family:UltimaPro;
-	font-style:normal;
-	font-weight:300;
-	src:url('UltimaProLt.woff') format('woff');
-}
-@font-face {
-	font-family:UltimaPro;
-	font-style:normal;
-	font-weight:400;
-	src:url('UltimaPro.woff') format('woff');
-}
-@font-face {
-	font-family:UltimaPro;
-	font-style:normal;
-	font-weight:700;
-	src:url('UltimaProBlack.woff') format('woff');
-}
-
 body {
-    font-family: UltimaPro, Helvetica, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #303030;
     line-height: 1.6;
 }
