@@ -6,8 +6,7 @@ namespace StaticMD\Admin;
  * Admin-Controller
  * Verarbeitet alle Admin-Anfragen
  */
-class AdminController
-{
+class AdminController {
     private array $config;
     private AdminAuth $auth;
 
@@ -143,6 +142,23 @@ class AdminController
         $this->auth->logout();
         header('Location: /admin?action=login&message=logged_out');
         exit;
+    }
+
+    /**
+     * Gibt alle verfügbaren Themes im Theme-Verzeichnis zurück
+     */
+    public function getAvailableThemes(): array
+    {
+        $themesDir = $this->config['paths']['system'] . '/themes';
+        $themes = [];
+        if (is_dir($themesDir)) {
+            foreach (scandir($themesDir) as $entry) {
+                if ($entry[0] !== '.' && is_dir($themesDir . '/' . $entry)) {
+                    $themes[] = $entry;
+                }
+            }
+        }
+        return $themes;
     }
 
     /**
@@ -558,9 +574,9 @@ class AdminController
     {
         $this->auth->requireLogin();
         
-        $settings = $this->getSettings();
-        
-        include __DIR__ . '/templates/settings.php';
+    $settings = $this->getSettings();
+    $availableThemes = $this->getAvailableThemes();
+    include __DIR__ . '/templates/settings.php';
     }
 
     /**
@@ -584,10 +600,15 @@ class AdminController
         $lang = $_POST['language'] ?? 'en';
         $lang = in_array($lang, ['en', 'de'], true) ? $lang : 'en';
 
+        $availableThemes = $this->getAvailableThemes();
+        $selectedTheme = $_POST['frontend_theme'] ?? 'bootstrap';
+        if (!in_array($selectedTheme, $availableThemes, true)) {
+            $selectedTheme = 'bootstrap';
+        }
         $settings = [
             'site_name' => trim($_POST['site_name'] ?? 'StaticMD'),
             'site_logo' => trim($_POST['site_logo'] ?? ''),
-            'frontend_theme' => $_POST['frontend_theme'] ?? 'bootstrap',
+            'frontend_theme' => $selectedTheme,
             'recent_files_count' => max(5, min(50, (int)($_POST['recent_files_count'] ?? 15))),
             'items_per_page' => max(10, min(100, (int)($_POST['items_per_page'] ?? 25))),
             'editor_theme' => $_POST['editor_theme'] ?? 'github',

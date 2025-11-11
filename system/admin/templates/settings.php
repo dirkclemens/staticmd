@@ -131,12 +131,7 @@ $timeRemaining = $this->auth->getTimeRemaining();
                         <i class="bi bi-clock me-1"></i>
                         <?= __('admin.common.session') ?>: <span id="timer"><?= gmdate('H:i:s', $timeRemaining) ?></span>
                     </small>
-                </div>
-                
-                <div class="dropdown">
-                    <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-person-circle me-1"></i>
-                        <?= htmlspecialchars($currentUser) ?>
+                            <!-- Button ins Formular verschoben -->
                     </a>
                     <ul class="dropdown-menu" style="right: 0; left: auto;">
                         <li><a class="dropdown-item" href="/admin">
@@ -168,53 +163,51 @@ $timeRemaining = $this->auth->getTimeRemaining();
             
             <div class="col-md-8">
                 <div class="card settings-container">
-                    <div class="card-header">
-                        <h4 class="card-title mb-0">
-                            <i class="bi bi-gear me-2"></i>
-                            <?= __('admin.settings.title') ?>
-                        </h4>
-                        <div class="d-flex justify-content-end align-items-center mt-2 mb-1">
-                            <a href="/admin" class="btn btn-secondary me-2"><?= __('admin.common.cancel') ?></a>
-                            <button type="submit" form="settings-form" class="btn btn-primary">
-                                <i class="bi bi-floppy me-1"></i> <?= __('admin.settings.save_settings') ?>
-                            </button>
-                        </div>
-                    </div>
+                    <form method="POST" action="/admin?action=save_settings" id="settings-form">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($this->auth->generateCSRFToken()) ?>">
+                        <div class="card-header">
+                            <h4 class="card-title mb-0">
+                                <i class="bi bi-gear me-2"></i>
+                                <?= __('admin.settings.title') ?>
+                            </h4>
+                            <div class="d-flex justify-content-end align-items-center mt-2 mb-1">
+                                <a href="/admin" class="btn btn-secondary me-2"><?= __('admin.common.cancel') ?></a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-floppy me-1"></i> <?= __('admin.settings.save_settings') ?>
+                                </button>
+                            </div>
+                        </div>                    
+                
+                        <div class="card-body">
+                            <!-- Nachrichten -->
+                            <?php if (isset($_GET['message'])): ?>
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <i class="bi bi-check-circle me-2"></i>
+                                <?php
+                                switch ($_GET['message']) {
+                                    case 'settings_saved': echo __('admin.alerts.settings_saved'); break;
+                                    default: echo __('admin.alerts.success');
+                                }
+                                ?>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                            <?php endif; ?>
                     
-                    <div class="card-body">
-                        <!-- Nachrichten -->
-                        <?php if (isset($_GET['message'])): ?>
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <i class="bi bi-check-circle me-2"></i>
-                            <?php
-                            switch ($_GET['message']) {
-                                case 'settings_saved': echo __('admin.alerts.settings_saved'); break;
-                                default: echo __('admin.alerts.success');
-                            }
-                            ?>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                        <?php endif; ?>
-                        
-                        <?php if (isset($_GET['error'])): ?>
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <i class="bi bi-exclamation-triangle me-2"></i>
-                            <?php
-                            switch ($_GET['error']) {
-                                case 'save_failed': echo __('admin.errors.settings_save_failed'); break;
-                                case 'csrf_invalid': echo __('admin.errors.csrf_invalid'); break;
-                                default: echo __('admin.errors.generic');
-                            }
-                            ?>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                        <?php endif; ?>
-                        
-                        <form method="POST" action="/admin?action=save_settings">
-                            <form method="POST" action="/admin?action=save_settings" id="settings-form">
-                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($this->auth->generateCSRFToken()) ?>">
-                            
-                            <!-- Seiten-Einstellungen -->
+                            <?php if (isset($_GET['error'])): ?>
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                <?php
+                                switch ($_GET['error']) {
+                                    case 'save_failed': echo __('admin.errors.settings_save_failed'); break;
+                                    case 'csrf_invalid': echo __('admin.errors.csrf_invalid'); break;
+                                    default: echo __('admin.errors.generic');
+                                }
+                                ?>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                            <?php endif; ?>
+
+                                    <!-- Seiten-Einstellungen -->
                             <div class="settings-section">
                                 <h5><i class="bi bi-globe me-2"></i><?= __('admin.settings.website') ?></h5>
                                 
@@ -303,14 +296,11 @@ $timeRemaining = $this->auth->getTimeRemaining();
                                         <div class="mb-3">
                                             <label for="frontend_theme" class="form-label"><?= __('admin.settings.frontend_theme') ?></label>
                                             <select class="form-select" id="frontend_theme" name="frontend_theme">
-                                                <option value="bootstrap" <?= ($settings['frontend_theme'] ?? 'bootstrap') === 'bootstrap' ? 'selected' : '' ?>>Bootstrap (Standard)</option>
-                                                <option value="solarized-light" <?= ($settings['frontend_theme'] ?? '') === 'solarized-light' ? 'selected' : '' ?>>Solarized Light</option>
-                                                <option value="solarized-dark" <?= ($settings['frontend_theme'] ?? '') === 'solarized-dark' ? 'selected' : '' ?>>Solarized Dark</option>
-                                                <option value="monokai-light" <?= ($settings['frontend_theme'] ?? '') === 'monokai-light' ? 'selected' : '' ?>>Monokai Light</option>
-                                                <option value="monokai-dark" <?= ($settings['frontend_theme'] ?? '') === 'monokai-dark' ? 'selected' : '' ?>>Monokai Dark</option>
-                                                <option value="github-light" <?= ($settings['frontend_theme'] ?? '') === 'github-light' ? 'selected' : '' ?>>GitHub Light</option>
-                                                <option value="github-dark" <?= ($settings['frontend_theme'] ?? '') === 'github-dark' ? 'selected' : '' ?>>GitHub Dark</option>
-                                                <option value="static-md" <?= ($settings['frontend_theme'] ?? '') === 'static-md' ? 'selected' : '' ?>>StaticMD</option>
+                                                <?php foreach ($availableThemes as $theme): ?>
+                                                    <option value="<?= htmlspecialchars($theme) ?>" <?= ($settings['frontend_theme'] ?? 'bootstrap') === $theme ? 'selected' : '' ?>>
+                                                        <?= ucfirst(str_replace(['-', '_'], [' ', ' '], $theme)) ?>
+                                                    </option>
+                                                <?php endforeach; ?>
                                             </select>
                                             <div class="form-text">
                                                 <?= __('admin.settings.frontend_theme_help') ?>
