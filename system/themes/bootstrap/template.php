@@ -66,10 +66,17 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
     
     <title><?= htmlspecialchars($title) ?> - <?= htmlspecialchars($siteName) ?></title>
     
+    <!-- Favicon -->  
+    <link rel="icon" type="image/png" href="/public/images/favicon.png">
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
-    
+   
+    <!-- Favicon -->
+    <?php
+    echo '<link rel="icon" type="image/png" href="/system/themes/' . htmlspecialchars($themeName) . '/favicon.png">';
+    ?>
     <!-- Custom Theme CSS -->
     <link href="/theme-css.php?theme=<?= htmlspecialchars($themeName) ?>" rel="stylesheet">
 

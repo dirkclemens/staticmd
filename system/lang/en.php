@@ -140,7 +140,6 @@ return [
         ],
         'files' => [
             'title' => 'File Manager',
-            'manage_description' => 'Manage all your Markdown files',
             'search_placeholder' => 'Search files...',
             'new_page' => 'New page',
             'selected_count' => 'files selected',

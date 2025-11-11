@@ -140,7 +140,6 @@ return [
         ],
         'files' => [
             'title' => 'Datei-Manager',
-            'manage_description' => 'Verwalten Sie alle Ihre Markdown-Dateien',
             'search_placeholder' => 'Dateien durchsuchen...',
             'new_page' => 'Neue Seite',
             'selected_count' => 'Dateien ausgewählt',

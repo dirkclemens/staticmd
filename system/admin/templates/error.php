@@ -14,18 +14,18 @@
             align-items: center;
             color: white;
         }
-        
+
         .error-container {
             text-align: center;
             max-width: 600px;
         }
-        
+
         .error-icon {
             font-size: 5rem;
             margin-bottom: 2rem;
             opacity: 0.8;
         }
-        
+
         .error-details {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;

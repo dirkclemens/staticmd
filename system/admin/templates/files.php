@@ -20,84 +20,7 @@ function encodeUrlPath($path) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     
-    <style>
-        body { background-color: #f8f9fa; }
-        .admin-header {
-            background: linear-gradient(45deg, #AC1200, #940f00ff); 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .files-container {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
-            padding: 10px;
-        }
-        
-        .file-item {
-            transition: all 0.2s ease;
-            border: none;
-            border-bottom: 1px solid #f0f0f0;
-            padding: 6px;
-        }
-        
-        .file-item:hover {
-            background-color: #f8f9fa;
-        }
-        
-        .file-icon {
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 6px;
-            font-size: 1.2rem;
-        }
-        
-        .file-actions {
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        }
-        
-        .file-item:hover .file-actions {
-            opacity: 1;
-        }
-        
-        .session-timer {
-            font-size: 0.85rem;
-            color: #ffc107;
-        }
-        
-        .folder-header {
-            background: linear-gradient(45deg, #e9ecef, #dee2e6);
-            border-radius: 8px;
-            margin-bottom: 0.5rem;
-        }
-        
-        .search-box {
-            border-radius: 25px;
-            border: 2px solid #e9ecef;
-            transition: all 0.3s ease;
-        }
-        
-        .search-box:focus {
-            border-color: #AC1200;
-            box-shadow: 0 0 0 0.2rem rgba(100, 100, 100, 0.25);
-        }
-        
-        .bulk-actions {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            display: none;
-        }
-        
-        .bulk-actions.show {
-            display: block;
-        }
-    </style>
+    <link rel="stylesheet" href="/public/admin.css">
 </head>
 <body>
     <!-- Admin Header -->
@@ -105,7 +28,7 @@ function encodeUrlPath($path) {
         <div class="container-fluid">
             <a href="/admin" class="navbar-brand mb-0 h1 text-decoration-none">
                 <i class="bi bi-shield-lock me-2"></i>
-                StaticMD Admin
+                <?= __('admin.brand') ?>
             </a>
             
             <div class="d-flex align-items-center text-white">
@@ -138,20 +61,73 @@ function encodeUrlPath($path) {
         </div>
     </nav>
 
-    <div class="container-fluid mt-4">
+    <div class="container-fluid">
         <div class="row">
-            <div class="col-12">
-                <div class="files-container">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <div>
-                            <h5 class="card-title mb-0">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 admin-sidebar">
+                <div class="p-3">
+                    <ul class="nav nav-pills flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link <?= ($_GET['action'] ?? 'dashboard') === 'dashboard' ? 'active' : '' ?>" 
+                               href="/admin">
+                                <i class="bi bi-speedometer2 me-2"></i>
+                                <?= __('admin.common.dashboard') ?>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link <?= ($_GET['action'] ?? '') === 'files' ? 'active' : '' ?>" 
+                               href="/admin?action=files">
+                                <i class="bi bi-folder me-2"></i>
+                                <?= __('admin.common.files') ?>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link <?= ($_GET['action'] ?? '') === 'new' ? 'active' : '' ?>" 
+                               href="/admin?action=new">
+                                <i class="bi bi-file-earmark-plus me-2"></i>
+                                <?= __('admin.common.new_page') ?>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link <?= ($_GET['action'] ?? '') === 'edit' ? 'active' : '' ?>" 
+                               href="/admin?action=edit">
+                                <i class="bi bi-pencil me-2"></i>
+                                <?= __('admin.common.editor') ?>
+                            </a>
+                        </li>
+                        <hr class="my-3">
+                        <li class="nav-item">
+                            <a class="nav-link <?= ($_GET['action'] ?? '') === 'settings' ? 'active' : '' ?>" 
+                               href="/admin?action=settings">
+                                <i class="bi bi-gear me-2"></i>
+                                <?= __('admin.common.settings') ?>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/">
+                                <i class="bi bi-eye me-2"></i>
+                                <?= __('admin.common.view_site') ?>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin?action=logout">
+                                <i class="bi bi-box-arrow-right me-2"></i>
+                                <?= __('admin.common.logout') ?>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <!-- Hauptinhalt -->
+            <main class="col-md-9 col-lg-10 admin-content">
+                <div class="card files-container">
+                    <div class="card-header">
+                            <h4 class="card-title mb-0">
                                 <i class="bi bi-folder me-2"></i>
                                 <?= __('admin.files.title') ?>
                             </h5>
-                            <small class="text-muted"><?= __('admin.files.manage_description') ?><br />&nbsp;</small>
-                        </div>
-                        
-                        <div class="d-flex gap-2">
+                                                
+                        <div class="d-flex justify-content-end align-items-center mt-2 mb-1">
                             <input type="text" class="form-control search-box" id="searchFiles" 
                                    placeholder="<?= __('admin.files.search_placeholder') ?>" style="width: 250px;">
                             <a href="/admin?action=new&return_url=<?= urlencode('/admin?action=files') ?>" class="btn btn-primary">
@@ -234,7 +210,7 @@ function encodeUrlPath($path) {
                         </div>
                     <?php endif; ?>
                     
-                    <div class="card-body p-0">
+                    <div class="card-body">
                         <?php if (!empty($filesByDir)): ?>
                             <div class="accordion" id="foldersAccordion">
                             <?php $i = 0; foreach ($filesByDir as $dirName => $files): $i++; ?>

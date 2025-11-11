@@ -6,6 +6,7 @@
     <title><?= __('admin.brand') ?> - <?= __('admin.login.signin') ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="/system/admin/admin.css">
     <style>
         body {
             background: linear-gradient(135deg, #ffffffff 0%, #c2c2c2ff 100%);

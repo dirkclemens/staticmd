@@ -5,6 +5,7 @@
 **/content/tech/*
 **/content/test/*
 **/system/themes/adcore/*
+**/logo/*
 **/*.code-workspace
 **/debug_*.php
 **/test_*.php
