@@ -1,10 +1,10 @@
-# Apache .htaccess für StaticMD (Root-Deployment)
-# Aktiviert URL Rewriting für saubere URLs
+# Apache .htaccess für StaticMD
+# Optimierte Version mit assets.php Handler
 
 RewriteEngine On
 RewriteBase /
 
-# Verzeichnis-Zugriff verhindern für System-Ordner (nur bei direktem Zugriff)
+# Verzeichnis-Zugriff verhindern für System-Ordner
 RewriteCond %{THE_REQUEST} \s/+system/
 RewriteRule ^system/ - [F,L]
 
@@ -16,22 +16,21 @@ RewriteCond %{REQUEST_FILENAME} -f
 RewriteCond %{REQUEST_URI} debug
 RewriteRule ^(.*)$ - [L]
 
+# Assets über PHP-Handler ausliefern (funktioniert zuverlässig)
+RewriteRule ^assets/(.+)$ assets.php?asset=$1 [L,QSA]
+
 # Admin-Bereich weiterleiten
 RewriteRule ^admin/?$ system/admin/index.php [L]
 RewriteRule ^admin/(.+)$ system/admin/index.php?route=$1 [L,QSA]
 
-# Statische Dateien direkt ausliefern
+# Logo und Favicon direkt ausliefern (falls im Root-Verzeichnis)
 RewriteCond %{REQUEST_FILENAME} -f
-RewriteRule ^public/(.*)$ public/$1 [L]
+RewriteRule ^(logo\.png|favicon\.ico)$ $1 [L]
 
 # Alle anderen Anfragen an index.php weiterleiten
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php?route=$1 [L,QSA]
-
-# nur die logo.png darf ausgeliefert werden
-RewriteCond %{REQUEST_FILENAME} -f
-RewriteRule ^(logo\\.png)$ $1 [L]
 
 # Security Headers
 <IfModule mod_headers.c>

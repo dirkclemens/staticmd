@@ -5,7 +5,7 @@
  */
 
 // Theme configuration
-$themeName = 'github-light';
+// $themeName wird von TemplateEngine übergeben
 $siteName = $config['system']['name'] ?? 'StaticMD';
 $siteUrl = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']);
 $currentRoute = $_GET['route'] ?? 'index';
@@ -71,10 +71,12 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     
     <!-- Favicon -->  
-    <link rel="icon" type="image/png" href="/public/images/favicon.png">
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
 
     <!-- Custom Theme CSS -->
-    <link href="/theme-css.php?theme=<?= htmlspecialchars($themeName) ?>" rel="stylesheet">
+    <style>
+        <?php include __DIR__ . '/template.css'; ?>
+    </style>
 
     <?php if (isset($meta['css'])): ?>
     <style><?= $meta['css'] ?></style>

@@ -368,7 +368,7 @@ class SearchEngine
                     $html .= '<div class="mb-1">';
                     foreach ($tags as $tag) {
                         if (!empty($tag)) {
-                            $html .= '<span class="badge bg-secondary me-1">' . htmlspecialchars($tag) . '</span>';
+                            $html .= '<a href="/tag/' . urlencode($tag) . '" class="badge bg-secondary me-1 text-decoration-none">' . htmlspecialchars($tag) . '</a>';
                         }
                     }
                     $html .= '</div>';

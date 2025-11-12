@@ -42,6 +42,14 @@ class TemplateEngine
         $currentRoute = $templateData['current_route'] ?? '';
         $siteName = $this->config['system']['name'] ?? 'StaticMD';
         
+        // Theme-Name für Template-CSS laden
+        $settingsFile = $this->config['paths']['system'] . '/settings.json';
+        $settings = [];
+        if (file_exists($settingsFile)) {
+            $settings = json_decode(file_get_contents($settingsFile), true) ?: [];
+        }
+        $themeName = $settings['frontend_theme'] ?? $this->config['theme']['default'];
+        
         // Navigation generieren
         $navItems = $this->generateNavigation();
         

@@ -2,6 +2,8 @@
 **/.gitignore
 **/backup/*
 **/backup_*
+**/assets/*.woff
+**/assets/*.woff2
 **/content/tech/*
 **/content/test/*
 **/system/themes/adcore/*
@@ -13,6 +15,8 @@
 **/*_check.php
 **/*.sh
 /*.md
+!public/assets/README.md
 !public/downloads/README.md
 !public/images/README.md
 
+    
