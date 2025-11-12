@@ -443,7 +443,7 @@ class AdminController {
     }
 
     /**
-     * Zeigt Datei-Manager
+     * Zeigt Dateimanager
      */
     private function showFileManager(): void
     {
@@ -454,22 +454,79 @@ class AdminController {
         $contentLoader = new \StaticMD\Core\ContentLoader($this->config);
         $allFiles = $contentLoader->listAll();
         
-        // Nach Verzeichnis gruppieren
-        $filesByDir = [];
-        foreach ($allFiles as $file) {
-            $dir = dirname($file['route']);
-            if ($dir === '.') $dir = 'Root';
-            
-            if (!isset($filesByDir[$dir])) {
-                $filesByDir[$dir] = [];
-            }
-            $filesByDir[$dir][] = $file;
-        }
+        // Hierarchische Struktur erstellen
+        $fileTree = $this->generateHierarchicalFileList($allFiles);
         
         include __DIR__ . '/templates/files.php';
     }
-
+    
     /**
+     * Generiert hierarchische Dateiliste als Baum
+     */
+    private function generateHierarchicalFileList(array $files): array
+    {
+        $tree = [];
+        
+        foreach ($files as $file) {
+            $parts = explode('/', $file['route']);
+            $current = &$tree;
+            
+            // Pfad aufbauen
+            $path = '';
+            for ($i = 0; $i < count($parts); $i++) {
+                $part = $parts[$i];
+                $path .= ($path ? '/' : '') . $part;
+                
+                if (!isset($current[$part])) {
+                    $current[$part] = [
+                        'type' => ($i === count($parts) - 1) ? 'file' : 'folder',
+                        'name' => $part,
+                        'path' => $path,
+                        'children' => [],
+                        'file_data' => null
+                    ];
+                }
+                
+                // Bei letztem Teil: Dateidaten anhängen
+                if ($i === count($parts) - 1) {
+                    $current[$part]['file_data'] = $file;
+                    $current[$part]['type'] = 'file';
+                } else {
+                    $current = &$current[$part]['children'];
+                }
+            }
+        }
+        
+        // Ordner und Dateien getrennt sortieren
+        $this->sortFileTree($tree);
+        
+        return $tree;
+    }
+    
+    /**
+     * Sortiert Dateibaum: Ordner zuerst, dann Dateien (beide alphabetisch)
+     */
+    private function sortFileTree(array &$tree): void
+    {
+        foreach ($tree as &$item) {
+            if (!empty($item['children'])) {
+                $this->sortFileTree($item['children']);
+            }
+        }
+        
+        uksort($tree, function($a, $b) use ($tree) {
+            $typeA = $tree[$a]['type'];
+            $typeB = $tree[$b]['type'];
+            
+            // Ordner zuerst
+            if ($typeA !== $typeB) {
+                return $typeA === 'folder' ? -1 : 1;
+            }
+            
+            // Gleicher Typ: alphabetisch
+            return strcasecmp($a, $b);
+        });
+    }    /**
      * Berechnet Festplattenverbrauch
      */
     private function calculateDiskUsage(): string

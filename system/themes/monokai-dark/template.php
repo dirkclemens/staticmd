@@ -163,30 +163,7 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
     <div class="content-wrapper">
         <div class="container">
             <!-- Breadcrumb Navigation -->
-            <?php if ($currentRoute !== 'index' && $currentRoute !== ''): ?>
-            <nav aria-label="breadcrumb" class="mb-4">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item">
-                        <a href="/"><i class="bi bi-house"></i> Startseite</a>
-                    </li>
-                    <?php 
-                    $routeParts = explode('/', trim($currentRoute, '/'));
-                    $currentPath = '';
-                    foreach ($routeParts as $i => $part):
-                        $currentPath .= ($currentPath ? '/' : '') . $part;
-                        $isLast = ($i === count($routeParts) - 1);
-                    ?>
-                    <li class="breadcrumb-item <?= $isLast ? 'active' : '' ?>">
-                        <?php if ($isLast): ?>
-                            <?= htmlspecialchars(ucwords(str_replace(['-', '_'], ' ', $part))) ?>
-                        <?php else: ?>
-                            <a href="/<?= $currentPath ?>"><?= htmlspecialchars(ucwords(str_replace(['-', '_'], ' ', $part))) ?></a>
-                        <?php endif; ?>
-                    </li>
-                    <?php endforeach; ?>
-                </ol>
-            </nav>
-            <?php endif; ?>
+            <?= $themeHelper->renderBreadcrumbs($breadcrumbs ?? []) ?>
             
             <div class="row">
                 <div class="col-lg-8">

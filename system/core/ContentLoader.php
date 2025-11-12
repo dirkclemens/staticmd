@@ -57,6 +57,11 @@ class ContentLoader
      */
     public function load(string $route): ?array
     {
+        // Route-Validierung für tiefe Verschachtelung
+        if (!$this->validateRouteDepth($route)) {
+            return null;
+        }
+        
         $contentPath = $this->findContentFile($route);
         
         if ($contentPath === null || !is_readable($contentPath)) {
@@ -91,6 +96,28 @@ class ContentLoader
             'visibility' => $parsed['meta']['Visibility'] ?? $parsed['meta']['visibility'] ?? 'public'
         ];
     }
+    
+    /**
+     * Validiert Route-Tiefe und verhindert zu tiefe Verschachtelung
+     */
+    private function validateRouteDepth(string $route): bool
+    {
+        $parts = explode('/', trim($route, '/'));
+        $maxDepth = 10; // Maximal 10 Ebenen
+        
+        if (count($parts) > $maxDepth) {
+            return false;
+        }
+        
+        // Prüfe auf leere oder problematische Pfad-Teile
+        foreach ($parts as $part) {
+            if (empty(trim($part)) || strlen($part) > 100) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
 
     /**
      * Generiert eine automatische Ordner-Übersichtsseite
@@ -105,17 +132,43 @@ class ContentLoader
             return null;
         }
         
-        // Alle Markdown-Dateien im Ordner finden
+        // Alle Markdown-Dateien und Unterordner im Ordner finden
         $files = [];
+        $subfolders = [];
         $extension = $this->config['markdown']['file_extension'];
         
         $iterator = new \DirectoryIterator($folderPath);
-        foreach ($iterator as $file) {
-            if ($file->isDot() || !$file->isFile()) {
+        foreach ($iterator as $item) {
+            if ($item->isDot()) {
                 continue;
             }
             
-            $filename = $file->getFilename();
+            if ($item->isDir()) {
+                // Unterordner behandeln
+                $subfolderName = $item->getFilename();
+                $subfolderRoute = empty($route) ? $subfolderName : $route . '/' . $subfolderName;
+                
+                // Überprüfen ob Unterordner Markdown-Dateien enthält
+                $subfolderPath = $item->getPathname();
+                $hasFiles = $this->hasMarkdownFiles($subfolderPath);
+                
+                if ($hasFiles) {
+                    $subfolders[] = [
+                        'name' => $subfolderName,
+                        'route' => $subfolderRoute,
+                        'title' => $this->getSubfolderTitle($subfolderPath, $subfolderName),
+                        'description' => $this->getSubfolderDescription($subfolderPath),
+                        'file_count' => $this->countMarkdownFiles($subfolderPath)
+                    ];
+                }
+                continue;
+            }
+            
+            if (!$item->isFile()) {
+                continue;
+            }
+            
+            $filename = $item->getFilename();
             if (!str_ends_with($filename, $extension)) {
                 continue;
             }
@@ -125,8 +178,8 @@ class ContentLoader
                 continue;
             }
             
-            $filePath = $file->getPathname();
-            $fileRoute = $route . '/' . substr($filename, 0, -strlen($extension));
+            $filePath = $item->getPathname();
+            $fileRoute = empty($route) ? substr($filename, 0, -strlen($extension)) : $route . '/' . substr($filename, 0, -strlen($extension));
             
             // Metadaten aus Datei lesen
             $rawContent = file_get_contents($filePath);
@@ -176,7 +229,7 @@ class ContentLoader
         
         // HTML für Übersichtsseite generieren
         $folderTitle = ucwords(str_replace(['/', '-', '_'], ' ', $route));
-        $html = $this->generateFolderOverviewHTML($folderTitle, $files, $route);
+        $html = $this->generateFolderOverviewHTML($folderTitle, $files, $subfolders, $route);
         
         return [
             'title' => $folderTitle . ' - Übersicht',
@@ -186,7 +239,8 @@ class ContentLoader
                 'description' => 'Übersicht aller Seiten im Bereich ' . $folderTitle,
                 'folder_overview' => true,
                 'folder_route' => $route,
-                'file_count' => count($files)
+                'file_count' => count($files),
+                'subfolder_count' => count($subfolders)
             ],
             'route' => $route,
             'file_path' => $folderPath,
@@ -197,22 +251,65 @@ class ContentLoader
     /**
      * Generiert HTML für Ordner-Übersichtsseite
      */
-    private function generateFolderOverviewHTML(string $folderTitle, array $files, string $route): string
+    private function generateFolderOverviewHTML(string $folderTitle, array $files, array $subfolders, string $route): string
     {
         $html = '<div class="folder-overview">';
         
         // Header
         $html .= '<div class="overview-header mb-4">';
         $html .= '<h1><i class="bi bi-folder2-open me-2"></i>' . htmlspecialchars($folderTitle) . '</h1>';
-        $html .= '<p class="lead">Übersicht aller Seiten in diesem Bereich (' . count($files) . ' Seiten)</p>';
+        $totalItems = count($files) + count($subfolders);
+        $html .= '<p class="lead">Übersicht aller Inhalte in diesem Bereich (' . count($files) . ' Seiten';
+        if (count($subfolders) > 0) {
+            $html .= ', ' . count($subfolders) . ' Unterordner';
+        }
+        $html .= ')</p>';
         $html .= '</div>';
         
-        if (empty($files)) {
-            $html .= '<div class="alert alert-info">';
-            $html .= '<i class="bi bi-info-circle me-2"></i>';
-            $html .= 'In diesem Bereich sind noch keine Seiten vorhanden.';
+        // Unterordner anzeigen (falls vorhanden)
+        if (!empty($subfolders)) {
+            $html .= '<div class="subfolders-section mb-5">';
+            $html .= '<h2><i class="bi bi-folder me-2"></i>Unterordner</h2>';
+            $html .= '<div class="row">';
+            
+            foreach ($subfolders as $subfolder) {
+                $html .= '<div class="col-md-6 col-lg-4 mb-3">';
+                $html .= '<div class="card h-100 border-primary border-opacity-25">';
+                $html .= '<div class="card-body">';
+                $html .= '<h5 class="card-title">';
+                $html .= '<a href="/' . $this->encodeUrlPath($subfolder['route']) . '" class="text-decoration-none">';
+                $html .= '<i class="bi bi-folder-fill me-2 text-primary"></i>';
+                $html .= htmlspecialchars($subfolder['title']);
+                $html .= '</a>';
+                $html .= '</h5>';
+                if (!empty($subfolder['description'])) {
+                    $html .= '<p class="card-text">' . htmlspecialchars($subfolder['description']) . '</p>';
+                }
+                $html .= '<small class="text-muted">';
+                $html .= '<i class="bi bi-files me-1"></i>';
+                $html .= $subfolder['file_count'] . ' Seiten';
+                $html .= '</small>';
+                $html .= '</div>';
+                $html .= '</div>';
+                $html .= '</div>';
+            }
+            
             $html .= '</div>';
+            $html .= '</div>';
+        }
+        
+        // Dateien anzeigen
+        if (empty($files)) {
+            if (empty($subfolders)) {
+                $html .= '<div class="alert alert-info">';
+                $html .= '<i class="bi bi-info-circle me-2"></i>';
+                $html .= 'In diesem Bereich sind noch keine Seiten vorhanden.';
+                $html .= '</div>';
+            }
         } else {
+            $html .= '<div class="files-section">';
+            $html .= '<h2><i class="bi bi-file-earmark-text me-2"></i>Seiten</h2>';
+            
             // Dateien spaltenweise in 3 Spalten aufteilen
             $columns = $this->distributeItemsInColumns($files, 3);
             
@@ -234,6 +331,7 @@ class ContentLoader
                 $html .= '</div>'; // col
             }
             $html .= '</div>'; // row
+            $html .= '</div>'; // files-section
         }
         
         // Navigation zurück
@@ -270,6 +368,8 @@ class ContentLoader
                     return $this->processPagesShortcode($params, $currentRoute);
                 case 'tags':
                     return $this->processTagsShortcode($params, $currentRoute);
+                case 'folder':
+                    return $this->processFolderShortcode($params, $currentRoute);
                 default:
                     return $matches[0]; // Unbekannte Shortcodes unverändert lassen
             }
@@ -341,6 +441,36 @@ class ContentLoader
         
         // Tags als Badge-Liste darstellen
         return $this->generateTagsList($tags, $targetPath);
+    }
+
+    /**
+     * Verarbeitet [folder /pfad/ limit] Shortcode
+     * Zeigt horizontale Liste der direkten Unterverzeichnisse
+     */
+    private function processFolderShortcode(array $params, string $currentRoute): string
+    {
+        // Parameter parsen: [folder /tech/ 10] oder [folder]
+        $targetPath = isset($params[0]) ? trim($params[0], ' ') : $currentRoute;
+        
+        // Root-Pfad erkennen: "/", "", oder leer
+        if ($targetPath === '/' || empty($targetPath)) {
+            $targetPath = '';
+        } else {
+            // Normale Pfade von Slashes befreien
+            $targetPath = trim($targetPath, '/');
+        }
+        
+        $limit = isset($params[1]) ? (int)$params[1] : 1000;
+        
+        // Direkte Unterordner sammeln
+        $subfolders = $this->getDirectSubfolders($targetPath, $limit);
+        
+        if (empty($subfolders)) {
+            return '<div class="alert alert-info">Keine Unterordner in "' . htmlspecialchars($targetPath ?: '/') . '" gefunden.</div>';
+        }
+        
+        // Horizontale Ordner-Navigation generieren
+        return $this->generateFolderNavigation($subfolders, $targetPath);
     }
 
     /**
@@ -852,8 +982,7 @@ class ContentLoader
         $defaultOrder = [
             'about' => 1,
             'blog' => 2,
-            'tech' => 3,
-            'diy' => 4
+            'help' => 3
         ];
         
         if (file_exists($settingsFile)) {
@@ -864,5 +993,278 @@ class ContentLoader
         }
         
         return $defaultOrder;
+    }
+    
+    /**
+     * Generiert Breadcrumb-Navigation für eine Route
+     */
+    public function getBreadcrumbs(string $route): array
+    {
+        $breadcrumbs = [['title' => 'Home', 'route' => '', 'url' => '/', 'is_last' => false]];
+        
+        if (empty($route) || $route === 'index') {
+            // Für Homepage: Home als letztes Element markieren
+            $breadcrumbs[0]['is_last'] = true;
+            return $breadcrumbs;
+        }
+        
+        $parts = explode('/', trim($route, '/'));
+        $currentPath = '';
+        
+        foreach ($parts as $index => $part) {
+            $currentPath .= ($currentPath ? '/' : '') . $part;
+            
+            // Titel generieren - versuche echten Titel aus Datei zu holen
+            $title = $this->getBreadcrumbTitle($currentPath, $part);
+            $url = '/' . $this->encodeUrlPath($currentPath);
+            
+            $breadcrumbs[] = [
+                'title' => $title,
+                'route' => $currentPath,
+                'url' => $url,
+                'is_last' => $index === count($parts) - 1
+            ];
+        }
+        
+        return $breadcrumbs;
+    }
+    
+    /**
+     * Ermittelt den besten Titel für einen Breadcrumb-Teil
+     */
+    private function getBreadcrumbTitle(string $route, string $fallback): string
+    {
+        // Versuche zuerst den echten Titel aus einer Datei zu holen
+        $contentFile = $this->findContentFile($route);
+        if ($contentFile && is_readable($contentFile)) {
+            $rawContent = file_get_contents($contentFile);
+            $parsed = $this->parseFrontMatter($rawContent);
+            $title = $parsed['meta']['Title'] ?? $parsed['meta']['title'] ?? null;
+            if (!empty($title)) {
+                return $title;
+            }
+        }
+        
+        // Versuche index.md im Ordner
+        $indexFile = $this->findContentFile($route . '/index');
+        if ($indexFile && is_readable($indexFile)) {
+            $rawContent = file_get_contents($indexFile);
+            $parsed = $this->parseFrontMatter($rawContent);
+            $title = $parsed['meta']['Title'] ?? $parsed['meta']['title'] ?? null;
+            if (!empty($title)) {
+                return $title;
+            }
+        }
+        
+        // Fallback: Route-Teil zu lesbarem Titel konvertieren
+        return $this->generateTitle($fallback);
+    }
+    
+    /**
+     * Prüft ob ein Ordner Markdown-Dateien enthält
+     */
+    private function hasMarkdownFiles(string $folderPath): bool
+    {
+        if (!is_dir($folderPath)) {
+            return false;
+        }
+        
+        $extension = $this->config['markdown']['file_extension'];
+        $files = scandir($folderPath);
+        
+        foreach ($files as $file) {
+            if ($file === '.' || $file === '..') continue;
+            
+            $filePath = $folderPath . '/' . $file;
+            if (is_file($filePath) && str_ends_with($file, $extension)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Zählt Markdown-Dateien in einem Ordner
+     */
+    private function countMarkdownFiles(string $folderPath): int
+    {
+        if (!is_dir($folderPath)) {
+            return 0;
+        }
+        
+        $count = 0;
+        $extension = $this->config['markdown']['file_extension'];
+        $files = scandir($folderPath);
+        
+        foreach ($files as $file) {
+            if ($file === '.' || $file === '..') continue;
+            
+            $filePath = $folderPath . '/' . $file;
+            if (is_file($filePath) && str_ends_with($file, $extension)) {
+                $count++;
+            }
+        }
+        
+        return $count;
+    }
+    
+    /**
+     * Ermittelt Titel eines Unterordners (aus index.md oder Ordnername)
+     */
+    private function getSubfolderTitle(string $folderPath, string $fallbackName): string
+    {
+        $extension = $this->config['markdown']['file_extension'];
+        $indexFile = $folderPath . '/index' . $extension;
+        
+        if (file_exists($indexFile) && is_readable($indexFile)) {
+            $content = file_get_contents($indexFile);
+            $parsed = $this->parseFrontMatter($content);
+            $title = $parsed['meta']['Title'] ?? $parsed['meta']['title'] ?? null;
+            if (!empty($title)) {
+                return $title;
+            }
+        }
+        
+        return ucwords(str_replace(['-', '_'], ' ', $fallbackName));
+    }
+    
+    /**
+     * Ermittelt Beschreibung eines Unterordners (aus index.md)
+     */
+    private function getSubfolderDescription(string $folderPath): string
+    {
+        $extension = $this->config['markdown']['file_extension'];
+        $indexFile = $folderPath . '/index' . $extension;
+        
+        if (file_exists($indexFile) && is_readable($indexFile)) {
+            $content = file_get_contents($indexFile);
+            $parsed = $this->parseFrontMatter($content);
+            $description = $parsed['meta']['description'] ?? '';
+            
+            if (!empty($description)) {
+                return $description;
+            }
+            
+            // Fallback: Erste Zeilen des Inhalts
+            $contentLines = explode("\n", trim($parsed['content']));
+            foreach ($contentLines as $line) {
+                $line = trim($line);
+                if (!empty($line) && !str_starts_with($line, '#')) {
+                    $preview = substr($line, 0, 100);
+                    if (strlen($line) > 100) {
+                        $preview .= '...';
+                    }
+                    return $preview;
+                }
+            }
+        }
+        
+        return '';
+    }
+
+    /**
+     * Sammelt direkte Unterordner eines Pfades
+     */
+    private function getDirectSubfolders(string $folderPath, int $limit = 1000): array
+    {
+        $contentPath = $this->config['paths']['content'];
+        $fullPath = $contentPath . '/' . $folderPath;
+        
+        if (!is_dir($fullPath)) {
+            return [];
+        }
+        
+        $subfolders = [];
+        
+        // Nur direkte Unterordner, nicht rekursiv
+        $iterator = new \DirectoryIterator($fullPath);
+        
+        foreach ($iterator as $item) {
+            if ($item->isDot() || !$item->isDir()) {
+                continue;
+            }
+            
+            $folderName = $item->getFilename();
+            
+            // Überprüfe ob der Ordner Markdown-Dateien enthält
+            $hasContent = false;
+            
+            // Prüfe auf index.md oder andere .md Dateien
+            $folderIterator = new \DirectoryIterator($item->getPathname());
+            foreach ($folderIterator as $subItem) {
+                if ($subItem->isFile() && pathinfo($subItem->getFilename(), PATHINFO_EXTENSION) === 'md') {
+                    $hasContent = true;
+                    break;
+                }
+            }
+            
+            if ($hasContent) {
+                // Titel aus index.md extrahieren oder Ordnername verwenden
+                $title = $this->getFolderTitle($item->getPathname());
+                $subfolders[] = [
+                    'name' => $folderName,
+                    'title' => $title,
+                    'path' => $folderPath ? $folderPath . '/' . $folderName : $folderName
+                ];
+            }
+        }
+        
+        // Nach Titel sortieren und limitieren
+        usort($subfolders, function($a, $b) {
+            return strcasecmp($a['title'], $b['title']);
+        });
+        
+        return array_slice($subfolders, 0, $limit);
+    }
+
+    /**
+     * Extrahiert den Titel eines Ordners aus seiner index.md
+     */
+    private function getFolderTitle(string $folderPath): string
+    {
+        $extension = $this->config['markdown']['file_extension'];
+        $indexFile = $folderPath . '/index' . $extension;
+        
+        if (file_exists($indexFile) && is_readable($indexFile)) {
+            $content = file_get_contents($indexFile);
+            $parsed = $this->parseFrontMatter($content);
+            
+            // Titel aus Front Matter
+            if (!empty($parsed['meta']['Title'])) {
+                return $parsed['meta']['Title'];
+            }
+            
+            // Fallback: Erste H1 im Inhalt
+            if (preg_match('/^#\s+(.+)$/m', $parsed['content'], $matches)) {
+                return trim($matches[1]);
+            }
+        }
+        
+        // Fallback: Ordnername mit Ersetzungen
+        $title = basename($folderPath);
+        $title = str_replace(['-', '_'], ' ', $title);
+        return ucwords($title);
+    }
+
+    /**
+     * Generiert horizontale Navigation für Unterordner
+     */
+    private function generateFolderNavigation(array $subfolders, string $basePath): string
+    {
+        $html = '<nav class="folder-navigation mb-3">';
+        $html .= '<div class="d-flex flex-wrap gap-2">';
+        
+        foreach ($subfolders as $folder) {
+            $url = '/' . $folder['path'];
+            $html .= '<a href="' . htmlspecialchars($url) . '" class="btn btn-outline-primary btn-sm">';
+            $html .= '<i class="bi bi-folder"></i> ' . htmlspecialchars($folder['title']);
+            $html .= '</a>';
+        }
+        
+        $html .= '</div>';
+        $html .= '</nav>';
+        
+        return $html;
     }
 }

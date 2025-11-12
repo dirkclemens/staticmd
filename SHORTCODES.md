@@ -8,6 +8,7 @@ StaticMD bietet ein mächtiges Shortcode-System für dynamische Inhalte.
 |-----------|----------|----------|
 | `[pages]` | Seitenliste generieren | `[pages /tech/ 1000 rows]` |
 | `[tags]` | Tag-Cloud erstellen | `[tags /tech/ 1000]` |
+| `[folder]` | Unterordner-Navigation | `[folder /tech/ 10]` |
 | `[accordion]` | Bootstrap-Accordion | `[accordionstart id "titel"]...[accordionstop]` |
 
 ## Pages-Shortcode
@@ -108,6 +109,68 @@ Tags werden nach Häufigkeit visualisiert:
 - **3-4 Vorkommen**: Mittlere blaue Badges  
 - **5+ Vorkommen**: Große grüne Badges
 
+## Folder-Shortcode
+
+### Syntax
+
+```markdown
+[folder /ordnerpfad/ limit]
+```
+
+### Parameter
+
+- **`/ordnerpfad/`** (optional): Relativer Pfad zum Ordner. Ohne Angabe = aktueller Ordner
+- **`limit`** (optional): Maximale Anzahl Unterordner. Standard: 1000
+
+### Beispiele
+
+```markdown
+# Alle Unterordner aus dem tech-Ordner
+[folder /tech/]
+
+# Maximal 5 Unterordner aus dem blog-Ordner
+[folder /blog/ 5]
+
+# Unterordner aus aktuellem Ordner
+[folder]
+
+# Unterordner der Root-Ebene
+[folder /]
+```
+
+### Ausgabe
+
+Das Folder-Shortcode generiert:
+- Horizontale Button-Navigation mit Bootstrap-Design
+- Nur **direkte** Unterordner (nicht rekursiv)
+- Prüfung auf Markdown-Inhalte (leere Ordner werden ignoriert)
+- Automatische Titel-Extraktion aus `index.md`
+- Fallback auf formatierten Ordnernamen
+- Responsive Flexbox-Layout mit Zeilenumbruch
+- Bootstrap Icons (Ordner-Symbol)
+
+### Titel-Extraktion
+
+Die Ordner-Titel werden in folgender Reihenfolge ermittelt:
+1. **Front Matter**: `Title:` aus `index.md`
+2. **H1-Überschrift**: Erste `# Überschrift` aus `index.md`
+3. **Ordnername**: Formatiert mit `ucwords()` und `-` → Leerzeichen
+
+### HTML-Ausgabe
+
+```html
+<nav class="folder-navigation mb-3">
+  <div class="d-flex flex-wrap gap-2">
+    <a href="/tech/hackintosh" class="btn btn-outline-primary btn-sm">
+      <i class="bi bi-folder"></i> Hackintosh Projekte
+    </a>
+    <a href="/tech/hardware" class="btn btn-outline-primary btn-sm">
+      <i class="bi bi-folder"></i> Hardware Tests
+    </a>
+  </div>
+</nav>
+```
+
 ## Accordion-Shortcode
 
 ### Syntax
@@ -189,9 +252,11 @@ Das Accordion-Shortcode generiert:
 ```markdown
 # Gut: Begrenzung bei großen Ordnern
 [pages /blog/ 50]
+[folder /tech/ 8]
 
 # Schlecht: Unbegrenzt bei vielen Dateien
 [pages /blog/]
+[folder /]
 ```
 
 ### SEO-Optimierung
@@ -219,6 +284,10 @@ Das Accordion-Shortcode generiert:
 Title: Übersichtsseite
 Tag: navigation, übersicht
 ---
+
+# Hauptbereiche
+
+[folder / 6]
 
 # Alle Artikel
 
@@ -248,4 +317,10 @@ Tag: navigation, übersicht
 
 # Alle Projekte (spaltenweise für Übersicht)
 [pages /projects/ columns]
+
+# Hauptkategorien-Navigation
+[folder / 8]
+
+# Unterkategorien eines Bereichs
+[folder /tech/ 5]
 ```

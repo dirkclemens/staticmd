@@ -139,4 +139,68 @@ class ThemeHelper
         $encodedParts = array_map('rawurlencode', $parts);
         return implode('/', $encodedParts);
     }
+    
+    /**
+     * Generiert Breadcrumb HTML für alle Themes
+     */
+    public function renderBreadcrumbs(array $breadcrumbs, string $theme = 'bootstrap'): string
+    {
+        // Nur anzeigen wenn mehr als nur "Home" vorhanden ist
+        // Oder wenn nur Home vorhanden ist, aber als aktive Seite (sollte nicht passieren)
+        if (empty($breadcrumbs) || count($breadcrumbs) < 2) {
+            return '';
+        }
+        
+        $html = '<nav aria-label="breadcrumb" class="mb-4">';
+        $html .= '<ol class="breadcrumb">';
+        
+        foreach ($breadcrumbs as $breadcrumb) {
+            $isLast = $breadcrumb['is_last'] ?? false;
+            $classes = 'breadcrumb-item' . ($isLast ? ' active' : '');
+            
+            $html .= '<li class="' . $classes . '">';
+            
+            if ($isLast) {
+                $html .= htmlspecialchars($breadcrumb['title']);
+            } else {
+                $html .= '<a href="' . htmlspecialchars($breadcrumb['url']) . '">';
+                if ($breadcrumb['route'] === '') {
+                    $html .= '<i class="bi bi-house"></i> ';
+                }
+                $html .= htmlspecialchars($breadcrumb['title']);
+                $html .= '</a>';
+            }
+            
+            $html .= '</li>';
+        }
+        
+        $html .= '</ol>';
+        $html .= '</nav>';
+        
+        return $html;
+    }
 }
+
+/*
+Usage in template.php:
+<?php if (!empty($breadcrumbs) && count($breadcrumbs) > 1): ?>
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <?php foreach ($breadcrumbs as $breadcrumb): ?>
+        <li class="breadcrumb-item <?= $breadcrumb['is_last'] ?? false ? 'active' : '' ?>">
+            <?php if ($breadcrumb['is_last'] ?? false): ?>
+                <?= htmlspecialchars($breadcrumb['title']) ?>
+            <?php else: ?>
+                <a href="<?= htmlspecialchars($breadcrumb['url']) ?>">
+                    <?php if ($breadcrumb['route'] === ''): ?>
+                        <i class="bi bi-house"></i> 
+                    <?php endif; ?>
+                    <?= htmlspecialchars($breadcrumb['title']) ?>
+                </a>
+            <?php endif; ?>
+        </li>
+        <?php endforeach; ?>
+    </ol>
+</nav>
+<?php endif; ?>   
+*/

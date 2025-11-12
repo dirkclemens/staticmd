@@ -7,7 +7,7 @@ StaticMD ist ein professionelles, PHP-basiertes CMS für Markdown-Inhalte mit Bo
 
 ## 🚀 Hauptfunktionen
 - **Markdown-Parser** mit Shortcodes, Emoji-Support, Accordions, Tag-System
-- **7 Themes** (Bootstrap, Solarized, Monokai, GitHub, jeweils Light/Dark)
+- **9 Themes** (Bootstrap, Solarized, Monokai, GitHub, Static-MD, AdCore)
 - **CodeMirror-Editor** mit Toolbar, Drag&Drop-Upload für Bilder, PDF, ZIP
 - **Download-Tag** mit automatischem Bootstrap-Icon je Dateityp
 - **Volltextsuche** und Tag-Filter
@@ -15,6 +15,8 @@ StaticMD ist ein professionelles, PHP-basiertes CMS für Markdown-Inhalte mit Bo
 - **Yellow CMS Kompatibilität**
 - **Admin-Dashboard** mit Datei-Manager, Live-Preview, Auto-Save
 - **CSRF-Schutz** und sichere Authentifizierung
+- **Breadcrumb-Navigation** für Unterverzeichnisse
+- **Folder-Shortcode** für horizontale Ordner-Navigation
 
 ---
 
@@ -41,10 +43,11 @@ staticMD/
 ---
 
 ## 📝 Markdown-Features
-- **Shortcodes**: `[pages]`, `[tags]`, `[accordion]`, `[download ...]`, `[image ...]`
+- **Shortcodes**: `[pages]`, `[tags]`, `[folder]`, `[accordion]`, `[download ...]`, `[image ...]`
 - **Download-Tag**: `[download datei.pdf "Alt-Text"]` erzeugt einen Link mit passendem Icon
 - **Accordion**: `[accordionstart id "Titel"] ... [accordionstop]`
 - **Tag-Cloud**: `[tags /pfad/ limit]`
+- **Folder-Navigation**: `[folder /pfad/ limit]` für horizontale Unterordner-Links
 - **Bilder**: `[image bild.jpg "Alt-Text" - 50%]`
 - **Emoji**: `:smile:`, `:rocket:`, `:heart:` u.v.m.
 

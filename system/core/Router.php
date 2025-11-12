@@ -93,10 +93,61 @@ class Router
         // Führende und abschließende Slashes entfernen
         $route = trim($route, '/');
         
-        // Path-Traversal verhindern
+        // Path-Traversal verhindern - erweiterte Prüfung für tiefe Verschachtelung
         $route = str_replace(['..', './'], '', $route);
+        
+        // Maximale Verschachtelungstiefe prüfen (Sicherheitsmaßnahme)
+        $maxDepth = 10; // Maximal 10 Ebenen tief
+        $parts = explode('/', $route);
+        if (count($parts) > $maxDepth) {
+            // Zu tiefe Verschachtelung: nur die ersten Ebenen verwenden
+            $route = implode('/', array_slice($parts, 0, $maxDepth));
+        }
+        
+        // Leere Pfad-Teile entfernen (entstehen durch mehrfache Slashes)
+        $parts = array_filter($parts, function($part) {
+            return !empty(trim($part));
+        });
+        $route = implode('/', $parts);
 
         return $route;
+    }
+    
+    /**
+     * Validiert eine Route für tiefe Verschachtelung
+     */
+    public function validateRoute(string $route): array
+    {
+        $issues = [];
+        $parts = explode('/', trim($route, '/'));
+        
+        // Prüfe Verschachtelungstiefe
+        if (count($parts) > 10) {
+            $issues[] = 'Route zu tief verschachtelt (max. 10 Ebenen)';
+        }
+        
+        // Prüfe einzelne Pfad-Teile
+        foreach ($parts as $index => $part) {
+            if (empty($part)) {
+                $issues[] = "Leerer Pfad-Teil an Position " . ($index + 1);
+                continue;
+            }
+            
+            if (strlen($part) > 100) {
+                $issues[] = "Pfad-Teil zu lang an Position " . ($index + 1) . " (max. 100 Zeichen)";
+            }
+            
+            // Prüfe auf problematische Zeichen
+            if (preg_match('/[<>:"\\|?*]/', $part)) {
+                $issues[] = "Ungültige Zeichen in Pfad-Teil an Position " . ($index + 1);
+            }
+        }
+        
+        return [
+            'valid' => empty($issues),
+            'issues' => $issues,
+            'sanitized_route' => $this->sanitizeRoute($route)
+        ];
     }
 
     /**

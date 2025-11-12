@@ -73,6 +73,34 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
     </nav>
 
     <div class="container-fluid mt-4">
+        <!-- Admin Breadcrumbs -->
+        <?php if (!empty($file) && $file !== 'index'): ?>
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/admin?action=files">
+                        <i class="bi bi-folder"></i> Dateien
+                    </a>
+                </li>
+                <?php 
+                $parts = explode('/', trim($file, '/'));
+                $currentPath = '';
+                foreach ($parts as $i => $part):
+                    $currentPath .= ($currentPath ? '/' : '') . $part;
+                    $isLast = ($i === count($parts) - 1);
+                ?>
+                <li class="breadcrumb-item <?= $isLast ? 'active' : '' ?>">
+                    <?php if ($isLast): ?>
+                        <i class="bi bi-file-earmark-text"></i> <?= htmlspecialchars($part) ?>
+                    <?php else: ?>
+                        <i class="bi bi-folder"></i> <?= htmlspecialchars($part) ?>
+                    <?php endif; ?>
+                </li>
+                <?php endforeach; ?>
+            </ol>
+        </nav>
+        <?php endif; ?>
+        
         <form method="POST" action="/admin?action=save" id="editorForm">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($this->auth->generateCSRFToken()) ?>">
             <input type="hidden" name="return_url" value="<?= htmlspecialchars($_GET['return_url'] ?? '') ?>">

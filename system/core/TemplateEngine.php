@@ -32,6 +32,12 @@ class TemplateEngine
             return;
         }
         
+        // Breadcrumbs generieren (vor extract, da $data danach nicht mehr verfügbar)
+        $breadcrumbs = [];
+        if (isset($templateData['current_route'])) {
+            $breadcrumbs = $this->contentLoader->getBreadcrumbs($templateData['current_route']);
+        }
+        
         // Template-Variablen extrahieren
         extract($templateData);
         
@@ -139,7 +145,7 @@ class TemplateEngine
     {
         // Frontend-Theme aus Settings laden
         $settingsFile = $this->config['paths']['system'] . '/settings.json';
-        \StaticMD\Core\Logger::info("########### Using settingsFile: $settingsFile");
+        // \StaticMD\Core\Logger::info("########### Using settingsFile: $settingsFile");
         $settings = [];
         if (file_exists($settingsFile)) {
             $settings = json_decode(file_get_contents($settingsFile), true) ?: [];
