@@ -222,11 +222,55 @@ function encodeUrlPath($path) {
                                         echo '<div class="folder-header p-2 bg-light rounded d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#folder_' . md5($item['path']) . '" style="cursor: pointer;">';
                                         echo '<i class="bi bi-folder-fill me-2 text-primary"></i>';
                                         echo '<strong>' . htmlspecialchars($name) . '</strong>';
-                                        echo '<span class="badge bg-secondary ms-2">' . count($item['children']) . '</span>';
+                                        
+                                        // Zeige Anzahl der Kinder und optional Index-Datei Info
+                                        $childCount = count($item['children']);
+                                        $hasIndexFile = isset($item['index_file']);
+                                        if ($hasIndexFile) {
+                                            echo '<span class="badge bg-success ms-2" title="Ordner mit Index-Datei">' . $childCount . ' + index</span>';
+                                        } else {
+                                            echo '<span class="badge bg-secondary ms-2">' . $childCount . '</span>';
+                                        }
                                         echo '<i class="bi bi-chevron-down ms-auto"></i>';
                                         echo '</div>';
                                         
                                         echo '<div class="collapse" id="folder_' . md5($item['path']) . '">';
+                                        
+                                        // Zeige Index-Datei zuerst, falls vorhanden
+                                        if ($hasIndexFile) {
+                                            $indexFile = $item['index_file'];
+                                            echo '<div class="file-item p-2 d-flex align-items-center border-bottom bg-light bg-opacity-50" style="margin-left: ' . (($level + 1) * 20) . 'px;" data-filename="' . htmlspecialchars($indexFile['route']) . '">';
+                                            echo '<div class="form-check me-3">';
+                                            echo '<input class="form-check-input file-checkbox" type="checkbox" value="' . htmlspecialchars($indexFile['route']) . '" id="file_' . md5($indexFile['route']) . '">';
+                                            echo '</div>';
+                                            echo '<div class="file-icon bg-success bg-opacity-10 text-success me-3 rounded p-1">';
+                                            echo '<i class="bi bi-house-fill" title="Index-Datei"></i>';
+                                            echo '</div>';
+                                            echo '<div class="flex-grow-1">';
+                                            echo '<div class="d-flex justify-content-between align-items-center">';
+                                            echo '<div>';
+                                            echo '<h6 class="mb-1">';
+                                            echo '<a href="/admin?action=edit&file=' . urlencode($indexFile['route']) . '&return_url=' . urlencode('/admin?action=files') . '" class="text-decoration-none">';
+                                            echo htmlspecialchars(basename($indexFile['route']) . '.md');
+                                            echo '</a>';
+                                            echo ' <small class="text-muted">(Index)</small>';
+                                            echo '</h6>';
+                                            echo '<small class="text-muted">Route: <code>/' . htmlspecialchars($indexFile['route']) . '</code></small>';
+                                            echo '<br><small class="text-muted"><i class="bi bi-clock me-1"></i>Geändert: ' . date('d.m.Y H:i', $indexFile['modified']) . '</small>';
+                                            echo '</div>';
+                                            echo '<div class="file-actions">';
+                                            echo '<div class="btn-group btn-group-sm" role="group">';
+                                            echo '<a href="/' . encodeUrlPath($indexFile['route']) . '" class="btn btn-outline-info" target="_blank" title="Anzeigen"><i class="bi bi-eye"></i></a>';
+                                            echo '<a href="/admin?action=edit&file=' . urlencode($indexFile['route']) . '&return_url=' . urlencode('/admin?action=files') . '" class="btn btn-outline-primary" title="Bearbeiten"><i class="bi bi-pencil"></i></a>';
+                                            echo '<button class="btn btn-outline-danger" onclick="confirmDelete(\'' . htmlspecialchars($indexFile['route']) . '\')" title="Löschen"><i class="bi bi-trash"></i></button>';
+                                            echo '</div>';
+                                            echo '</div>';
+                                            echo '</div>';
+                                            echo '</div>';
+                                            echo '</div>';
+                                        }
+                                        
+                                        // Dann alle anderen Kinder
                                         foreach ($item['children'] as $childName => $child) {
                                             renderFileTreeNode($childName, $child, $level + 1);
                                         }

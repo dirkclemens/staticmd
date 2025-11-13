@@ -883,6 +883,10 @@ class ContentLoader
         }
         
         $items = scandir($dir);
+        if ($items === false) {
+            return;
+        }
+        
         foreach ($items as $item) {
             if ($item === '.' || $item === '..') {
                 continue;

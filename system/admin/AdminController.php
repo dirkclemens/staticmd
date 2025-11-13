@@ -489,9 +489,21 @@ class AdminController {
                 
                 // Bei letztem Teil: Dateidaten anhängen
                 if ($i === count($parts) - 1) {
+                    // WICHTIG: Nur als 'file' setzen wenn es noch kein Ordner mit Kindern ist
+                    if (empty($current[$part]['children'])) {
+                        $current[$part]['type'] = 'file';
+                    } else {
+                        // Wenn bereits Kinder vorhanden sind, ist es ein Ordner mit index.md
+                        // In diesem Fall die Datei als spezielle Eigenschaft des Ordners speichern
+                        $current[$part]['index_file'] = $file;
+                        $current[$part]['type'] = 'folder'; // Bleibt ein Ordner
+                    }
                     $current[$part]['file_data'] = $file;
-                    $current[$part]['type'] = 'file';
                 } else {
+                    // Nur als Ordner setzen wenn es noch keine Datei ist
+                    if ($current[$part]['type'] !== 'file' || !empty($current[$part]['children'])) {
+                        $current[$part]['type'] = 'folder';
+                    }
                     $current = &$current[$part]['children'];
                 }
             }
