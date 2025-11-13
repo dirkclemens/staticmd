@@ -1,6 +1,6 @@
 {
-    "site_name": "Notes",
-    "site_logo": "https:\/\/flat.adcore.de\/logo.png",
+    "site_name": "StaticMD",
+    "site_logo": "https:\/\/staticmd.adcore.de\/logo.png",
     "frontend_theme": "bootstrap",
     "recent_files_count": 20,
     "items_per_page": 25,
@@ -8,11 +8,9 @@
     "show_file_stats": true,
     "auto_save_interval": 30,
     "navigation_order": {
-        "tech": 1,
-        "diy": 2,
-        "test": 3,
-        "help": 4,
-        "about": 5
+        "blog": 1,
+        "help": 2,
+        "about": 3
     },
     "language": "en",
     "search_result_limit": 200
