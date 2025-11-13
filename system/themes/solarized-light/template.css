@@ -26,7 +26,7 @@ body {
 }
 
 .navbar {
-    background-color: var(--sol-base2) !important;
+    background-color: var(--sol-base3) !important;
     border-bottom: 2px solid var(--sol-base1);
 }
 
@@ -75,7 +75,7 @@ body {
 }
 
 .breadcrumb {
-    background-color: var(--sol-base2);
+    background-color: var(--sol-base3);
 }
 
 .breadcrumb-item a {
