@@ -1,7 +1,7 @@
 {
     "site_name": "Notes",
     "site_logo": "https:\/\/flat.adcore.de\/logo.png",
-    "frontend_theme": "adcore",
+    "frontend_theme": "bootstrap",
     "recent_files_count": 20,
     "items_per_page": 25,
     "editor_theme": "github",
