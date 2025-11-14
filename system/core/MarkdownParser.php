@@ -8,11 +8,16 @@ namespace StaticMD\Core;
  */
 class MarkdownParser
 {
+    private array $latexBlocks = [];
+    
     /**
      * Konvertiert Markdown zu HTML
      */
     public function parse(string $markdown): string
     {
+        // LaTeX-Formeln vor Markdown-Processing schützen
+        $markdown = $this->preprocessLaTeX($markdown);
+        
         // Zeilen in Array aufteilen
         $lines = explode("\n", $markdown);
         $html = '';
@@ -214,6 +219,11 @@ class MarkdownParser
         // Offene Code-Blöcke schließen
         if ($inCodeBlock) {
             $html .= "</code></pre>\n";
+        }
+        
+        // LaTeX-Platzhalter wieder einsetzen
+        if (!empty($this->latexBlocks)) {
+            $html = str_replace(array_keys($this->latexBlocks), array_values($this->latexBlocks), $html);
         }
         
         return trim($html);
@@ -594,5 +604,32 @@ class MarkdownParser
         $text = str_replace(array_keys($existingLinks), array_values($existingLinks), $text);
         
         return $text;
+    }
+    
+    /**
+     * Schützt LaTeX-Formeln vor Markdown-Processing
+     */
+    private function preprocessLaTeX(string $content): string
+    {
+        $this->latexBlocks = [];
+        $blockIndex = 0;
+        
+        // Block-Formeln ($$...$$) zuerst verarbeiten
+        $content = preg_replace_callback('/\$\$(.*?)\$\$/s', function($matches) use (&$blockIndex) {
+            $placeholder = '___LATEX_BLOCK_' . $blockIndex . '___';
+            $this->latexBlocks[$placeholder] = '<div class="katex-display">' . htmlspecialchars(trim($matches[1])) . '</div>';
+            $blockIndex++;
+            return $placeholder;
+        }, $content);
+        
+        // Inline-Formeln ($...$) verarbeiten - nur wenn nicht in Code-Blöcken
+        $content = preg_replace_callback('/(?<!`)\$([^$\n]+)\$(?!`)/', function($matches) use (&$blockIndex) {
+            $placeholder = '___LATEX_INLINE_' . $blockIndex . '___';
+            $this->latexBlocks[$placeholder] = '<span class="katex-inline">' . htmlspecialchars(trim($matches[1])) . '</span>';
+            $blockIndex++;
+            return $placeholder;
+        }, $content);
+        
+        return $content;
     }
 }

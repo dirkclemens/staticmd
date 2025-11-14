@@ -70,6 +70,9 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     
+    <!-- KaTeX CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    
     <!-- Favicon -->  
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
 
@@ -311,9 +314,13 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
+    <!-- KaTeX JS -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    
     <!-- Custom JS -->
     <script>
-    // Smooth scrolling for anchor links
+        // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -326,10 +333,20 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
             });
         });
         
-    // Code syntax highlighting (simple)
+        // Code syntax highlighting (simple)
         document.querySelectorAll('pre code').forEach(block => {
             block.classList.add('language-' + (block.className.match(/language-(\w+)/) || ['', 'text'])[1]);
         });
+        
+        // KaTeX Auto-Render
+        if (typeof renderMathInElement !== 'undefined') {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '<span class="katex-inline">', right: '</span>', display: false},
+                    {left: '<div class="katex-display">', right: '</div>', display: true}
+                ]
+            });
+        }
     </script>
     
     <?php if (isset($meta['js'])): ?>
