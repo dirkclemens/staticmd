@@ -3,12 +3,19 @@ $pageTitle = __('admin.common.settings');
 $currentUser = $this->auth->getUsername();
 $timeRemaining = $this->auth->getTimeRemaining();
 ?>
+<?php
+// Security Headers setzen
+require_once __DIR__ . '/../../core/SecurityHeaders.php';
+use StaticMD\Core\SecurityHeaders;
+SecurityHeaders::setAllSecurityHeaders('admin');
+$nonce = SecurityHeaders::getNonce();
+?>
 <!DOCTYPE html>
 <html lang="<?= htmlspecialchars(\StaticMD\Core\I18n::getLanguage()) ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= __('admin.brand') ?> - <?= __('admin.common.settings') ?></title>
+    <title><?= __('admin.brand') ?> - <?= __('admin.settings.title') ?></title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
@@ -417,8 +424,90 @@ echo htmlspecialchars(trim($orderText));
                                 </div>
                             </div>
                             
+                            <!-- SEO & Robots Settings -->
+                            <div class="card mt-4">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">
+                                        <i class="bi bi-search me-2"></i>
+                                        SEO & Suchmaschinen-Einstellungen
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="seo_robots_policy" class="form-label">
+                                                    <i class="bi bi-robot me-1"></i>
+                                                    Standard Robots-Policy
+                                                </label>
+                                                <select class="form-select" id="seo_robots_policy" name="seo_robots_policy">
+                                                    <option value="index,follow" <?= ($settings['seo_robots_policy'] ?? 'index,follow') === 'index,follow' ? 'selected' : '' ?>>
+                                                        Index & Follow (Suchmaschinen-freundlich)
+                                                    </option>
+                                                    <option value="index,nofollow" <?= ($settings['seo_robots_policy'] ?? '') === 'index,nofollow' ? 'selected' : '' ?>>
+                                                        Index aber kein Follow
+                                                    </option>
+                                                    <option value="noindex,follow" <?= ($settings['seo_robots_policy'] ?? '') === 'noindex,follow' ? 'selected' : '' ?>>
+                                                        Kein Index aber Follow
+                                                    </option>
+                                                    <option value="noindex,nofollow" <?= ($settings['seo_robots_policy'] ?? '') === 'noindex,nofollow' ? 'selected' : '' ?>>
+                                                        Kein Index & kein Follow
+                                                    </option>
+                                                </select>
+                                                <small class="text-muted">
+                                                    Standard-Verhalten für alle Seiten (kann pro Seite überschrieben werden)
+                                                </small>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" id="seo_block_crawlers" 
+                                                           name="seo_block_crawlers" value="1" 
+                                                           <?= ($settings['seo_block_crawlers'] ?? false) ? 'checked' : '' ?>>
+                                                    <label class="form-check-label" for="seo_block_crawlers">
+                                                        <i class="bi bi-shield-x me-1"></i>
+                                                        <strong>Alle Suchmaschinen blockieren</strong>
+                                                    </label>
+                                                </div>
+                                                <small class="text-muted">
+                                                    Aktiviert: Komplette Seite wird nicht indexiert<br>
+                                                    <strong>Warnung:</strong> Überschreibt alle anderen Einstellungen!
+                                                </small>
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" id="seo_generate_robots_txt" 
+                                                           name="seo_generate_robots_txt" value="1" 
+                                                           <?= ($settings['seo_generate_robots_txt'] ?? true) ? 'checked' : '' ?>>
+                                                    <label class="form-check-label" for="seo_generate_robots_txt">
+                                                        <i class="bi bi-file-text me-1"></i>
+                                                        robots.txt generieren
+                                                    </label>
+                                                </div>
+                                                <small class="text-muted">
+                                                    Automatische robots.txt unter <a href="/robots.php" target="_blank">/robots.txt</a>
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="alert alert-info">
+                                        <h6><i class="bi bi-info-circle me-2"></i>SEO-Funktionen:</h6>
+                                        <ul class="mb-0">
+                                            <li><strong>Per-Page Robots:</strong> Verwenden Sie <code>Robots: noindex,nofollow</code> im Front Matter</li>
+                                            <li><strong>robots.txt:</strong> Automatisch generiert unter <a href="/robots.php" target="_blank">/robots.txt</a></li>
+                                            <li><strong>Meta-Tags:</strong> Automatisch in allen Templates eingefügt</li>
+                                            <li><strong>HTTP-Headers:</strong> X-Robots-Tag bei noindex automatisch gesetzt</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
                             <!-- Aktionen -->
-                            <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex justify-content-between align-items-center mt-4">
                                 <div>
                                     <small class="text-muted">
                                         <i class="bi bi-info-circle me-1"></i>
@@ -442,7 +531,7 @@ echo htmlspecialchars(trim($orderText));
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
-    <script>
+    <script nonce="<?= $nonce ?>">
         let timeRemaining = <?= $timeRemaining ?>;
         
         // Session-Timer

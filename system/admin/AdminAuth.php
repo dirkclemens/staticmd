@@ -38,6 +38,7 @@ class AdminAuth
             $_SESSION['admin_logged_in'] = true;
             $_SESSION['admin_username'] = $username;
             $_SESSION['admin_login_time'] = time();
+            $_SESSION['admin_last_activity'] = time();
             
             // Session regenerieren für Sicherheit
             session_regenerate_id(true);
@@ -79,8 +80,8 @@ class AdminAuth
             header('Location: /admin?action=login');
             exit;
         }
-        // Timeout bei jedem Request zurücksetzen
-        $_SESSION['admin_login_time'] = time();
+        // Aktivität vermerken ohne Login-Zeit zu ändern
+        $_SESSION['admin_last_activity'] = time();
     }
 
     /**
@@ -122,5 +123,31 @@ class AdminAuth
         
         $elapsed = time() - $_SESSION['admin_login_time'];
         return max(0, $this->config['admin']['session_timeout'] - $elapsed);
+    }
+
+    /**
+     * Gibt Session-Informationen für Debug-Zwecke zurück
+     */
+    public function getSessionInfo(): array
+    {
+        if (!$this->isLoggedIn()) {
+            return [];
+        }
+
+        $loginTime = $_SESSION['admin_login_time'] ?? 0;
+        $lastActivity = $_SESSION['admin_last_activity'] ?? 0;
+        $currentTime = time();
+        
+        return [
+            'login_time' => $loginTime,
+            'login_time_formatted' => date('Y-m-d H:i:s', $loginTime),
+            'last_activity' => $lastActivity,
+            'last_activity_formatted' => date('Y-m-d H:i:s', $lastActivity),
+            'current_time' => $currentTime,
+            'session_timeout' => $this->config['admin']['session_timeout'],
+            'time_remaining' => $this->getTimeRemaining(),
+            'elapsed_since_login' => $currentTime - $loginTime,
+            'elapsed_since_activity' => $currentTime - $lastActivity
+        ];
     }
 }

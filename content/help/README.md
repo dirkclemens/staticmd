@@ -15,6 +15,9 @@ StaticMD ist ein professionelles, PHP-basiertes CMS für Markdown-Inhalte mit Bo
 - **Yellow CMS Kompatibilität**
 - **Admin-Dashboard** mit Datei-Manager, Live-Preview, Auto-Save
 - **CSRF-Schutz** und sichere Authentifizierung
+- **Content-Security-Policy** (CSP) und umfassende Security Headers
+- **SEO-Kontrolle** mit robots.txt Generator und Meta-Tags
+- **Suchmaschinen-Blockierung** global oder pro Seite
 - **Breadcrumb-Navigation** für Unterverzeichnisse
 - **Folder-Shortcode** für horizontale Ordner-Navigation
 
@@ -26,16 +29,15 @@ staticMD/
 ├── index.php
 ├── config.php
 ├── .htaccess
-├── upload.sh
 ├── content/
 │   ├── index.md
-│   ├── tech/
 │   └── ...
 ├── system/
 │   ├── core/
 │   ├── admin/
 │   └── themes/
 └── public/
+	├── assets/
 	├── images/
 	└── downloads/
 ```
@@ -50,13 +52,16 @@ staticMD/
 - **Folder-Navigation**: `[folder /pfad/ limit]` für horizontale Unterordner-Links
 - **Bilder**: `[image bild.jpg "Alt-Text" - 50%]`
 - **Emoji**: `:smile:`, `:rocket:`, `:heart:` u.v.m.
+- **SEO Front Matter**: `Robots:`, `Description:`, `Canonical:` für Suchmaschinen-Kontrolle
 
 ---
 
 ## 📚 Hilfe & Dokumentation
-- **Installationsanleitung**: [installation.md](installation.md)
-- **Deployment-Guide**: [deployment.md](deployment.md)
-- **Uberspace-Setup**: [uberspace.md](uberspace.md)
+- **Installationsanleitung**: [installation/installation.md](installation/installation.md)
+- **Deployment-Guide**: [installation/deployment.md](installation/deployment.md)
+- **Security & CSP**: [security.md](security.md)
+- **SEO & Suchmaschinen**: [seo.md](seo.md)
+- **Uberspace-Setup**: [installation/uberspace.md](installation/uberspace.md)
 - **Feature-Übersicht**: [features.md](features.md)
 
 ---
@@ -65,7 +70,7 @@ staticMD/
 - PDF/ZIP per Drag&Drop hochladen, Download-Tag wird automatisch eingefügt
 - Navigation und Theme im Admin-Dashboard anpassen
 - Backup regelmäßig erstellen
-- Fehler? Siehe [installation.md](installation.md) und [deployment.md](deployment.md)
+- Fehler? Siehe [installation/installation.md](installation/installation.md) und [installation/deployment.md](installation/deployment.md)
 
 ---
 

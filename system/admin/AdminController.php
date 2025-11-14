@@ -685,7 +685,10 @@ class AdminController {
             'auto_save_interval' => max(30, min(300, (int)($_POST['auto_save_interval'] ?? 60))),
             'navigation_order' => $this->parseNavigationOrder($_POST['navigation_order'] ?? ''),
             'language' => $lang,
-            'search_result_limit' => max(10, min(200, (int)($_POST['search_result_limit'] ?? 50)))
+            'search_result_limit' => max(10, min(200, (int)($_POST['search_result_limit'] ?? 50))),
+            'seo_robots_policy' => $this->validateRobotsPolicy($_POST['seo_robots_policy'] ?? 'index,follow'),
+            'seo_block_crawlers' => isset($_POST['seo_block_crawlers']),
+            'seo_generate_robots_txt' => isset($_POST['seo_generate_robots_txt'])
         ];
         
         if ($this->saveSettingsToFile($settings)) {
@@ -815,5 +818,20 @@ class AdminController {
             echo json_encode(['success' => false, 'error' => 'Upload failed']);
         }
         exit;
+    }
+
+    /**
+     * Validiert Robots-Policy-Wert
+     */
+    private function validateRobotsPolicy(string $policy): string
+    {
+        $validPolicies = [
+            'index,follow',
+            'index,nofollow', 
+            'noindex,follow',
+            'noindex,nofollow'
+        ];
+        
+        return in_array($policy, $validPolicies) ? $policy : 'index,follow';
     }
 }

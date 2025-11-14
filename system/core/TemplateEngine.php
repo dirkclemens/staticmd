@@ -23,6 +23,10 @@ class TemplateEngine
      */
     public function render(string $template, array $templateData): void
     {
+        // Security Headers für Frontend setzen
+        require_once __DIR__ . '/SecurityHeaders.php';
+        SecurityHeaders::setAllSecurityHeaders('frontend');
+        
         $meta = $templateData['content']['meta'] ?? [];
         $templatePath = $this->getTemplatePath($meta);
         
@@ -47,6 +51,7 @@ class TemplateEngine
         $meta = $templateData['content']['meta'] ?? [];
         $currentRoute = $templateData['current_route'] ?? '';
         $siteName = $this->config['system']['name'] ?? 'StaticMD';
+        $nonce = SecurityHeaders::getNonce();
         
         // Theme-Name für Template-CSS laden
         $settingsFile = $this->config['paths']['system'] . '/settings.json';
@@ -55,6 +60,9 @@ class TemplateEngine
             $settings = json_decode(file_get_contents($settingsFile), true) ?: [];
         }
         $themeName = $settings['frontend_theme'] ?? $this->config['theme']['default'];
+        
+        // SEO/Robots Meta-Tags generieren
+        $robotsMeta = $this->generateRobotsMeta($settings, $meta);
         
         // Navigation generieren
         $navItems = $this->generateNavigation();
@@ -224,5 +232,63 @@ class TemplateEngine
 </body>
 </html>
 HTML;
+    }
+
+    /**
+     * Generiert Robots Meta-Tags basierend auf Settings und Content-Meta
+     */
+    private function generateRobotsMeta(array $settings, array $contentMeta): string
+    {
+        // Standard-Policy aus Settings
+        $defaultPolicy = $settings['seo_robots_policy'] ?? 'index,follow';
+        $blockCrawlers = $settings['seo_block_crawlers'] ?? false;
+        
+        // Content-spezifische Robots-Direktiven (aus Front Matter)
+        $contentRobots = $contentMeta['robots'] ?? null;
+        
+        // Finale Policy bestimmen
+        if ($blockCrawlers) {
+            $robotsPolicy = 'noindex,nofollow,noarchive,nosnippet';
+        } elseif ($contentRobots) {
+            $robotsPolicy = $contentRobots;
+        } else {
+            $robotsPolicy = $defaultPolicy;
+        }
+        
+        // Meta-Tags generieren
+        $metaTags = [];
+        
+        // Standard Robots Meta-Tag
+        $metaTags[] = '<meta name="robots" content="' . htmlspecialchars($robotsPolicy) . '">';
+        
+        // Erweiterte Robots-Direktiven
+        if (strpos($robotsPolicy, 'noindex') !== false || $blockCrawlers) {
+            // Zusätzliche Anti-Crawling Meta-Tags
+            $metaTags[] = '<meta name="googlebot" content="noindex,nofollow,noarchive,nosnippet">';
+            $metaTags[] = '<meta name="bingbot" content="noindex,nofollow,noarchive,nosnippet">';
+            $metaTags[] = '<meta name="yahoobot" content="noindex,nofollow">';
+            $metaTags[] = '<meta name="duckduckbot" content="noindex,nofollow">';
+            $metaTags[] = '<meta name="baiduspider" content="noindex,nofollow">';
+            $metaTags[] = '<meta name="yandexbot" content="noindex,nofollow">';
+            
+            // HTTP-Headers für zusätzlichen Schutz
+            header('X-Robots-Tag: noindex,nofollow,noarchive,nosnippet');
+        }
+        
+        // Optionale Meta-Tags aus Content
+        if (isset($contentMeta['canonical'])) {
+            $metaTags[] = '<link rel="canonical" href="' . htmlspecialchars($contentMeta['canonical']) . '">';
+        }
+        
+        if (isset($contentMeta['description'])) {
+            if ($blockCrawlers || strpos($robotsPolicy, 'noindex') !== false) {
+                // Keine Description bei noindex
+                $metaTags[] = '<meta name="description" content="">';
+            } else {
+                $metaTags[] = '<meta name="description" content="' . htmlspecialchars($contentMeta['description']) . '">';
+            }
+        }
+        
+        return implode("\n    ", $metaTags);
     }
 }

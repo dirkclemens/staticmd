@@ -8,9 +8,6 @@ error_reporting(E_ALL);
  * Verwaltet alle Admin-Funktionen
  */
 
-// Session starten
-session_start();
-
 // Autoloader und Konfiguration laden
 if (file_exists(__DIR__ . '/../../vendor/autoload.php')) {
     require_once __DIR__ . '/../../vendor/autoload.php';
@@ -22,6 +19,28 @@ $config = require_once __DIR__ . '/../../config.php';
 require_once __DIR__ . '/AdminAuth.php';
 require_once __DIR__ . '/AdminController.php';
 require_once __DIR__ . '/../core/I18n.php';
+require_once __DIR__ . '/../core/SecurityHeaders.php';
+
+// Security Headers setzen (Admin-Kontext)
+use StaticMD\Core\SecurityHeaders;
+SecurityHeaders::setAllSecurityHeaders('admin');
+
+// Session-Konfiguration VOR session_start()
+$timeout = $config['admin']['session_timeout'];
+ini_set('session.gc_maxlifetime', $timeout);
+ini_set('session.cookie_lifetime', $timeout);
+ini_set('session.cache_expire', ceil($timeout / 60));
+
+session_set_cookie_params([
+    'lifetime' => $timeout,
+    'path' => '/',
+    'httponly' => true,
+    'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on',
+    'samesite' => 'Strict'
+]);
+
+// Session starten
+session_start();
 
 use StaticMD\Admin\AdminAuth;
 use StaticMD\Admin\AdminController;

@@ -13,5 +13,8 @@
         "about": 3
     },
     "language": "en",
-    "search_result_limit": 200
+    "search_result_limit": 200,
+    "seo_robots_policy": "index,follow",
+    "seo_block_crawlers": false,
+    "seo_generate_robots_txt": true
 }

@@ -19,6 +19,9 @@ RewriteRule ^(.*)$ - [L]
 # Assets über PHP-Handler ausliefern (funktioniert zuverlässig)
 RewriteRule ^assets/(.+)$ assets.php?asset=$1 [L,QSA]
 
+# robots.txt dynamisch generieren
+RewriteRule ^robots\.txt$ robots.php [L]
+
 # Admin-Bereich weiterleiten
 RewriteRule ^admin/?$ system/admin/index.php [L]
 RewriteRule ^admin/(.+)$ system/admin/index.php?route=$1 [L,QSA]

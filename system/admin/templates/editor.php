@@ -11,6 +11,13 @@ if (file_exists($settingsFile)) {
 }
 $editorTheme = $settings['editor_theme'] ?? 'github';
 ?>
+<?php
+// Security Headers setzen
+require_once __DIR__ . '/../../core/SecurityHeaders.php';
+use StaticMD\Core\SecurityHeaders;
+SecurityHeaders::setAllSecurityHeaders('admin');
+$nonce = SecurityHeaders::getNonce();
+?>
 <!DOCTYPE html>
 <html lang="<?= htmlspecialchars(\StaticMD\Core\I18n::getLanguage()) ?>">
 <head>
@@ -407,7 +414,7 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/search/searchcursor.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/dialog/dialog.min.js"></script>
     
-    <script>
+    <script nonce="<?= $nonce ?>">
         // Download-Tag einfügen
         function insertDownloadTag() {
             if (!editor) return;
@@ -811,7 +818,7 @@ $editorTheme = $settings['editor_theme'] ?? 'github';
         <input type="hidden" name="file" value="">
     </form>
     
-    <script>
+    <script nonce="<?= $nonce ?>">
         // Delete-Funktion ausführen
         function executeDelete() {
             document.getElementById('deleteForm').submit();

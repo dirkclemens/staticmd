@@ -9,11 +9,12 @@ Komplette Anleitung für die Installation und Konfiguration von StaticMD auf Ihr
 ### Systemanforderungen
 - **PHP 8.3+** mit Extensions: `mbstring`, `intl`
 - **Apache Webserver** mit `mod_rewrite` aktiviert
+- **HTTPS-Zertifikat** (empfohlen für Security Headers)
 - **SSH-Zugang** (für optimales Deployment)
 
 ### 1. Dateien installieren
 ```bash
-git clone [repository-url] staticMD
+git clone https://github.com/dirkclemens/staticmd.git staticMD
 cd staticMD
 # Oder ZIP herunterladen und entpacken
 unzip staticMD.zip
@@ -209,12 +210,17 @@ tail -f /var/log/php_errors.log
 
 ---
 
-## 🚀 Go-Live Checkliste
+### Go-Live Checkliste
 
 ### Vor dem Launch
 - [ ] Admin-Passwort geändert
 - [ ] Site-Name in config.php angepasst
 - [ ] SSL-Zertifikat installiert
+- [ ] Security Headers aktiviert (automatisch)
+- [ ] CSP-Test durchgeführt (`/csp-test.php`)
+- [ ] Session-Timeout konfiguriert
+- [ ] SEO-Einstellungen konfiguriert
+- [ ] robots.txt getestet (`/robots.txt`)
 - [ ] Backup-Strategie implementiert
 - [ ] Performance-Optimierungen aktiviert
 - [ ] 404-Seite angepasst
@@ -230,10 +236,10 @@ tail -f /var/log/php_errors.log
 ## 📞 Support & Hilfe
 
 ### Dokumentation
-- **README.md**: Feature-Übersicht
+- **help/README.md**: Feature-Übersicht
 - **CHANGELOG.md**: Entwicklungshistorie
 - **scope_final.md**: Projekt-Analyse
 
 ### Live-Beispiel
-- **Demo**: https://flat.adcore.de/
+- **Demo**: https://staticMD.adcore.de
 - **Admin-Demo**: Vollständige Funktion

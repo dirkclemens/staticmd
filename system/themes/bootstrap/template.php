@@ -64,6 +64,9 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
     <meta name="description" content="<?= htmlspecialchars($meta['description'] ?? 'Powered by StaticMD') ?>">
     <meta name="author" content="<?= htmlspecialchars($meta['author'] ?? '') ?>">
     
+    <!-- SEO/Robots Meta-Tags -->
+    <?= $robotsMeta ?>
+    
     <title><?= htmlspecialchars($title) ?> - <?= htmlspecialchars($siteName) ?></title>
     
     <!-- Favicon -->  

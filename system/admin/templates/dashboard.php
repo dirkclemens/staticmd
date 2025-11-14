@@ -1,4 +1,10 @@
 <?php
+// Security Headers setzen
+require_once __DIR__ . '/../../core/SecurityHeaders.php';
+use StaticMD\Core\SecurityHeaders;
+SecurityHeaders::setAllSecurityHeaders('admin');
+$nonce = SecurityHeaders::getNonce();
+
 // Admin-Layout Header
 $pageTitle = $pageTitle ?? 'Dashboard';
 $currentUser = $this->auth->getUsername();
@@ -352,7 +358,7 @@ function encodeUrlPath($path) {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
-    <script>
+    <script nonce="<?= $nonce ?>">
         // Session-Timer
         let timeRemaining = <?= $timeRemaining ?>;
         

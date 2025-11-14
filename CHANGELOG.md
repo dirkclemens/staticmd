@@ -39,8 +39,8 @@ Dokumentation aller wichtigen Entwicklungsschritte und implementierten Features.
 - **VERBESSERT**: Unicode-Handling und Fehlerbehandlung
 
 ### 📚 Documentation & Developer Experience
-- **AKTUALISIERT**: README.md mit vollständiger Feature-Matrix
-- **NEU**: THEME-SYSTEM.md für Custom-Theme-Entwicklung
+- **AKTUALISIERT**: /content/help/README.md mit vollständiger Feature-Matrix
+- **NEU**: /content/help/themes.md für Custom-Theme-Entwicklung
 - **NEU**: Umfassende GitHub Copilot AI Instructions
 - **VERBESSERT**: Installation und Deployment-Guides
 
@@ -245,12 +245,12 @@ Duplicate file cleanup
 
 ## Documentation Updates
 
-### README.md Evolution
+### Documentation Evolution
 - **v1.0**: Basic project description
 - **v1.1**: Added installation instructions  
 - **v1.2**: Feature documentation
 - **v2.0**: Complete rewrite with all features
-- **v2.1**: Production examples and troubleshooting
+- **v2.1**: Migration to /content/help/ structure
 
 ### Scope Documentation
 - **scope.md**: Original requirements

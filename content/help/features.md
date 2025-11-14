@@ -21,6 +21,15 @@
 - Drag&Drop-Upload für PDF/ZIP
 - Clean URLs
 - CSRF-Schutz
+- Content-Security-Policy (CSP)
+- Umfassende Security Headers
+- Path-Traversal-Schutz
+- XSS-Schutz
+- Session-Security
+- Open-Redirect-Schutz
+- SEO & Suchmaschinen-Kontrolle
+- Dynamische robots.txt Generierung
+- Per-Page Robots Meta-Tags
 - Breadcrumb-Navigation
 - Unterverzeichnis-Support
 
@@ -30,21 +39,20 @@ staticMD/
 ├── index.php
 ├── config.php
 ├── .htaccess
-├── upload.sh
 ├── content/
 │   ├── index.md
-│   ├── tech/
 │   └── ...
 ├── system/
 │   ├── core/
 │   ├── admin/
 │   └── themes/
 └── public/
+    ├── assets/
     ├── images/
     └── downloads/
 ```
 
-## Markdown-Syntax
+## Markdown-Features
 ```
 - [ download datei.pdf "Alt-Text"] erzeugt einen Download-Link mit passendem Icon   
 - [ image bild.jpg "Alt-Text" - 50%] für Bilder   
@@ -52,6 +60,18 @@ staticMD/
 - [ tags /pfad/ limit] für Tag-Clouds   
 - [ folder /pfad/ limit] für horizontale Unterordner-Navigation
 - [ accordionstart id "Titel"]...[accordionstop] für Accordions   
+```
+
+## SEO Front Matter
+```markdown
+---
+Title: Seitentitel
+Author: Autor
+Tag: seo, robots
+Description: Meta-Description für Suchmaschinen
+Robots: noindex,nofollow
+Canonical: https://your-domain.com/canonical-url
+---
 ```
 
 ## Hinweise

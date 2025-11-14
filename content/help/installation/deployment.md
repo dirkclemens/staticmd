@@ -39,16 +39,16 @@ Statische Downloads werden unter `/public/downloads/` gespeichert und über `/do
 
 ### Uberspace Setup
 - Dateien hochladen nach `/var/www/virtual/USER/html/`
-- Domain einrichten: `uberspace web domain add staticMD.ihre-domain.com`
+- Domain einrichten: `uberspace web domain add staticMD.your-domain.com`
 - Berechtigungen setzen: `chmod 755 content/ system/`
-- Testen: `https://staticMD.ihre-domain.com/` und `https://staticMD.ihre-domain.com/admin`
+- Testen: `https://staticMD.your-domain.com/` und `https://staticMD.your-domain.com/admin`
 
 ### Nginx Beispiel-Konfiguration
 ```nginx
 server {
     listen 80;
-    server_name staticMD.ihre-domain.com;
-    root /var/www/virtual/USER/staticMD.ihre-domain.com;
+    server_name staticMD.your-domain.com;
+    root /var/www/virtual/USER/staticMD.your-domain.com;
     index index.php;
     location ~ ^/(system|content)/ { deny all; return 403; }
     location ~ ^/admin(/.*)?$ { try_files $uri $uri/ /system/admin/index.php?route=$1; }
@@ -65,17 +65,55 @@ server {
 - ZIP Upload
 
 ## ✅ Nach dem Deployment testen
-- Frontend: `http://ihre-domain.com/`
-- Admin: `http://ihre-domain.com/admin`
+- Frontend: `http://your-domain.com/`
+- Admin: `http://your-domain.com/admin`
 - Editor: Neue Seite erstellen
 - Navigation: Alle Links prüfen
 
-## 🔒 Sicherheits-Tipps
-- SSL/HTTPS aktivieren
+## 🔒 Sicherheits-Features (automatisch aktiviert)
+
+### Content-Security-Policy (CSP)
+- ✅ **Automatisch aktiviert** - Schutz vor XSS-Angriffen
+- ✅ **Kontextbasiert** - Frontend/Admin-spezifische Policies
+- ✅ **CDN-Whitelist** - Bootstrap, CodeMirror erlaubt
+- ✅ **Nonce-System** - Sichere Inline-Scripts
+
+### HTTP Security Headers
+- ✅ **X-Frame-Options**: DENY (Clickjacking-Schutz)
+- ✅ **X-Content-Type-Options**: nosniff
+- ✅ **X-XSS-Protection**: 1; mode=block
+- ✅ **Referrer-Policy**: strict-origin-when-cross-origin
+- ✅ **HSTS**: Bei HTTPS automatisch aktiviert
+- ✅ **Permissions-Policy**: Unnötige Browser-APIs deaktiviert
+
+### Session-Security
+- ✅ **Sichere Cookies**: HttpOnly, Secure, SameSite=Strict
+- ✅ **CSRF-Schutz**: Alle Admin-Aktionen geschützt
+- ✅ **Session-Timeout**: Konfigurierbar bis 48h
+- ✅ **Path-Traversal-Schutz**: URL-Validierung
+
+### CSP-Test durchführen
+Nach dem Deployment testen:
+
+**Security Tests:**
+```
+https://your-domain.com/csp-test.php?context=frontend
+https://your-domain.com/csp-test.php?context=admin
+```
+
+**SEO Tests:**
+```
+https://your-domain.com/robots.txt
+https://your-domain.com/admin (SEO-Settings konfigurieren)
+```
+
+## 🛡️ Zusätzliche Sicherheits-Tipps
+- SSL/HTTPS aktivieren (für HSTS)
 - Firewall konfigurieren
 - Regelmäßige Backups
 - PHP Error-Logs überwachen
 - Updates von PHP und Server-Software
+- CSP-Violations im Browser-Log überwachen
 
 ## 🚨 Häufige Probleme
 - 500 Internal Server Error: PHP Error-Log prüfen, mod_rewrite aktiviert?
