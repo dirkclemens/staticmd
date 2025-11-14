@@ -102,6 +102,20 @@ body {
     color: var(--gh-fg-muted);
 }
 
+.breadcrumb-item .btn-outline-secondary {
+    color: var(--gh-fg-muted);
+    border-color: var(--gh-border-default);
+    background-color: transparent;
+    font-size: 0.875rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.breadcrumb-item .btn-outline-secondary:hover {
+    color: var(--gh-fg-default);
+    background-color: var(--gh-canvas-subtle);
+    border-color: var(--gh-border-muted);
+}
+
 .badge {
     background-color: var(--gh-done-fg) !important;
     border-radius: 12px;

@@ -274,3 +274,18 @@ footer {
     margin-top: 3rem;
 }
 
+/* Breadcrumb Zurück-Button Stile */
+.breadcrumb-item .btn-outline-secondary {
+    color: var(--sMD-dark);
+    border-color: var(--sMD-primary);
+    background-color: transparent;
+    font-size: 0.875rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.breadcrumb-item .btn-outline-secondary:hover {
+    color: white;
+    background-color: var(--sMD-primary);
+    border-color: var(--sMD-primary);
+}
+

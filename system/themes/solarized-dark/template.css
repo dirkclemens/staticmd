@@ -98,6 +98,20 @@ body {
     color: var(--sol-base1);
 }
 
+.breadcrumb-item .btn-outline-secondary {
+    color: var(--sol-base1);
+    border-color: var(--sol-base01);
+    background-color: transparent;
+    font-size: 0.875rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.breadcrumb-item .btn-outline-secondary:hover {
+    color: var(--sol-base2);
+    background-color: var(--sol-base02);
+    border-color: var(--sol-base01);
+}
+
 .badge {
     background-color: var(--sol-violet) !important;
 }

@@ -96,6 +96,20 @@ body {
     color: var(--monokai-blue);
 }
 
+.breadcrumb-item .btn-outline-secondary {
+    color: var(--monokai-comment);
+    border-color: var(--monokai-selection);
+    background-color: transparent;
+    font-size: 0.875rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.breadcrumb-item .btn-outline-secondary:hover {
+    color: var(--monokai-text);
+    background-color: var(--monokai-background);
+    border-color: var(--monokai-selection);
+}
+
 .badge {
     background-color: var(--monokai-purple) !important;
 }

@@ -14,7 +14,7 @@
     },
     "language": "en",
     "search_result_limit": 200,
-    "seo_robots_policy": "index,follow",
-    "seo_block_crawlers": false,
+    "seo_robots_policy": "noindex,nofollow",
+    "seo_block_crawlers": true,
     "seo_generate_robots_txt": true
 }

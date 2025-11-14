@@ -201,3 +201,9 @@ footer {
     color: white;
     margin-top: 3rem;
 }
+
+/* Breadcrumb Zurück-Button Stile */
+.breadcrumb-item .btn-outline-secondary {
+    font-size: 0.875rem;
+    padding: 0.25rem 0.5rem;
+}

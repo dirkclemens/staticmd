@@ -160,264 +160,279 @@ $nonce = SecurityHeaders::getNonce();
                             </div>
                             <?php endif; ?>
 
-                                    <!-- Seiten-Einstellungen -->
-                            <div class="settings-section">
-                                <h5><i class="bi bi-globe me-2"></i><?= __('admin.settings.website') ?></h5>
-                                
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="site_name" class="form-label"><?= __('admin.settings.website_name') ?></label>
-                                            <input type="text" class="form-control" id="site_name" name="site_name" 
-                                                   value="<?= htmlspecialchars($settings['site_name']) ?>" 
-                                                   placeholder="StaticMD" required>
-                                            <div class="form-text"><?= __('admin.settings.website_name_help') ?></div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="site_logo" class="form-label"><?= __('admin.settings.logo_url') ?></label>
-                                            <input type="url" class="form-control" id="site_logo" name="site_logo" 
-                                                   value="<?= htmlspecialchars($settings['site_logo']) ?>" 
-                                                   placeholder="https://example.com/logo.png">
-                                            <div class="form-text"><?= __('admin.settings.logo_url_help') ?></div>
-                                        </div>
-                                    </div>
+                            <!-- Seiten-Einstellungen -->                                
+                            <div class="card mt-4">                                                                
+                                <div class="card-header">
+                                    <h5><i class="bi bi-globe me-2"></i><?= __('admin.settings.website') ?></h5>
                                 </div>
+                                <div class="card-body">                                                                
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="site_name" class="form-label"><?= __('admin.settings.website_name') ?></label>
+                                                <input type="text" class="form-control" id="site_name" name="site_name" 
+                                                    value="<?= htmlspecialchars($settings['site_name']) ?>" 
+                                                    placeholder="StaticMD" required>
+                                                <div class="form-text"><?= __('admin.settings.website_name_help') ?></div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="site_logo" class="form-label"><?= __('admin.settings.logo_url') ?></label>
+                                                <input type="url" class="form-control" id="site_logo" name="site_logo" 
+                                                    value="<?= htmlspecialchars($settings['site_logo']) ?>" 
+                                                    placeholder="https://example.com/logo.png">
+                                                <div class="form-text"><?= __('admin.settings.logo_url_help') ?></div>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="language" class="form-label"><?= __('admin.settings.language') ?></label>
-                                            <select class="form-select" id="language" name="language">
-                                                <option value="en" <?= ($settings['language'] ?? 'en') === 'en' ? 'selected' : '' ?>>English</option>
-                                                <option value="de" <?= ($settings['language'] ?? 'en') === 'de' ? 'selected' : '' ?>>Deutsch</option>
-                                            </select>
-                                            <div class="form-text"><?= __('admin.settings.language_help') ?></div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="language" class="form-label"><?= __('admin.settings.language') ?></label>
+                                                <select class="form-select" id="language" name="language">
+                                                    <option value="en" <?= ($settings['language'] ?? 'en') === 'en' ? 'selected' : '' ?>>English</option>
+                                                    <option value="de" <?= ($settings['language'] ?? 'en') === 'de' ? 'selected' : '' ?>>Deutsch</option>
+                                                </select>
+                                                <div class="form-text"><?= __('admin.settings.language_help') ?></div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div>    
                             </div>
                             
                             <!-- Dashboard-Einstellungen -->
-                            <div class="settings-section">
-                                <h5><i class="bi bi-speedometer2 me-2"></i><?= __('admin.settings.dashboard') ?></h5>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="recent_files_count" class="form-label">
-                                                <?= __('admin.settings.recent_files_count') ?>:
-                                                <span class="range-value" id="recent_files_value"><?= $settings['recent_files_count'] ?></span>
-                                            </label>
-                                            <input type="range" class="form-range" id="recent_files_count" name="recent_files_count"
-                                                   min="5" max="50" value="<?= $settings['recent_files_count'] ?>"
-                                                   oninput="document.getElementById('recent_files_value').textContent = this.value">
-                                            <div class="form-text"><?= __('admin.settings.recent_files_count_help') ?></div>
+                            <div class="card mt-4">                                                                
+                                <div class="card-header">
+                                    <h5><i class="bi bi-speedometer2 me-2"></i><?= __('admin.settings.dashboard') ?></h5>
+                                </div>
+                                <div class="card-body">                                
+                                    <div class="row">          
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="recent_files_count" class="form-label">
+                                                    <?= __('admin.settings.recent_files_count') ?>:
+                                                    <span class="range-value" id="recent_files_value"><?= $settings['recent_files_count'] ?></span>
+                                                </label>
+                                                <input type="range" class="form-range" id="recent_files_count" name="recent_files_count"
+                                                    min="5" max="50" value="<?= $settings['recent_files_count'] ?>"
+                                                    oninput="document.getElementById('recent_files_value').textContent = this.value">
+                                                <div class="form-text"><?= __('admin.settings.recent_files_count_help') ?></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="search_result_limit" class="form-label">
+                                                    <?= __('admin.search.result_limit_label') ?>:
+                                                    <span class="range-value" id="search_result_limit_value"><?= $settings['search_result_limit'] ?? 50 ?></span>
+                                                </label>
+                                                <input type="range" class="form-range" id="search_result_limit" name="search_result_limit"
+                                                    min="10" max="200" step="10" value="<?= $settings['search_result_limit'] ?? 50 ?>"
+                                                    oninput="document.getElementById('search_result_limit_value').textContent = this.value">
+                                                <div class="form-text"><?= __('admin.search.result_limit_help') ?></div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="search_result_limit" class="form-label">
-                                                <?= __('admin.search.result_limit_label') ?>:
-                                                <span class="range-value" id="search_result_limit_value"><?= $settings['search_result_limit'] ?? 50 ?></span>
+                                    <div class="mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="show_file_stats" name="show_file_stats"
+                                                <?= $settings['show_file_stats'] ? 'checked' : '' ?>>
+                                            <label class="form-check-label" for="show_file_stats">
+                                                <?= __('admin.settings.show_file_stats') ?>
                                             </label>
-                                            <input type="range" class="form-range" id="search_result_limit" name="search_result_limit"
-                                                   min="10" max="200" step="10" value="<?= $settings['search_result_limit'] ?? 50 ?>"
-                                                   oninput="document.getElementById('search_result_limit_value').textContent = this.value">
-                                            <div class="form-text"><?= __('admin.search.result_limit_help') ?></div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="mb-3">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="show_file_stats" name="show_file_stats"
-                                               <?= $settings['show_file_stats'] ? 'checked' : '' ?>>
-                                        <label class="form-check-label" for="show_file_stats">
-                                            <?= __('admin.settings.show_file_stats') ?>
-                                        </label>
-                                    </div>
-                                </div>
+                                </div>    
                             </div>
                             
                             <!-- Frontend-Theme -->
-                            <div class="settings-section">
-                                <h5><i class="bi bi-palette me-2"></i><?= __('admin.settings.frontend_theme') ?></h5>
-                                
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="frontend_theme" class="form-label"><?= __('admin.settings.frontend_theme') ?></label>
-                                            <select class="form-select" id="frontend_theme" name="frontend_theme">
-                                                <?php foreach ($availableThemes as $theme): ?>
-                                                    <option value="<?= htmlspecialchars($theme) ?>" <?= ($settings['frontend_theme'] ?? 'bootstrap') === $theme ? 'selected' : '' ?>>
-                                                        <?= ucfirst(str_replace(['-', '_'], [' ', ' '], $theme)) ?>
-                                                    </option>
-                                                <?php endforeach; ?>
-                                            </select>
-                                            <div class="form-text">
-                                                <?= __('admin.settings.frontend_theme_help') ?>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label"><?= __('admin.settings.theme_preview') ?></label>
-                                            <div class="border rounded p-3" style="background: linear-gradient(45deg, #f8f9fa 25%, transparent 25%), linear-gradient(-45deg, #f8f9fa 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f8f9fa 75%), linear-gradient(-45deg, transparent 75%, #f8f9fa 75%); background-size: 20px 20px; background-position: 0 0, 0 10px, 10px -10px, -10px 0px;">
-                                                <div class="text-center text-muted">
-                                                    <i class="bi bi-eye fs-1"></i><br>
-                                                    <small><?= __('admin.settings.theme_preview') ?></small><br>
-                                                    <small><?= __('admin.settings.visit_frontend') ?></small>
+                            <div class="card mt-4">                                                                
+                                <div class="card-header">
+                                    <h5><i class="bi bi-palette me-2"></i><?= __('admin.settings.frontend_theme') ?></h5>
+                                </div>
+                                <div class="card-body">                                
+                                    <div class="row">                                                                    
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="frontend_theme" class="form-label"><?= __('admin.settings.frontend_theme') ?></label>
+                                                <select class="form-select" id="frontend_theme" name="frontend_theme">
+                                                    <?php foreach ($availableThemes as $theme): ?>
+                                                        <option value="<?= htmlspecialchars($theme) ?>" <?= ($settings['frontend_theme'] ?? 'bootstrap') === $theme ? 'selected' : '' ?>>
+                                                            <?= ucfirst(str_replace(['-', '_'], [' ', ' '], $theme)) ?>
+                                                        </option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                                <div class="form-text">
+                                                    <?= __('admin.settings.frontend_theme_help') ?>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Editor-Einstellungen -->
-                            <div class="settings-section">
-                                <h5><i class="bi bi-pencil me-2"></i><?= __('admin.settings.editor') ?></h5>
-                                
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="editor_theme" class="form-label"><?= __('admin.settings.editor_theme') ?></label>
-                                            <select class="form-select" id="editor_theme" name="editor_theme" onchange="previewTheme(this.value)">
-                                                <option value="github" <?= $settings['editor_theme'] === 'github' ? 'selected' : '' ?>>GitHub (hell)</option>
-                                                <option value="monokai" <?= $settings['editor_theme'] === 'monokai' ? 'selected' : '' ?>>Monokai (dunkel)</option>
-                                                <option value="solarized-light" <?= $settings['editor_theme'] === 'solarized-light' ? 'selected' : '' ?>>Solarized Light</option>
-                                                <option value="solarized-dark" <?= $settings['editor_theme'] === 'solarized-dark' ? 'selected' : '' ?>>Solarized Dark</option>
-                                                <option value="material" <?= $settings['editor_theme'] === 'material' ? 'selected' : '' ?>>Material (dunkel)</option>
-                                            </select>
-                                            
-                                            <!-- Theme-Vorschau -->
-                                            <div class="mt-2">
-                                                <div id="theme-preview" class="border rounded p-2" style="font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace; font-size: 12px; line-height: 1.4;">
-                                                    <div id="theme-preview-content">
-                                                        <span class="theme-keyword"># Markdown</span><br>
-                                                        <span class="theme-text">**Bold text** and *italic text*</span><br>
-                                                        <span class="theme-comment">```javascript</span><br>
-                                                        <span class="theme-keyword">function</span> <span class="theme-function">example</span>() {<br>
-                                                        &nbsp;&nbsp;<span class="theme-keyword">return</span> <span class="theme-string">"Hello World"</span>;<br>
-                                                        }<br>
-                                                        <span class="theme-comment">```</span>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label"><?= __('admin.settings.theme_preview') ?></label>
+                                                <div class="border rounded p-3" style="background: linear-gradient(45deg, #f8f9fa 25%, transparent 25%), linear-gradient(-45deg, #f8f9fa 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f8f9fa 75%), linear-gradient(-45deg, transparent 75%, #f8f9fa 75%); background-size: 20px 20px; background-position: 0 0, 0 10px, 10px -10px, -10px 0px;">
+                                                    <div class="text-center text-muted">
+                                                        <i class="bi bi-eye fs-1"></i><br>
+                                                        <small><?= __('admin.settings.theme_preview') ?></small><br>
+                                                        <small><?= __('admin.settings.visit_frontend') ?></small>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="auto_save_interval" class="form-label">
-                                                <?= __('admin.settings.auto_save_interval') ?>: 
-                                                <span class="range-value" id="auto_save_value"><?= $settings['auto_save_interval'] ?></span>s
-                                            </label>
-                                            <input type="range" class="form-range" id="auto_save_interval" name="auto_save_interval" 
-                                                   min="30" max="300" step="30" value="<?= $settings['auto_save_interval'] ?>"
-                                                   oninput="document.getElementById('auto_save_value').textContent = this.value">
-                                            <div class="form-text"><?= __('admin.settings.auto_save_interval_help') ?></div>
+                                    </div>    
+                                </div>
+                            </div>
+                            
+                            <!-- Editor-Einstellungen -->
+                            <div class="card mt-4">                                                                
+                                <div class="card-header">
+                                    <h5><i class="bi bi-pencil me-2"></i><?= __('admin.settings.editor') ?></h5>
+                                </div>
+                                <div class="card-body">                                
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="editor_theme" class="form-label"><?= __('admin.settings.editor_theme') ?></label>
+                                                <select class="form-select" id="editor_theme" name="editor_theme" onchange="previewTheme(this.value)">
+                                                    <option value="github" <?= $settings['editor_theme'] === 'github' ? 'selected' : '' ?>>GitHub (hell)</option>
+                                                    <option value="monokai" <?= $settings['editor_theme'] === 'monokai' ? 'selected' : '' ?>>Monokai (dunkel)</option>
+                                                    <option value="solarized-light" <?= $settings['editor_theme'] === 'solarized-light' ? 'selected' : '' ?>>Solarized Light</option>
+                                                    <option value="solarized-dark" <?= $settings['editor_theme'] === 'solarized-dark' ? 'selected' : '' ?>>Solarized Dark</option>
+                                                    <option value="material" <?= $settings['editor_theme'] === 'material' ? 'selected' : '' ?>>Material (dunkel)</option>
+                                                </select>
+                                                
+                                                <!-- Theme-Vorschau -->
+                                                <div class="mt-2">
+                                                    <div id="theme-preview" class="border rounded p-2" style="font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace; font-size: 12px; line-height: 1.4;">
+                                                        <div id="theme-preview-content">
+                                                            <span class="theme-keyword"># Markdown</span><br>
+                                                            <span class="theme-text">**Bold text** and *italic text*</span><br>
+                                                            <span class="theme-comment">```javascript</span><br>
+                                                            <span class="theme-keyword">function</span> <span class="theme-function">example</span>() {<br>
+                                                            &nbsp;&nbsp;<span class="theme-keyword">return</span> <span class="theme-string">"Hello World"</span>;<br>
+                                                            }<br>
+                                                            <span class="theme-comment">```</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="auto_save_interval" class="form-label">
+                                                    <?= __('admin.settings.auto_save_interval') ?>: 
+                                                    <span class="range-value" id="auto_save_value"><?= $settings['auto_save_interval'] ?></span>s
+                                                </label>
+                                                <input type="range" class="form-range" id="auto_save_interval" name="auto_save_interval" 
+                                                    min="30" max="300" step="30" value="<?= $settings['auto_save_interval'] ?>"
+                                                    oninput="document.getElementById('auto_save_value').textContent = this.value">
+                                                <div class="form-text"><?= __('admin.settings.auto_save_interval_help') ?></div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             
                             <!-- Navigation-Sortierung -->
-                            <div class="settings-section">
-                                <h5><i class="bi bi-list-ol me-2"></i><?= __('admin.settings.navigation') ?></h5>
-                                <p class="text-muted"><?= __('admin.settings.navigation_hint') ?></p>
-                                
-                                <div class="row">
-                                    <div class="col-md-8">
-                                        <div class="mb-3">
-                                            <label for="navigation_order" class="form-label"><?= __('admin.settings.navigation_order') ?></label>
-                                            <textarea class="form-control" id="navigation_order" name="navigation_order" 
-                                                      rows="6" placeholder="about&#10;blog&#10;tech&#10;diy"><?php
-// Navigation-Order als Text formatieren
-$navOrder = $settings['navigation_order'] ?? [];
-$orderText = '';
-foreach ($navOrder as $section => $priority) {
-    $orderText .= $section . ':' . $priority . "\n";
-}
-echo htmlspecialchars(trim($orderText));
-?></textarea>
-                                            <div class="form-text">
-                                                <strong><?= __('admin.settings.navigation_format') ?></strong><br>
-                                                <code>section</code> <?= __('admin.settings.navigation_or') ?> <code>section:priorität</code><br>
-                                                <strong><?= __('admin.settings.navigation_example') ?></strong><br>
-                                                <code>about:1</code><br>
-                                                <code>blog:2</code><br>
-                                                <code>tech</code> <?= __('admin.settings.navigation_auto') ?><br>
-                                                <code>diy</code>
+                            <div class="card mt-4">                                                                
+                                <div class="card-header">
+                                    <h5><i class="bi bi-list-ol me-2"></i><?= __('admin.settings.navigation') ?></h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <div class="mb-3">
+                                                <label for="navigation_order" class="form-label"><?= __('admin.settings.navigation_order') ?></label>
+                                                <textarea class="form-control" id="navigation_order" name="navigation_order" 
+                                                        rows="6" placeholder="about&#10;blog&#10;tech&#10;diy"><?php
+                                                        // Navigation-Order als Text formatieren
+                                                        $navOrder = $settings['navigation_order'] ?? [];
+                                                        $orderText = '';
+                                                        foreach ($navOrder as $section => $priority) {
+                                                            $orderText .= $section . ':' . $priority . "\n";
+                                                        }
+                                                        echo htmlspecialchars(trim($orderText));
+                                                        ?></textarea>
+                                                <div class="form-text">
+                                                    <strong><?= __('admin.settings.navigation_format') ?></strong><br>
+                                                    <code>section</code> <?= __('admin.settings.navigation_or') ?> <code>section:priorität</code><br>
+                                                    <strong><?= __('admin.settings.navigation_example') ?></strong><br>
+                                                    <code>about:1</code><br>
+                                                    <code>blog:2</code><br>
+                                                    <code>tech</code> <?= __('admin.settings.navigation_auto') ?><br>
+                                                    <code>diy</code>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    
-                                    <div class="col-md-4">
-                                        <div class="card bg-light">
-                                            <div class="card-header">
-                                                <small class="fw-bold"><?= __('admin.settings.current_navigation') ?></small>
-                                            </div>
-                                            <div class="card-body">
-                                                <small class="text-muted">
-                                                    <?= __('admin.settings.current_order') ?><br><br>
-                                                    <?php
-                                                    // Zeige aktuelle Navigation-Sortierung
-                                                    $contentPath = $this->config['paths']['content'];
-                                                    $currentOrder = $settings['navigation_order'] ?? [];
-                                                    
-                                                    if (is_dir($contentPath)) {
-                                                        $sections = [];
+                                        
+                                        <div class="col-md-4">
+                                            <div class="card bg-light">
+                                                <div class="card-header">
+                                                    <small class="fw-bold"><?= __('admin.settings.current_navigation') ?></small>
+                                                </div>
+                                                <div class="card-body">
+                                                    <small class="text-muted">
+                                                        <?= __('admin.settings.current_order') ?><br><br>
+                                                        <?php
+                                                        // Zeige aktuelle Navigation-Sortierung
+                                                        $contentPath = $this->config['paths']['content'];
+                                                        $currentOrder = $settings['navigation_order'] ?? [];
                                                         
-                                                        // Sammle sowohl Ordner als auch Root-Dateien
-                                                        $items = glob($contentPath . '/*');
-                                                        foreach ($items as $item) {
-                                                            $basename = basename($item);
+                                                        if (is_dir($contentPath)) {
+                                                            $sections = [];
                                                             
-                                                            if (is_dir($item)) {
-                                                                // Ordner hinzufügen
-                                                                $sections[] = $basename;
-                                                            } elseif (is_file($item) && str_ends_with($basename, '.md')) {
-                                                                // Markdown-Dateien hinzufügen (ohne .md Extension)
-                                                                $section = substr($basename, 0, -3);
-                                                                if ($section !== 'index') { // index.md ausschließen
-                                                                    $sections[] = $section;
+                                                            // Sammle sowohl Ordner als auch Root-Dateien
+                                                            $items = glob($contentPath . '/*');
+                                                            foreach ($items as $item) {
+                                                                $basename = basename($item);
+                                                                
+                                                                if (is_dir($item)) {
+                                                                    // Ordner hinzufügen
+                                                                    $sections[] = $basename;
+                                                                } elseif (is_file($item) && str_ends_with($basename, '.md')) {
+                                                                    // Markdown-Dateien hinzufügen (ohne .md Extension)
+                                                                    $section = substr($basename, 0, -3);
+                                                                    if ($section !== 'index') { // index.md ausschließen
+                                                                        $sections[] = $section;
+                                                                    }
                                                                 }
                                                             }
-                                                        }
-                                                        
-                                                        // Duplikate entfernen (falls sowohl Ordner als auch Datei existieren)
-                                                        $sections = array_unique($sections);
-                                                        
-                                                        if (!empty($sections)) {
-                                                            // Sortiere Sections nach aktueller Navigation-Order
-                                                            usort($sections, function($a, $b) use ($currentOrder) {
-                                                                $orderA = $currentOrder[$a] ?? 999;
-                                                                $orderB = $currentOrder[$b] ?? 999;
-                                                                
-                                                                if ($orderA === $orderB) {
-                                                                    return strcasecmp($a, $b);
-                                                                }
-                                                                
-                                                                return $orderA <=> $orderB;
-                                                            });
                                                             
-                                                            // Zeige sortierte Sections mit aktueller Priorität
-                                                            foreach ($sections as $section) {
-                                                                $priority = $currentOrder[$section] ?? 'auto';
-                                                                $badgeClass = isset($currentOrder[$section]) ? 'text-bg-primary' : 'text-bg-secondary';
-                                                                echo '<div class="d-flex justify-content-between align-items-center mb-1">';
-                                                                echo '<span class="badge ' . $badgeClass . '">' . htmlspecialchars($section) . '</span>';
-                                                                echo '<small class="text-muted ms-2">(' . $priority . ')</small>';
-                                                                echo '</div>';
+                                                            // Duplikate entfernen (falls sowohl Ordner als auch Datei existieren)
+                                                            $sections = array_unique($sections);
+                                                            
+                                                            if (!empty($sections)) {
+                                                                // Sortiere Sections nach aktueller Navigation-Order
+                                                                usort($sections, function($a, $b) use ($currentOrder) {
+                                                                    $orderA = $currentOrder[$a] ?? 999;
+                                                                    $orderB = $currentOrder[$b] ?? 999;
+                                                                    
+                                                                    if ($orderA === $orderB) {
+                                                                        return strcasecmp($a, $b);
+                                                                    }
+                                                                    
+                                                                    return $orderA <=> $orderB;
+                                                                });
+                                                                
+                                                                // Zeige sortierte Sections mit aktueller Priorität
+                                                                foreach ($sections as $section) {
+                                                                    $priority = $currentOrder[$section] ?? 'auto';
+                                                                    $badgeClass = isset($currentOrder[$section]) ? 'text-bg-primary' : 'text-bg-secondary';
+                                                                    echo '<div class="d-flex justify-content-between align-items-center mb-1">';
+                                                                    echo '<span class="badge ' . $badgeClass . '">' . htmlspecialchars($section) . '</span>';
+                                                                    echo '<small class="text-muted ms-2">(' . $priority . ')</small>';
+                                                                    echo '</div>';
+                                                                }
+                                                            } else {
+                                                                echo '<em>' . __('admin.settings.no_navigation_found') . '</em>';
                                                             }
-                                                        } else {
-                                                            echo '<em>' . __('admin.settings.no_navigation_found') . '</em>';
                                                         }
-                                                    }
-                                                    ?>
-                                                </small>
+                                                        ?>
+                                                    </small>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

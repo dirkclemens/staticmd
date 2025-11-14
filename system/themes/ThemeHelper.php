@@ -174,33 +174,19 @@ class ThemeHelper
             $html .= '</li>';
         }
         
+        // Zurück-Link hinzufügen (nur wenn nicht auf der Home-Seite)
+        $isHomePage = count($breadcrumbs) === 1 && ($breadcrumbs[0]['route'] ?? '') === '';
+        if (!$isHomePage) {
+            $html .= '<li class="breadcrumb-item ms-auto">';
+            $html .= '<button type="button" class="btn btn-sm btn-outline-secondary d-flex align-items-center" onclick="window.history.back()" title="Zur vorherigen Seite zurück">';
+            $html .= '<i class="bi bi-arrow-left me-1"></i> Zurück';
+            $html .= '</button>';
+            $html .= '</li>';
+        }
+        
         $html .= '</ol>';
         $html .= '</nav>';
         
         return $html;
     }
 }
-
-/*
-Usage in template.php:
-<?php if (!empty($breadcrumbs) && count($breadcrumbs) > 1): ?>
-<nav aria-label="breadcrumb" class="mb-4">
-    <ol class="breadcrumb">
-        <?php foreach ($breadcrumbs as $breadcrumb): ?>
-        <li class="breadcrumb-item <?= $breadcrumb['is_last'] ?? false ? 'active' : '' ?>">
-            <?php if ($breadcrumb['is_last'] ?? false): ?>
-                <?= htmlspecialchars($breadcrumb['title']) ?>
-            <?php else: ?>
-                <a href="<?= htmlspecialchars($breadcrumb['url']) ?>">
-                    <?php if ($breadcrumb['route'] === ''): ?>
-                        <i class="bi bi-house"></i> 
-                    <?php endif; ?>
-                    <?= htmlspecialchars($breadcrumb['title']) ?>
-                </a>
-            <?php endif; ?>
-        </li>
-        <?php endforeach; ?>
-    </ol>
-</nav>
-<?php endif; ?>   
-*/
