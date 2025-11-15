@@ -586,6 +586,7 @@ $nonce = SecurityHeaders::getNonce();
                                                         <small class="text-muted">
                                                             <i class="bi bi-hdd me-1"></i>
                                                             <strong><?= $backupStats['size_formatted'] ?></strong>
+                                                            <div class="text-muted" style="font-size: 0.75rem;"><?= __('admin.settings.backup.size_info') ?></div>
                                                         </small>
                                                     </div>
                                                 </div>

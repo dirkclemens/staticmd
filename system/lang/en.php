@@ -80,9 +80,9 @@ return [
         'dashboard' => [
             'stats' => [
                 'total_pages' => 'Total pages',
-                'disk_usage' => 'Disk usage',
+                'disk_usage' => 'Content size',
                 'php_version' => 'PHP version',
-                'memory_limit' => 'Memory limit'
+                'public_size' => 'Assets size'
             ],
             'recent' => 'Recently edited',
             'columns' => [
@@ -177,7 +177,8 @@ return [
                 'create_button' => 'Create backup',
                 'creating' => 'Creating backup...',
                 'download_ready' => 'Backup is ready for download',
-                'security_note' => 'Note: The admin password is not stored in the backup for security reasons.'
+                'security_note' => 'Note: The admin password is not stored in the backup for security reasons.',
+                'size_info' => 'Backup size'
             ]
         ],
         'error' => [

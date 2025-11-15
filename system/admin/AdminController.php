@@ -188,10 +188,10 @@ class AdminController {
             // Die ersten N Dateien sind die neuesten
             'recent_files' => array_slice($allFiles, 0, $recentFilesCount),
             'disk_usage' => $this->calculateDiskUsage(),
+            'public_size' => $this->calculatePublicSize(),
             'system_info' => [
                 'php_version' => PHP_VERSION,
-                'upload_max_filesize' => ini_get('upload_max_filesize'),
-                'memory_limit' => ini_get('memory_limit')
+                'upload_max_filesize' => ini_get('upload_max_filesize')
             ]
         ];
         
@@ -549,6 +549,17 @@ class AdminController {
     {
         $contentDir = $this->config['paths']['content'];
         $size = $this->getDirSize($contentDir);
+        
+        return $this->formatBytes($size);
+    }
+    
+    /**
+     * Berechnet die Größe des /public/ Verzeichnisses
+     */
+    private function calculatePublicSize(): string
+    {
+        $publicDir = $this->config['paths']['public'];
+        $size = $this->getDirSize($publicDir);
         
         return $this->formatBytes($size);
     }

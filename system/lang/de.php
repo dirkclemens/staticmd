@@ -80,9 +80,9 @@ return [
         'dashboard' => [
             'stats' => [
                 'total_pages' => 'Gesamt Seiten',
-                'disk_usage' => 'Speicherplatz',
+                'disk_usage' => 'Content-Größe',
                 'php_version' => 'PHP Version',
-                'memory_limit' => 'Memory Limit'
+                'public_size' => 'Assets-Größe'
             ],
             'recent' => 'Zuletzt bearbeitet',
             'columns' => [
@@ -177,7 +177,8 @@ return [
                 'create_button' => 'Backup erstellen',
                 'creating' => 'Backup wird erstellt...',
                 'download_ready' => 'Backup ist bereit zum Download',
-                'security_note' => 'Hinweis: Das Admin-Passwort wird aus Sicherheitsgründen nicht im Backup gespeichert.'
+                'security_note' => 'Hinweis: Das Admin-Passwort wird aus Sicherheitsgründen nicht im Backup gespeichert.',
+                'size_info' => 'Backup-Größe'
             ]
         ],
         'error' => [

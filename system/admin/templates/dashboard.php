@@ -215,7 +215,23 @@ function encodeUrlPath($path) {
                             </div>
                         </div>
                     </div>
-                    
+
+                    <div class="col-md-3">
+                        <div class="card stat-card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="stat-icon bg-warning bg-opacity-10 text-warning me-3">
+                                        <i class="bi bi-folder"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="card-title mb-1"><?= $stats['public_size'] ?></h5>
+                                        <p class="card-text text-muted small mb-0"><?= __('admin.dashboard.stats.public_size') ?></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="col-md-3">
                         <div class="card stat-card">
                             <div class="card-body">
@@ -231,22 +247,7 @@ function encodeUrlPath($path) {
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="col-md-3">
-                        <div class="card stat-card">
-                            <div class="card-body">
-                                <div class="d-flex align-items-center">
-                                    <div class="stat-icon bg-warning bg-opacity-10 text-warning me-3">
-                                        <i class="bi bi-memory"></i>
-                                    </div>
-                                    <div>
-                                        <h5 class="card-title mb-1"><?= $stats['system_info']['memory_limit'] ?></h5>
-                                        <p class="card-text text-muted small mb-0"><?= __('admin.dashboard.stats.memory_limit') ?></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
 
                 <!-- Neueste Dateien -->
