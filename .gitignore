@@ -15,6 +15,7 @@
 **/*_check.php
 **/*.sh
 /*.md
+!/README.md
 !public/assets/README.md
 !public/downloads/README.md
 !public/images/README.md
