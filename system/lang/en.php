@@ -11,6 +11,20 @@ return [
         'tags_overview_description' => 'Overview of all used tags with number of pages',
         'tag_title' => 'Tag: %s',
         'tag_description' => 'All pages with the tag "%s"',
+        'search_results_count' => '%d results for "%s"',
+        'search_results_count_with_time' => '%d results for "%s" (%s seconds)',
+        'search_no_results' => 'No results found for "%s".',
+        'search_suggestions' => 'Try different search terms or check your spelling.',
+        'content_overview' => 'Overview of all content in this area (%d pages',
+        'folder_overview_title' => '%s - Overview',
+        'folder_overview_description' => 'Overview of all pages in %s section',
+        'back_link' => 'Back',
+        'overview' => 'Overview',
+    ],
+    'common' => [
+        'back_button' => 'Back',
+        'back_button_tooltip' => 'Back to previous page',
+        'bulk_delete_placeholder' => 'Bulk delete functionality would be implemented here.'
     ],
     'admin' => [
         'brand' => 'StaticMD Admin',
@@ -55,6 +69,8 @@ return [
             'no_permission' => 'No permission to delete.',
             'invalid_file' => 'Invalid filename.',
             'csrf_invalid' => 'Invalid security token.',
+            'csrf_token_invalid' => 'CSRF token invalid.',
+            'filename_required' => 'Filename is required.',
             'invalid_request' => 'Invalid request.',
             'settings_save_failed' => 'Error saving settings.',
             'generic' => 'An error occurred.'
@@ -104,6 +120,7 @@ return [
             'navigation_or' => 'or',
             'navigation_example' => 'Example:',
             'navigation_auto' => '(automatic priority)',
+            'navigation_priority' => 'priority',
             'current_navigation' => 'Current navigation',
             'current_order' => 'Current order (before changes):',
             'no_navigation_found' => 'No navigation sections found',
@@ -125,7 +142,26 @@ return [
             'actions_saved_in' => 'Settings are stored in',
             'save_settings' => 'Save settings',
             'language' => 'Language',
-            'language_help' => 'Choose the language for the admin interface'
+            'language_help' => 'Choose the language for the admin interface',
+            'seo' => [
+                'title' => 'SEO & Search Engine Settings',
+                'robots_policy_label' => 'Default Robots Policy',
+                'robots_policy_help' => 'Default behavior for all pages (can be overridden per page)',
+                'robots_index_follow' => 'Index & Follow (Search engine friendly)',
+                'robots_index_nofollow' => 'Index but no Follow',
+                'robots_noindex_follow' => 'No Index but Follow',
+                'robots_noindex_nofollow' => 'No Index & no Follow',
+                'block_crawlers_label' => 'Block all search engines',
+                'block_crawlers_help' => 'Enabled: Complete site will not be indexed',
+                'block_crawlers_warning' => 'Warning: Overrides all other settings!',
+                'generate_robots_txt_label' => 'Generate robots.txt',
+                'generate_robots_txt_help' => 'Automatic robots.txt under /robots.txt',
+                'features_title' => 'SEO Features:',
+                'features_per_page' => 'Per-Page Robots: Use Robots: noindex,nofollow in Front Matter',
+                'features_robots_txt' => 'robots.txt: Automatically generated under /robots.txt',
+                'features_meta_tags' => 'Meta-Tags: Automatically inserted in all templates',
+                'features_http_headers' => 'HTTP-Headers: X-Robots-Tag automatically set for noindex'
+            ]
         ],
         'error' => [
             'title' => 'Error',
@@ -148,8 +184,18 @@ return [
             'invalid_filename' => 'Invalid filename.',
             'no_delete_permission' => 'No permission to delete the file.',
             'changes_saved' => 'Changes have been saved and you have returned to the file manager.',
+            'file_deleted_success' => 'File was successfully deleted.',
+            'modified' => 'Modified',
             'view' => 'View',
-            'edit' => 'Edit'
+            'edit' => 'Edit',
+            'view_tooltip' => 'View',
+            'edit_tooltip' => 'Edit',
+            'delete_tooltip' => 'Delete',
+            'delete_modal_title' => 'Delete file',
+            'delete_modal_question' => 'Are you sure you want to delete the file {filename}?',
+            'delete_modal_warning' => 'This action cannot be undone.',
+            'delete_modal_confirm' => 'Delete',
+            'bulk_delete_confirm' => 'Are you sure you want to delete {count} file(s)?'
         ],
         'editor' => [
             'file_route_placeholder' => 'e.g. my-page or blog/article',
@@ -185,7 +231,34 @@ return [
             'toolbar' => 'Editor Toolbar',
             'fullscreen' => 'Fullscreen',
             'preview_loading' => 'Preview loading...',
-            'delete_confirm' => 'Are you sure you want to delete the file?'
+            'delete_confirm' => 'Are you sure you want to delete the file?',
+            'toolbar' => [
+                'bold' => 'Bold',
+                'italic' => 'Italic',
+                'strikethrough' => 'Strikethrough',
+                'heading_h1' => 'Heading H1',
+                'heading_h2' => 'Heading H2',
+                'heading_h3' => 'Heading H3',
+                'heading_h4' => 'Heading H4',
+                'list_unordered' => 'Unordered list',
+                'list_ordered' => 'Ordered list',
+                'checklist' => 'Checklist',
+                'link' => 'Link',
+                'image' => 'Image',
+                'download_link' => 'Download link',
+                'inline_code' => 'Inline code',
+                'code_block' => 'Code block',
+                'quote' => 'Quote',
+                'table' => 'Table',
+                'horizontal_line' => 'Horizontal line',
+                'anchor' => 'Anchor',
+                'accordion' => 'Accordion',
+                'emoji' => 'Emoji',
+                'auto_save_placeholder' => 'Auto-save could be implemented here'
+            ],
+            'emoji_categories' => [
+                'activities' => 'Activities'
+            ]
         ]
     ]
 ];

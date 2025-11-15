@@ -11,6 +11,20 @@ return [
         'tags_overview_description' => 'Übersicht aller verwendeten Tags mit Anzahl der Seiten',
         'tag_title' => 'Tag: %s',
         'tag_description' => 'Alle Seiten mit dem Tag "%s"',
+        'search_results_count' => '%d Ergebnisse für "%s"',
+        'search_results_count_with_time' => '%d Ergebnisse für "%s" (%s Sekunden)',
+        'search_no_results' => 'Keine Ergebnisse für "%s" gefunden.',
+        'search_suggestions' => 'Versuchen Sie andere Suchbegriffe oder prüfen Sie die Schreibweise.',
+        'content_overview' => 'Übersicht aller Inhalte in diesem Bereich (%d Seiten',
+        'folder_overview_title' => '%s - Übersicht',
+        'folder_overview_description' => 'Übersicht aller Seiten im Bereich %s',
+        'back_link' => 'Zurück',
+        'overview' => 'Übersicht',
+    ],
+    'common' => [
+        'back_button' => 'Zurück',
+        'back_button_tooltip' => 'Zur vorherigen Seite zurück',
+        'bulk_delete_placeholder' => 'Bulk-Delete-Funktionalität würde hier implementiert werden.'
     ],
     'admin' => [
         'brand' => 'StaticMD Admin',
@@ -55,6 +69,8 @@ return [
             'no_permission' => 'Keine Berechtigung zum Löschen.',
             'invalid_file' => 'Ungültiger Dateiname.',
             'csrf_invalid' => 'Sicherheitstoken ungültig.',
+            'csrf_token_invalid' => 'CSRF-Token ungültig.',
+            'filename_required' => 'Dateiname ist erforderlich.',
             'invalid_request' => 'Ungültige Anfrage.',
             'settings_save_failed' => 'Fehler beim Speichern der Einstellungen.',
             'generic' => 'Ein Fehler ist aufgetreten.'
@@ -104,6 +120,7 @@ return [
             'navigation_or' => 'oder',
             'navigation_example' => 'Beispiel:',
             'navigation_auto' => '(automatische Priorität)',
+            'navigation_priority' => 'priorität',
             'current_navigation' => 'Aktuelle Navigation',
             'current_order' => 'Aktuelle Reihenfolge (vor Änderungen):',
             'no_navigation_found' => 'Keine Navigation-Bereiche gefunden',
@@ -125,7 +142,26 @@ return [
             'actions_saved_in' => 'Einstellungen werden gespeichert in',
             'save_settings' => 'Einstellungen speichern',
             'language' => 'Sprache',
-            'language_help' => 'Sprache für die Admin-Oberfläche wählen'
+            'language_help' => 'Sprache für die Admin-Oberfläche wählen',
+            'seo' => [
+                'title' => 'SEO & Suchmaschinen-Einstellungen',
+                'robots_policy_label' => 'Standard Robots-Policy',
+                'robots_policy_help' => 'Standard-Verhalten für alle Seiten (kann pro Seite überschrieben werden)',
+                'robots_index_follow' => 'Index & Follow (Suchmaschinen-freundlich)',
+                'robots_index_nofollow' => 'Index aber kein Follow',
+                'robots_noindex_follow' => 'Kein Index aber Follow',
+                'robots_noindex_nofollow' => 'Kein Index & kein Follow',
+                'block_crawlers_label' => 'Alle Suchmaschinen blockieren',
+                'block_crawlers_help' => 'Aktiviert: Komplette Seite wird nicht indexiert',
+                'block_crawlers_warning' => 'Warnung: Überschreibt alle anderen Einstellungen!',
+                'generate_robots_txt_label' => 'robots.txt generieren',
+                'generate_robots_txt_help' => 'Automatische robots.txt unter /robots.txt',
+                'features_title' => 'SEO-Funktionen:',
+                'features_per_page' => 'Per-Page Robots: Verwenden Sie Robots: noindex,nofollow im Front Matter',
+                'features_robots_txt' => 'robots.txt: Automatisch generiert unter /robots.txt',
+                'features_meta_tags' => 'Meta-Tags: Automatisch in allen Templates eingefügt',
+                'features_http_headers' => 'HTTP-Headers: X-Robots-Tag bei noindex automatisch gesetzt'
+            ]
         ],
         'error' => [
             'title' => 'Fehler',
@@ -148,8 +184,18 @@ return [
             'invalid_filename' => 'Ungültiger Dateiname.',
             'no_delete_permission' => 'Keine Berechtigung zum Löschen der Datei.',
             'changes_saved' => 'Änderungen wurden gespeichert und Sie sind zum Dateimanager zurückgekehrt.',
+            'file_deleted_success' => 'Datei wurde erfolgreich gelöscht.',
+            'modified' => 'Geändert',
             'view' => 'Ansehen',
-            'edit' => 'Bearbeiten'
+            'edit' => 'Bearbeiten',
+            'view_tooltip' => 'Anzeigen',
+            'edit_tooltip' => 'Bearbeiten',
+            'delete_tooltip' => 'Löschen',
+            'delete_modal_title' => 'Datei löschen',
+            'delete_modal_question' => 'Sind Sie sicher, dass Sie die Datei {filename} löschen möchten?',
+            'delete_modal_warning' => 'Diese Aktion kann nicht rückgängig gemacht werden.',
+            'delete_modal_confirm' => 'Löschen',
+            'bulk_delete_confirm' => 'Sind Sie sicher, dass Sie {count} Datei(en) löschen möchten?'
         ],
         'editor' => [
             'file_route_placeholder' => 'z.B. meine-seite oder blog/artikel',
@@ -185,7 +231,34 @@ return [
             'toolbar' => 'Editor Toolbar',
             'fullscreen' => 'Vollbild',
             'preview_loading' => 'Vorschau wird geladen...',
-            'delete_confirm' => 'Sind Sie sicher, dass Sie die Datei löschen möchten?'
+            'delete_confirm' => 'Sind Sie sicher, dass Sie die Datei löschen möchten?',
+            'toolbar' => [
+                'bold' => 'Fett',
+                'italic' => 'Kursiv',
+                'strikethrough' => 'Durchgestrichen',
+                'heading_h1' => 'Überschrift H1',
+                'heading_h2' => 'Überschrift H2',
+                'heading_h3' => 'Überschrift H3',
+                'heading_h4' => 'Überschrift H4',
+                'list_unordered' => 'Aufzählung',
+                'list_ordered' => 'Nummerierte Liste',
+                'checklist' => 'Checkliste',
+                'link' => 'Link',
+                'image' => 'Bild',
+                'download_link' => 'Download-Link',
+                'inline_code' => 'Inline-Code',
+                'code_block' => 'Code-Block',
+                'quote' => 'Zitat',
+                'table' => 'Tabelle',
+                'horizontal_line' => 'Horizontale Linie',
+                'anchor' => 'Anchor / Sprungmarke',
+                'accordion' => 'Accordion',
+                'emoji' => 'Emoji',
+                'auto_save_placeholder' => 'Auto-save könnte hier implementiert werden'
+            ],
+            'emoji_categories' => [
+                'activities' => 'Aktivitäten'
+            ]
         ]
     ]
 ];

@@ -178,8 +178,8 @@ class ThemeHelper
         $isHomePage = count($breadcrumbs) === 1 && ($breadcrumbs[0]['route'] ?? '') === '';
         if (!$isHomePage) {
             $html .= '<li class="breadcrumb-item ms-auto">';
-            $html .= '<button type="button" class="btn btn-sm btn-outline-secondary d-flex align-items-center" onclick="window.history.back()" title="Zur vorherigen Seite zurück">';
-            $html .= '<i class="bi bi-arrow-left me-1"></i> Zurück';
+            $html .= '<button type="button" class="btn btn-sm btn-outline-secondary d-flex align-items-center" onclick="window.history.back()" title="' . \StaticMD\Core\I18n::t('common.back_button_tooltip') . '">';
+            $html .= '<i class="bi bi-arrow-left me-1"></i> ' . \StaticMD\Core\I18n::t('common.back_button');
             $html .= '</button>';
             $html .= '</li>';
         }

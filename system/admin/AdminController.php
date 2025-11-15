@@ -289,7 +289,7 @@ class AdminController {
         
         $csrfToken = $_POST['csrf_token'] ?? '';
         if (!$this->auth->verifyCSRFToken($csrfToken)) {
-            die('CSRF-Token ungültig.');
+            die(\StaticMD\Core\I18n::t('admin.errors.csrf_token_invalid'));
         }
         
         $file = $_POST['file'] ?? '';
@@ -297,7 +297,7 @@ class AdminController {
         $meta = $_POST['meta'] ?? [];
         
         if (empty($file)) {
-            die('Dateiname ist erforderlich.');
+            die(\StaticMD\Core\I18n::t('admin.errors.filename_required'));
         }
         
         // Sichere Dateinamen erzwingen

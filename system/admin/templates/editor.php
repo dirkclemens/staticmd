@@ -237,13 +237,13 @@ $nonce = SecurityHeaders::getNonce();
                         <!-- Editor Toolbar -->
                         <div class="toolbar">
                             <!-- Text-Formatierung -->
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('**', '**')" title="Fett">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('**', '**')" title="<?php echo \StaticMD\Core\I18n::t('admin.editor.toolbar.bold'); ?>">
                                 <i class="bi bi-type-bold"></i>
                             </button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('*', '*')" title="Kursiv">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('*', '*')" title="<?php echo \StaticMD\Core\I18n::t('admin.editor.toolbar.italic'); ?>">
                                 <i class="bi bi-type-italic"></i>
                             </button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('~~', '~~')" title="Durchgestrichen">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('~~', '~~')" title="<?php echo \StaticMD\Core\I18n::t('admin.editor.toolbar.strikethrough'); ?>">
                                 <i class="bi bi-type-strikethrough"></i>
                             </button>
                             
@@ -251,16 +251,16 @@ $nonce = SecurityHeaders::getNonce();
                             
                             <!-- Überschriften -->
                             <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('# ', '')" title="Überschrift H1">
+                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('# ', '')" title="<?php echo \StaticMD\Core\I18n::t('admin.editor.toolbar.heading_h1'); ?>">
                                     <i class="bi bi-type-h1"></i>
                                 </button>
-                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('## ', '')" title="Überschrift H2">
+                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('## ', '')" title="<?php echo \StaticMD\Core\I18n::t('admin.editor.toolbar.heading_h2'); ?>">
                                     <i class="bi bi-type-h2"></i>
                                 </button>
-                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('### ', '')" title="Überschrift H3">
+                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('### ', '')" title="<?php echo \StaticMD\Core\I18n::t('admin.editor.toolbar.heading_h3'); ?>">
                                     <i class="bi bi-type-h3"></i>
                                 </button>
-                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('#### ', '')" title="Überschrift H4">
+                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('#### ', '')" title="<?php echo \StaticMD\Core\I18n::t('admin.editor.toolbar.heading_h4'); ?>">
                                     <span style="font-size: 0.75em; font-weight: bold;">H4</span>
                                 </button>
                             </div>
@@ -268,65 +268,65 @@ $nonce = SecurityHeaders::getNonce();
                             <div class="vr mx-2"></div>
                             
                             <!-- Listen -->
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('- ', '')" title="Aufzählung">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('- ', '')" title="<?php echo \StaticMD\Core\I18n::t('admin.editor.toolbar.list_unordered'); ?>">
                                 <i class="bi bi-list-ul"></i>
                             </button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('1. ', '')" title="Nummerierte Liste">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('1. ', '')" title="<?php echo \StaticMD\Core\I18n::t('admin.editor.toolbar.list_ordered'); ?>">
                                 <i class="bi bi-list-ol"></i>
                             </button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('- [ ]', '')" title="Checkliste">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('- [ ]', '')" title="<?php echo \StaticMD\Core\I18n::t('admin.editor.toolbar.checklist'); ?>">
                                 <i class="bi bi-list-check"></i>
                             </button>
                             
                             <div class="vr mx-2"></div>
                             
                             <!-- Links & Medien -->
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('[', '](url)')" title="Link">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('[', '](url)')" title="<?php echo \StaticMD\Core\I18n::t('admin.editor.toolbar.link'); ?>">
                                 <i class="bi bi-link"></i>
                             </button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('![Alt-Text](', ')')" title="Bild">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('![Alt-Text](', ')')" title="<?php echo \StaticMD\Core\I18n::t('admin.editor.toolbar.image'); ?>">
                                 <i class="bi bi-image"></i>
                             </button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertDownloadTag()" title="Download-Link">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertDownloadTag()" title="<?php echo \StaticMD\Core\I18n::t('admin.editor.toolbar.download_link'); ?>">
                                 <i class="bi bi-file-earmark-arrow-down"></i>
                             </button>
                             
                             <div class="vr mx-2"></div>
                             
                             <!-- Code & Spezial -->
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('`', '`')" title="Inline-Code">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('`', '`')" title="<?php echo \StaticMD\Core\I18n::t('admin.editor.toolbar.inline_code'); ?>">
                                 <i class="bi bi-code"></i>
                             </button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertCodeBlock()" title="Code-Block">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertCodeBlock()" title="<?php echo \StaticMD\Core\I18n::t('admin.editor.toolbar.code_block'); ?>">
                                 <i class="bi bi-code-square"></i>
                             </button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('> ', '')" title="Zitat">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('> ', '')" title="<?php echo \StaticMD\Core\I18n::t('admin.editor.toolbar.quote'); ?>">
                                 <i class="bi bi-quote"></i>
                             </button>
                             
                             <div class="vr mx-2"></div>
                             
                             <!-- Struktur -->
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertTable()" title="Tabelle">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertTable()" title="<?php echo \StaticMD\Core\I18n::t('admin.editor.toolbar.table'); ?>">
                                 <i class="bi bi-table"></i>
                             </button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('---', '')" title="Horizontale Linie">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertMarkdown('---', '')" title="<?php echo \StaticMD\Core\I18n::t('admin.editor.toolbar.horizontal_line'); ?>">
                                 <i class="bi bi-hr"></i>
                             </button>
                             
                             <div class="vr mx-2"></div>
                             <!--Sprungmarke-->
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertAnchor()" title="Anchor / Sprungmarke">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertAnchor()" title="<?php echo \StaticMD\Core\I18n::t('admin.editor.toolbar.anchor'); ?>">
                                 <i class="bi bi-bookmark"></i> 
                             </button>                            
                             <!-- Accordion -->
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertAccordion()" title="Accordion">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertAccordion()" title="<?php echo \StaticMD\Core\I18n::t('admin.editor.toolbar.accordion'); ?>">
                                 <i class="bi bi-arrows-collapse"></i>
                             </button>
 
                             <!-- Emojis -->
                             <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" title="Emoji">
+                                <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" title="<?php echo \StaticMD\Core\I18n::t('admin.editor.toolbar.emoji'); ?>">
                                     😊
                                 </button>
                                 <ul class="dropdown-menu emoji-dropdown">
@@ -354,7 +354,7 @@ $nonce = SecurityHeaders::getNonce();
                                     <li><a class="dropdown-item" href="#" onclick="insertEmoji(':green_heart:')">💚 :green_heart:</a></li>
                                     <li><a class="dropdown-item" href="#" onclick="insertEmoji(':broken_heart:')">💔 :broken_heart:</a></li>
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><h6 class="dropdown-header">Aktivitäten</h6></li>
+                                    <li><h6 class="dropdown-header"><?= __('admin.editor.emoji_categories.activities') ?></h6></li>
                                     <li><a class="dropdown-item" href="#" onclick="insertEmoji(':fire:')">🔥 :fire:</a></li>
                                     <li><a class="dropdown-item" href="#" onclick="insertEmoji(':star:')">⭐ :star:</a></li>
                                     <li><a class="dropdown-item" href="#" onclick="insertEmoji(':rocket:')">🚀 :rocket:</a></li>
@@ -771,7 +771,7 @@ $nonce = SecurityHeaders::getNonce();
         setInterval(function() {
             if (editor && editor.getValue().trim()) {
                 // Hier könnte ein Auto-Save implementiert werden
-                console.log('Auto-save könnte hier implementiert werden');
+                console.log('<?php echo \StaticMD\Core\I18n::t('admin.editor.toolbar.auto_save_placeholder'); ?>');
             }
         }, 30000);
         

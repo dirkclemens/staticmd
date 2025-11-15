@@ -165,7 +165,7 @@ $nonce = SecurityHeaders::getNonce();
                             <?php
                             switch ($_GET['message']) {
                                 case 'deleted':
-                                    echo 'Datei wurde erfolgreich gelöscht.';
+                                    echo \StaticMD\Core\I18n::t('admin.files.file_deleted_success');
                                     break;
                                 case 'saved':
                                     echo 'Datei wurde erfolgreich gespeichert.';
@@ -263,13 +263,13 @@ $nonce = SecurityHeaders::getNonce();
                                             echo ' <small class="text-muted">(Index)</small>';
                                             echo '</h6>';
                                             echo '<small class="text-muted">Route: <code>/' . htmlspecialchars($indexFile['route']) . '</code></small>';
-                                            echo '<br><small class="text-muted"><i class="bi bi-clock me-1"></i>Geändert: ' . date('d.m.Y H:i', $indexFile['modified']) . '</small>';
+                                            echo '<br><small class="text-muted"><i class="bi bi-clock me-1"></i>' . \StaticMD\Core\I18n::t('admin.files.modified') . ': ' . date('d.m.Y H:i', $indexFile['modified']) . '</small>';
                                             echo '</div>';
                                             echo '<div class="file-actions">';
                                             echo '<div class="btn-group btn-group-sm" role="group">';
-                                            echo '<a href="/' . encodeUrlPath($indexFile['route']) . '" class="btn btn-outline-info" target="_blank" title="Anzeigen"><i class="bi bi-eye"></i></a>';
-                                            echo '<a href="/admin?action=edit&file=' . urlencode($indexFile['route']) . '&return_url=' . urlencode('/admin?action=files') . '" class="btn btn-outline-primary" title="Bearbeiten"><i class="bi bi-pencil"></i></a>';
-                                            echo '<button class="btn btn-outline-danger" onclick="confirmDelete(\'' . htmlspecialchars($indexFile['route']) . '\')" title="Löschen"><i class="bi bi-trash"></i></button>';
+                                            echo '<a href="/' . encodeUrlPath($indexFile['route']) . '" class="btn btn-outline-info" target="_blank" title="' . \StaticMD\Core\I18n::t('admin.files.view_tooltip') . '"><i class="bi bi-eye"></i></a>';
+                                            echo '<a href="/admin?action=edit&file=' . urlencode($indexFile['route']) . '&return_url=' . urlencode('/admin?action=files') . '" class="btn btn-outline-primary" title="' . \StaticMD\Core\I18n::t('admin.files.edit_tooltip') . '"><i class="bi bi-pencil"></i></a>';
+                                            echo '<button class="btn btn-outline-danger" onclick="confirmDelete(\'' . htmlspecialchars($indexFile['route']) . '\')" title="' . \StaticMD\Core\I18n::t('admin.files.delete_tooltip') . '"><i class="bi bi-trash"></i></button>';
                                             echo '</div>';
                                             echo '</div>';
                                             echo '</div>';
@@ -302,13 +302,13 @@ $nonce = SecurityHeaders::getNonce();
                                         echo '</a>';
                                         echo '</h6>';
                                         echo '<small class="text-muted">Route: <code>/' . htmlspecialchars($file['route']) . '</code></small>';
-                                        echo '<br><small class="text-muted"><i class="bi bi-clock me-1"></i>Geändert: ' . date('d.m.Y H:i', $file['modified']) . '</small>';
+                                        echo '<br><small class="text-muted"><i class="bi bi-clock me-1"></i>' . \StaticMD\Core\I18n::t('admin.files.modified') . ': ' . date('d.m.Y H:i', $file['modified']) . '</small>';
                                         echo '</div>';
                                         echo '<div class="file-actions">';
                                         echo '<div class="btn-group btn-group-sm" role="group">';
-                                        echo '<a href="/' . encodeUrlPath($file['route']) . '" class="btn btn-outline-info" target="_blank" title="Anzeigen"><i class="bi bi-eye"></i></a>';
-                                        echo '<a href="/admin?action=edit&file=' . urlencode($file['route']) . '&return_url=' . urlencode('/admin?action=files') . '" class="btn btn-outline-primary" title="Bearbeiten"><i class="bi bi-pencil"></i></a>';
-                                        echo '<button class="btn btn-outline-danger" onclick="confirmDelete(\'' . htmlspecialchars($file['route']) . '\')" title="Löschen"><i class="bi bi-trash"></i></button>';
+                                        echo '<a href="/' . encodeUrlPath($file['route']) . '" class="btn btn-outline-info" target="_blank" title="' . \StaticMD\Core\I18n::t('admin.files.view_tooltip') . '"><i class="bi bi-eye"></i></a>';
+                                        echo '<a href="/admin?action=edit&file=' . urlencode($file['route']) . '&return_url=' . urlencode('/admin?action=files') . '" class="btn btn-outline-primary" title="' . \StaticMD\Core\I18n::t('admin.files.edit_tooltip') . '"><i class="bi bi-pencil"></i></a>';
+                                        echo '<button class="btn btn-outline-danger" onclick="confirmDelete(\'' . htmlspecialchars($file['route']) . '\')" title="' . \StaticMD\Core\I18n::t('admin.files.delete_tooltip') . '"><i class="bi bi-trash"></i></button>';
                                         echo '</div>';
                                         echo '</div>';
                                         echo '</div>';
@@ -345,18 +345,18 @@ $nonce = SecurityHeaders::getNonce();
                 <div class="modal-header">
                     <h5 class="modal-title">
                         <i class="bi bi-exclamation-triangle text-warning me-2"></i>
-                        Datei löschen
+                        <?= __('admin.files.delete_modal_title') ?>
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Sind Sie sicher, dass Sie die Datei <strong id="deleteFileName"></strong> löschen möchten?</p>
-                    <p class="text-muted">Diese Aktion kann nicht rückgängig gemacht werden.</p>
+                    <p id="deleteModalQuestion"><?= __('admin.files.delete_modal_question') ?></p>
+                    <p class="text-muted"><?= __('admin.files.delete_modal_warning') ?></p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= __('admin.common.cancel') ?></button>
                     <a href="#" class="btn btn-danger" id="deleteConfirmBtn">
-                        <i class="bi bi-trash me-1"></i> Löschen
+                        <i class="bi bi-trash me-1"></i> <?= __('admin.files.delete_modal_confirm') ?>
                     </a>
                 </div>
             </div>
@@ -457,15 +457,20 @@ $nonce = SecurityHeaders::getNonce();
             
             const fileNames = Array.from(selectedFiles).join(', ');
             
-            if (confirm(`Sind Sie sicher, dass Sie ${selectedFiles.size} Datei(en) löschen möchten?\n\n${fileNames}`)) {
+            if (confirm(`<?= __('admin.files.bulk_delete_confirm') ?>`.replace('{count}', selectedFiles.size) + `\n\n${fileNames}`)) {
                 // Hier würde die Bulk-Delete-Funktionalität implementiert
-                alert('Bulk-Delete-Funktionalität würde hier implementiert werden.');
+                alert('<?php echo \StaticMD\Core\I18n::t('common.bulk_delete_placeholder'); ?>');
             }
         });
         
+        // JavaScript-Übersetzungen
+        const deleteModalQuestionTemplate = '<?= __('admin.files.delete_modal_question') ?>';
+        
         // Einzelne Datei löschen
         function confirmDelete(fileName) {
-            document.getElementById('deleteFileName').textContent = fileName;
+            // Update modal question with filename
+            const questionText = deleteModalQuestionTemplate.replace('{filename}', `<strong>${fileName}</strong>`);
+            document.getElementById('deleteModalQuestion').innerHTML = questionText;
             
             // Einfache, direkte URL-Konstruktion ohne komplexe Kodierung
             const deleteUrl = `/admin?action=delete&file=${encodeURIComponent(fileName)}&token=<?= htmlspecialchars($this->auth->generateCSRFToken()) ?>&return_url=/admin%3Faction%3Dfiles`;

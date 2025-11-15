@@ -126,7 +126,7 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
                                     <?= htmlspecialchars($nav['title']) ?>
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($nav['route']) ?>">Übersicht</a></li>
+                                    <li><a class="dropdown-item" href="/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($nav['route']) ?>"><?= \StaticMD\Core\I18n::t('core.overview') ?></a></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <?php foreach ($nav['pages'] as $page): ?>
                                     <li><a class="dropdown-item" href="/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($page['route']) ?>">

@@ -358,7 +358,7 @@ $nonce = SecurityHeaders::getNonce();
                                                         ?></textarea>
                                                 <div class="form-text">
                                                     <strong><?= __('admin.settings.navigation_format') ?></strong><br>
-                                                    <code>section</code> <?= __('admin.settings.navigation_or') ?> <code>section:priorität</code><br>
+                                                    <code>section</code> <?= __('admin.settings.navigation_or') ?> <code>section:<?= __('admin.settings.navigation_priority') ?></code><br>
                                                     <strong><?= __('admin.settings.navigation_example') ?></strong><br>
                                                     <code>about:1</code><br>
                                                     <code>blog:2</code><br>
@@ -444,7 +444,7 @@ $nonce = SecurityHeaders::getNonce();
                                 <div class="card-header">
                                     <h5 class="card-title mb-0">
                                         <i class="bi bi-search me-2"></i>
-                                        SEO & Suchmaschinen-Einstellungen
+                                        <?= __('admin.settings.seo.title') ?>
                                     </h5>
                                 </div>
                                 <div class="card-body">
@@ -453,24 +453,24 @@ $nonce = SecurityHeaders::getNonce();
                                             <div class="mb-3">
                                                 <label for="seo_robots_policy" class="form-label">
                                                     <i class="bi bi-robot me-1"></i>
-                                                    Standard Robots-Policy
+                                                    <?= __('admin.settings.seo.robots_policy_label') ?>
                                                 </label>
                                                 <select class="form-select" id="seo_robots_policy" name="seo_robots_policy">
                                                     <option value="index,follow" <?= ($settings['seo_robots_policy'] ?? 'index,follow') === 'index,follow' ? 'selected' : '' ?>>
-                                                        Index & Follow (Suchmaschinen-freundlich)
+                                                        <?= __('admin.settings.seo.robots_index_follow') ?>
                                                     </option>
                                                     <option value="index,nofollow" <?= ($settings['seo_robots_policy'] ?? '') === 'index,nofollow' ? 'selected' : '' ?>>
-                                                        Index aber kein Follow
+                                                        <?= __('admin.settings.seo.robots_index_nofollow') ?>
                                                     </option>
                                                     <option value="noindex,follow" <?= ($settings['seo_robots_policy'] ?? '') === 'noindex,follow' ? 'selected' : '' ?>>
-                                                        Kein Index aber Follow
+                                                        <?= __('admin.settings.seo.robots_noindex_follow') ?>
                                                     </option>
                                                     <option value="noindex,nofollow" <?= ($settings['seo_robots_policy'] ?? '') === 'noindex,nofollow' ? 'selected' : '' ?>>
-                                                        Kein Index & kein Follow
+                                                        <?= __('admin.settings.seo.robots_noindex_nofollow') ?>
                                                     </option>
                                                 </select>
                                                 <small class="text-muted">
-                                                    Standard-Verhalten für alle Seiten (kann pro Seite überschrieben werden)
+                                                    <?= __('admin.settings.seo.robots_policy_help') ?>
                                                 </small>
                                             </div>
                                         </div>
@@ -483,12 +483,12 @@ $nonce = SecurityHeaders::getNonce();
                                                            <?= ($settings['seo_block_crawlers'] ?? false) ? 'checked' : '' ?>>
                                                     <label class="form-check-label" for="seo_block_crawlers">
                                                         <i class="bi bi-shield-x me-1"></i>
-                                                        <strong>Alle Suchmaschinen blockieren</strong>
+                                                        <strong><?= __('admin.settings.seo.block_crawlers_label') ?></strong>
                                                     </label>
                                                 </div>
                                                 <small class="text-muted">
-                                                    Aktiviert: Komplette Seite wird nicht indexiert<br>
-                                                    <strong>Warnung:</strong> Überschreibt alle anderen Einstellungen!
+                                                    <?= __('admin.settings.seo.block_crawlers_help') ?><br>
+                                                    <strong><?= __('admin.settings.seo.block_crawlers_warning') ?></strong>
                                                 </small>
                                             </div>
                                             
@@ -499,23 +499,23 @@ $nonce = SecurityHeaders::getNonce();
                                                            <?= ($settings['seo_generate_robots_txt'] ?? true) ? 'checked' : '' ?>>
                                                     <label class="form-check-label" for="seo_generate_robots_txt">
                                                         <i class="bi bi-file-text me-1"></i>
-                                                        robots.txt generieren
+                                                        <?= __('admin.settings.seo.generate_robots_txt_label') ?>
                                                     </label>
                                                 </div>
                                                 <small class="text-muted">
-                                                    Automatische robots.txt unter <a href="/robots.php" target="_blank">/robots.txt</a>
+                                                    <?= __('admin.settings.seo.generate_robots_txt_help') ?> <a href="/robots.php" target="_blank">/robots.txt</a>
                                                 </small>
                                             </div>
                                         </div>
                                     </div>
                                     
                                     <div class="alert alert-info">
-                                        <h6><i class="bi bi-info-circle me-2"></i>SEO-Funktionen:</h6>
+                                        <h6><i class="bi bi-info-circle me-2"></i><?= __('admin.settings.seo.features_title') ?></h6>
                                         <ul class="mb-0">
-                                            <li><strong>Per-Page Robots:</strong> Verwenden Sie <code>Robots: noindex,nofollow</code> im Front Matter</li>
-                                            <li><strong>robots.txt:</strong> Automatisch generiert unter <a href="/robots.php" target="_blank">/robots.txt</a></li>
-                                            <li><strong>Meta-Tags:</strong> Automatisch in allen Templates eingefügt</li>
-                                            <li><strong>HTTP-Headers:</strong> X-Robots-Tag bei noindex automatisch gesetzt</li>
+                                            <li><?= __('admin.settings.seo.features_per_page') ?> <code>Robots: noindex,nofollow</code></li>
+                                            <li><?= __('admin.settings.seo.features_robots_txt') ?> <a href="/robots.php" target="_blank">/robots.txt</a></li>
+                                            <li><?= __('admin.settings.seo.features_meta_tags') ?></li>
+                                            <li><?= __('admin.settings.seo.features_http_headers') ?></li>
                                         </ul>
                                     </div>
                                 </div>

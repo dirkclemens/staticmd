@@ -322,17 +322,30 @@ class SearchEngine
         
         // Header
         $html .= '<div class="search-header mb-4">';
-        $html .= '<h1><i class="bi bi-search me-2"></i>Suchergebnisse</h1>';
+        $html .= '<h1><i class="bi bi-search me-2"></i>' . \StaticMD\Core\I18n::t('core.search_results_title', ['query' => htmlspecialchars($query)]) . '</h1>';
         
         if (!empty($results)) {
             $html .= '<p class="lead">';
-            $html .= count($results) . ' Ergebnisse für "<strong>' . htmlspecialchars($query) . '</strong>"';
             if ($totalTime > 0) {
-                $html .= ' (' . number_format($totalTime, 3) . ' Sekunden)';
+                $html .= sprintf(
+                    \StaticMD\Core\I18n::t('core.search_results_count_with_time'),
+                    count($results),
+                    '<strong>' . htmlspecialchars($query) . '</strong>',
+                    number_format($totalTime, 3)
+                );
+            } else {
+                $html .= sprintf(
+                    \StaticMD\Core\I18n::t('core.search_results_count'),
+                    count($results),
+                    '<strong>' . htmlspecialchars($query) . '</strong>'
+                );
             }
             $html .= '</p>';
         } else {
-            $html .= '<p class="lead text-muted">Keine Ergebnisse für "<strong>' . htmlspecialchars($query) . '</strong>" gefunden.</p>';
+            $html .= '<p class="lead text-muted">' . sprintf(
+                \StaticMD\Core\I18n::t('core.search_no_results'),
+                '<strong>' . htmlspecialchars($query) . '</strong>'
+            ) . '</p>';
         }
         $html .= '</div>';
         
@@ -388,7 +401,7 @@ class SearchEngine
         } else {
             $html .= '<div class="alert alert-info">';
             $html .= '<h5><i class="bi bi-info-circle me-2"></i>Keine Ergebnisse gefunden</h5>';
-            $html .= '<p class="mb-0">Versuchen Sie andere Suchbegriffe oder prüfen Sie die Schreibweise.</p>';
+            $html .= '<p class="mb-0">' . \StaticMD\Core\I18n::t('core.search_suggestions') . '</p>';
             $html .= '</div>';
         }
         
