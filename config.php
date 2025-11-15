@@ -23,9 +23,9 @@ return [
     
     // Admin configuration
     'admin' => [
-        'username' => 'dirk',
-        'password' => '$2y$10$/lqmtxQzJatB6r5/lEQGf.6McMaRpwNCCiF0QTep3jQlewqW1JO9G',
-    'session_timeout' => 84600 // 172800 // 48 hours
+        'username' => 'admin',        
+        'password' => '$2y$10$RLXuEkGUSVScmHoRGnLrIO7fgKcHU4/9CkBrFdNT46infcMfX.qOm',
+        'session_timeout' => 3600
     ],
     
     // Theme settings
