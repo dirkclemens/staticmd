@@ -5,7 +5,7 @@
  */
 
 // Theme configuration
-// $themeName wird von TemplateEngine übergeben
+// $themeName is provided by TemplateEngine
 $siteName = $config['system']['name'] ?? 'StaticMD';
 $siteUrl = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']);
 $currentRoute = $_GET['route'] ?? 'index';
@@ -40,16 +40,16 @@ function generateTitle($route) {
     return ucwords($title);
 }
 
-// Navigation sortieren - aus Einstellungen laden
+// Sort navigation - load from settings
 $navigationOrder = $this->contentLoader->getNavigationOrder();
 
-// Sortierung anwenden
+// Apply sorting
 uksort($navItems, function($a, $b) use ($navigationOrder) {
     $orderA = $navigationOrder[$a] ?? 999;
     $orderB = $navigationOrder[$b] ?? 999;
     
     if ($orderA === $orderB) {
-        // Bei gleicher Gewichtung alphabetisch sortieren
+        // Sort alphabetically for equal weights
         return strcasecmp($a, $b);
     }
     
@@ -320,7 +320,7 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
     
     <!-- Custom JS -->
     <script>
-        // Smooth scrolling für Anker-Links
+        // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();

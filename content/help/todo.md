@@ -8,40 +8,40 @@ Visibility: public
 
 # Todo
 
-## ✅ Erledigte Features
-- [x] Mehrsprachigkeit (deutsch/englisch)
-- [x] Breadcrumb-Navigation für Unterverzeichnisse
-- [x] Folder-Shortcode für horizontale Ordner-Navigation
-- [x] Theme-System mit 9 verschiedenen Designs
-- [x] Unicode/Umlaut-Support für deutsche Inhalte
-- [x] Content-Security-Policy (CSP) und Security Headers
-- [x] SEO-Kontrolle mit robots.txt Generator
-- [x] Per-Page Robots Meta-Tags über Front Matter
-- [x] Suchmaschinen-Blockierung (global/pro Seite)
+## ✅ Completed Features
+- [x] Multilingual support (German/English)
+- [x] Breadcrumb navigation for subdirectories
+- [x] Folder shortcode for horizontal folder navigation
+- [x] Theme system with 9 different designs
+- [x] Unicode/umlaut support for German content
+- [x] Content Security Policy (CSP) and security headers
+- [x] SEO control with robots.txt generator
+- [x] Per-page robots meta tags via Front Matter
+- [x] Search engine blocking (global/per page)
 
-## 🔄 In Arbeit
-- [ ] Seiten verschieben/umbenennen im Admin
-- [ ] Erweiterte Suchfunktion nach Seitentitel
-- [ ] Performance-Optimierung für große Ordner
+## 🔄 In Progress
+- [ ] Move/rename pages in admin
+- [ ] Advanced search functionality by page title
+- [ ] Performance optimization for large folders
 
-## 📋 Geplante Features
-- [ ] Layout-System: Standard, Wiki, Blog, Page
-- [ ] Automatische Sitemap-Generierung (XML)
-- [ ] RSS/Atom-Feed für Blog-Bereiche
-- [ ] Backup/Restore-Funktionalität im Admin
-- [ ] Erweiterte Tag-Verwaltung
-- [ ] Kommentar-System (optional)
-- [ ] SEO-Analytics Integration (Google/Bing Webmaster Tools)
-- [ ] Schema.org Structured Data
+## 📋 Planned Features
+- [ ] Layout system: Standard, Wiki, Blog, Page
+- [ ] Automatic sitemap generation (XML)
+- [ ] RSS/Atom feed for blog sections
+- [ ] Backup/restore functionality in admin
+- [ ] Advanced tag management
+- [ ] Comment system (optional)
+- [ ] SEO analytics integration (Google/Bing Webmaster Tools)
+- [ ] Schema.org structured data
 
 ## 🎨 Design & UX
-- [ ] Dark-Mode-Toggle im Frontend
-- [ ] Erweiterte Editor-Funktionen (Tabellen-Editor)
-- [ ] Mobile Admin-Interface Optimierung
-- [ ] Print-Stylesheet für bessere Druckansicht
+- [ ] Dark mode toggle in frontend
+- [ ] Extended editor functions (table editor)
+- [ ] Mobile admin interface optimization
+- [ ] Print stylesheet for better print view
 
-## 🔧 Technische Verbesserungen
-- [ ] Docker-Container für einfache Entwicklung
-- [ ] Unit-Tests für Core-Funktionen
-- [ ] GitHub Actions für CI/CD
-- [ ] Composer-Package-Management
+## 🔧 Technical Improvements
+- [ ] Docker container for easy development
+- [ ] Unit tests for core functions
+- [ ] GitHub Actions for CI/CD
+- [ ] Composer package management

@@ -34,8 +34,8 @@ class ContentLoader
      */
     private function simpleUnicodeNormalize(string $text): string
     {
-        // Häufige kombinierte Unicode-Zeichen zu einfachen konvertieren
-        // Verwende hex-Codes für kombinierte Zeichen
+        // Convert common combined Unicode characters to simple ones
+        // Use hex codes for combined characters
         $replacements = [
             "a\xCC\x88" => 'ä',  // ä (a + combining diaeresis)
             "o\xCC\x88" => 'ö',  // ö (o + combining diaeresis)
@@ -57,7 +57,7 @@ class ContentLoader
      */
     public function load(string $route): ?array
     {
-        // Route-Validierung für tiefe Verschachtelung
+        // Route validation for deep nesting
         if (!$this->validateRouteDepth($route)) {
             return null;
         }
@@ -65,7 +65,7 @@ class ContentLoader
         $contentPath = $this->findContentFile($route);
         
         if ($contentPath === null || !is_readable($contentPath)) {
-            // Prüfen ob es ein Ordner ist
+            // Check if it is a folder
             $folderOverview = $this->generateFolderOverview($route);
             if ($folderOverview !== null) {
                 return $folderOverview;
@@ -75,16 +75,16 @@ class ContentLoader
 
         $rawContent = file_get_contents($contentPath);
         
-        // Front Matter und Content trennen
+        // Separate front matter and content
         $parsed = $this->parseFrontMatter($rawContent);
         
-        // Markdown zu HTML konvertieren
+        // Convert Markdown to HTML
         $htmlContent = $this->parser->parse($parsed['content']);
         
-        // Accordion-Shortcodes nach Markdown-Parsing verarbeiten
+        // Process accordion shortcodes after Markdown parsing
         $htmlContent = $this->processAccordionShortcodes($htmlContent);
         
-        // Pages/Tags-Shortcodes nach Markdown-Parsing verarbeiten
+        // Process pages/tags shortcodes after Markdown parsing
         $htmlContent = $this->processShortcodes($htmlContent, $route);
         
         return [
@@ -109,7 +109,7 @@ class ContentLoader
             return false;
         }
         
-        // Prüfe auf leere oder problematische Pfad-Teile
+        // Check for empty or problematic path parts
         foreach ($parts as $part) {
             if (empty(trim($part)) || strlen($part) > 100) {
                 return false;
@@ -127,12 +127,12 @@ class ContentLoader
         $contentDir = $this->config['paths']['content'];
         $folderPath = $contentDir . '/' . $route;
         
-        // Prüfen ob Ordner existiert
+        // Check if folder exists
         if (!is_dir($folderPath)) {
             return null;
         }
         
-        // Alle Markdown-Dateien und Unterordner im Ordner finden
+        // Find all Markdown files and subfolders in the folder
         $files = [];
         $subfolders = [];
         $extension = $this->config['markdown']['file_extension'];
@@ -144,11 +144,11 @@ class ContentLoader
             }
             
             if ($item->isDir()) {
-                // Unterordner behandeln
+                // Handle subfolders
                 $subfolderName = $item->getFilename();
                 $subfolderRoute = empty($route) ? $subfolderName : $route . '/' . $subfolderName;
                 
-                // Überprüfen ob Unterordner Markdown-Dateien enthält
+                // Check if subfolder contains Markdown files
                 $subfolderPath = $item->getPathname();
                 $hasFiles = $this->hasMarkdownFiles($subfolderPath);
                 
@@ -173,7 +173,7 @@ class ContentLoader
                 continue;
             }
             
-            // index.md überspringen (wäre die Ordner-Hauptseite)
+            // Skip index.md (would be the folder main page)
             if ($filename === 'index' . $extension) {
                 continue;
             }
@@ -181,7 +181,7 @@ class ContentLoader
             $filePath = $item->getPathname();
             $fileRoute = empty($route) ? substr($filename, 0, -strlen($extension)) : $route . '/' . substr($filename, 0, -strlen($extension));
             
-            // Metadaten aus Datei lesen
+            // Read metadata from file
             $rawContent = file_get_contents($filePath);
             $parsed = $this->parseFrontMatter($rawContent);
             
@@ -222,12 +222,12 @@ class ContentLoader
             ];
         }
         
-        // Alphabetisch sortieren (case-insensitive)
+        // Sort alphabetically (case-insensitive)
         usort($files, function($a, $b) {
             return strcasecmp($a['title'], $b['title']);
         });
         
-        // HTML für Übersichtsseite generieren
+        // Generate HTML for overview page
         $folderTitle = ucwords(str_replace(['/', '-', '_'], ' ', $route));
         $html = $this->generateFolderOverviewHTML($folderTitle, $files, $subfolders, $route);
         
@@ -334,7 +334,7 @@ class ContentLoader
             $html .= '</div>'; // files-section
         }
         
-        // Navigation zurück
+        // Navigation back
         if ($route !== '') {
             $parentRoute = dirname($route);
             $parentRoute = ($parentRoute === '.' || $parentRoute === '/') ? '' : $parentRoute;
@@ -356,7 +356,7 @@ class ContentLoader
      */
     private function processShortcodes(string $content, string $currentRoute): string
     {
-        // Pattern für Shortcodes in HTML (auch in <p> Tags)
+        // Pattern for shortcodes in HTML (also in <p> tags)
         $pattern = '/(?:<p>)?\[([a-zA-Z]+)\s+([^\]]+)\](?:<\/p>)?/';
         
         return preg_replace_callback($pattern, function($matches) use ($currentRoute) {
@@ -371,7 +371,7 @@ class ContentLoader
                 case 'folder':
                     return $this->processFolderShortcode($params, $currentRoute);
                 default:
-                    return $matches[0]; // Unbekannte Shortcodes unverändert lassen
+                    return $matches[0]; // Leave unknown shortcodes unchanged
             }
         }, $content);
     }
@@ -396,7 +396,7 @@ class ContentLoader
         $limit = isset($params[1]) ? (int)$params[1] : 1000;
         $layout = isset($params[2]) ? strtolower(trim($params[2])) : 'columns';
         
-        // Folder Overview für den angegebenen Pfad generieren
+        // Generate folder overview for the specified path
         $folderOverview = $this->generateFolderOverview($targetPath);
         
         if ($folderOverview === null) {
@@ -410,7 +410,7 @@ class ContentLoader
             return '<div class="alert alert-info">Keine Seiten in "' . htmlspecialchars($targetPath) . '" gefunden.</div>';
         }
         
-        // Kompakte Darstellung für Einbettung
+        // Compact display for embedding
         return $this->generateEmbeddedFolderOverview($files, $targetPath, $layout);
     }
 
@@ -469,7 +469,7 @@ class ContentLoader
             return '<div class="alert alert-info">Keine Unterordner in "' . htmlspecialchars($targetPath ?: '/') . '" gefunden.</div>';
         }
         
-        // Horizontale Ordner-Navigation generieren
+        // Generate horizontal folder navigation
         return $this->generateFolderNavigation($subfolders, $targetPath);
     }
 
@@ -479,7 +479,7 @@ class ContentLoader
      */
     private function processAccordionShortcodes(string $content): string
     {
-        // Pattern für beide Accordion-Typen in HTML-Code
+        // Pattern for both accordion types in HTML code
         $patterns = [
             // [spoilerstart id "title"] ... [spoilerstop] oder [spoilerstop id] (auch in <p> Tags)
             '/(?:<p>)?\[(spoilerstart)\s+([a-zA-Z0-9_-]+)\s+"([^"]+)"\](?:<\/p>)?([\s\S]*?)(?:<p>)?\[spoilerstop(?:\s+[^\]]*?)?\](?:<\/p>)?/i',
@@ -506,7 +506,7 @@ class ContentLoader
      */
     private function generateAccordionHTML(string $id, string $title, string $content): string
     {
-        // Unique ID für mehrere Accordions pro Seite
+        // Unique ID for multiple accordions per page
         $accordionId = 'accordion-' . $id;
         $collapseId = 'collapse-' . $id;
         $headingId = 'heading-' . $id;
@@ -514,7 +514,7 @@ class ContentLoader
         // HTML-Entities in Titel escapen
         $safeTitle = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
         
-        // Content ist bereits HTML (wurde durch Markdown-Parser verarbeitet)
+        // Content is already HTML (was processed by Markdown parser)
         $htmlContent = trim($content);
         
         return sprintf('
@@ -576,7 +576,7 @@ class ContentLoader
                 continue;
             }
             
-            // index.md überspringen
+            // Skip index.md
             if ($filename === 'index' . $extension) {
                 continue;
             }
@@ -602,7 +602,7 @@ class ContentLoader
             $count++;
         }
         
-        // Alphabetisch sortieren (case-insensitive)
+        // Sort alphabetically (case-insensitive)
         usort($files, function($a, $b) {
             return strcasecmp($a['title'], $b['title']);
         });
@@ -630,7 +630,7 @@ class ContentLoader
             }
         }
         
-        // Case-insensitive alphabetisch sortieren
+        // Sort alphabetically case-insensitive
         uksort($tagCounts, function($a, $b) {
             return strcasecmp($a, $b);
         });
@@ -684,7 +684,7 @@ class ContentLoader
         $html = '<div class="tag-cloud mb-3">';
         
         foreach ($tagCounts as $tag => $count) {
-            // Tag-Größe basierend auf Häufigkeit
+            // Tag size based on frequency
             $size = min(3, max(1, (int)floor($count / 2) + 1));
             $badgeClass = $size === 1 ? 'bg-secondary' : ($size === 2 ? 'bg-primary' : 'bg-success');
             
@@ -711,14 +711,14 @@ class ContentLoader
         $contentDir = $this->config['paths']['content'];
         $extension = $this->config['markdown']['file_extension'];
         
-        // URL-dekodierte Route für Dateisystem-Zugriff
+        // URL-decoded route for filesystem access
         $decodedRoute = urldecode($route);
         
         // Unicode-Normalisierung falls verfügbar
         if (class_exists('Normalizer') && function_exists('normalizer_normalize')) {
             $decodedRoute = normalizer_normalize($decodedRoute, Normalizer::FORM_C);
         } else {
-            // Einfache Fallback-Normalisierung für häufige Fälle
+            // Simple fallback normalization for common cases
             $decodedRoute = $this->simpleUnicodeNormalize($decodedRoute);
         }
         
@@ -729,7 +729,7 @@ class ContentLoader
             trim(urldecode($route), '/')
         ];
         
-        // Für jede Route-Variante verschiedene Pfade ausprobieren
+        // Try different paths for each route variant
         foreach ($routeVariants as $routeVariant) {
             $possiblePaths = [
                 $contentDir . '/' . $routeVariant . $extension,
@@ -743,7 +743,7 @@ class ContentLoader
                 }
             }
             
-            // Erweiterte Suche: Im Verzeichnis nach normalisierter Datei suchen
+            // Extended search: Look for normalized file in directory
             $dir = dirname($contentDir . '/' . $routeVariant);
             $filename = basename($routeVariant) . $extension;
             
@@ -753,7 +753,7 @@ class ContentLoader
                     foreach ($files as $file) {
                         if ($file === '.' || $file === '..') continue;
                         
-                        // Normalisiere beide Dateinamen zum Vergleich
+                        // Normalize both filenames for comparison
                         $normalizedFile = $this->normalizeForComparison($file);
                         $normalizedTarget = $this->normalizeForComparison($filename);
                         
@@ -768,10 +768,10 @@ class ContentLoader
             }
         }
         
-        // Für Startseite
+        // For homepage
         if ($route === 'index' || $route === '') {
             $indexPaths = [
-                $contentDir . '/home' . $extension,    // home.md hat Priorität
+                $contentDir . '/home' . $extension,    // home.md has priority
                 $contentDir . '/index' . $extension
             ];
             
@@ -826,7 +826,7 @@ class ContentLoader
                     $mappedKey = $yellowMapping[$cleanKey] ?? strtolower($cleanKey);
                     $meta[$mappedKey] = $cleanValue;
                     
-                    // Behalte auch Original Yellow Keys für Kompatibilität
+                    // Keep original Yellow keys for compatibility
                     if (array_key_exists($cleanKey, $yellowMapping)) {
                         $meta[$cleanKey] = $cleanValue;
                     }
@@ -849,7 +849,7 @@ class ContentLoader
             return $this->config['system']['name'];
         }
         
-        // Route zu lesbarem Titel konvertieren
+        // Convert route to readable title
         $title = str_replace(['/', '-', '_'], ' ', $route);
         return ucwords($title);
     }
@@ -865,7 +865,7 @@ class ContentLoader
         $files = [];
         $this->scanDirectory($contentDir, $contentDir, $extension, $files);
 
-        // Nach Änderungsdatum (modified) absteigend sortieren
+        // Sort by modification date (modified) descending
         usort($files, function($a, $b) {
             return $b['modified'] <=> $a['modified'];
             //return $a['modified'] <=> $b['modified'];
@@ -965,7 +965,7 @@ class ContentLoader
      */
     private function shouldShowPrivateContent(): bool
     {
-        // AdminAuth-Klasse laden für Session-Prüfung
+        // Load AdminAuth class for session check
         $adminAuthFile = $this->config['paths']['system'] . '/admin/AdminAuth.php';
         if (file_exists($adminAuthFile)) {
             require_once $adminAuthFile;
@@ -1018,7 +1018,7 @@ class ContentLoader
         foreach ($parts as $index => $part) {
             $currentPath .= ($currentPath ? '/' : '') . $part;
             
-            // Titel generieren - versuche echten Titel aus Datei zu holen
+            // Generate title - try to get real title from file
             $title = $this->getBreadcrumbTitle($currentPath, $part);
             $url = '/' . $this->encodeUrlPath($currentPath);
             
@@ -1038,7 +1038,7 @@ class ContentLoader
      */
     private function getBreadcrumbTitle(string $route, string $fallback): string
     {
-        // Versuche zuerst den echten Titel aus einer Datei zu holen
+        // First try to get the real title from a file
         $contentFile = $this->findContentFile($route);
         if ($contentFile && is_readable($contentFile)) {
             $rawContent = file_get_contents($contentFile);
@@ -1049,7 +1049,7 @@ class ContentLoader
             }
         }
         
-        // Versuche index.md im Ordner
+        // Try index.md in the folder
         $indexFile = $this->findContentFile($route . '/index');
         if ($indexFile && is_readable($indexFile)) {
             $rawContent = file_get_contents($indexFile);
@@ -1060,7 +1060,7 @@ class ContentLoader
             }
         }
         
-        // Fallback: Route-Teil zu lesbarem Titel konvertieren
+        // Fallback: Convert route part to readable title
         return $this->generateTitle($fallback);
     }
     
@@ -1191,10 +1191,10 @@ class ContentLoader
             
             $folderName = $item->getFilename();
             
-            // Überprüfe ob der Ordner Markdown-Dateien enthält
+            // Check if the folder contains Markdown files
             $hasContent = false;
             
-            // Prüfe auf index.md oder andere .md Dateien
+            // Check for index.md or other .md files
             $folderIterator = new \DirectoryIterator($item->getPathname());
             foreach ($folderIterator as $subItem) {
                 if ($subItem->isFile() && pathinfo($subItem->getFilename(), PATHINFO_EXTENSION) === 'md') {
@@ -1214,7 +1214,7 @@ class ContentLoader
             }
         }
         
-        // Nach Titel sortieren und limitieren
+        // Sort by title and limit
         usort($subfolders, function($a, $b) {
             return strcasecmp($a['title'], $b['title']);
         });

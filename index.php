@@ -9,10 +9,6 @@ error_reporting(E_ALL);
  * Verarbeitet alle Frontend-Anfragen
  */
 
-// Error reporting for development
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 // Include autoloader (if Composer is installed)
 if (file_exists(__DIR__ . '/vendor/autoload.php')) {
     require_once __DIR__ . '/vendor/autoload.php';
@@ -41,7 +37,7 @@ $settings = [];
 if (file_exists($settingsFile)) {
     $settings = json_decode(file_get_contents($settingsFile), true);
 }
-$language = $settings['language'] ?? ($config['admin']['language'] ?? 'de');
+$language = $settings['language'] ?? ($config['admin']['language'] ?? 'en');
 // Initialize I18n
 \StaticMD\Core\I18n::init($language, __DIR__ . '/system/lang');
 

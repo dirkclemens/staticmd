@@ -22,14 +22,14 @@ class Router
      */
     public function getRoute(): string
     {
-        // Route aus GET-Parameter oder REQUEST_URI ermitteln
+        // Determine route from GET parameter or REQUEST_URI
         $route = $_GET['route'] ?? '';
         
         if (empty($route)) {
-            // Fallback auf REQUEST_URI
+            // Fallback to REQUEST_URI
             $requestUri = $_SERVER['REQUEST_URI'] ?? '/';
             
-            // Script-Name entfernen (falls vorhanden)
+            // Remove script name (if present)
             $scriptName = dirname($_SERVER['SCRIPT_NAME']);
             if ($scriptName !== '/' && strpos($requestUri, $scriptName) === 0) {
                 $requestUri = substr($requestUri, strlen($scriptName));
@@ -37,32 +37,32 @@ class Router
             
             $route = trim($requestUri, '/');
             
-            // Query-String entfernen
+            // Remove query string
             if (($pos = strpos($route, '?')) !== false) {
                 $route = substr($route, 0, $pos);
             }
         }
         
-        // Spezielle Such-Route (vor Bereinigung prüfen)
+        // Special search route (check before cleanup)
         if ($route === 'search') {
             return 'search';
         }
         
-        // Spezielle Tag-Route (vor Bereinigung prüfen)  
+        // Special tag route (check before cleanup)
         if ($route === 'tag') {
-            return 'tag'; // Tag-Übersicht
+            return 'tag'; // Tag overview
         }
         if (str_starts_with($route, 'tag/')) {
-            // Tag-Route bereinigen
+            // Clean up tag route
             return $this->sanitizeRoute($route);
         }
 
-        // Leere Route = Startseite
+        // Empty route = homepage
         if (empty($route)) {
             return 'index';
         }
 
-        // URL-Dekodierung und Bereinigung für normale Routen
+        // URL decoding and cleanup for normal routes
         return $this->sanitizeRoute($route);
     }
 
@@ -71,40 +71,40 @@ class Router
      */
     private function sanitizeRoute(string $route): string
     {
-        // URL-dekodieren - mehrfach für kombinierte Unicode-Zeichen
+        // URL decode - multiple times for combined Unicode characters
         $route = urldecode($route);
-        $route = urldecode($route); // Doppelte Dekodierung für %CC%88 usw.
+        $route = urldecode($route); // Double decoding for %CC%88 etc.
         
-        // Unicode normalisieren (NFD zu NFC) - kombinierte Zeichen zu einzelnen
+        // Normalize Unicode (NFD to NFC) - combined characters to single ones
         if (class_exists('Normalizer') && function_exists('normalizer_normalize')) {
             $route = normalizer_normalize($route, Normalizer::FORM_C);
         } else {
-            // Einfache Fallback-Normalisierung
+            // Simple fallback normalization
             $route = $this->simpleUnicodeNormalize($route);
         }
         
-        // Erlaubte Zeichen: Unicode-Buchstaben, Zahlen, -, _, /, . (für Dateierweiterungen)
-        // Umlaute und andere Unicode-Zeichen sind erlaubt
+        // Allowed characters: Unicode letters, numbers, -, _, /, . (for file extensions)
+        // Umlauts and other Unicode characters are allowed
         $route = preg_replace('/[^\p{L}\p{N}\-_\/\.]/u', '', $route);
         
-        // Mehrfache Slashes entfernen
+        // Remove multiple slashes
         $route = preg_replace('/\/+/', '/', $route);
         
-        // Führende und abschließende Slashes entfernen
+        // Remove leading and trailing slashes
         $route = trim($route, '/');
         
-        // Path-Traversal verhindern - erweiterte Prüfung für tiefe Verschachtelung
+        // Prevent path traversal - extended check for deep nesting
         $route = str_replace(['..', './'], '', $route);
         
-        // Maximale Verschachtelungstiefe prüfen (Sicherheitsmaßnahme)
+        // Check maximum nesting depth (security measure)
         $maxDepth = 10; // Maximal 10 Ebenen tief
         $parts = explode('/', $route);
         if (count($parts) > $maxDepth) {
-            // Zu tiefe Verschachtelung: nur die ersten Ebenen verwenden
+            // Too deep nesting: use only the first levels
             $route = implode('/', array_slice($parts, 0, $maxDepth));
         }
         
-        // Leere Pfad-Teile entfernen (entstehen durch mehrfache Slashes)
+        // Remove empty path parts (created by multiple slashes)
         $parts = array_filter($parts, function($part) {
             return !empty(trim($part));
         });
@@ -121,12 +121,12 @@ class Router
         $issues = [];
         $parts = explode('/', trim($route, '/'));
         
-        // Prüfe Verschachtelungstiefe
+        // Check nesting depth
         if (count($parts) > 10) {
             $issues[] = 'Route zu tief verschachtelt (max. 10 Ebenen)';
         }
         
-        // Prüfe einzelne Pfad-Teile
+        // Check individual path parts
         foreach ($parts as $index => $part) {
             if (empty($part)) {
                 $issues[] = "Leerer Pfad-Teil an Position " . ($index + 1);
@@ -137,7 +137,7 @@ class Router
                 $issues[] = "Pfad-Teil zu lang an Position " . ($index + 1) . " (max. 100 Zeichen)";
             }
             
-            // Prüfe auf problematische Zeichen
+            // Check for problematic characters
             if (preg_match('/[<>:"\\|?*]/', $part)) {
                 $issues[] = "Ungültige Zeichen in Pfad-Teil an Position " . ($index + 1);
             }
@@ -169,8 +169,8 @@ class Router
      */
     private function simpleUnicodeNormalize(string $text): string
     {
-        // Häufige kombinierte Unicode-Zeichen zu einfachen konvertieren
-        // Verwende hex-Codes für kombinierte Zeichen
+        // Convert common combined Unicode characters to simple ones
+        // Use hex codes for combined characters
         $replacements = [
             "a\xCC\x88" => 'ä',  // ä (a + combining diaeresis)
             "o\xCC\x88" => 'ö',  // ö (o + combining diaeresis)

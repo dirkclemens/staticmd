@@ -40,7 +40,7 @@ class AdminAuth
             $_SESSION['admin_login_time'] = time();
             $_SESSION['admin_last_activity'] = time();
             
-            // Session regenerieren für Sicherheit
+            // Regenerate session for security
             session_regenerate_id(true);
             
             return true;
@@ -59,7 +59,7 @@ class AdminAuth
     {
         $_SESSION = [];
         
-        // Session-Cookie löschen
+        // Delete session cookie
         if (ini_get("session.use_cookies")) {
             $params = session_get_cookie_params();
             setcookie(session_name(), '', time() - 42000,
@@ -80,7 +80,7 @@ class AdminAuth
             header('Location: /admin?action=login');
             exit;
         }
-        // Aktivität vermerken ohne Login-Zeit zu ändern
+        // Track activity without changing login time
         $_SESSION['admin_last_activity'] = time();
     }
 

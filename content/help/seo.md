@@ -1,49 +1,49 @@
 ---
-Title: SEO & Suchmaschinen-Kontrolle
+Title: SEO & Search Engine Control
 Author: StaticMD Team
 Tag: seo, robots, documentation
 ---
 
-# SEO & Suchmaschinen-Kontrolle in StaticMD
+# SEO & Search Engine Control in StaticMD
 
-StaticMD bietet umfassende Kontrolle über Suchmaschinen-Indexierung und SEO-Einstellungen.
+StaticMD provides comprehensive control over search engine indexing and SEO settings.
 
-## 🎛️ Admin-Interface
+## 🎛️ Admin Interface
 
-### SEO-Einstellungen
+### SEO Settings
 
-In den **Admin-Settings** finden Sie unter "SEO & Suchmaschinen-Einstellungen":
+In the **Admin Settings** under "SEO & Search Engine Settings":
 
-#### **Standard Robots-Policy**
-- `index,follow` - Suchmaschinen-freundlich (Standard)
-- `index,nofollow` - Indexieren aber Links nicht folgen
-- `noindex,follow` - Nicht indexieren aber Links folgen  
-- `noindex,nofollow` - Komplett blockieren
+#### **Default Robots Policy**
+- `index,follow` - Search engine friendly (default)
+- `index,nofollow` - Index but don't follow links
+- `noindex,follow` - Don't index but follow links  
+- `noindex,nofollow` - Block completely
 
-#### **Alle Suchmaschinen blockieren**
-- ✅ Aktiviert: Komplette Website wird nicht indexiert
-- ⚠️ Überschreibt alle anderen Einstellungen
+#### **Block All Search Engines**
+- ✅ Enabled: Complete website will not be indexed
+- ⚠️ Overrides all other settings
 
-#### **robots.txt generieren**
-- Automatische robots.txt unter `/robots.txt`
-- Basiert auf den SEO-Einstellungen
+#### **Generate robots.txt**
+- Automatic robots.txt at `/robots.txt`
+- Based on SEO settings
 
-## 🔧 Pro-Seite Kontrolle
+## 🔧 Per-Page Control
 
 ### Front Matter Robots
-Jede Markdown-Seite kann eigene Robots-Direktiven haben:
+Each Markdown page can have its own robots directives:
 
 ```markdown
 ---
-Title: Private Seite
+Title: Private Page
 Author: Admin
 Robots: noindex,nofollow
 ---
 
-# Diese Seite wird nicht indexiert
+# This page will not be indexed
 ```
 
-### Unterstützte Robots-Direktiven
+### Supported Robots Directives
 - `index` / `noindex`
 - `follow` / `nofollow`
 - `archive` / `noarchive`
@@ -52,38 +52,38 @@ Robots: noindex,nofollow
 
 ## 🤖 robots.txt Features
 
-### Automatische Generierung
-- **URL**: `/robots.txt` (wird zu `/robots.php` weitergeleitet)
-- **Dynamisch**: Basiert auf aktuellen SEO-Settings
-- **Cache**: 24 Stunden HTTP-Cache-Header
+### Automatic Generation
+- **URL**: `/robots.txt` (redirected to `/robots.php`)
+- **Dynamic**: Based on current SEO settings
+- **Cache**: 24-hour HTTP cache headers
 
-### Bei "Suchmaschinen blockieren" = AUS
+### When "Block Search Engines" = OFF
 ```
 User-agent: *
 Allow: /
 
-# System-Verzeichnisse blockieren
+# Block system directories
 Disallow: /system/
 Disallow: /admin/
 Disallow: /config.php
 
-# Spezielle Bot-Regelungen
+# Special bot rules
 User-agent: Googlebot
 Allow: /public/
 Crawl-delay: 1
 
-# Aggressive Bots beschränken
+# Restrict aggressive bots
 User-agent: AhrefsBot
 Crawl-delay: 10
 Disallow: /
 ```
 
-### Bei "Suchmaschinen blockieren" = AN
+### When "Block Search Engines" = ON
 ```
 User-agent: *
 Disallow: /
 
-# Zusätzlich spezifische Bots blockieren
+# Additionally block specific bots
 User-agent: Googlebot
 Disallow: /
 
@@ -158,33 +158,33 @@ Admin > Settings > "Alle Suchmaschinen blockieren" ✅
 
 ## 🔍 Testing & Debugging
 
-### robots.txt testen
+### Test robots.txt
 - **URL**: `https://your-domain.com/robots.txt`
 - **Google Search Console**: robots.txt Tester
 - **Bing Webmaster Tools**: robots.txt Tester
 
-### Meta-Tags prüfen
+### Check Meta Tags
 ```html
-<!-- Seitenquelltext anzeigen -->
+<!-- View page source -->
 <meta name="robots" content="noindex,nofollow">
 ```
 
-### HTTP-Headers prüfen
+### Check HTTP Headers
 ```bash
-curl -I https://your-domain.com/seite
+curl -I https://your-domain.com/page
 # X-Robots-Tag: noindex,nofollow,noarchive,nosnippet
 ```
 
-## ⚙️ Technische Details
+## ⚙️ Technical Details
 
-### Template-Integration
-Alle StaticMD-Themes unterstützen automatisch:
+### Template Integration
+All StaticMD themes automatically support:
 ```php
 <!-- SEO/Robots Meta-Tags -->
 <?= $robotsMeta ?>
 ```
 
-### Settings-Schema
+### Settings Schema
 ```json
 {
     "seo_robots_policy": "index,follow",
@@ -194,25 +194,25 @@ Alle StaticMD-Themes unterstützen automatisch:
 ```
 
 ### Front Matter Priority
-1. **Front Matter `Robots:`** (höchste Priorität)
-2. **"Alle Suchmaschinen blockieren"** 
-3. **Standard Robots-Policy** (niedrigste)
+1. **Front Matter `Robots:`** (highest priority)
+2. **"Block All Search Engines"** 
+3. **Default Robots Policy** (lowest)
 
 ## 🚀 Best Practices
 
-### Production-Website
-- Standard: `index,follow`
-- robots.txt: Aktiviert
-- Pro-Seite: Nach Bedarf
+### Production Website
+- Default: `index,follow`
+- robots.txt: Enabled
+- Per-page: As needed
 
 ### Staging/Development
-- Block Crawlers: ✅ Aktiviert
-- Verhindert versehentliche Indexierung
+- Block Crawlers: ✅ Enabled
+- Prevents accidental indexing
 
 ### Sensitive Content
 - Front Matter: `Robots: noindex,nofollow`
-- Zusätzlich: HTTP Auth oder IP-Beschränkung
+- Additionally: HTTP Auth or IP restrictions
 
 ---
 
-*SEO-Kontrolle in StaticMD ist flexibel und mehrschichtig - von global bis pro-Seite konfigurierbar.*
+*SEO control in StaticMD is flexible and multi-layered - configurable from global to per-page.*

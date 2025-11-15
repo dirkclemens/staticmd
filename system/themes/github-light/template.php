@@ -5,7 +5,7 @@
  */
 
 // Theme configuration
-// $themeName wird von TemplateEngine übergeben
+// $themeName is provided by TemplateEngine
 $siteName = $config['system']['name'] ?? 'StaticMD';
 $siteUrl = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']);
 $currentRoute = $_GET['route'] ?? 'index';

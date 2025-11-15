@@ -1,29 +1,29 @@
 
-# Willkommen bei StaticMD
+# Welcome to StaticMD
 
-StaticMD ist ein professionelles, PHP-basiertes CMS für Markdown-Inhalte mit Bootstrap-Frontend und umfangreichem Admin-Interface. Die Software eignet sich ideal für technische Dokus, Wikis, Blogs und Knowledge Bases.
+StaticMD is a professional PHP-based CMS for Markdown content with Bootstrap frontend and comprehensive admin interface. The software is ideal for technical documentation, wikis, blogs, and knowledge bases.
 
 ---
 
-## 🚀 Hauptfunktionen
-- **Markdown-Parser** mit Shortcodes, Emoji-Support, Accordions, Tag-System
+## 🚀 Key Features
+- **Markdown Parser** with shortcodes, emoji support, accordions, tag system
 - **9 Themes** (Bootstrap, Solarized, Monokai, GitHub, Static-MD, AdCore)
-- **CodeMirror-Editor** mit Toolbar, Drag&Drop-Upload für Bilder, PDF, ZIP
-- **Download-Tag** mit automatischem Bootstrap-Icon je Dateityp
-- **Volltextsuche** und Tag-Filter
-- **Unicode/Umlaut-Support** für deutsche Inhalte
-- **Yellow CMS Kompatibilität**
-- **Admin-Dashboard** mit Datei-Manager, Live-Preview, Auto-Save
-- **CSRF-Schutz** und sichere Authentifizierung
-- **Content-Security-Policy** (CSP) und umfassende Security Headers
-- **SEO-Kontrolle** mit robots.txt Generator und Meta-Tags
-- **Suchmaschinen-Blockierung** global oder pro Seite
-- **Breadcrumb-Navigation** für Unterverzeichnisse
-- **Folder-Shortcode** für horizontale Ordner-Navigation
+- **CodeMirror Editor** with toolbar, drag&drop upload for images, PDF, ZIP
+- **Download Tag** with automatic Bootstrap icon per file type
+- **Full-text search** and tag filter
+- **Unicode/Umlaut support** for German content
+- **Yellow CMS compatibility**
+- **Admin Dashboard** with file manager, live preview, auto-save
+- **CSRF protection** and secure authentication
+- **Content Security Policy** (CSP) and comprehensive security headers
+- **SEO control** with robots.txt generator and meta tags
+- **Search engine blocking** globally or per page
+- **Breadcrumb navigation** for subdirectories
+- **Folder shortcode** for horizontal folder navigation
 
 ---
 
-## 📦 Projektstruktur
+## 📦 Project Structure
 ```
 staticMD/
 ├── index.php
@@ -44,37 +44,37 @@ staticMD/
 
 ---
 
-## 📝 Markdown-Features
+## 📝 Markdown Features
 - **Shortcodes**: `[pages]`, `[tags]`, `[folder]`, `[accordion]`, `[download ...]`, `[image ...]`
-- **Download-Tag**: `[download datei.pdf "Alt-Text"]` erzeugt einen Link mit passendem Icon
-- **Accordion**: `[accordionstart id "Titel"] ... [accordionstop]`
-- **Tag-Cloud**: `[tags /pfad/ limit]`
-- **Folder-Navigation**: `[folder /pfad/ limit]` für horizontale Unterordner-Links
-- **Bilder**: `[image bild.jpg "Alt-Text" - 50%]`
-- **Emoji**: `:smile:`, `:rocket:`, `:heart:` u.v.m.
-- **SEO Front Matter**: `Robots:`, `Description:`, `Canonical:` für Suchmaschinen-Kontrolle
+- **Download Tag**: `[download file.pdf "Alt-Text"]` creates a link with matching icon
+- **Accordion**: `[accordionstart id "Title"] ... [accordionstop]`
+- **Tag Cloud**: `[tags /path/ limit]`
+- **Folder Navigation**: `[folder /path/ limit]` for horizontal subfolder links
+- **Images**: `[image image.jpg "Alt-Text" - 50%]`
+- **Emoji**: `:smile:`, `:rocket:`, `:heart:` and many more
+- **SEO Front Matter**: `Robots:`, `Description:`, `Canonical:` for search engine control
 
 ---
 
-## 📚 Hilfe & Dokumentation
-- **Installationsanleitung**: [installation/installation.md](installation/installation.md)
-- **Deployment-Guide**: [installation/deployment.md](installation/deployment.md)
+## 📚 Help & Documentation
+- **Installation Guide**: [installation/installation.md](installation/installation.md)
+- **Deployment Guide**: [installation/deployment.md](installation/deployment.md)
 - **Security & CSP**: [security.md](security.md)
-- **SEO & Suchmaschinen**: [seo.md](seo.md)
-- **Uberspace-Setup**: [installation/uberspace.md](installation/uberspace.md)
-- **Feature-Übersicht**: [features.md](features.md)
+- **SEO & Search Engines**: [seo.md](seo.md)
+- **Uberspace Setup**: [installation/uberspace.md](installation/uberspace.md)
+- **Feature Overview**: [features.md](features.md)
 
 ---
 
-## 💡 Tipps
-- PDF/ZIP per Drag&Drop hochladen, Download-Tag wird automatisch eingefügt
-- Navigation und Theme im Admin-Dashboard anpassen
-- Backup regelmäßig erstellen
-- Fehler? Siehe [installation/installation.md](installation/installation.md) und [installation/deployment.md](installation/deployment.md)
+## 💡 Tips
+- Upload PDF/ZIP via drag&drop, download tag is automatically inserted
+- Customize navigation and theme in admin dashboard
+- Create backups regularly
+- Issues? See [installation/installation.md](installation/installation.md) and [installation/deployment.md](installation/deployment.md)
 
 ---
 
 ## 🔗 Links
 - **Demo**: https://staticMD.adcore.de/ (login: admin/admin123)
-- **Projektseite**: https://github.com/dirkclemens/staticMD
-- **Uberspace Doku**: https://manual.uberspace.de/
+- **Project Page**: https://github.com/dirkclemens/staticMD
+- **Uberspace Docs**: https://manual.uberspace.de/

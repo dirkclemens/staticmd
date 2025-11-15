@@ -6,19 +6,19 @@ Tag: security, csp, documentation
 
 # Security Features in StaticMD
 
-StaticMD implementiert umfassende Sicherheitsmaßnahmen nach modernen Web-Security-Standards.
+StaticMD implements comprehensive security measures according to modern web security standards.
 
-## Content-Security-Policy (CSP)
+## Content Security Policy (CSP)
 
-### Was ist CSP?
-Content-Security-Policy schützt vor **Cross-Site-Scripting (XSS)** und **Code-Injection-Angriffen** durch strenge Kontrolle über erlaubte Ressourcen.
+### What is CSP?
+Content Security Policy protects against **Cross-Site Scripting (XSS)** and **code injection attacks** through strict control over allowed resources.
 
-### Implementierung in StaticMD
+### Implementation in StaticMD
 
-#### Automatische Aktivierung
-- ✅ **Frontend**: Automatisch in allen Themes aktiviert
-- ✅ **Admin**: Speziell konfiguriert für CodeMirror-Editor
-- ✅ **Kontextbasiert**: Verschiedene Policies je nach Bereich
+#### Automatic Activation
+- ✅ **Frontend**: Automatically activated in all themes
+- ✅ **Admin**: Specially configured for CodeMirror editor
+- ✅ **Context-based**: Different policies depending on area
 
 #### CSP-Direktiven
 
@@ -38,97 +38,97 @@ frame-ancestors 'none';
 script-src [...] 'unsafe-eval';  // für CodeMirror Syntax-Highlighting
 ```
 
-### Nonce-System
-StaticMD verwendet **Nonces** für sichere Inline-Scripts:
+### Nonce System
+StaticMD uses **nonces** for secure inline scripts:
 
 ```php
-<!-- Sicheres Inline-Script -->
+<!-- Secure inline script -->
 <script nonce="<?= $nonce ?>">
-    console.log('Sicher durch Nonce');
+    console.log('Secure through nonce');
 </script>
 ```
 
-## Weitere Security Features
+## Additional Security Features
 
 ### 1. HTTP Security Headers
 
 **X-Frame-Options:** `DENY`
-- Schutz vor Clickjacking-Angriffen
+- Protection against clickjacking attacks
 
 **X-Content-Type-Options:** `nosniff`  
-- Verhindert MIME-Type-Sniffing
+- Prevents MIME type sniffing
 
 **X-XSS-Protection:** `1; mode=block`
-- XSS-Filter für Legacy-Browser
+- XSS filter for legacy browsers
 
 **Referrer-Policy:** `strict-origin-when-cross-origin`
-- Kontrollierte Referrer-Übertragung
+- Controlled referrer transmission
 
-**Strict-Transport-Security** (bei HTTPS)
-- Erzwingt HTTPS-Verbindungen
+**Strict-Transport-Security** (with HTTPS)
+- Enforces HTTPS connections
 
-### 2. Input-Validierung
+### 2. Input Validation
 
-**Path-Traversal-Schutz:**
-- Mehrfache `../` Entfernung
-- Maximale Verschachtelungstiefe (10 Ebenen)
-- Erlaubte Zeichen-Whitelist
+**Path Traversal Protection:**
+- Multiple `../` removal
+- Maximum nesting depth (10 levels)
+- Allowed character whitelist
 
-**Unicode-Normalisierung:**
-- NFD→NFC Konvertierung für deutsche Umlaute
-- Sichere URL-Dekodierung
+**Unicode Normalization:**
+- NFD→NFC conversion for German umlauts
+- Safe URL decoding
 
-### 3. Session-Security
+### 3. Session Security
 
-**Sichere Cookie-Parameter:**
+**Secure Cookie Parameters:**
 ```php
 'httponly' => true,
-'secure' => true,     // bei HTTPS
+'secure' => true,     // with HTTPS
 'samesite' => 'Strict'
 ```
 
-**Konfigurierbare Timeouts:**
-- Bis zu 48 Stunden Session-Laufzeit
-- Automatische Garbage Collection
+**Configurable Timeouts:**
+- Up to 48 hours session lifetime
+- Automatic garbage collection
 
-### 4. CSRF-Schutz
+### 4. CSRF Protection
 
-**Token-Generierung:**
+**Token Generation:**
 ```php
 $token = bin2hex(random_bytes(32));
 ```
 
-**Timing-Attack-sichere Verifikation:**
+**Timing-Attack Safe Verification:**
 ```php
 hash_equals($_SESSION['csrf_token'], $userToken);
 ```
 
-### 5. Open-Redirect-Schutz
+### 5. Open Redirect Protection
 
-**Return-URL-Validierung:**
+**Return URL Validation:**
 ```php
 if (!str_starts_with($returnUrl, '/admin')) {
-    $returnUrl = '/admin';  // Sicherer Fallback
+    $returnUrl = '/admin';  // Safe fallback
 }
 ```
 
 ## Testing & Debugging
 
-### CSP-Test-Seite
-StaticMD enthält eine Test-Seite unter `/csp-test.php`:
+### CSP Test Page
+StaticMD includes a test page at `/csp-test.php`:
 
 ```
 https://your-domain.com/csp-test.php?context=frontend
 https://your-domain.com/csp-test.php?context=admin
 ```
 
-### Browser-Tools
-1. **Developer Tools** → **Console**: CSP-Violations anzeigen
-2. **Network Tab**: Blockierte Ressourcen identifizieren
-3. **Security Tab**: HTTPS und Certificate-Status
+### Browser Tools
+1. **Developer Tools** → **Console**: Show CSP violations
+2. **Network Tab**: Identify blocked resources
+3. **Security Tab**: HTTPS and certificate status
 
-### Debug-Informationen
-Session-Debug über AdminAuth verfügbar:
+### Debug Information
+Session debug available via AdminAuth:
 ```php
 $sessionInfo = $auth->getSessionInfo();
 print_r($sessionInfo);
@@ -136,55 +136,55 @@ print_r($sessionInfo);
 
 ## Best Practices
 
-### 1. Entwicklung
-- **Inline-Scripts vermeiden** oder mit Nonce versehen
-- **CDN-Ressourcen** nur von whitelisteten Domains
-- **File-Uploads** auf erlaubte Typen beschränken
+### 1. Development
+- **Avoid inline scripts** or use with nonce
+- **CDN resources** only from whitelisted domains
+- **File uploads** restricted to allowed types
 
 ### 2. Deployment
-- **HTTPS** in Produktion verwenden
-- **Security Headers** in Webserver-Konfiguration ergänzen
-- **CSP-Reports** für Monitoring einrichten (optional)
+- **Use HTTPS** in production
+- **Add security headers** in web server configuration
+- **Set up CSP reports** for monitoring (optional)
 
 ### 3. Monitoring
-- **Browser-Console** auf CSP-Violations überwachen
-- **Server-Logs** auf ungewöhnliche Requests prüfen
-- **Session-Timeouts** an Nutzungsverhalten anpassen
+- **Monitor browser console** for CSP violations
+- **Check server logs** for unusual requests
+- **Adjust session timeouts** to usage behavior
 
-## Konfiguration
+## Configuration
 
-### SecurityHeaders-Klasse anpassen
+### Customize SecurityHeaders Class
 ```php
-// Eigene CSP-Direktiven hinzufügen
+// Add custom CSP directives
 $basePolicy[] = "worker-src 'self'";
 $basePolicy[] = "manifest-src 'self'";
 ```
 
-### CDN-Domains erweitern
+### Extend CDN Domains
 ```php
-"script-src 'self' 'unsafe-inline' https://ihr-cdn.com";
+"script-src 'self' 'unsafe-inline' https://your-cdn.com";
 ```
 
-### Kontextspezifische Anpassungen
+### Context-Specific Adjustments
 ```php
 if ($context === 'special') {
     $basePolicy[1] = "script-src 'self' 'unsafe-inline'";
 }
 ```
 
-## Kompatibilität
+## Compatibility
 
-**Unterstützte Browser:**
+**Supported Browsers:**
 - ✅ Chrome 25+
 - ✅ Firefox 23+  
 - ✅ Safari 7+
-- ✅ Edge (alle Versionen)
+- ✅ Edge (all versions)
 
-**Fallback-Verhalten:**
-- Alte Browser ignorieren CSP-Header
-- X-XSS-Protection als Fallback aktiv
-- Grundsätzliche Sicherheit durch Input-Validierung
+**Fallback Behavior:**
+- Older browsers ignore CSP headers
+- X-XSS-Protection active as fallback
+- Basic security through input validation
 
 ---
 
-*StaticMD erreicht **CSP Level 2** Compliance und erfüllt moderne Web-Security-Standards.*
+*StaticMD achieves **CSP Level 2** compliance and meets modern web security standards.*

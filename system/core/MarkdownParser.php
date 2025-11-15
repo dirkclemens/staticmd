@@ -15,7 +15,7 @@ class MarkdownParser
      */
     public function parse(string $markdown): string
     {
-        // LaTeX-Formeln vor Markdown-Processing schützen
+        // Protect LaTeX formulas before Markdown processing
         $markdown = $this->preprocessLaTeX($markdown);
         
         // Zeilen in Array aufteilen
@@ -32,7 +32,7 @@ class MarkdownParser
             $line = $lines[$i];
             $trimmedLine = $line;
 
-            // Code-Blöcke erkennen
+            // Recognize code blocks
             if (str_starts_with($trimmedLine, '```')) {
                 if ($inParagraph) {
                     $html .= '<p>' . $this->parseInline($paragraphContent) . "</p>\n";
@@ -50,13 +50,13 @@ class MarkdownParser
                 continue;
             }
 
-            // In Code-Block: Zeile unverändert ausgeben
+            // In code block: output line unchanged
             if ($inCodeBlock) {
                 $html .= htmlspecialchars($line) . "\n";
                 continue;
             }
 
-            // Listen beenden wenn nötig
+            // End lists if necessary
             if ($inList && !$this->isListItem($trimmedLine)) {
                 $html .= "</$listType>\n";
                 $inList = false;
@@ -73,7 +73,7 @@ class MarkdownParser
                 continue;
             }
             
-            // Überschriften
+            // Headings
             if (str_starts_with($trimmedLine, '#')) {
                 // Paragraph beenden falls aktiv
                 if ($inParagraph) {
@@ -103,7 +103,7 @@ class MarkdownParser
             
             // Hardbreaks: Zeile endet mit 2+ Leerzeichen
             if (preg_match('/[\s]{2,}$/u', $trimmedLine)) {
-                // Wenn Zeile nach Whitespace wirklich leer ist, nur <br> einfügen
+                // If line is really empty after whitespace, only insert <br>
                 if (strlen(trim($trimmedLine)) === 0) {
                     $html .= "<br>\n";
                     continue;
@@ -157,7 +157,7 @@ class MarkdownParser
             // Tabellen erkennen (Zeilen mit | Zeichen)
             // Aber nur wenn es eine echte Tabelle ist (mit Header und Separator)
             if (strpos($trimmedLine, '|') !== false && !empty($trimmedLine)) {
-                // Prüfen ob nächste Zeile ein Tabellen-Separator ist
+                // Check if next line is a table separator
                 $isTable = false;
                 if (($i + 1) < count($lines)) {
                     $nextLine = trim($lines[$i + 1]);
@@ -197,7 +197,7 @@ class MarkdownParser
                 continue;
             }
             
-            // Normaler Text - sammeln für Paragraph
+            // Normal text - collect for paragraph
             if ($inParagraph) {
                 $paragraphContent .= ($paragraphContent === '' ? '' : ' ') . $trimmedLine;
             } else {
@@ -211,7 +211,7 @@ class MarkdownParser
             $html .= '<p>' . $this->parseInline($paragraphContent) . "</p>\n";
         }
         
-        // Offene Listen schließen
+        // Close open lists
         if ($inList) {
             $html .= "</$listType>\n";
         }

@@ -2,91 +2,91 @@
 Title: Theme System
 Author: StaticMD Team
 Tag: themes, design, frontend
-Layout: wiki
+Layout: Standard
 ---
 
 # Theme System
 
-Umfassende Dokumentation des StaticMD Theme-Systems mit 7 professionellen Themes und Anleitung zur Entwicklung eigener Themes.
+Comprehensive documentation of the StaticMD theme system with 7 professional themes and guide for developing custom themes.
 
 ---
 
-## Übersicht
+## Overview
 
-StaticMD bietet ein flexibles Theme-System mit 7 vorinstallierten professionellen Themes. Das System unterstützt sowohl Frontend-Themes für die Besucher-Ansicht als auch Editor-Themes für das Admin-Interface.
+StaticMD offers a flexible theme system with 7 pre-installed professional themes. The system supports both frontend themes for visitor view and editor themes for the admin interface.
 
-## Verfügbare Themes
+## Available Themes
 
-### Frontend-Themes
+### Frontend Themes
 
-#### 1. Bootstrap (Standard)
-- **Pfad**: `/system/themes/bootstrap/`
-- **Beschreibung**: Standard Bootstrap 5 Theme mit modernem Design
-- **Features**: Responsive Grid, Dark/Light Mode Toggle, Professional Layout
-- **Zielgruppe**: Universell einsetzbar, business-tauglich
+#### 1. Bootstrap (Default)
+- **Path**: `/system/themes/bootstrap/`
+- **Description**: Standard Bootstrap 5 theme with modern design
+- **Features**: Responsive grid, dark/light mode toggle, professional layout
+- **Target Audience**: Universal use, business-ready
 
 #### 2. Solarized Light
-- **Pfad**: `/system/themes/solarized-light/`
-- **Beschreibung**: Augenschonendes helles Theme für Entwickler
-- **Features**: Warme Farbtöne, hoher Kontrast, Code-optimiert
-- **Zielgruppe**: Entwickler, technische Dokumentation
+- **Path**: `/system/themes/solarized-light/`
+- **Description**: Eye-friendly light theme for developers
+- **Features**: Warm colors, high contrast, code-optimized
+- **Target Audience**: Developers, technical documentation
 
 #### 3. Solarized Dark
-- **Pfad**: `/system/themes/solarized-dark/`  
-- **Beschreibung**: Dunkles Solarized Theme für nächtliche Arbeit
-- **Features**: Dunkler Hintergrund, gedämpfte Farben, augenschonend
-- **Zielgruppe**: Entwickler, Dark Mode Präferenz
+- **Path**: `/system/themes/solarized-dark/`
+- **Description**: Dark Solarized theme for nighttime work
+- **Features**: Dark background, muted colors, eye-friendly
+- **Target Audience**: Developers, dark mode preference
 
 #### 4. Monokai Light
-- **Pfad**: `/system/themes/monokai-light/`
-- **Beschreibung**: Helle Variante des beliebten Monokai Themes
-- **Features**: Kontraststarke Farben, moderne Typografie
-- **Zielgruppe**: Designer, kreative Projekte
+- **Path**: `/system/themes/monokai-light/`
+- **Description**: Light variant of the popular Monokai theme
+- **Features**: High-contrast colors, modern typography
+- **Target Audience**: Designers, creative projects
 
 #### 5. Monokai Dark
-- **Pfad**: `/system/themes/monokai-dark/`
-- **Beschreibung**: Klassisches dunkles Monokai Theme
-- **Features**: Dunkler Hintergrund, leuchtende Akzentfarben
-- **Zielgruppe**: Entwickler, Programmierer
+- **Path**: `/system/themes/monokai-dark/`
+- **Description**: Classic dark Monokai theme
+- **Features**: Dark background, bright accent colors
+- **Target Audience**: Developers, programmers
 
 #### 6. GitHub Light
-- **Pfad**: `/system/themes/github-light/`
-- **Beschreibung**: Authentische GitHub-Optik für Repositories
-- **Features**: GitHub-ähnliches Design, Markdown-optimiert
-- **Zielgruppe**: Open Source Projekte, Dokumentation
+- **Path**: `/system/themes/github-light/`
+- **Description**: Authentic GitHub look for repositories
+- **Features**: GitHub-like design, Markdown-optimized
+- **Target Audience**: Open source projects, documentation
 
 #### 7. GitHub Dark
-- **Pfad**: `/system/themes/github-dark/`
-- **Beschreibung**: Dunkle GitHub-Variante
-- **Features**: GitHub Dark Mode, professionell
-- **Zielgruppe**: Entwickler, moderne Projekte
+- **Path**: `/system/themes/github-dark/`
+- **Description**: Dark GitHub variant
+- **Features**: GitHub dark mode, professional
+- **Target Audience**: Developers, modern projects
 
-### Editor-Themes
+### Editor Themes
 
 #### CodeMirror Themes
-- **GitHub**: Standard heller Editor
-- **Monokai**: Dunkler Editor mit Syntaxhervorhebung
-- **Solarized Light**: Heller Solarized Editor
-- **Solarized Dark**: Dunkler Solarized Editor  
-- **Material**: Material Design Editor
+- **GitHub**: Standard light editor
+- **Monokai**: Dark editor with syntax highlighting
+- **Solarized Light**: Light Solarized editor
+- **Solarized Dark**: Dark Solarized editor
+- **Material**: Material Design editor
 
 ---
 
-## Theme-Struktur
+## Theme Structure
 
-### Verzeichnisaufbau
+### Directory Structure
 ```
 system/themes/
 ├── bootstrap/
 │   ├── template.php      # PHP Template
-│   └── template.css      # Theme-spezifisches CSS
+│   └── template.css      # Theme-specific CSS
 ├── solarized-light/
 │   ├── template.php
 │   └── template.css
-└── [weitere themes...]
+└── [other themes...]
 ```
 
-### Template-Datei (template.php)
+### Template File (template.php)
 ```php
 <?php
 // Theme: Bootstrap
@@ -97,7 +97,7 @@ $siteName = $this->getSetting('site_name', 'StaticMD');
 $currentTheme = $this->getSetting('frontend_theme', 'bootstrap');
 ?>
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -131,123 +131,60 @@ $currentTheme = $this->getSetting('frontend_theme', 'bootstrap');
 </html>
 ```
 
-### CSS-Datei (template.css)
-```css
-/* Theme: Bootstrap */
-/* Custom theme styles */
-
-:root {
-    --primary-color: #0d6efd;
-    --secondary-color: #6c757d;
-    --success-color: #198754;
-    --info-color: #0dcaf0;
-    --warning-color: #ffc107;
-    --danger-color: #dc3545;
-    --light-color: #f8f9fa;
-    --dark-color: #212529;
-}
-
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.6;
-    color: var(--dark-color);
-}
-
-.navbar-brand {
-    font-weight: bold;
-    font-size: 1.5rem;
-}
-
-.content-wrapper {
-    min-height: calc(100vh - 200px);
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-    .container {
-        padding: 0 15px;
-    }
-}
-```
-
 ---
 
-## Theme-Auswahl und -Verwaltung
+## Theme Selection and Management
 
-### Admin-Interface
+### Admin Interface
 
-Themes können über **Admin → Settings → Theme Settings** verwaltet werden:
+Themes can be managed via **Admin → Settings → Theme Settings**:
 
-1. **Frontend Theme Auswahl**: Dropdown mit allen verfügbaren Themes
-2. **Editor Theme Auswahl**: CodeMirror Theme für den Admin-Editor
-3. **Live-Vorschau**: Sofortige Ansicht der Änderungen
-4. **Theme-Informationen**: Details zu jedem Theme
+1. **Frontend Theme Selection**: Dropdown with all available themes
+2. **Editor Theme Selection**: CodeMirror theme for admin editor
+3. **Live Preview**: Immediate view of changes
+4. **Theme Information**: Details about each theme
 
-### Programmatische Auswahl
+### Programmatic Selection
 
 ```php
-// Theme setzen
+// Set theme
 $app->setSetting('frontend_theme', 'solarized-dark');
 $app->setSetting('editor_theme', 'monokai');
 
-// Aktuelles Theme abfragen
+// Get current theme
 $currentTheme = $app->getSetting('frontend_theme', 'bootstrap');
-```
-
-### URL-Parameter (Debug)
-
-```
-# Temporäres Theme testen
-https://your-domain.com/?theme=github-dark
-
-# Editor-Theme testen  
-https://your-domain.com/admin/?editor_theme=solarized-light
 ```
 
 ---
 
-## Eigene Themes entwickeln
+## Developing Custom Themes
 
-### 1. Theme-Verzeichnis erstellen
+### 1. Create Theme Directory
 
 ```bash
-mkdir system/themes/mein-theme
-cd system/themes/mein-theme
+mkdir system/themes/my-theme
+cd system/themes/my-theme
 ```
 
-### 2. Template-Datei erstellen
+### 2. Create Template File
 
 ```php
 <?php
-// Theme: Mein Custom Theme
+// Theme: My Custom Theme
 // Version: 1.0.0
-// Author: Dein Name
+// Author: Your Name
 
 $siteName = $this->getSetting('site_name', 'StaticMD');
-$siteDescription = $this->getSetting('site_description', '');
-$enableSeoMeta = $this->getSetting('enable_seo_meta', true);
 ?>
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($title ?? $siteName) ?></title>
     
-    <?php if ($enableSeoMeta): ?>
-    <meta name="description" content="<?= htmlspecialchars($description ?? $siteDescription) ?>">
-    <meta name="author" content="<?= htmlspecialchars($author ?? '') ?>">
-    <?php if (!empty($tags)): ?>
-    <meta name="keywords" content="<?= htmlspecialchars($tags) ?>">
-    <?php endif; ?>
-    <?= $robotsMeta ?? '' ?>
-    <?php endif; ?>
-    
     <!-- Theme CSS -->
-    <link href="/system/themes/mein-theme/template.css" rel="stylesheet">
-    
-    <!-- Optional: External Dependencies -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/system/themes/my-theme/template.css" rel="stylesheet">
 </head>
 <body>
     <header class="site-header">
@@ -287,10 +224,10 @@ $enableSeoMeta = $this->getSetting('enable_seo_meta', true);
 </html>
 ```
 
-### 3. CSS-Datei erstellen
+### 3. Create CSS File
 
 ```css
-/* Theme: Mein Custom Theme */
+/* Theme: My Custom Theme */
 
 :root {
     --primary-color: #2c3e50;
@@ -298,10 +235,6 @@ $enableSeoMeta = $this->getSetting('enable_seo_meta', true);
     --text-color: #333;
     --bg-color: #fff;
     --border-color: #e1e8ed;
-}
-
-* {
-    box-sizing: border-box;
 }
 
 body {
@@ -359,41 +292,6 @@ body {
     padding: 3rem 0;
 }
 
-/* Typography */
-h1, h2, h3, h4, h5, h6 {
-    color: var(--primary-color);
-    line-height: 1.3;
-}
-
-h1 { font-size: 2.5rem; }
-h2 { font-size: 2rem; }
-h3 { font-size: 1.5rem; }
-
-/* Links */
-a {
-    color: var(--accent-color);
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
-/* Code */
-code {
-    background: #f8f9fa;
-    padding: 0.2rem 0.4rem;
-    border-radius: 3px;
-    font-size: 0.9em;
-}
-
-pre {
-    background: #f8f9fa;
-    padding: 1rem;
-    border-radius: 5px;
-    overflow-x: auto;
-}
-
 /* Footer */
 .site-footer {
     background: var(--primary-color);
@@ -413,326 +311,97 @@ pre {
         flex-direction: column;
         gap: 1rem;
     }
-    
-    .container {
-        padding: 0 15px;
-    }
 }
 ```
 
-### 4. Theme registrieren
-
-Das Theme wird automatisch erkannt, wenn es im `/system/themes/` Verzeichnis liegt.
-
 ---
 
-## Theme-Variablen
+## Theme Variables
 
-### Verfügbare Variablen in Templates
+### Available Variables in Templates
 
 ```php
-// Content-Variablen
-$content         // Verarbeiteter Markdown-Content
-$title          // Seiten-Titel
-$author         // Autor der Seite
-$tags           // Komma-getrennte Tags
-$description    // Meta-Beschreibung
+// Content variables
+$content         // Processed Markdown content
+$title          // Page title
+$author         // Page author
+$tags           // Comma-separated tags
+$description    // Meta description
 
 // Navigation
-$navigation     // Array mit Navigation-Items
-$breadcrumb     // Breadcrumb-Navigation
+$navigation     // Array with navigation items
+$breadcrumb     // Breadcrumb navigation
 
 // Settings
-$siteName       // Site-Name aus Settings
-$siteDescription // Site-Beschreibung
-$currentTheme   // Aktuelles Theme
+$siteName       // Site name from settings
+$siteDescription // Site description
+$currentTheme   // Current theme
 
 // SEO
-$robotsMeta     // Robots Meta-Tags
-$enableSeoMeta  // SEO aktiviert/deaktiviert
+$robotsMeta     // Robots meta tags
+$enableSeoMeta  // SEO enabled/disabled
 
 // System
-$isAdmin        // Ist Admin eingeloggt
-$adminToolbar   // Admin-Toolbar HTML
-```
-
-### Helper-Funktionen
-
-```php
-// Settings abrufen
-$this->getSetting('key', 'default')
-
-// URL generieren
-$this->url('/pfad/')
-
-// Asset-URL generieren
-$this->asset('css/style.css')
-
-// Navigation generieren
-$this->getNavigationOrder()
+$isAdmin        // Is admin logged in
+$adminToolbar   // Admin toolbar HTML
 ```
 
 ---
 
-## Theme-Vererbung
+## Performance Optimization
 
-### Base-Theme erstellen
-
-```php
-// system/themes/base/template.php
-<?php
-abstract class BaseTheme 
-{
-    protected function renderHeader(): string 
-    {
-        return '<header class="site-header">...</header>';
-    }
-    
-    protected function renderNavigation(): string 
-    {
-        return '<nav class="main-nav">...</nav>';
-    }
-    
-    protected function renderFooter(): string 
-    {
-        return '<footer class="site-footer">...</footer>';
-    }
-}
-```
-
-### Theme erweitern
-
-```php
-// system/themes/mein-theme/template.php
-<?php
-require_once __DIR__ . '/../base/template.php';
-
-class MeinTheme extends BaseTheme 
-{
-    public function render(): string 
-    {
-        return '<!DOCTYPE html>
-        <html>
-        <head>...</head>
-        <body>
-            ' . $this->renderHeader() . '
-            <main>' . $content . '</main>
-            ' . $this->renderFooter() . '
-        </body>
-        </html>';
-    }
-}
-```
-
----
-
-## Advanced Theme Features
-
-### Conditional Loading
+### CSS Minification
 
 ```php
 <?php
-// Verschiedene Layouts je nach Content-Typ
-$layout = $this->getSetting('default_layout', 'wiki');
-
-if (strpos($content, '[gallery') !== false) {
-    $layout = 'gallery';
-} elseif (strpos($content, '[blog') !== false) {
-    $layout = 'blog';
-}
-
-// Layout-spezifische Includes
-include __DIR__ . "/layouts/{$layout}.php";
-?>
-```
-
-### Dynamic CSS
-
-```php
-<?php
-// CSS-Variablen aus Settings
-$primaryColor = $this->getSetting('primary_color', '#0d6efd');
-$accentColor = $this->getSetting('accent_color', '#6c757d');
-?>
-<style>
-:root {
-    --primary-color: <?= $primaryColor ?>;
-    --accent-color: <?= $accentColor ?>;
-}
-</style>
-```
-
-### JavaScript Integration
-
-```php
-<!-- Theme-spezifische JavaScript -->
-<script>
-window.StaticMD = {
-    theme: '<?= $currentTheme ?>',
-    settings: <?= json_encode($this->getThemeSettings()) ?>,
-    isAdmin: <?= $isAdmin ? 'true' : 'false' ?>
-};
-</script>
-<script src="/system/themes/<?= $currentTheme ?>/theme.js"></script>
-```
-
----
-
-## Performance-Optimierung
-
-### CSS-Minification
-
-```php
-<?php
-// Automatische CSS-Minification
+// Automatic CSS minification
 $cssFile = "/system/themes/{$currentTheme}/template.css";
 $minifiedCss = $this->minifyCSS(file_get_contents($cssFile));
 
-// Cache-Busting
+// Cache busting
 $cssVersion = filemtime($cssFile);
 echo "<link href='{$cssFile}?v={$cssVersion}' rel='stylesheet'>";
 ?>
-```
-
-### Lazy Loading
-
-```css
-/* Progressive Enhancement */
-.theme-content {
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.theme-loaded .theme-content {
-    opacity: 1;
-}
 ```
 
 ### Critical CSS
 
 ```php
 <?php
-// Inline Critical CSS für Above-the-Fold Content
+// Inline critical CSS for above-the-fold content
 $criticalCSS = $this->getCriticalCSS($currentTheme);
 echo "<style>{$criticalCSS}</style>";
 
-// Nicht-kritisches CSS async laden
+// Load non-critical CSS async
 echo "<link rel='preload' href='/system/themes/{$currentTheme}/template.css' as='style' onload=\"this.onload=null;this.rel='stylesheet'\">";
 ?>
 ```
 
 ---
 
-## Testing und Debugging
-
-### Theme-Testing
-
-```bash
-# Alle Themes testen
-for theme in system/themes/*/; do
-    echo "Testing theme: $(basename $theme)"
-    curl -s "http://localhost:8000/?theme=$(basename $theme)"
-done
-```
-
-### CSS-Validierung
-
-```bash
-# CSS-Syntax prüfen
-npm install -g css-validator
-css-validator system/themes/*/template.css
-```
-
-### Performance-Testing
-
-```javascript
-// Theme-Performance messen
-console.time('Theme Load');
-document.addEventListener('DOMContentLoaded', function() {
-    console.timeEnd('Theme Load');
-});
-```
-
----
-
-## Migration bestehender Themes
-
-### Von anderen CMS
-
-```php
-// WordPress Theme → StaticMD
-// header.php → template.php (Header-Teil)
-// footer.php → template.php (Footer-Teil)
-// style.css → template.css
-
-// Jekyll Theme → StaticMD
-// _layouts/default.html → template.php
-// _sass/main.scss → template.css (kompiliert)
-```
-
-### Theme-Converter
-
-```php
-class ThemeConverter 
-{
-    public function convertWordPressTheme($themePath): void 
-    {
-        $header = file_get_contents($themePath . '/header.php');
-        $footer = file_get_contents($themePath . '/footer.php');
-        
-        $template = $this->mergeTemplate($header, $footer);
-        file_put_contents('template.php', $template);
-    }
-}
-```
-
----
-
 ## Troubleshooting
 
-### Häufige Probleme
+### Common Issues
 
-#### Theme wird nicht geladen
-- **Ursache**: Theme-Name falsch geschrieben oder Theme-Dateien fehlen
-- **Lösung**: Theme-Verzeichnis und Dateien prüfen
+#### Theme not loading
+- **Cause**: Theme name misspelled or theme files missing
+- **Solution**: Check theme directory and files
 
-#### CSS wird nicht angewendet
-- **Ursache**: CSS-Pfad falsch oder Schreibrechte fehlen
-- **Lösung**: Pfade und Berechtigungen überprüfen
+#### CSS not applied
+- **Cause**: Wrong CSS path or missing write permissions
+- **Solution**: Check paths and permissions
 
-#### JavaScript-Errors
-- **Ursache**: Externe Dependencies nicht verfügbar
-- **Lösung**: CDN-Links prüfen, lokale Fallbacks implementieren
+#### JavaScript errors
+- **Cause**: External dependencies not available
+- **Solution**: Check CDN links, implement local fallbacks
 
-### Debug-Modus
+### Debug Mode
 
 ```php
 // In config.php
 'system' => [
-    'debug' => true  // Zeigt Theme-Loading-Details
+    'debug' => true  // Shows theme loading details
 ]
-```
-
-### Theme-Validierung
-
-```php
-class ThemeValidator 
-{
-    public function validate($themePath): array 
-    {
-        $errors = [];
-        
-        if (!file_exists($themePath . '/template.php')) {
-            $errors[] = 'template.php fehlt';
-        }
-        
-        if (!file_exists($themePath . '/template.css')) {
-            $errors[] = 'template.css fehlt';
-        }
-        
-        return $errors;
-    }
-}
 ```
 
 ---

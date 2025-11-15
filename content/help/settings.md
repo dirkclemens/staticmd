@@ -1,49 +1,49 @@
 ---
 Title: Settings System
 Author: StaticMD Team
-Tag: admin, konfiguration, einstellungen
-Layout: wiki
+Tag: admin, configuration, settings
+Layout: Standard
 ---
 
 # Settings System
 
-Umfassende Dokumentation des StaticMD Settings-Systems mit allen verfügbaren Konfigurationsoptionen.
+Comprehensive documentation of the StaticMD settings system with all available configuration options.
 
 ---
 
-## Übersicht
+## Overview
 
-Das Settings-System von StaticMD verwendet JSON-basierte Konfiguration mit einem benutzerfreundlichen Admin-Interface. Alle Einstellungen werden in `system/settings.json` gespeichert und können über das Admin-Interface verwaltet werden.
+The StaticMD settings system uses JSON-based configuration with a user-friendly admin interface. All settings are stored in `system/settings.json` and can be managed through the admin interface.
 
-## Verfügbare Settings
+## Available Settings
 
-### Website-Grundeinstellungen
+### Website Basic Settings
 
 #### Site Name
-- **Schlüssel**: `site_name`
-- **Typ**: String
-- **Standard**: `"StaticMD"`
-- **Beschreibung**: Name der Website, wird im Browser-Tab und Header angezeigt
+- **Key**: `site_name`
+- **Type**: String
+- **Default**: `"StaticMD"`
+- **Description**: Website name, displayed in browser tab and header
 
 #### Site Logo
-- **Schlüssel**: `site_logo`
-- **Typ**: String (Pfad)
-- **Standard**: `""`
-- **Beschreibung**: Pfad zum Logo-Bild (relativ zu `/public/images/`)
+- **Key**: `site_logo`
+- **Type**: String (path)
+- **Default**: `""`
+- **Description**: Path to logo image (relative to `/public/images/`)
 
 #### Site Description
-- **Schlüssel**: `site_description`
-- **Typ**: String
-- **Standard**: `"Professional Markdown CMS"`
-- **Beschreibung**: Kurze Beschreibung der Website für Meta-Tags
+- **Key**: `site_description`
+- **Type**: String
+- **Default**: `"Professional Markdown CMS"`
+- **Description**: Brief website description for meta tags
 
-### Frontend-Themes
+### Frontend Themes
 
 #### Frontend Theme
-- **Schlüssel**: `frontend_theme`
-- **Typ**: String
-- **Standard**: `"bootstrap"`
-- **Optionen**: 
+- **Key**: `frontend_theme`
+- **Type**: String
+- **Default**: `"bootstrap"`
+- **Options**: 
   - `bootstrap` - Standard Bootstrap Theme
   - `solarized-light` - Solarized Light Theme
   - `solarized-dark` - Solarized Dark Theme
@@ -52,113 +52,130 @@ Das Settings-System von StaticMD verwendet JSON-basierte Konfiguration mit einem
   - `github-light` - GitHub Light Theme
   - `github-dark` - GitHub Dark Theme
 
-### Editor-Konfiguration
-
 #### Editor Theme
-- **Schlüssel**: `editor_theme`
-- **Typ**: String
-- **Standard**: `"github"`
-- **Optionen**:
-  - `github` - GitHub Theme
-  - `monokai` - Monokai Theme
-  - `solarized-light` - Solarized Light
-  - `solarized-dark` - Solarized Dark
-  - `material` - Material Theme
+- **Key**: `editor_theme`
+- **Type**: String
+- **Default**: `"github"`
+- **Options**: 
+  - `github` - GitHub Light Editor
+  - `monokai` - Monokai Dark Editor
+  - `solarized-light` - Solarized Light Editor
+  - `solarized-dark` - Solarized Dark Editor
+  - `material` - Material Design Editor
 
-#### Auto-Save Interval
-- **Schlüssel**: `auto_save_interval`
-- **Typ**: Integer (Sekunden)
-- **Standard**: `60`
-- **Bereich**: 30-300 Sekunden
-- **Beschreibung**: Intervall für automatisches Speichern im Editor
-
-#### Editor Layout
-- **Schlüssel**: `editor_layout`
-- **Typ**: String
-- **Standard**: `"vertical"`
-- **Optionen**: `vertical`, `horizontal`
-
-### Dashboard-Einstellungen
-
-#### Recent Files Limit
-- **Schlüssel**: `recent_files_limit`
-- **Typ**: Integer
-- **Standard**: `10`
-- **Bereich**: 5-50
-- **Beschreibung**: Anzahl der zuletzt bearbeiteten Dateien im Dashboard
-
-#### Show File Stats
-- **Schlüssel**: `show_file_stats`
-- **Typ**: Boolean
-- **Standard**: `true`
-- **Beschreibung**: Zeigt Datei-Statistiken im Dashboard
-
-### SEO-Einstellungen
-
-#### Robots Policy
-- **Schlüssel**: `robots_policy`
-- **Typ**: String
-- **Standard**: `"allow"`
-- **Optionen**: `allow`, `block`
-- **Beschreibung**: Grundsätzliche Suchmaschinen-Policy
+### SEO Settings
 
 #### Enable SEO Meta Tags
-- **Schlüssel**: `enable_seo_meta`
-- **Typ**: Boolean
-- **Standard**: `true`
-- **Beschreibung**: Aktiviert automatische SEO Meta-Tags
+- **Key**: `enable_seo_meta`
+- **Type**: Boolean
+- **Default**: `true`
+- **Description**: Enable automatic generation of SEO meta tags
 
-### Content-Einstellungen
+#### Default Robots Setting
+- **Key**: `default_robots`
+- **Type**: String
+- **Default**: `"index,follow"`
+- **Options**: 
+  - `index,follow` - Allow indexing and following links
+  - `noindex,nofollow` - Block indexing and following links
+  - `index,nofollow` - Allow indexing but block following links
+  - `noindex,follow` - Block indexing but allow following links
 
-#### Default Layout
-- **Schlüssel**: `default_layout`
-- **Typ**: String
-- **Standard**: `"wiki"`
-- **Beschreibung**: Standard-Layout für neue Seiten
+#### Enable Search Engine Blocking
+- **Key**: `block_search_engines`
+- **Type**: Boolean
+- **Default**: `false`
+- **Description**: Globally block search engines from indexing the site
 
-#### Show Navigation Order
-- **Schlüssel**: `show_navigation_order`
-- **Typ**: Boolean
-- **Standard**: `true`
-- **Beschreibung**: Zeigt Navigation-Reihenfolge im Admin-Interface
+### Navigation Settings
 
 #### Navigation Order
-- **Schlüssel**: `navigation_order`
-- **Typ**: Object
-- **Standard**: `{}`
-- **Beschreibung**: Reihenfolge der Navigation (Pfad → Priorität)
+- **Key**: `navigation_order`
+- **Type**: Object
+- **Description**: Custom ordering for main navigation items
+- **Example**:
+```json
+{
+  "about": 1,
+  "blog": 2,
+  "tech": 3,
+  "help": 4
+}
+```
 
-### Shortcode-Einstellungen
+#### Show Homepage in Navigation
+- **Key**: `show_homepage_in_nav`
+- **Type**: Boolean
+- **Default**: `true`
+- **Description**: Display homepage link in main navigation
 
-#### Default Pages Limit
-- **Schlüssel**: `default_pages_limit`
-- **Typ**: Integer
-- **Standard**: `20`
-- **Beschreibung**: Standard-Limit für `[pages]` Shortcode
+### Editor Settings
 
-#### Default Tags Limit
-- **Schlüssel**: `default_tags_limit`
-- **Typ**: Integer
-- **Standard**: `30`
-- **Beschreibung**: Standard-Limit für `[tags]` Shortcode
+#### Auto-Save Interval
+- **Key**: `auto_save_interval`
+- **Type**: Integer (seconds)
+- **Default**: `60`
+- **Options**: `30`, `60`, `120`, `300` or `0` (disabled)
+- **Description**: Automatic saving interval for editor content
 
-#### Pages Sort Order
-- **Schlüssel**: `pages_sort_order`
-- **Typ**: String
-- **Standard**: `"alphabetical"`
-- **Optionen**: `alphabetical`, `modified`, `created`
+#### Show Line Numbers
+- **Key**: `editor_line_numbers`
+- **Type**: Boolean
+- **Default**: `true`
+- **Description**: Display line numbers in code editor
 
-#### Tags Sort Order
-- **Schlüssel**: `tags_sort_order`
-- **Typ**: String
-- **Standard**: `"alphabetical"`
-- **Optionen**: `alphabetical`, `frequency`
+#### Enable Live Preview
+- **Key**: `enable_live_preview`
+- **Type**: Boolean
+- **Default**: `true`
+- **Description**: Enable real-time preview in editor
+
+### Content Settings
+
+#### Default Layout
+- **Key**: `default_layout`
+- **Type**: String
+- **Default**: `"wiki"`
+- **Options**: `standard`, `wiki`, `blog`, `page`
+- **Description**: Default layout for new pages
+
+#### Enable Tag Clouds
+- **Key**: `enable_tag_clouds`
+- **Type**: Boolean
+- **Default**: `true`
+- **Description**: Enable tag cloud generation for folders
+
+#### Pages Per Folder Overview
+- **Key**: `pages_per_folder`
+- **Type**: Integer
+- **Default**: `20`
+- **Description**: Maximum pages shown in folder overviews
+
+### Search Settings
+
+#### Enable Search
+- **Key**: `enable_search`
+- **Type**: Boolean
+- **Default**: `true`
+- **Description**: Enable site-wide search functionality
+
+#### Search Results Per Page
+- **Key**: `search_results_per_page`
+- **Type**: Integer
+- **Default**: `10`
+- **Description**: Number of search results per page
+
+#### Search in Content
+- **Key**: `search_in_content`
+- **Type**: Boolean
+- **Default**: `true`
+- **Description**: Include page content in search results
 
 ---
 
-## Konfigurationsdatei
+## Configuration File Structure
 
-Die Einstellungen werden in `system/settings.json` gespeichert:
+### system/settings.json
 
 ```json
 {
@@ -167,215 +184,380 @@ Die Einstellungen werden in `system/settings.json` gespeichert:
     "site_description": "Professional Markdown CMS",
     "frontend_theme": "bootstrap",
     "editor_theme": "github",
-    "auto_save_interval": 60,
-    "editor_layout": "vertical",
-    "recent_files_limit": 10,
-    "show_file_stats": true,
-    "robots_policy": "allow",
     "enable_seo_meta": true,
-    "default_layout": "wiki",
-    "show_navigation_order": true,
+    "default_robots": "index,follow",
+    "block_search_engines": false,
     "navigation_order": {
         "about": 1,
         "blog": 2,
-        "help": 3
+        "tech": 3,
+        "help": 4
     },
-    "default_pages_limit": 20,
-    "default_tags_limit": 30,
-    "pages_sort_order": "alphabetical",
-    "tags_sort_order": "alphabetical"
+    "show_homepage_in_nav": true,
+    "auto_save_interval": 60,
+    "editor_line_numbers": true,
+    "enable_live_preview": true,
+    "default_layout": "wiki",
+    "enable_tag_clouds": true,
+    "pages_per_folder": 20,
+    "enable_search": true,
+    "search_results_per_page": 10,
+    "search_in_content": true
 }
 ```
 
 ---
 
-## Admin-Interface
+## Admin Interface
 
-### Settings-Verwaltung
+### Settings Management
 
-Das Settings-Interface ist über **Admin → Settings** erreichbar und bietet:
+Access via **Admin → Settings**:
 
-1. **Website-Einstellungen**: Site Name, Logo, Beschreibung
-2. **Theme-Auswahl**: Frontend und Editor Themes mit Live-Vorschau
-3. **Editor-Konfiguration**: Auto-Save, Layout, Theme
-4. **Dashboard-Optionen**: Recent Files, Statistiken
-5. **SEO-Kontrollen**: Robots Policy, Meta Tags
-6. **Content-Einstellungen**: Standard-Layout, Navigation
-7. **Shortcode-Parameter**: Limits und Sortierung
+1. **General Tab**: Basic website settings
+2. **Themes Tab**: Frontend and editor theme selection
+3. **SEO Tab**: Search engine optimization settings
+4. **Navigation Tab**: Navigation structure and ordering
+5. **Editor Tab**: Editor behavior and preferences
+6. **Content Tab**: Content display and organization
+7. **Search Tab**: Search functionality configuration
 
-### Navigation-Management
+### Setting Types
 
-Die Navigation-Reihenfolge kann über das Settings-Interface verwaltet werden:
+#### Text Input
+```html
+<input type="text" name="site_name" value="StaticMD">
+```
 
-- **Automatische Erkennung**: Alle Hauptordner werden erkannt
-- **Prioritäten setzen**: Numerische Werte für Reihenfolge
-- **Live-Vorschau**: Änderungen werden sofort sichtbar
-- **Alphabetische Fallback**: Ordner ohne Priorität werden alphabetisch sortiert
+#### Textarea
+```html
+<textarea name="site_description">Professional Markdown CMS</textarea>
+```
+
+#### Select Dropdown
+```html
+<select name="frontend_theme">
+    <option value="bootstrap">Bootstrap</option>
+    <option value="solarized-light">Solarized Light</option>
+    <option value="solarized-dark">Solarized Dark</option>
+</select>
+```
+
+#### Checkbox
+```html
+<input type="checkbox" name="enable_seo_meta" checked>
+```
+
+#### Range Slider
+```html
+<input type="range" name="auto_save_interval" min="30" max="300" step="30" value="60">
+```
 
 ---
 
-## Programmatische Verwendung
+## Programmatic Access
 
-### Settings laden
+### Reading Settings
 
 ```php
-use StaticMD\Core\Application;
+// Using TemplateEngine
+$siteName = $this->getSetting('site_name', 'StaticMD');
+$theme = $this->getSetting('frontend_theme', 'bootstrap');
 
-$app = new Application();
-$settings = $app->getSettings();
-
+// Direct JSON access
+$settings = json_decode(file_get_contents('system/settings.json'), true);
 $siteName = $settings['site_name'] ?? 'StaticMD';
-$theme = $settings['frontend_theme'] ?? 'bootstrap';
 ```
 
-### Settings speichern
+### Writing Settings
 
 ```php
-use StaticMD\Admin\AdminController;
+// Load current settings
+$settings = json_decode(file_get_contents('system/settings.json'), true);
 
-$admin = new AdminController();
-$admin->updateSettings([
-    'site_name' => 'Meine Website',
-    'frontend_theme' => 'solarized-dark'
-]);
+// Update settings
+$settings['site_name'] = 'My New Site';
+$settings['frontend_theme'] = 'solarized-dark';
+
+// Save settings
+file_put_contents('system/settings.json', json_encode($settings, JSON_PRETTY_PRINT));
 ```
 
-### Einzelne Settings abfragen
+### Settings Validation
 
 ```php
-$app = new Application();
-
-// Mit Fallback-Wert
-$autoSave = $app->getSetting('auto_save_interval', 60);
-
-// Ohne Fallback
-$theme = $app->getSetting('frontend_theme');
-```
-
----
-
-## Validierung und Fehlerbehandlung
-
-### Automatische Validierung
-
-- **Theme-Namen**: Werden gegen verfügbare Themes validiert
-- **Numerische Werte**: Bereich-Validierung (z.B. 30-300 für Auto-Save)
-- **Boolean-Werte**: Strenge Typ-Konvertierung
-- **String-Werte**: HTML-Escaping für Sicherheit
-
-### Fehlerbehandlung
-
-```php
-try {
-    $admin->updateSettings($newSettings);
-    $message = "Settings erfolgreich gespeichert!";
-} catch (Exception $e) {
-    $error = "Fehler beim Speichern: " . $e->getMessage();
-}
-```
-
-### Fallback-Verhalten
-
-- **Fehlende Settings**: Werden mit Standard-Werten ersetzt
-- **Ungültige Werte**: Fallen auf Standard-Werte zurück
-- **Korrupte JSON**: Wird mit leeren Settings überschrieben
-
----
-
-## Migration und Upgrades
-
-### Settings-Migration
-
-Bei Updates werden neue Settings automatisch mit Standard-Werten hinzugefügt:
-
-```php
-private function migrateSettings(array $settings): array
+class SettingsValidator 
 {
-    $defaults = $this->getDefaultSettings();
-    return array_merge($defaults, $settings);
+    public function validate(array $settings): array 
+    {
+        $errors = [];
+        
+        // Required fields
+        if (empty($settings['site_name'])) {
+            $errors[] = 'Site name is required';
+        }
+        
+        // Valid theme
+        $validThemes = ['bootstrap', 'solarized-light', 'solarized-dark'];
+        if (!in_array($settings['frontend_theme'], $validThemes)) {
+            $errors[] = 'Invalid frontend theme';
+        }
+        
+        // Auto-save interval
+        if ($settings['auto_save_interval'] < 0 || $settings['auto_save_interval'] > 600) {
+            $errors[] = 'Auto-save interval must be between 0 and 600 seconds';
+        }
+        
+        return $errors;
+    }
 }
 ```
 
-### Backup-Strategie
+---
 
-- **Automatische Backups**: Vor jeder Änderung wird eine Backup-Datei erstellt
-- **Rollback-Funktion**: Wiederherstellung bei Fehlern möglich
-- **Versioning**: Settings-Versionen werden getrackt
+## Environment-Specific Settings
+
+### Development Settings
+
+```json
+{
+    "site_name": "StaticMD (Dev)",
+    "enable_seo_meta": false,
+    "block_search_engines": true,
+    "auto_save_interval": 30,
+    "debug_mode": true
+}
+```
+
+### Production Settings
+
+```json
+{
+    "site_name": "My Production Site",
+    "enable_seo_meta": true,
+    "block_search_engines": false,
+    "auto_save_interval": 120,
+    "debug_mode": false
+}
+```
+
+### Settings Override
+
+```php
+// config.php - Override specific settings
+$config['settings_override'] = [
+    'development' => [
+        'block_search_engines' => true,
+        'debug_mode' => true
+    ],
+    'production' => [
+        'block_search_engines' => false,
+        'debug_mode' => false
+    ]
+];
+```
 
 ---
 
-## Erweiterte Konfiguration
+## Custom Settings
 
-### Custom Settings
+### Adding New Settings
 
-Entwickler können eigene Settings hinzufügen:
-
-```php
-// In config.php
-'custom_settings' => [
-    'my_feature_enabled' => true,
-    'my_api_key' => 'secret'
-]
+1. **Update settings.json**:
+```json
+{
+    "my_custom_setting": "default_value"
+}
 ```
 
-### Theme-spezifische Settings
+2. **Add to Admin Interface**:
+```php
+// In admin/templates/settings.php
+<div class="mb-3">
+    <label for="my_custom_setting" class="form-label">My Custom Setting</label>
+    <input type="text" class="form-control" id="my_custom_setting" 
+           name="my_custom_setting" value="<?= htmlspecialchars($settings['my_custom_setting'] ?? '') ?>">
+</div>
+```
+
+3. **Use in Templates**:
+```php
+$customValue = $this->getSetting('my_custom_setting', 'default');
+```
+
+### Setting Categories
 
 ```php
-'theme_settings' => [
-    'bootstrap' => [
-        'navbar_style' => 'dark',
-        'container_fluid' => false
-    ],
-    'solarized-dark' => [
-        'syntax_highlighting' => true
-    ]
-]
+class SettingsManager 
+{
+    private $categories = [
+        'general' => ['site_name', 'site_logo', 'site_description'],
+        'themes' => ['frontend_theme', 'editor_theme'],
+        'seo' => ['enable_seo_meta', 'default_robots', 'block_search_engines'],
+        'navigation' => ['navigation_order', 'show_homepage_in_nav'],
+        'editor' => ['auto_save_interval', 'editor_line_numbers', 'enable_live_preview'],
+        'content' => ['default_layout', 'enable_tag_clouds', 'pages_per_folder'],
+        'search' => ['enable_search', 'search_results_per_page', 'search_in_content']
+    ];
+    
+    public function getSettingsByCategory(string $category): array 
+    {
+        $settings = $this->loadSettings();
+        $categorySettings = [];
+        
+        if (isset($this->categories[$category])) {
+            foreach ($this->categories[$category] as $key) {
+                $categorySettings[$key] = $settings[$key] ?? null;
+            }
+        }
+        
+        return $categorySettings;
+    }
+}
+```
+
+---
+
+## Migration and Backup
+
+### Settings Backup
+
+```php
+// Create backup
+$settings = file_get_contents('system/settings.json');
+$backup = [
+    'timestamp' => date('Y-m-d H:i:s'),
+    'settings' => json_decode($settings, true)
+];
+file_put_contents('backup/settings_' . date('Y-m-d_H-i-s') . '.json', 
+                  json_encode($backup, JSON_PRETTY_PRINT));
+```
+
+### Settings Restore
+
+```php
+// Restore from backup
+$backupFile = 'backup/settings_2024-01-15_10-30-00.json';
+$backup = json_decode(file_get_contents($backupFile), true);
+file_put_contents('system/settings.json', 
+                  json_encode($backup['settings'], JSON_PRETTY_PRINT));
+```
+
+### Migration Script
+
+```php
+class SettingsMigration 
+{
+    public function migrateFrom_v1_to_v2(): void 
+    {
+        $settings = json_decode(file_get_contents('system/settings.json'), true);
+        
+        // Add new settings with defaults
+        $settings['enable_live_preview'] = true;
+        $settings['search_in_content'] = true;
+        
+        // Remove deprecated settings
+        unset($settings['old_deprecated_setting']);
+        
+        // Rename settings
+        if (isset($settings['old_name'])) {
+            $settings['new_name'] = $settings['old_name'];
+            unset($settings['old_name']);
+        }
+        
+        file_put_contents('system/settings.json', json_encode($settings, JSON_PRETTY_PRINT));
+    }
+}
+```
+
+---
+
+## Performance Considerations
+
+### Settings Caching
+
+```php
+class SettingsCache 
+{
+    private static $cache = null;
+    
+    public static function get(string $key, $default = null) 
+    {
+        if (self::$cache === null) {
+            self::$cache = json_decode(file_get_contents('system/settings.json'), true);
+        }
+        
+        return self::$cache[$key] ?? $default;
+    }
+    
+    public static function invalidate(): void 
+    {
+        self::$cache = null;
+    }
+}
+```
+
+### Lazy Loading
+
+```php
+// Only load settings when needed
+class LazySettings 
+{
+    private $settings = null;
+    
+    public function get(string $key, $default = null) 
+    {
+        if ($this->settings === null) {
+            $this->settings = json_decode(file_get_contents('system/settings.json'), true);
+        }
+        
+        return $this->settings[$key] ?? $default;
+    }
+}
 ```
 
 ---
 
 ## Troubleshooting
 
-### Häufige Probleme
+### Common Issues
 
-#### Settings werden nicht gespeichert
-- **Ursache**: Keine Schreibrechte auf `system/settings.json`
-- **Lösung**: `chmod 664 system/settings.json`
+#### Settings not saving
+- **Cause**: File permissions or JSON syntax error
+- **Solution**: Check file permissions and validate JSON
 
-#### Theme wird nicht geladen  
-- **Ursache**: Theme-Name falsch geschrieben
-- **Lösung**: Überprüfe verfügbare Themes in `system/themes/`
+#### Default values not working
+- **Cause**: Missing fallback values in code
+- **Solution**: Always provide default values when accessing settings
 
-#### Auto-Save funktioniert nicht
-- **Ursache**: JavaScript-Error oder ungültiges Intervall
-- **Lösung**: Browser-Konsole prüfen, Intervall zwischen 30-300s setzen
+#### Settings UI not updating
+- **Cause**: Browser cache or incorrect form handling
+- **Solution**: Clear cache and check form submission
 
-### Debug-Modus
+### Debug Settings
 
 ```php
-// In config.php
-'system' => [
-    'debug' => true  // Zeigt detaillierte Settings-Logs
-]
+// Enable settings debugging
+$config['debug_settings'] = true;
+
+// Log all settings access
+if ($config['debug_settings']) {
+    error_log("Settings access: {$key} = " . json_encode($value));
+}
+```
+
+### Settings Validation
+
+```php
+// Validate settings file
+$json = file_get_contents('system/settings.json');
+$settings = json_decode($json, true);
+
+if (json_last_error() !== JSON_ERROR_NONE) {
+    throw new Exception('Invalid JSON in settings.json: ' . json_last_error_msg());
+}
 ```
 
 ---
 
-## Performance-Optimierung
-
-### Settings-Caching
-
-- **Memory-Cache**: Settings werden nach dem ersten Laden gecacht
-- **File-Cache**: Vermeidet wiederholtes JSON-Parsing
-- **Invalidierung**: Cache wird bei Änderungen automatisch geleert
-
-### Best Practices
-
-1. **Minimal Settings**: Nur notwendige Settings in JSON speichern
-2. **Lazy Loading**: Settings erst bei Bedarf laden
-3. **Batch Updates**: Mehrere Settings in einem Request ändern
-4. **Validierung**: Client-seitige Validierung für bessere UX
-
----
-
-*StaticMD Settings System - Professional Configuration Management*
+*StaticMD Settings System v2.0 - Flexible Configuration Management*

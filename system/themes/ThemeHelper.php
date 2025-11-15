@@ -174,7 +174,7 @@ class ThemeHelper
             $html .= '</li>';
         }
         
-        // Zurück-Link hinzufügen (nur wenn nicht auf der Home-Seite)
+        // Add back link (only when not on home page)
         $isHomePage = count($breadcrumbs) === 1 && ($breadcrumbs[0]['route'] ?? '') === '';
         if (!$isHomePage) {
             $html .= '<li class="breadcrumb-item ms-auto">';

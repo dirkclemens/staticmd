@@ -2,203 +2,203 @@
 Title: Shortcodes Reference
 Author: StaticMD Team
 Tag: shortcodes, markdown, content
-Layout: wiki
+Layout: Standard
 ---
 
 # Shortcodes Reference
 
-Umfassende Dokumentation aller verfügbaren Shortcodes in StaticMD für erweiterte Content-Funktionalität.
+Comprehensive documentation of all available shortcodes in StaticMD for advanced content functionality.
 
 ---
 
-## Übersicht
+## Overview
 
-Shortcodes erweitern die Standard-Markdown-Syntax um dynamische Inhalte und erweiterte Layoutoptionen. StaticMD unterstützt sowohl eigene Shortcodes als auch Yellow CMS-kompatible Syntax.
+Shortcodes extend the standard Markdown syntax with dynamic content and advanced layout options. StaticMD supports both custom shortcodes and Yellow CMS-compatible syntax.
 
-## Content-Shortcodes
+## Content Shortcodes
 
-### [pages] - Seitenlisten generieren
+### [pages] - Generate Page Lists
 
-Generiert automatische Listen von Markdown-Dateien aus einem bestimmten Verzeichnis.
+Automatically generates lists of Markdown files from a specific directory.
 
-#### Grundsyntax
+#### Basic Syntax
 ```markdown
-[pages /pfad/ limit]
-[pages /pfad/ limit layout]
+[pages /path/ limit]
+[pages /path/ limit layout]
 ```
 
-#### Parameter
-- **`/pfad/`**: Pfad zum Verzeichnis (relativ zu `/content/`)
-- **`limit`**: Maximale Anzahl von Dateien (Standard: 20)
-- **`layout`**: `rows` (Standard) oder `columns`
+#### Parameters
+- **`/path/`**: Path to directory (relative to `/content/`)
+- **`limit`**: Maximum number of files (default: 20)
+- **`layout`**: `rows` (default) or `columns`
 
-#### Beispiele
+#### Examples
 
-**Einfache Liste**:
+**Simple List**:
 ```markdown
 [pages /blog/ 10]
 ```
 
-**Spalten-Layout**:
+**Column Layout**:
 ```markdown
 [pages /tech/ 15 columns]
 ```
 
-**Root-Verzeichnis**:
+**Root Directory**:
 ```markdown
 [pages / 5]
 ```
 
-#### Ausgabe-Format (Rows)
-- Chronologische Liste mit Titeln
-- Klickbare Links zu den Seiten
-- Automatische Titel-Extraktion aus Front Matter
-- Datum der letzten Änderung
+#### Output Format (Rows)
+- Chronological list with titles
+- Clickable links to pages
+- Automatic title extraction from Front Matter
+- Last modification date
 
-#### Ausgabe-Format (Columns)
-- Bootstrap-Grid mit Cards
-- Responsive 2-3 Spalten je nach Bildschirmgröße
-- Kompakte Darstellung für Übersichten
+#### Output Format (Columns)
+- Bootstrap grid with cards
+- Responsive 2-3 columns depending on screen size
+- Compact display for overviews
 
-#### Sortieroptionen
-- **Alphabetisch**: Standard-Sortierung nach Dateiname
-- **Datum**: Nach letzter Änderung (neueste zuerst)
-- **Titel**: Nach extrahiertem Titel aus Front Matter
+#### Sorting Options
+- **Alphabetical**: Default sorting by filename
+- **Date**: By last modification (newest first)
+- **Title**: By extracted title from Front Matter
 
-### [tags] - Tag-Clouds erstellen
+### [tags] - Create Tag Clouds
 
-Erstellt Tag-Clouds mit allen verfügbaren Tags aus einem Verzeichnis.
+Creates tag clouds with all available tags from a directory.
 
-#### Grundsyntax
+#### Basic Syntax
 ```markdown
-[tags /pfad/ limit]
-[tags /pfad/ limit layout]
+[tags /path/ limit]
+[tags /path/ limit layout]
 ```
 
-#### Parameter
-- **`/pfad/`**: Pfad zum Verzeichnis für Tag-Extraktion
-- **`limit`**: Maximale Anzahl von Tags (Standard: 30)
-- **`layout`**: `cloud` (Standard) oder `list`
+#### Parameters
+- **`/path/`**: Path to directory for tag extraction
+- **`limit`**: Maximum number of tags (default: 30)
+- **`layout`**: `cloud` (default) or `list`
 
-#### Beispiele
+#### Examples
 
-**Standard Tag-Cloud**:
+**Standard Tag Cloud**:
 ```markdown
 [tags /blog/ 20]
 ```
 
-**Tag-Liste**:
+**Tag List**:
 ```markdown
 [tags /tech/ 15 list]
 ```
 
-**Alle Tags**:
+**All Tags**:
 ```markdown
 [tags / 50]
 ```
 
-#### Ausgabe-Format (Cloud)
-- Größen-gewichtete Tags basierend auf Häufigkeit
-- Klickbare Links zu Tag-Filterseiten
-- Bootstrap-Badges mit unterschiedlichen Größen
-- Alphabetische oder Häufigkeits-Sortierung
+#### Output Format (Cloud)
+- Size-weighted tags based on frequency
+- Clickable links to tag filter pages
+- Bootstrap badges with different sizes
+- Alphabetical or frequency sorting
 
-#### Ausgabe-Format (List)
-- Kompakte Liste mit Tag-Namen
-- Verwendungsanzahl in Klammern
-- Zeilen-basierte Darstellung
+#### Output Format (List)
+- Compact list with tag names
+- Usage count in parentheses
+- Row-based display
 
 ---
 
-## Layout-Shortcodes
+## Layout Shortcodes
 
 ### [accordionstart] / [accordionstop] - Bootstrap Accordions
 
-Erstellt kollabierbare Bootstrap 5 Accordion-Bereiche.
+Creates collapsible Bootstrap 5 accordion areas.
 
 #### Syntax
 ```markdown
-[accordionstart id "Titel"]
-Inhalt des Accordion-Bereichs...
+[accordionstart id "Title"]
+Content of the accordion area...
 [accordionstop]
 ```
 
-#### Parameter
-- **`id`**: Eindeutige ID für das Accordion (nur Buchstaben/Zahlen)
-- **`"Titel"`**: Sichtbarer Titel des Accordion-Headers
+#### Parameters
+- **`id`**: Unique ID for the accordion (letters/numbers only)
+- **`"Title"`**: Visible title of the accordion header
 
-#### Beispiel
+#### Example
 ```markdown
 [accordionstart install "Installation"]
-## Schritt 1: Download
-Lade die neueste Version herunter...
+## Step 1: Download
+Download the latest version...
 
-## Schritt 2: Konfiguration
-Bearbeite die config.php...
+## Step 2: Configuration
+Edit the config.php...
 [accordionstop]
 
-[accordionstart config "Konfiguration"]
+[accordionstart config "Configuration"]
 ### Database Setup
-Verbindung zur Datenbank...
+Connection to database...
 [accordionstop]
 ```
 
 #### Features
-- **Bootstrap 5 kompatibel**: Moderne Accordion-Styles
-- **Vollständiges Markdown**: Markdown-Syntax wird innerhalb verarbeitet
-- **Eindeutige IDs**: Verhindert Konflikte bei mehreren Accordions
-- **Responsive Design**: Mobile-optimierte Darstellung
+- **Bootstrap 5 compatible**: Modern accordion styles
+- **Full Markdown**: Markdown syntax is processed within
+- **Unique IDs**: Prevents conflicts with multiple accordions
+- **Responsive Design**: Mobile-optimized display
 
-#### Verschachtelte Accordions
+#### Nested Accordions
 ```markdown
-[accordionstart main "Hauptbereich"]
-Einführungstext...
+[accordionstart main "Main Area"]
+Introduction text...
 
-[accordionstart sub "Unterbereich"]
-Detaillierte Informationen...
+[accordionstart sub "Sub Area"]
+Detailed information...
 [accordionstop]
 
-Weiterer Text...
+Additional text...
 [accordionstop]
 ```
 
 ---
 
-## Yellow CMS Kompatibilität
+## Yellow CMS Compatibility
 
-### [image] - Responsive Bilder
+### [image] - Responsive Images
 
-Yellow CMS-kompatible Bild-Syntax für responsive Bilder.
+Yellow CMS-compatible image syntax for responsive images.
 
 #### Syntax
 ```markdown
-[image dateiname.jpg Beschreibung Klasse Größe]
+[image filename.jpg Description Class Size]
 ```
 
-#### Parameter
-- **`dateiname.jpg`**: Bild-Datei in `/public/images/`
-- **`Beschreibung`**: Alt-Text (verwende `-` für leer)
-- **`Klasse`**: CSS-Klasse (verwende `-` für keine)
-- **`Größe`**: Prozentuale Breite (z.B. `50%`)
+#### Parameters
+- **`filename.jpg`**: Image file in `/public/images/`
+- **`Description`**: Alt text (use `-` for empty)
+- **`Class`**: CSS class (use `-` for none)
+- **`Size`**: Percentage width (e.g. `50%`)
 
-#### Beispiele
+#### Examples
 
-**Einfaches Bild**:
+**Simple Image**:
 ```markdown
 [image screenshot.png - - 100%]
 ```
 
-**Mit Beschreibung und Größe**:
+**With Description and Size**:
 ```markdown
 [image logo.svg "StaticMD Logo" center 30%]
 ```
 
-**Responsive Bild**:
+**Responsive Image**:
 ```markdown
 [image banner.jpg "Banner Image" img-fluid 80%]
 ```
 
-#### Ausgabe
+#### Output
 ```html
 <img src="/public/images/screenshot.png" 
      alt="StaticMD Logo" 
@@ -208,11 +208,11 @@ Yellow CMS-kompatible Bild-Syntax für responsive Bilder.
 
 ---
 
-## Konfiguration
+## Configuration
 
-### Standard-Limits
+### Default Limits
 
-In `system/settings.json` können Standard-Werte konfiguriert werden:
+Default values can be configured in `system/settings.json`:
 
 ```json
 {
@@ -223,47 +223,47 @@ In `system/settings.json` können Standard-Werte konfiguriert werden:
 }
 ```
 
-### Sortier-Optionen
+### Sorting Options
 
-#### Pages Sortierung
-- **`alphabetical`**: Nach Dateiname (Standard)
-- **`modified`**: Nach Änderungsdatum
-- **`created`**: Nach Erstellungsdatum
-- **`title`**: Nach extrahiertem Titel
+#### Pages Sorting
+- **`alphabetical`**: By filename (default)
+- **`modified`**: By modification date
+- **`created`**: By creation date
+- **`title`**: By extracted title
 
-#### Tags Sortierung
-- **`alphabetical`**: Alphabetisch (Standard)
-- **`frequency`**: Nach Häufigkeit
+#### Tags Sorting
+- **`alphabetical`**: Alphabetical (default)
+- **`frequency`**: By frequency
 
-### Performance-Einstellungen
+### Performance Settings
 
 ```php
 // In config.php
 'shortcodes' => [
     'cache_enabled' => true,
-    'cache_duration' => 3600,  // 1 Stunde
-    'max_files_scan' => 1000   // Limit für große Verzeichnisse
+    'cache_duration' => 3600,  // 1 hour
+    'max_files_scan' => 1000   // Limit for large directories
 ]
 ```
 
 ---
 
-## Erweiterte Verwendung
+## Advanced Usage
 
-### Kombinierte Shortcodes
+### Combined Shortcodes
 
 ```markdown
-# Projekt-Übersicht
+# Project Overview
 
-## Alle Projekte
-[pages /projekte/ 10 columns]
+## All Projects
+[pages /projects/ 10 columns]
 
-## Beliebte Tags
-[tags /projekte/ 15 cloud]
+## Popular Tags
+[tags /projects/ 15 cloud]
 
-## Detaillierte Anleitungen
+## Detailed Guides
 [accordionstart details "Installation & Setup"]
-### Schritt-für-Schritt Anleitung
+### Step-by-Step Guide
 [pages /help/installation/ 5]
 [accordionstop]
 ```
@@ -271,15 +271,15 @@ In `system/settings.json` können Standard-Werte konfiguriert werden:
 ### Conditional Content
 
 ```markdown
-<!-- Nur auf der Startseite -->
+<!-- Only on homepage -->
 [pages / 5]
 
-<!-- Blog-Bereich -->
+<!-- Blog section -->
 [pages /blog/ 10]
 [tags /blog/ 20]
 
-<!-- Technische Dokumentation -->
-[accordionstart api "API Dokumentation"]
+<!-- Technical documentation -->
+[accordionstart api "API Documentation"]
 [pages /api/ 15 list]
 [accordionstop]
 ```
@@ -287,157 +287,67 @@ In `system/settings.json` können Standard-Werte konfiguriert werden:
 ### Responsive Layouts
 
 ```markdown
-<!-- Mobile-optimiert -->
+<!-- Mobile-optimized -->
 [pages /portfolio/ 6 columns]
 
-<!-- Desktop-Listen -->
+<!-- Desktop lists -->
 [pages /articles/ 20 rows]
 
-<!-- Tag-Navigation -->
+<!-- Tag navigation -->
 [tags / 25 cloud]
 ```
 
 ---
 
-## Custom Shortcodes
+## Debugging and Troubleshooting
 
-### Eigene Shortcodes entwickeln
+### Common Issues
 
-Entwickler können eigene Shortcodes in `MarkdownParser.php` hinzufügen:
+#### Shortcode not processed
+- **Cause**: Syntax error or missing parameters
+- **Solution**: Check parameter order and spelling
 
-```php
-private function processCustomShortcodes(string $content): string
-{
-    // [quote autor "text"] Shortcode
-    $content = preg_replace_callback(
-        '/\[quote\s+([^\s]+)\s+"([^"]+)"\]/',
-        function($matches) {
-            $author = $matches[1];
-            $text = $matches[2];
-            return $this->renderQuote($author, $text);
-        },
-        $content
-    );
-    
-    return $content;
-}
-```
+#### Path not found
+- **Cause**: Wrong path to content directory
+- **Solution**: Specify path relative to `/content/`
 
-### Plugin-System
+#### Images not displayed
+- **Cause**: Image file not in `/public/images/`
+- **Solution**: Check file path and permissions
 
-```php
-// Custom Plugin
-class GalleryShortcode 
-{
-    public function process(string $content): string 
-    {
-        return preg_replace_callback(
-            '/\[gallery\s+([^\]]+)\]/',
-            [$this, 'renderGallery'],
-            $content
-        );
-    }
-    
-    private function renderGallery(array $matches): string
-    {
-        // Gallery-HTML generieren
-        return '<div class="gallery">...</div>';
-    }
-}
-```
+### Performance Optimization
+
+#### Best Practices
+
+1. **Set Limits**: Query large directories with limits
+2. **Choose Layout**: `columns` for many entries, `rows` for details
+3. **Use Caching**: Enable cache settings when available
+4. **Optimize Paths**: Use specific paths instead of root directory
+
+#### Monitoring Performance
+
+Large directories or many shortcodes can impact page loading times. Consider:
+- Using reasonable limits (10-20 items)
+- Organizing content in focused subdirectories
+- Implementing caching strategies for frequently accessed content
 
 ---
 
-## Debugging und Troubleshooting
+## Migration from Other CMS
 
-### Debug-Modus aktivieren
+### From Yellow CMS
 
-```php
-// In config.php
-'system' => [
-    'debug' => true
-]
-```
-
-### Häufige Probleme
-
-#### Shortcode wird nicht verarbeitet
-- **Ursache**: Syntax-Fehler oder fehlende Parameter
-- **Lösung**: Parameter-Reihenfolge und Schreibweise prüfen
-
-#### Pfad nicht gefunden
-- **Ursache**: Falscher Pfad zu Content-Verzeichnis
-- **Lösung**: Pfad relativ zu `/content/` angeben
-
-#### Bilder werden nicht angezeigt
-- **Ursache**: Bild-Datei nicht in `/public/images/`
-- **Lösung**: Datei-Pfad und Berechtigungen prüfen
-
-### Shortcode-Logs
-
-```php
-// Debug-Output für Shortcodes
-error_log("Processing shortcode: " . $shortcode);
-error_log("Parameters: " . print_r($params, true));
-```
-
----
-
-## Performance-Optimierung
-
-### Caching-Strategien
-
-- **Content-Cache**: Verarbeitete Shortcodes werden gecacht
-- **File-System-Cache**: Verzeichnis-Scans werden zwischengespeichert
-- **Template-Cache**: Generierte HTML-Snippets werden gecacht
-
-### Best Practices
-
-1. **Limits setzen**: Große Verzeichnisse mit Limits abfragen
-2. **Layout wählen**: `columns` für viele Einträge, `rows` für Details
-3. **Caching nutzen**: Cache-Einstellungen aktivieren
-4. **Pfade optimieren**: Spezifische Pfade statt Root-Verzeichnis
-
-### Monitoring
-
-```php
-// Performance-Messung
-$start = microtime(true);
-$result = $this->processShortcode($content);
-$duration = microtime(true) - $start;
-
-if ($duration > 0.1) {
-    error_log("Slow shortcode processing: {$duration}s");
-}
-```
-
----
-
-## Migration von anderen CMS
-
-### Von Yellow CMS
-
-StaticMD ist vollständig kompatibel mit Yellow CMS Shortcodes:
+StaticMD is fully compatible with Yellow CMS shortcodes:
 
 ```markdown
 <!-- Yellow CMS -->
 [image photo.jpg "Description" left 50%]
 
-<!-- StaticMD (identisch) -->
+<!-- StaticMD (identical) -->
 [image photo.jpg "Description" left 50%]
 ```
 
-### Von Kirby CMS
-
-```markdown
-<!-- Kirby -->
-(image: photo.jpg alt: Description class: left width: 50%)
-
-<!-- StaticMD Äquivalent -->
-[image photo.jpg "Description" left 50%]
-```
-
-### Von Jekyll
+### From Jekyll
 
 ```markdown
 <!-- Jekyll -->
@@ -445,10 +355,10 @@ StaticMD ist vollständig kompatibel mit Yellow CMS Shortcodes:
   {{ post.title }}
 {% endfor %}
 
-<!-- StaticMD Äquivalent -->
+<!-- StaticMD Equivalent -->
 [pages /blog/ 10]
 ```
 
 ---
 
-*StaticMD Shortcodes - Erweiterte Content-Funktionalität für Markdown*
+*StaticMD Shortcodes - Advanced Content Functionality for Markdown*

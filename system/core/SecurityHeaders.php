@@ -37,12 +37,12 @@ class SecurityHeaders
             "upgrade-insecure-requests"
         ];
 
-        // Admin-spezifische Anpassungen
+        // Admin-specific adjustments
         if ($context === 'admin') {
-            // CodeMirror benötigt eval() für Syntax-Highlighting
+            // CodeMirror requires eval() for syntax highlighting
             $basePolicy[1] = "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com";
             
-            // Admin braucht möglicherweise Formulare für File-Upload
+            // Admin may need forms for file upload
             $basePolicy[] = "child-src 'self'";
         }
 
@@ -57,19 +57,19 @@ class SecurityHeaders
         // Content-Security-Policy
         self::setCSP($context);
 
-        // X-Frame-Options (Defense in Depth zu CSP frame-ancestors)
+        // X-Frame-Options (Defense in Depth to CSP frame-ancestors)
         header('X-Frame-Options: DENY');
 
         // X-Content-Type-Options
         header('X-Content-Type-Options: nosniff');
 
-        // X-XSS-Protection (Legacy, aber noch sinnvoll für ältere Browser)
+        // X-XSS-Protection (Legacy, but still useful for older browsers)
         header('X-XSS-Protection: 1; mode=block');
 
         // Referrer Policy
         header('Referrer-Policy: strict-origin-when-cross-origin');
 
-        // HTTPS-Verbindung: Strict-Transport-Security (nur bei HTTPS setzen)
+        // HTTPS connection: Strict-Transport-Security (only set with HTTPS)
         if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
             header('Strict-Transport-Security: max-age=31536000; includeSubDomains; preload');
         }

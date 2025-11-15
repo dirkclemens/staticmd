@@ -2,7 +2,7 @@
 Title: Uberspace Hosting
 Author: StaticMD Team
 Tag: hosting, uberspace, deployment
-Layout: wiki
+Layout: Standard
 ---
 
 # Uberspace Hosting Guide

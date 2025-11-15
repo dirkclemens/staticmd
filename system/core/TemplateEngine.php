@@ -23,7 +23,7 @@ class TemplateEngine
      */
     public function render(string $template, array $templateData): void
     {
-        // Security Headers für Frontend setzen
+        // Set security headers for frontend
         require_once __DIR__ . '/SecurityHeaders.php';
         SecurityHeaders::setAllSecurityHeaders('frontend');
         
@@ -36,7 +36,7 @@ class TemplateEngine
             return;
         }
         
-        // Breadcrumbs generieren (vor extract, da $data danach nicht mehr verfügbar)
+        // Generate breadcrumbs (before extract, as $data is no longer available afterwards)
         $breadcrumbs = [];
         if (isset($templateData['current_route'])) {
             $breadcrumbs = $this->contentLoader->getBreadcrumbs($templateData['current_route']);
@@ -53,7 +53,7 @@ class TemplateEngine
         $siteName = $this->config['system']['name'] ?? 'StaticMD';
         $nonce = SecurityHeaders::getNonce();
         
-        // Theme-Name für Template-CSS laden
+        // Load theme name for template CSS
         $settingsFile = $this->config['paths']['system'] . '/settings.json';
         $settings = [];
         if (file_exists($settingsFile)) {
@@ -76,7 +76,7 @@ class TemplateEngine
      */
     private function generateNavigation(): array
     {
-        // Vollständige Navigation aus ContentLoader laden
+        // Load complete navigation from ContentLoader
         $pages = $this->contentLoader->listAll();
         
         // Titel aus Markdown-Headern laden
@@ -263,7 +263,7 @@ HTML;
         
         // Erweiterte Robots-Direktiven
         if (strpos($robotsPolicy, 'noindex') !== false || $blockCrawlers) {
-            // Zusätzliche Anti-Crawling Meta-Tags
+            // Additional anti-crawling meta tags
             $metaTags[] = '<meta name="googlebot" content="noindex,nofollow,noarchive,nosnippet">';
             $metaTags[] = '<meta name="bingbot" content="noindex,nofollow,noarchive,nosnippet">';
             $metaTags[] = '<meta name="yahoobot" content="noindex,nofollow">';
@@ -271,7 +271,7 @@ HTML;
             $metaTags[] = '<meta name="baiduspider" content="noindex,nofollow">';
             $metaTags[] = '<meta name="yandexbot" content="noindex,nofollow">';
             
-            // HTTP-Headers für zusätzlichen Schutz
+            // HTTP headers for additional protection
             header('X-Robots-Tag: noindex,nofollow,noarchive,nosnippet');
         }
         

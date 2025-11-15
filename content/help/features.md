@@ -1,39 +1,39 @@
-# StaticMD - Feature-Übersicht
+# StaticMD - Feature Overview
 
-## Hauptfeatures
-- 9 Frontend-Themes (Bootstrap, Solarized, Monokai, GitHub, Static-MD, AdCore)
-- 5 Editor-Themes (CodeMirror)
-- Live Theme-Wechsel
+## Main Features
+- 9 Frontend Themes (Bootstrap, Solarized, Monokai, GitHub, Static-MD, AdCore)
+- 5 Editor Themes (CodeMirror)
+- Live Theme Switching
 - Responsive Design
-- Vollständiges Admin-Dashboard
-- Professioneller Editor mit Toolbar und Drag&Drop
-- Delete-Funktion mit Bestätigung
+- Complete Admin Dashboard
+- Professional Editor with Toolbar and Drag&Drop
+- Delete Function with Confirmation
 - Return-URL Navigation
-- Settings-System
+- Settings System
 - Auto-Save
 - Privacy Controls
-- Unicode/Umlaut-Support
-- Yellow CMS Kompatibilität
-- Volltext-Suche
-- Shortcodes: `[pages]`, `[tags]`, `[folder]`, `[accordion]`, `[ download datei.pdf]`, `[ image name.png]`
-- Tag-System
-- Download-Tag mit Bootstrap-Icon
-- Drag&Drop-Upload für PDF/ZIP
+- Unicode/Umlaut Support
+- Yellow CMS Compatibility
+- Full-text Search
+- Shortcodes: `[pages]`, `[tags]`, `[folder]`, `[accordion]`, `[ download file.pdf]`, `[ image name.png]`
+- Tag System
+- Download Tag with Bootstrap Icon
+- Drag&Drop Upload for PDF/ZIP
 - Clean URLs
-- CSRF-Schutz
-- Content-Security-Policy (CSP)
-- Umfassende Security Headers
-- Path-Traversal-Schutz
-- XSS-Schutz
-- Session-Security
-- Open-Redirect-Schutz
-- SEO & Suchmaschinen-Kontrolle
-- Dynamische robots.txt Generierung
-- Per-Page Robots Meta-Tags
-- Breadcrumb-Navigation
-- Unterverzeichnis-Support
+- CSRF Protection
+- Content Security Policy (CSP)
+- Comprehensive Security Headers
+- Path Traversal Protection
+- XSS Protection
+- Session Security
+- Open Redirect Protection
+- SEO & Search Engine Control
+- Dynamic robots.txt Generation
+- Per-Page Robots Meta Tags
+- Breadcrumb Navigation
+- Subdirectory Support
 
-## Projektstruktur
+## Project Structure
 ```
 staticMD/
 ├── index.php
@@ -52,29 +52,29 @@ staticMD/
     └── downloads/
 ```
 
-## Markdown-Features
+## Markdown Features
 ```
-- [ download datei.pdf "Alt-Text"] erzeugt einen Download-Link mit passendem Icon   
-- [ image bild.jpg "Alt-Text" - 50%] für Bilder   
-- [ pages /pfad/ limit] für Übersichten   
-- [ tags /pfad/ limit] für Tag-Clouds   
-- [ folder /pfad/ limit] für horizontale Unterordner-Navigation
-- [ accordionstart id "Titel"]...[accordionstop] für Accordions   
+- [ download file.pdf "Alt-Text"] creates a download link with matching icon   
+- [ image image.jpg "Alt-Text" - 50%] for images   
+- [ pages /path/ limit] for overviews   
+- [ tags /path/ limit] for tag clouds   
+- [ folder /path/ limit] for horizontal subfolder navigation
+- [ accordionstart id "Title"]...[accordionstop] for accordions   
 ```
 
 ## SEO Front Matter
 ```markdown
 ---
-Title: Seitentitel
-Author: Autor
+Title: Page Title
+Author: Author
 Tag: seo, robots
-Description: Meta-Description für Suchmaschinen
+Description: Meta description for search engines
 Robots: noindex,nofollow
 Canonical: https://your-domain.com/canonical-url
 ---
 ```
 
-## Hinweise
-- PDF/ZIP werden nach `/public/downloads/` hochgeladen
-- Download-Tag wird automatisch eingefügt
-- Parser zeigt je Dateityp das passende Bootstrap-Icon
+## Notes
+- PDF/ZIP files are uploaded to `/public/downloads/`
+- Download tag is automatically inserted
+- Parser shows the appropriate Bootstrap icon for each file type

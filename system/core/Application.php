@@ -181,7 +181,7 @@ class Application
         require_once __DIR__ . '/SearchEngine.php';
         
     // Extract tag from route: tag/tagname
-        $tagName = substr($route, 4); // Entferne "tag/"
+        $tagName = substr($route, 4); // Remove "tag/"
         $tagName = urldecode($tagName);
         
         if (empty($tagName)) {

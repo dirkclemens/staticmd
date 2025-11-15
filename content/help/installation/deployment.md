@@ -2,29 +2,29 @@
 
 ## 🛠 Pre-Deployment Setup
 
-### 1. Admin-Passwort ändern
-Bearbeiten Sie `config.php` und ändern Sie:
+### 1. Change Admin Password
+Edit `config.php` and change:
 ```php
 'admin' => [
     'username' => 'admin',
-    'password' => password_hash('IHR_SICHERES_PASSWORT', PASSWORD_DEFAULT),
+    'password' => password_hash('YOUR_SECURE_PASSWORD', PASSWORD_DEFAULT),
     'session_timeout' => 3600
 ],
 ```
 
-### 2. Server-Anforderungen prüfen
-- PHP 8.0+ (idealerweise 8.4+)
-- Apache mit mod_rewrite ODER Nginx
-- Schreibrechte für `content/` Verzeichnis
+### 2. Check Server Requirements
+- PHP 8.0+ (ideally 8.4+)
+- Apache with mod_rewrite OR Nginx
+- Write permissions for `content/` directory
 
-### 3. Datei-Berechtigungen setzen
+### 3. Set File Permissions
 ```bash
 chmod 755 content/ system/ public/downloads/
 chmod 644 content/*.md content/*/*.md
 chmod 600 config.php
 ```
 
-### 4. Debug-Modus deaktivieren
+### 4. Disable Debug Mode
 In `config.php`:
 ```php
 'system' => [
@@ -33,17 +33,17 @@ In `config.php`:
 ],
 ```
 
-## 🌐 Uberspace Server-Konfiguration
-### Download-Verzeichnis
-Statische Downloads werden unter `/public/downloads/` gespeichert und über `/downloads/datei.pdf` ausgeliefert.
+## 🌐 Uberspace Server Configuration
+### Download Directory
+Static downloads are stored under `/public/downloads/` and served via `/downloads/file.pdf`.
 
 ### Uberspace Setup
-- Dateien hochladen nach `/var/www/virtual/USER/html/`
-- Domain einrichten: `uberspace web domain add staticMD.your-domain.com`
-- Berechtigungen setzen: `chmod 755 content/ system/`
-- Testen: `https://staticMD.your-domain.com/` und `https://staticMD.your-domain.com/admin`
+- Upload files to `/var/www/virtual/USER/html/`
+- Setup domain: `uberspace web domain add staticMD.your-domain.com`
+- Set permissions: `chmod 755 content/ system/`
+- Test: `https://staticMD.your-domain.com/` and `https://staticMD.your-domain.com/admin`
 
-### Nginx Beispiel-Konfiguration
+### Nginx Example Configuration
 ```nginx
 server {
     listen 80;
@@ -59,41 +59,41 @@ server {
 }
 ```
 
-## 📦 Upload-Methoden
+## 📦 Upload Methods
 - FTP/SFTP Upload
 - Git Deployment
 - ZIP Upload
 
-## ✅ Nach dem Deployment testen
+## ✅ Test After Deployment
 - Frontend: `http://your-domain.com/`
 - Admin: `http://your-domain.com/admin`
-- Editor: Neue Seite erstellen
-- Navigation: Alle Links prüfen
+- Editor: Create new page
+- Navigation: Check all links
 
-## 🔒 Sicherheits-Features (automatisch aktiviert)
+## 🔒 Security Features (automatically enabled)
 
-### Content-Security-Policy (CSP)
-- ✅ **Automatisch aktiviert** - Schutz vor XSS-Angriffen
-- ✅ **Kontextbasiert** - Frontend/Admin-spezifische Policies
-- ✅ **CDN-Whitelist** - Bootstrap, CodeMirror erlaubt
-- ✅ **Nonce-System** - Sichere Inline-Scripts
+### Content Security Policy (CSP)
+- ✅ **Automatically enabled** - Protection against XSS attacks
+- ✅ **Context-based** - Frontend/Admin-specific policies
+- ✅ **CDN Whitelist** - Bootstrap, CodeMirror allowed
+- ✅ **Nonce System** - Secure inline scripts
 
 ### HTTP Security Headers
-- ✅ **X-Frame-Options**: DENY (Clickjacking-Schutz)
+- ✅ **X-Frame-Options**: DENY (Clickjacking protection)
 - ✅ **X-Content-Type-Options**: nosniff
 - ✅ **X-XSS-Protection**: 1; mode=block
 - ✅ **Referrer-Policy**: strict-origin-when-cross-origin
-- ✅ **HSTS**: Bei HTTPS automatisch aktiviert
-- ✅ **Permissions-Policy**: Unnötige Browser-APIs deaktiviert
+- ✅ **HSTS**: Automatically enabled with HTTPS
+- ✅ **Permissions-Policy**: Unnecessary browser APIs disabled
 
-### Session-Security
-- ✅ **Sichere Cookies**: HttpOnly, Secure, SameSite=Strict
-- ✅ **CSRF-Schutz**: Alle Admin-Aktionen geschützt
-- ✅ **Session-Timeout**: Konfigurierbar bis 48h
-- ✅ **Path-Traversal-Schutz**: URL-Validierung
+### Session Security
+- ✅ **Secure Cookies**: HttpOnly, Secure, SameSite=Strict
+- ✅ **CSRF Protection**: All admin actions protected
+- ✅ **Session Timeout**: Configurable up to 48h
+- ✅ **Path Traversal Protection**: URL validation
 
-### CSP-Test durchführen
-Nach dem Deployment testen:
+### Perform CSP Test
+Test after deployment:
 
 **Security Tests:**
 ```
@@ -104,20 +104,20 @@ https://your-domain.com/csp-test.php?context=admin
 **SEO Tests:**
 ```
 https://your-domain.com/robots.txt
-https://your-domain.com/admin (SEO-Settings konfigurieren)
+https://your-domain.com/admin (configure SEO settings)
 ```
 
-## 🛡️ Zusätzliche Sicherheits-Tipps
-- SSL/HTTPS aktivieren (für HSTS)
-- Firewall konfigurieren
-- Regelmäßige Backups
-- PHP Error-Logs überwachen
-- Updates von PHP und Server-Software
-- CSP-Violations im Browser-Log überwachen
+## 🛡️ Additional Security Tips
+- Enable SSL/HTTPS (for HSTS)
+- Configure firewall
+- Regular backups
+- Monitor PHP error logs
+- Update PHP and server software
+- Monitor CSP violations in browser logs
 
-## 🚨 Häufige Probleme
-- 500 Internal Server Error: PHP Error-Log prüfen, mod_rewrite aktiviert?
-- Admin-Login funktioniert nicht: Passwort-Hash korrekt, Session-Ordner beschreibbar?
-- CSS/JS lädt nicht: CDN-Links erreichbar?
+## 🚨 Common Issues
+- 500 Internal Server Error: Check PHP error log, mod_rewrite enabled?
+- Admin login not working: Password hash correct, session folder writable?
+- CSS/JS not loading: CDN links accessible?
 
 ---
