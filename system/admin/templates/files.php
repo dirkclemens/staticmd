@@ -9,6 +9,16 @@ function encodeUrlPath($path) {
     $encodedParts = array_map('rawurlencode', $parts);
     return implode('/', $encodedParts);
 }
+
+// Helper-Funktion für Byte-Formatierung
+function formatBytes(int $bytes, int $precision = 2): string {
+    $units = ['Byte', 'KB', 'MB', 'GB'];
+    for ($i = 0; $bytes > 1024 && $i < count($units) - 1; $i++) {
+        $bytes /= 1024;
+    }    
+    return round($bytes, $precision) . ' ' . $units[$i];
+}
+
 ?>
 <?php
 // Security Headers setzen
@@ -262,8 +272,12 @@ $nonce = SecurityHeaders::getNonce();
                                             echo '</a>';
                                             echo ' <small class="text-muted">(Index)</small>';
                                             echo '</h6>';
-                                            echo '<small class="text-muted">Route: <code>/' . htmlspecialchars($indexFile['route']) . '</code></small>';
-                                            echo '<br><small class="text-muted"><i class="bi bi-clock me-1"></i>' . \StaticMD\Core\I18n::t('admin.files.modified') . ': ' . date('d.m.Y H:i', $indexFile['modified']) . '</small>';
+                                            echo '<div class="d-flex gap-3 flex-wrap">';
+                                            echo '<small class="text-muted"><i class="bi bi-link me-1"></i><code>/' . htmlspecialchars($indexFile['route']) . '</code></small>';
+                                            echo '<small class="text-muted"><i class="bi bi-clock me-1"></i>' . date('d.m.Y H:i', $indexFile['modified']) . '</small>';
+                                            $fileSize = isset($indexFile['size']) ? formatBytes($indexFile['size'], 1) : 'N/A';
+                                            echo '<small class="text-muted"><i class="bi bi-file-earmark me-1"></i>' . $fileSize . '</small>';
+                                            echo '</div>';
                                             echo '</div>';
                                             echo '<div class="file-actions">';
                                             echo '<div class="btn-group btn-group-sm" role="group">';
@@ -301,8 +315,12 @@ $nonce = SecurityHeaders::getNonce();
                                         echo htmlspecialchars($name . '.md');
                                         echo '</a>';
                                         echo '</h6>';
-                                        echo '<small class="text-muted">Route: <code>/' . htmlspecialchars($file['route']) . '</code></small>';
-                                        echo '<br><small class="text-muted"><i class="bi bi-clock me-1"></i>' . \StaticMD\Core\I18n::t('admin.files.modified') . ': ' . date('d.m.Y H:i', $file['modified']) . '</small>';
+                                        echo '<div class="d-flex gap-3 flex-wrap">';
+                                        echo '<small class="text-muted"><i class="bi bi-link me-1"></i><code>/' . htmlspecialchars($file['route']) . '</code></small>';
+                                        echo '<small class="text-muted"><i class="bi bi-clock me-1"></i>' . date('d.m.Y H:i', $file['modified']) . '</small>';
+                                        $fileSize = isset($file['size']) ? formatBytes($file['size'], 1) : 'N/A';
+                                        echo '<small class="text-muted"><i class="bi bi-file-earmark me-1"></i>' . $fileSize . '</small>';
+                                        echo '</div>';
                                         echo '</div>';
                                         echo '<div class="file-actions">';
                                         echo '<div class="btn-group btn-group-sm" role="group">';

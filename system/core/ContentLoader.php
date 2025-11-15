@@ -904,7 +904,8 @@ class ContentLoader
                     'route' => $route,
                     'file' => $relativePath,
                     'path' => $fullPath,
-                    'modified' => filemtime($fullPath)
+                    'modified' => filemtime($fullPath),
+                    'size' => filesize($fullPath)
                 ];
             }
         }
