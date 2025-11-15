@@ -7,7 +7,7 @@ Complete guide for installing and configuring StaticMD on your server.
 ## 🚀 Quick Installation
 
 ### System Requirements
-- **PHP 8.3+** with extensions: `mbstring`, `intl`
+- **PHP 8.4+** with extensions: `mbstring`, `intl`
 - **Apache web server** with `mod_rewrite` enabled
 - **HTTPS certificate** (recommended for security headers)
 - **SSH access** (for optimal deployment)
@@ -22,11 +22,7 @@ cd staticMD
 ```
 
 ### 2. Server Upload
-```bash
-nano upload.sh # Adjust SERVER and REMOTE_PATH
-chmod +x upload.sh
-./upload.sh
-```
+use any ftp/sftp or similar tool to upload all files
 
 ### 3. Initial Configuration
 ```bash
@@ -53,42 +49,39 @@ chmod +x upload.sh
 </VirtualHost>
 ```
 
-### File Permissions
-```bash
+### File Permissions examples
+```bash 
 chmod 755 /var/www/html/staticMD
 chmod -R 644 /var/www/html/staticMD/*
 chmod -R 755 /var/www/html/staticMD/content/
-chmod -R 755 /var/www/html/staticMD/public/downloads/
+chmod -R 755 /var/www/html/staticMD/public/
 chmod 644 /var/www/html/staticMD/.htaccess
 chmod 644 /var/www/html/staticMD/config.php
 ```
 
 ---
 
-## 🛠 Konfiguration
-### Download-Tag und Download-Verzeichnis
-PDF- und ZIP-Dateien werden per Drag&Drop nach `/public/downloads/` hochgeladen und mit `[download datei.pdf "Alt-Text"]` verlinkt. Der Parser zeigt das passende Bootstrap-Icon.
+## 🛠 Configuration
+### Download Tag and Download Directory
+PDF and ZIP files are uploaded via drag&drop to `/public/downloads/` and linked with `[download file.pdf "Alt-Text"]`. The parser shows the appropriate Bootstrap icon.
 
-### Admin-Zugangsdaten ändern
+### Change Admin Credentials
 ```php
 'admin' => [
-    'username' => 'ihr-username',
+    'username' => 'your-username',
     'password' => '$2y$10$...',
     'session_timeout' => 3600
 ]
 ```
 
-### Passwort-Hash generieren
-```php
-<?php
-echo password_hash('ihr-neues-passwort', PASSWORD_BCRYPT);
-?>
-```
+### Generate Password Hash
+simply run `php -f ./generate_password_hash.php` and follow th einstructions
 
-### Site-Konfiguration
+
+### Site Configuration
 ```php
 'system' => [
-    'name' => 'Ihr Site-Name',
+    'name' => 'Your Site Name',
     'timezone' => 'Europe/Berlin',
     'charset' => 'UTF-8'
 ],
@@ -101,14 +94,14 @@ echo password_hash('ihr-neues-passwort', PASSWORD_BCRYPT);
 
 ---
 
-## 🌍 Produktionsumgebung
+## 🌍 Produktion environment
 
 ### Uberspace.de Installation
 ```bash
 ssh user@server.uberspace.de
 uberspace web domain add ihre-domain.de
 cd /var/www/virtual/user/ihre-domain.de/
-chmod -R 755 content/
+chmod -R 755 content/ public/
 ```
 
 ### Shared Hosting Installation
@@ -193,13 +186,13 @@ memory_limit=256M
 
 ### Create Backup
 ```bash
-tar -czf staticmd_backup_$(date +%Y%m%d).tar.gz content/ config.php public/media/
+tar -czf staticmd_backup_$(date +%Y%m%d).tar.gz config.php content/ public/
 rsync -av content/ backup/content_$(date +%Y%m%d)/
 ```
 
 ### Deploy Updates
 ```bash
-rsync -av --exclude=content/ --exclude=config.php new-version/ production-installation/
+rsync -av --exclude=content/ --exclude=public/ --exclude=config.php new-version/ production-installation/
 ```
 
 ### Log Rotation
@@ -217,7 +210,6 @@ tail -f /var/log/php_errors.log
 - [ ] Site name adjusted in config.php
 - [ ] SSL certificate installed
 - [ ] Security headers activated (automatic)
-- [ ] CSP test performed (`/csp-test.php`)
 - [ ] Session timeout configured
 - [ ] SEO settings configured
 - [ ] robots.txt tested (`/robots.txt`)
@@ -238,7 +230,6 @@ tail -f /var/log/php_errors.log
 ### Documentation
 - **help/README.md**: Feature overview
 - **CHANGELOG.md**: Development history
-- **scope_final.md**: Project analysis
 
 ### Live Example
 - **Demo**: https://staticMD.adcore.de

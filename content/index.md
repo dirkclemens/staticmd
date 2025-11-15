@@ -1,52 +1,53 @@
 
-Title: Willkommen bei StaticMD
+Title: Welcome to StaticMD
 Tag: demo, start, cms
-Layout: wiki
+Author: System
+Layout: Standard
+Visibility: public
 ---
 
-# 🚀 StaticMD Demo-Startseite
+# 🚀 StaticMD Demo Homepage
 
-Willkommen zur Demo von **StaticMD** – dem modernen Markdown-CMS mit Bootstrap-Frontend und leistungsstarkem Admin-System!
+Welcome to the demo of **StaticMD** – the modern Markdown CMS with Bootstrap frontend and powerful admin system!
 
 ---
 
-## Was ist StaticMD?
+## What is StaticMD?
 
-StaticMD ist ein professionelles, PHP-basiertes CMS für Markdown-Inhalte. Es bietet:
+StaticMD is a professional, PHP-based CMS for Markdown content. It offers:
 - 7 Themes (Bootstrap, Solarized, Monokai, GitHub)
-- CodeMirror-Editor mit Toolbar & Drag&Drop
-- Download-Tag mit Icon
-- Volltextsuche & Tag-System
-- Unicode/Umlaut-Support
-- Yellow CMS Kompatibilität
-- Responsive Design
+- CodeMirror editor with toolbar & drag&drop
+- Full-text search & tag system
+- Unicode/umlaut support
+- Shortcodes
+- Responsive design
 
 ---
 
-## Schnellstart
+## Quick Start
 
-- **Admin-Login:** [admin](admin)
-- **Hilfe & Dokumentation:** [help/README.md](help/README)
-- **Feature-Übersicht:** [help/features.md](help/features)
-- **Installationsanleitung:** [help/installation/installation.md](help/installation/installation)
+- **Admin Login:** [admin](admin)
+- **Help & Documentation:** [help/README.md](help/README)
+- **Feature Overview:** [help/features.md](help/features)
+- **Installation Guide:** [help/installation/installation.md](help/installation/installation)
 
 ---
 
-## Markdown-Demo
+## Markdown Demo
 
-### Download-Tag
+### Download Tag
 [download demo.pdf "Demo PDF"]
 
 ### Accordion
 [accordionstart demo "Demo Accordion"]
-**Dies ist ein Beispiel für ein Accordion.**
+**This is an example of an accordion.**
 [accordionstop]
 
-### Tag-Cloud
+### Tag Cloud
 [tags /content/ 10]
 
-### Bild-Upload
-[image demo.jpg "Demo-Bild" - 10%]
+### Image Upload
+[image demo.jpg "Demo Image" - 10%]
 
 ### Emoji
 :rocket: :smile: :heart:
@@ -56,10 +57,10 @@ StaticMD ist ein professionelles, PHP-basiertes CMS für Markdown-Inhalte. Es bi
 ## Navigation
 - [About](about/)
 - [Blog](blog/)
-- [Hilfe](help/)
+- [Help](help/)
 
 ---
 
-## Kontakt & Support
-- [GitHub Projektseite](https://github.com/dirkclemens/staticMD)
-- [Live-Demo](https://staticmd.adcore.de/)
+## Contact & Support
+- [GitHub Project Page](https://github.com/dirkclemens/staticMD)
+- [Live Demo](https://staticmd.adcore.de/)

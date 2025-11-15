@@ -1,7 +1,7 @@
 ---
+Title: emoji markup / markdown
+Author: System
 Tag: emoji, markdown
-Author: dirk
-date: 2025-10-26
 Visibility: public
 ---
 

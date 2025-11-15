@@ -1,6 +1,6 @@
 ---
 Title: Security & CSP
-Author: StaticMD Team
+Author: System
 Tag: security, csp, documentation
 ---
 
@@ -33,7 +33,7 @@ object-src 'none';
 frame-ancestors 'none';
 ```
 
-**Admin-Policy (zusätzlich):**
+**Admin-Policy (additional):**
 ```
 script-src [...] 'unsafe-eval';  // für CodeMirror Syntax-Highlighting
 ```
@@ -113,14 +113,6 @@ if (!str_starts_with($returnUrl, '/admin')) {
 ```
 
 ## Testing & Debugging
-
-### CSP Test Page
-StaticMD includes a test page at `/csp-test.php`:
-
-```
-https://your-domain.com/csp-test.php?context=frontend
-https://your-domain.com/csp-test.php?context=admin
-```
 
 ### Browser Tools
 1. **Developer Tools** → **Console**: Show CSP violations

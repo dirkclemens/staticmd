@@ -1,6 +1,6 @@
 ---
 Title: SEO & Search Engine Control
-Author: StaticMD Team
+Author: System
 Tag: seo, robots, documentation
 ---
 
@@ -93,37 +93,37 @@ Disallow: /
 
 ## 🏷️ Meta-Tags Implementation
 
-### Automatische Meta-Tags
-StaticMD fügt automatisch folgende Meta-Tags ein:
+### Automatic Meta-Tags
+StaticMD automatically inserts the following meta-tags:
 
 ```html
 <!-- Standard Robots -->
 <meta name="robots" content="index,follow">
 
-<!-- Bei noindex zusätzlich -->
+<!-- Additionally for noindex -->
 <meta name="googlebot" content="noindex,nofollow,noarchive,nosnippet">
 <meta name="bingbot" content="noindex,nofollow,noarchive,nosnippet">
 <meta name="yahoobot" content="noindex,nofollow">
 ```
 
-### HTTP-Headers
-Bei `noindex` wird zusätzlich gesetzt:
+### HTTP Headers
+For `noindex` pages, additionally set:
 ```
 X-Robots-Tag: noindex,nofollow,noarchive,nosnippet
 ```
 
-## 📊 Crawler-Kontrolle
+## 📊 Crawler Control
 
-### Erlaubte/Beschränkte Bots
+### Allowed/Restricted Bots
 
-**Standard-Crawler (normal)**:
+**Standard Crawlers (normal)**:
 - Googlebot, Bingbot, DuckDuckBot
-- Crawl-Delay: 1-2 Sekunden
+- Crawl-Delay: 1-2 seconds
 
-**Aggressive SEO-Bots (beschränkt)**:
+**Aggressive SEO Bots (restricted)**:
 - AhrefsBot, MJ12bot, SemrushBot
-- Crawl-Delay: 10 Sekunden
-- Disallow: / (bei Block-Modus)
+- Crawl-Delay: 10 seconds
+- Disallow: / (in block mode)
 
 ### Bot-Detection
 robots.txt-Zugriffe werden geloggt:
@@ -131,29 +131,29 @@ robots.txt-Zugriffe werden geloggt:
 robots.txt accessed - Block Crawlers: false
 ```
 
-## 🎯 Anwendungsfälle
+## 🎯 Use Cases
 
-### 1. Komplette Website privat
+### 1. Complete Website Private
 ```
-Admin > Settings > "Alle Suchmaschinen blockieren" ✅
+Admin > Settings > "Block All Search Engines" ✅
 ```
 
-### 2. Bestimmte Seiten privat
+### 2. Specific Pages Private
 ```markdown
 ---
-Title: Interne Dokumentation
+Title: Internal Documentation
 Robots: noindex,nofollow
 ---
 ```
 
-### 3. SEO-optimiert (Standard)
+### 3. SEO Optimized (Default)
 ```
-Admin > Settings > "Standard Robots-Policy" = "index,follow"
+Admin > Settings > "Default Robots Policy" = "index,follow"
 ```
 
 ### 4. Staging/Development
 ```
-Admin > Settings > "Alle Suchmaschinen blockieren" ✅
+Admin > Settings > "Block All Search Engines" ✅
 ```
 
 ## 🔍 Testing & Debugging

@@ -1,86 +1,86 @@
 ---
 Title: StaticMD Blog - News & Tutorials
-Author: StaticMD Team
+Author: System
 Date: 2025-10-26
 Layout: Standard
 Tag: blog, news, tutorials, cms, markdown
-Description: Offizieller StaticMD Blog mit Updates, Tutorials und Best Practices
+Description: Official StaticMD blog with updates, tutorials and best practices
 Visibility: public
 ---
 
 # StaticMD Blog - News & Tutorials
 
-🎉 **Willkommen im offiziellen StaticMD Blog!** Hier erfahren Sie alles über Updates, neue Features und Best Practices.
+🎉 **Welcome to the official StaticMD blog!** Here you'll find everything about updates, new features and best practices.
 
-## � Aktuelle News
+## 📰 Latest News
 
-### 🚀 StaticMD 2.0 - Major Update verfügbar!
+### 🚀 StaticMD 2.0 - Major Update Available!
 
-**26. Oktober 2025** - Das größte Update in der StaticMD-Geschichte ist da!
+**October 26, 2025** - The biggest update in StaticMD history is here!
 
-**Neue Features:**
-- **7 professionelle Frontend-Themes** (Solarized, Monokai, GitHub)
-- **5 Editor-Themes** mit Live-Vorschau
-- **Delete-Funktionalität** mit Sicherheits-Modal
-- **Full-Height Editor** für optimale Nutzung
-- **Privacy Controls** für Public/Private Seiten
-- **Erweiterte Shortcodes** mit Layout-Optionen
+**New Features:**
+- **7 professional frontend themes** (Solarized, Monokai, GitHub)
+- **5 editor themes** with live preview
+- **Delete functionality** with security modal
+- **Full-height editor** for optimal use
+- **Privacy controls** for public/private pages
+- **Extended shortcodes** with layout options
 
-## � Kategorien
+## 📂 Categories
 
-### 🎨 Theme-System
-- **Frontend-Themes**: Wählen Sie aus 7 professionellen Designs
-- **Editor-Themes**: 5 CodeMirror-Themes für optimales Schreiben
-- **Custom Themes**: Anleitung zur Theme-Entwicklung
+### 🎨 Theme System
+- **Frontend Themes**: Choose from 7 professional designs
+- **Editor Themes**: 5 CodeMirror themes for optimal writing
+- **Custom Themes**: Guide to theme development
 
-### 🔧 Admin-Features
-- **Settings-System**: Umfangreiche Konfigurationsmöglichkeiten
-- **Auto-Save**: Automatisches Speichern mit konfigurierbaren Intervallen
-- **Return-URL Navigation**: Nahtlose Benutzererfahrung
-- **Dashboard**: Übersicht mit "Zuletzt bearbeitet"-Liste
+### 🔧 Admin Features
+- **Settings System**: Comprehensive configuration options
+- **Auto-Save**: Automatic saving with configurable intervals
+- **Return-URL Navigation**: Seamless user experience
+- **Dashboard**: Overview with "Recently edited" list
 
-### 📚 Content-Management
-- **Shortcodes**: `[pages]`, `[tags]`, `[accordion]` effektiv nutzen
-- **Sortierung**: Zeilen- vs. spaltenweise Layouts
-- **Tags**: Case-insensitive alphabetische Sortierung
-- **Privacy**: Public/Private Seiten verwalten
+### 📚 Content Management
+- **Shortcodes**: Use `[pages]`, `[tags]`, `[accordion]` effectively
+- **Sorting**: Row vs. column layouts
+- **Tags**: Case-insensitive alphabetical sorting
+- **Privacy**: Manage public/private pages
 
-### 🛠️ Entwicklung
-- **PHP 8.3+ Features**: Moderne Entwicklungspraktiken
-- **Unicode-Support**: Deutsche Umlaute und Sonderzeichen
-- **Security**: CSRF-Schutz und sichere Authentifizierung
-- **Performance**: Optimierungen und Best Practices
+### 🛠️ Development
+- **PHP 8.3+ Features**: Modern development practices
+- **Unicode Support**: German umlauts and special characters
+- **Security**: CSRF protection and secure authentication
+- **Performance**: Optimizations and best practices
 
-## 🎓 Tutorial-Reihen
+## 🎓 Tutorial Series
 
-### � Schnellstart-Serie
-1. **Installation & Setup** - StaticMD in 5 Minuten einrichten
-2. **Erste Seite erstellen** - Von Markdown zu Website
-3. **Admin-Interface** - Alle Features im Überblick
-4. **Theme-System** - Aussehen individuell anpassen
+### 🚀 Quick Start Series
+1. **Installation & Setup** - Set up StaticMD in 5 minutes
+2. **Create First Page** - From Markdown to website
+3. **Admin Interface** - All features at a glance
+4. **Theme System** - Customize appearance individually
 
 ### 🔧 Advanced Features
-1. **Shortcodes Master Class** - `[pages]`, `[tags]`, `[accordion]` optimal nutzen
-2. **Privacy & Security** - Public/Private Seiten und Sicherheit
-3. **Performance Tuning** - StaticMD optimal konfigurieren
-4. **Custom Themes** - Eigene Themes entwickeln
+1. **Shortcodes Master Class** - Use `[pages]`, `[tags]`, `[accordion]` optimally
+2. **Privacy & Security** - Public/private pages and security
+3. **Performance Tuning** - Configure StaticMD optimally
+4. **Custom Themes** - Develop your own themes
 
 ### 💡 Best Practices
-1. **Content-Struktur** - Inhalte sinnvoll organisieren
-2. **SEO-Optimierung** - Suchmaschinen-freundliche Websites
-3. **Workflow-Tipps** - Effizient mit StaticMD arbeiten
-4. **Deployment** - StaticMD live schalten
+1. **Content Structure** - Organize content meaningfully
+2. **SEO Optimization** - Search engine friendly websites
+3. **Workflow Tips** - Work efficiently with StaticMD
+4. **Deployment** - Go live with StaticMD
 
-## 📋 Alle Blog-Artikel
+## 📋 All Blog Articles
 
 [pages /blog/ 50 rows]
 
-## 🏷️ Beliebte Tags
+## 🏷️ Popular Tags
 
 [tags /blog/ 20]
 
 ---
 
-**Stay tuned für weitere Updates und Tutorials!** 🚀
+**Stay tuned for more updates and tutorials!** 🚀
 
-> Haben Sie Ideen für Blog-Artikel oder Tutorials? Lassen Sie es uns wissen!
+> Have ideas for blog articles or tutorials? Let us know!

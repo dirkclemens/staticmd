@@ -7,59 +7,59 @@ Layout: Standard
 
 # Uberspace Hosting Guide
 
-Komplette Anleitung für das Hosting von StaticMD auf Uberspace - einem deutschen Shared Hosting Service für Entwickler.
+Complete guide for hosting StaticMD on Uberspace - a German shared hosting service for developers.
 
 ---
 
-## Übersicht
+## Overview
 
-Uberspace ist ein developer-freundlicher Hosting-Service aus Deutschland, der sich perfekt für StaticMD eignet. Diese Anleitung führt durch die komplette Installation und Konfiguration.
+Uberspace is a developer-friendly hosting service from Germany that's perfect for StaticMD. This guide walks through the complete installation and configuration.
 
-## Voraussetzungen
+## Prerequisites
 
 ### Uberspace Account
-- **Account**: Registrierung auf [uberspace.de](https://uberspace.de)
-- **SSH-Zugang**: Standardmäßig aktiviert
-- **PHP Version**: PHP 8.3+ (verfügbar)
-- **Domains**: Kostenlose \*.uber.space Subdomain inklusive
+- **Account**: Registration at [uberspace.de](https://uberspace.de)
+- **SSH Access**: Enabled by default
+- **PHP Version**: PHP 8.4+ (available)
+- **Domains**: Free \*.uber.space subdomain included
 
-### Lokale Vorbereitung
-- StaticMD-Installation auf lokalem System
-- SSH-Client (Terminal, PuTTY, etc.)
-- SCP/SFTP-Client für Dateiübertragung
+### Local Preparation
+- StaticMD installation on local system
+- SSH client (Terminal, PuTTY, etc.)
+- SCP/SFTP client for file transfer
 
 ---
 
 ## Installation
 
-### 1. SSH-Verbindung herstellen
+### 1. Establish SSH Connection
 
 ```bash
-# Mit SSH verbinden
-ssh username@username.uber.space
+# Connect via SSH
+ssh username@your-space.uberspace.de
 
-# Arbeitsverzeichnis wechseln
+# Change to working directory
 cd ~/html
 ```
 
-### 2. PHP-Version konfigurieren
+### 2. Configure PHP Version
 
 ```bash
-# Verfügbare PHP-Versionen anzeigen
+# Show available PHP versions
 uberspace tools version list php
 
-# PHP 8.3 aktivieren
+# Activate PHP 8.3
 uberspace tools version use php 8.3
 
-# Version überprüfen
+# Check version
 php --version
 ```
 
-### 3. StaticMD hochladen
+### 3. Upload StaticMD
 
-#### Option A: Git Clone (empfohlen)
+#### Option A: Git Clone (recommended)
 ```bash
-# Repository klonen
+# Clone repository
 git clone https://github.com/dirkclemens/staticmd.git
 mv staticmd/* .
 mv staticmd/.* . 2>/dev/null
@@ -68,42 +68,42 @@ rmdir staticmd
 
 #### Option B: Upload via SCP
 ```bash
-# Lokal: Dateien komprimieren
+# Local: Compress files
 tar -czf staticmd.tar.gz *
 
-# Hochladen
-scp staticmd.tar.gz username@your-space.uber.space:~/html/
+# Upload
+scp staticmd.tar.gz username@your-space.uberspace.de:~/html/
 
-# Auf Uberspace: Entpacken
-ssh username@your-space.uber.space
+# On Uberspace: Extract
+ssh username@your-space.uberspace.de
 cd ~/html
 tar -xzf staticmd.tar.gz
 rm staticmd.tar.gz
 ```
 
-### 4. Berechtigungen setzen
+### 4. Set Permissions
 
 ```bash
-# Verzeichnisse beschreibbar machen
+# Make directories writable
 chmod 755 content/
 chmod 755 system/
 chmod 755 public/
 
-# Config-Datei sichern
+# Secure config file
 chmod 600 config.php
 
-# Session-Verzeichnis erstellen
+# Create session directory
 mkdir -p ~/tmp/sessions
 chmod 700 ~/tmp/sessions
 ```
 
 ---
 
-## Konfiguration
+## Configuration
 
-### 1. Apache-Konfiguration (.htaccess)
+### 1. Apache Configuration (.htaccess)
 
-Uberspace-optimierte `.htaccess` erstellen:
+Create Uberspace-optimized `.htaccess`:
 
 ```apache
 # StaticMD - Uberspace Configuration
@@ -164,39 +164,39 @@ RewriteRule ^(.*)$ index.php?route=$1 [QSA,L]
 
 ## Troubleshooting
 
-### Häufige Probleme
+### Common Problems
 
 #### 1. 500 Internal Server Error
 ```bash
-# Error Log prüfen
+# Check error log
 tail ~/logs/error_log
 
-# Häufige Ursachen:
-# - Falsche Berechtigungen
-# - PHP-Syntax-Fehler
-# - Fehlende Abhängigkeiten
+# Common causes:
+# - Wrong permissions
+# - PHP syntax errors
+# - Missing dependencies
 ```
 
-#### 2. Session-Probleme
+#### 2. Session Problems
 ```bash
-# Session-Verzeichnis prüfen
+# Check session directory
 ls -la ~/tmp/sessions/
 
-# Berechtigungen korrigieren
+# Fix permissions
 chmod 700 ~/tmp/sessions
 ```
 
 ## Support
 
-### Uberspace-spezifische Hilfe
+### Uberspace-specific Help
 - **Manual**: [manual.uberspace.de](https://manual.uberspace.de)
-- **Support**: Ticket-System im Uberspace-Dashboard
+- **Support**: Ticket system in Uberspace dashboard
 - **Community**: [Twitter @ubernauten](https://twitter.com/ubernauten)
 
-### StaticMD-Support  
-- **GitHub**: Issues und Discussions
-- **Documentation**: Vollständige Docs im `/content/help/` Verzeichnis
+### StaticMD Support  
+- **GitHub**: Issues and Discussions
+- **Documentation**: Complete docs in `/content/help/` directory
 
 ---
 
-*StaticMD auf Uberspace - Professional German Hosting für Entwickler*
+*StaticMD on Uberspace - Professional German Hosting for Developers*

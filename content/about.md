@@ -1,110 +1,110 @@
 ---
-Title: Über StaticMD
-Author: StaticMD Team
-Date: 2025-10-26
+Title: About StaticMD
+Author: System
+Layout: Standard
 Tag: about, info, cms
-Description: Erfahren Sie mehr über StaticMD - das professionelle Markdown CMS
+Description: Learn more about StaticMD - the professional Markdown CMS
 Visibility: public
 ---
 
-# Über StaticMD
+# About StaticMD
 
-Willkommen bei **StaticMD** - dem professionellen Content Management System für Markdown-basierte Websites!
+Welcome to **StaticMD** - the professional Content Management System for Markdown-based websites!
 
-## 🚀 Unsere Mission
+## 🚀 Our Mission
 
-Wir entwickeln ein modernes, benutzerfreundliches CMS, das die Einfachheit von Markdown mit den Anforderungen professioneller Websites verbindet. StaticMD soll sowohl für Entwickler als auch für Content-Ersteller die perfekte Lösung bieten.
+We develop a modern, user-friendly CMS that combines the simplicity of Markdown with the requirements of professional websites. StaticMD aims to provide the perfect solution for both developers and content creators.
 
-## ✨ Was StaticMD besonders macht
+## ✨ What Makes StaticMD Special
 
-### 🎨 Flexibles Theme-System
-- **7 Frontend-Themes**: Bootstrap, Solarized (Light/Dark), Monokai (Light/Dark), GitHub (Light/Dark)
-- **5 Editor-Themes**: GitHub, Monokai, Solarized Light/Dark, Material
-- **Live Theme-Wechsel** über das Admin-Interface
+### 🎨 Flexible Theme System
+- **7 Frontend Themes**: Bootstrap, Solarized (Light/Dark), Monokai (Light/Dark), GitHub (Light/Dark)
+- **5 Editor Themes**: GitHub, Monokai, Solarized Light/Dark, Material
+- **Live Theme Switching** via admin interface
 
-### 🔧 Professionelles Admin-Interface
-- **Full-Height Editor** mit CodeMirror-Integration
-- **Auto-Save Funktion** mit konfigurierbaren Intervallen
-- **Delete-Funktionalität** mit Sicherheits-Modal
-- **Return-URL Navigation** für nahtlose Workflows
-- **Umfangreiche Settings** für komplette Anpassung
+### 🔧 Professional Admin Interface
+- **Full-Height Editor** with CodeMirror integration
+- **Auto-Save Function** with configurable intervals
+- **Delete Functionality** with security modal
+- **Return-URL Navigation** for seamless workflows
+- **Comprehensive Settings** for complete customization
 
-### 📝 Erweiterte Content-Features
-- **Privacy Controls**: Public/Private Seiten
-- **Konfigurierbare Sortierung** für Shortcodes
-- **Case-insensitive Sortierung** für bessere UX
-- **Shortcodes**: `[pages]`, `[tags]`, `[accordion]` mit Layout-Optionen
+### 📝 Advanced Content Features
+- **Privacy Controls**: Public/Private pages
+- **Configurable Sorting** for shortcodes
+- **Case-insensitive Sorting** for better UX
+- **Shortcodes**: `[pages]`, `[tags]`, `[accordion]` with layout options
 
-## 🛠️ Technologie-Stack
+## 🛠️ Technology Stack
 
 ### Backend
-- **PHP 8.3+** mit modernen Features
-- **Unicode/Umlaut-Support** für deutsche Inhalte
-- **Session-basierte Authentifizierung** mit CSRF-Schutz
-- **JSON-basierte Settings** für flexible Konfiguration
+- **PHP 8.4+** with modern features
+- **Unicode/Umlaut Support** for German content
+- **Session-based Authentication** with CSRF protection
+- **JSON-based Settings** for flexible configuration
 
 ### Frontend
-- **Bootstrap 5** für responsive Layouts
-- **CodeMirror** für professionellen Editor
-- **Clean URLs** mit .htaccess-Routing
-- **Mobile-optimiert** für alle Endgeräte
+- **Bootstrap 5** for responsive layouts
+- **CodeMirror** for professional editor
+- **Clean URLs** with .htaccess routing
+- **Mobile-optimized** for all devices
 
-## 🎯 Features im Detail
+## 🎯 Features in Detail
 
-### Shortcode-Demonstration
+### Shortcode Demonstration
 
-**Alle Bereiche unserer Website:**
+**All areas of our website:**
 [pages / 20 columns]
 
-**Beliebte Tags:**
+**Popular tags:**
 [tags / 15]
 
-### Privacy-System
-Diese Seite ist **öffentlich** sichtbar. Im Admin-Bereich können Sie Seiten als **privat** markieren - diese sind dann nur für eingeloggte Administratoren zugänglich.
+### Privacy System
+This page is **publicly** visible. In the admin area, you can mark pages as **private** - these are then only accessible to logged-in administrators.
 
 ### Responsive Design
-StaticMD sieht auf **allen Geräten** perfekt aus:
-- 📱 **Mobile**: Optimierte Navigation und Layouts
-- 💻 **Tablet**: Angepasste Spaltenbreiten
-- 🖥️ **Desktop**: Vollständige Feature-Nutzung
+StaticMD looks perfect on **all devices**:
+- 📱 **Mobile**: Optimized navigation and layouts
+- 💻 **Tablet**: Adapted column widths
+- 🖥️ **Desktop**: Full feature usage
 
 ### Performance
-- ⚡ **Schnelle Ladezeiten** durch optimierte PHP-Code
-- 🔄 **Caching-Mechanismen** für bessere Performance
-- 📦 **Bootstrap CDN** für schnelle CSS/JS-Lieferung
-- 🎯 **Lazy Loading** für große Content-Bereiche
+- ⚡ **Fast loading times** through optimized PHP code
+- 🔄 **Caching mechanisms** for better performance
+- 📦 **Bootstrap CDN** for fast CSS/JS delivery
+- 🎯 **Lazy loading** for large content areas
 
-## 🌟 Unsere Vision
+## 🌟 Our Vision
 
-StaticMD soll das **beste Markdown CMS** werden - einfach zu verwenden, aber mächtig genug für professionelle Websites. Wir glauben an:
+StaticMD aims to become the **best Markdown CMS** - easy to use, but powerful enough for professional websites. We believe in:
 
-- **Einfachheit ohne Kompromisse**
-- **Flexibilität durch Themes**
-- **Sicherheit by Design**
-- **Performance First**
-- **Community-getriebene Entwicklung**
+- **Simplicity without compromise**
+- **Flexibility through themes**
+- **Security by design**
+- **Performance first**
+- **Community-driven development**
 
-## 📊 StaticMD in Zahlen
+## 📊 StaticMD by Numbers
 
-- **7 Frontend-Themes** für jeden Geschmack
-- **5 Editor-Themes** für optimales Schreiben
-- **3 Shortcode-Typen** für dynamische Inhalte
-- **100% responsive** auf allen Geräten
-- **PHP 8.3+** moderne Technologie
-- **Bootstrap 5** für professionelles Design
+- **7 Frontend themes** for every taste
+- **5 Editor themes** for optimal writing
+- **3 Shortcode types** for dynamic content
+- **100% responsive** on all devices
+- **PHP 8.3+** modern technology
+- **Bootstrap 5** for professional design
 
 ## 🤝 Community & Support
 
-StaticMD wird kontinuierlich weiterentwickelt. Werden Sie Teil unserer Community:
+StaticMD is continuously developed. Become part of our community:
 
-- **GitHub Issues**: Bug-Reports und Feature-Requests
-- **Discussions**: Fragen und Erfahrungsaustausch
-- **Pull Requests**: Code-Beiträge willkommen
-- **Documentation**: Hilfe bei der Dokumentation
+- **GitHub Issues**: Bug reports and feature requests
+- **Discussions**: Questions and experience sharing
+- **Pull Requests**: Code contributions welcome
+- **Documentation**: Help with documentation
 
-## 📞 Kontakt
+## 📞 Contact
 
-Haben Sie Fragen oder möchten Sie StaticMD für Ihr Projekt einsetzen?
+Do you have questions or would you like to use StaticMD for your project?
 
 - **GitHub**: [StaticMD Repository](https://github.com/staticmd/staticmd)
 - **Issues**: [Bug Reports & Features](https://github.com/staticmd/staticmd/issues)
@@ -112,5 +112,5 @@ Haben Sie Fragen oder möchten Sie StaticMD für Ihr Projekt einsetzen?
 
 ---
 
-> *"Das beste CMS ist das, welches man nicht bemerkt - es funktioniert einfach."*  
+> *"The best CMS is one you don't notice - it just works."*  
 > **— StaticMD Philosophy**

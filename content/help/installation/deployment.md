@@ -15,11 +15,11 @@ Edit `config.php` and change:
 ### 2. Check Server Requirements
 - PHP 8.0+ (ideally 8.4+)
 - Apache with mod_rewrite OR Nginx
-- Write permissions for `content/` directory
+- Write permissions for `content/` and `public/` directory
 
 ### 3. Set File Permissions
 ```bash
-chmod 755 content/ system/ public/downloads/
+chmod 755 content/ system/ public/
 chmod 644 content/*.md content/*/*.md
 chmod 600 config.php
 ```
@@ -40,7 +40,7 @@ Static downloads are stored under `/public/downloads/` and served via `/download
 ### Uberspace Setup
 - Upload files to `/var/www/virtual/USER/html/`
 - Setup domain: `uberspace web domain add staticMD.your-domain.com`
-- Set permissions: `chmod 755 content/ system/`
+- Set permissions: `chmod 755 content/ system/ public/`
 - Test: `https://staticMD.your-domain.com/` and `https://staticMD.your-domain.com/admin`
 
 ### Nginx Example Configuration
@@ -91,33 +91,3 @@ server {
 - ✅ **CSRF Protection**: All admin actions protected
 - ✅ **Session Timeout**: Configurable up to 48h
 - ✅ **Path Traversal Protection**: URL validation
-
-### Perform CSP Test
-Test after deployment:
-
-**Security Tests:**
-```
-https://your-domain.com/csp-test.php?context=frontend
-https://your-domain.com/csp-test.php?context=admin
-```
-
-**SEO Tests:**
-```
-https://your-domain.com/robots.txt
-https://your-domain.com/admin (configure SEO settings)
-```
-
-## 🛡️ Additional Security Tips
-- Enable SSL/HTTPS (for HSTS)
-- Configure firewall
-- Regular backups
-- Monitor PHP error logs
-- Update PHP and server software
-- Monitor CSP violations in browser logs
-
-## 🚨 Common Issues
-- 500 Internal Server Error: Check PHP error log, mod_rewrite enabled?
-- Admin login not working: Password hash correct, session folder writable?
-- CSS/JS not loading: CDN links accessible?
-
----

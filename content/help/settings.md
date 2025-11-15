@@ -1,6 +1,6 @@
 ---
 Title: Settings System
-Author: StaticMD Team
+Author: System
 Tag: admin, configuration, settings
 Layout: Standard
 ---
@@ -98,8 +98,7 @@ The StaticMD settings system uses JSON-based configuration with a user-friendly 
 {
   "about": 1,
   "blog": 2,
-  "tech": 3,
-  "help": 4
+  "help": 3
 }
 ```
 
@@ -181,31 +180,24 @@ The StaticMD settings system uses JSON-based configuration with a user-friendly 
 {
     "site_name": "StaticMD",
     "site_logo": "",
-    "site_description": "Professional Markdown CMS",
     "frontend_theme": "bootstrap",
+    "recent_files_count": 20,
+    "items_per_page": 25,
     "editor_theme": "github",
-    "enable_seo_meta": true,
-    "default_robots": "index,follow",
-    "block_search_engines": false,
+    "show_file_stats": true,
+    "auto_save_interval": 30,
     "navigation_order": {
-        "about": 1,
-        "blog": 2,
-        "tech": 3,
-        "help": 4
+        "blog": 1,
+        "help": 2,
+        "about": 3
     },
-    "show_homepage_in_nav": true,
-    "auto_save_interval": 60,
-    "editor_line_numbers": true,
-    "enable_live_preview": true,
-    "default_layout": "wiki",
-    "enable_tag_clouds": true,
-    "pages_per_folder": 20,
-    "enable_search": true,
-    "search_results_per_page": 10,
-    "search_in_content": true
+    "language": "en",
+    "search_result_limit": 200,
+    "seo_robots_policy": "noindex,nofollow",
+    "seo_block_crawlers": true,
+    "seo_generate_robots_txt": true
 }
 ```
-
 ---
 
 ## Admin Interface
@@ -221,37 +213,6 @@ Access via **Admin → Settings**:
 5. **Editor Tab**: Editor behavior and preferences
 6. **Content Tab**: Content display and organization
 7. **Search Tab**: Search functionality configuration
-
-### Setting Types
-
-#### Text Input
-```html
-<input type="text" name="site_name" value="StaticMD">
-```
-
-#### Textarea
-```html
-<textarea name="site_description">Professional Markdown CMS</textarea>
-```
-
-#### Select Dropdown
-```html
-<select name="frontend_theme">
-    <option value="bootstrap">Bootstrap</option>
-    <option value="solarized-light">Solarized Light</option>
-    <option value="solarized-dark">Solarized Dark</option>
-</select>
-```
-
-#### Checkbox
-```html
-<input type="checkbox" name="enable_seo_meta" checked>
-```
-
-#### Range Slider
-```html
-<input type="range" name="auto_save_interval" min="30" max="300" step="30" value="60">
-```
 
 ---
 
