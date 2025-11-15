@@ -617,7 +617,7 @@ class MarkdownParser
         // Block-Formeln ($$...$$) zuerst verarbeiten
         $content = preg_replace_callback('/\$\$(.*?)\$\$/s', function($matches) use (&$blockIndex) {
             $placeholder = '___LATEX_BLOCK_' . $blockIndex . '___';
-            $this->latexBlocks[$placeholder] = '<div class="katex-display">' . htmlspecialchars(trim($matches[1])) . '</div>';
+            $this->latexBlocks[$placeholder] = '$$' . trim($matches[1]) . '$$';
             $blockIndex++;
             return $placeholder;
         }, $content);
@@ -625,7 +625,7 @@ class MarkdownParser
         // Inline-Formeln ($...$) verarbeiten - nur wenn nicht in Code-Blöcken
         $content = preg_replace_callback('/(?<!`)\$([^$\n]+)\$(?!`)/', function($matches) use (&$blockIndex) {
             $placeholder = '___LATEX_INLINE_' . $blockIndex . '___';
-            $this->latexBlocks[$placeholder] = '<span class="katex-inline">' . htmlspecialchars(trim($matches[1])) . '</span>';
+            $this->latexBlocks[$placeholder] = '$' . trim($matches[1]) . '$';
             $blockIndex++;
             return $placeholder;
         }, $content);

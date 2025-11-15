@@ -340,15 +340,20 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
             block.classList.add('language-' + (block.className.match(/language-(\w+)/) || ['', 'text'])[1]);
         });
         
-        // KaTeX Auto-Render
-        if (typeof renderMathInElement !== 'undefined') {
+        document.addEventListener("DOMContentLoaded", function() {
             renderMathInElement(document.body, {
-                delimiters: [
-                    {left: '<span class="katex-inline">', right: '</span>', display: false},
-                    {left: '<div class="katex-display">', right: '</div>', display: true}
-                ]
+            // customised options
+            // • auto-render specific keys, e.g.:
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            // • rendering keys, e.g.:
+            throwOnError : false
             });
-        }
+        });
     </script>
     
     <?php if (isset($meta['js'])): ?>
