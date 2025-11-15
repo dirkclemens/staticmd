@@ -55,7 +55,8 @@ return [
             'saved' => 'File saved successfully.',
             'deleted' => 'File deleted successfully.',
             'success' => 'Action completed successfully.',
-            'settings_saved' => 'Settings have been saved successfully.'
+            'settings_saved' => 'Settings have been saved successfully.',
+            'backup_created' => 'Backup has been created successfully.'
             ],
         'search' => [
             'result_limit_label' => 'Maximum number of search results',
@@ -73,6 +74,7 @@ return [
             'filename_required' => 'Filename is required.',
             'invalid_request' => 'Invalid request.',
             'settings_save_failed' => 'Error saving settings.',
+            'backup_failed' => 'Backup could not be created.',
             'generic' => 'An error occurred.'
         ],
         'dashboard' => [
@@ -161,6 +163,21 @@ return [
                 'features_robots_txt' => 'robots.txt: Automatically generated under /robots.txt',
                 'features_meta_tags' => 'Meta-Tags: Automatically inserted in all templates',
                 'features_http_headers' => 'HTTP-Headers: X-Robots-Tag automatically set for noindex'
+            ],
+            'backup' => [
+                'title' => 'Backup & Recovery',
+                'description' => 'Create a complete backup of your StaticMD installation. The backup contains all content, settings and assets.',
+                'includes_title' => 'Backup includes:',
+                'includes_content' => 'All Markdown content from',
+                'includes_config' => 'Configuration files:',
+                'includes_themes' => 'All custom themes from',
+                'includes_assets' => 'Uploaded files from',
+                'create_backup' => 'Create backup',
+                'create_description' => 'Creates a ZIP file with all important data.',
+                'create_button' => 'Create backup',
+                'creating' => 'Creating backup...',
+                'download_ready' => 'Backup is ready for download',
+                'security_note' => 'Note: The admin password is not stored in the backup for security reasons.'
             ]
         ],
         'error' => [

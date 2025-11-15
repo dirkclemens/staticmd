@@ -139,6 +139,7 @@ $nonce = SecurityHeaders::getNonce();
                                 <?php
                                 switch ($_GET['message']) {
                                     case 'settings_saved': echo __('admin.alerts.settings_saved'); break;
+                                    case 'backup_created': echo __('admin.alerts.backup_created'); break;
                                     default: echo __('admin.alerts.success');
                                 }
                                 ?>
@@ -153,6 +154,7 @@ $nonce = SecurityHeaders::getNonce();
                                 switch ($_GET['error']) {
                                     case 'save_failed': echo __('admin.errors.settings_save_failed'); break;
                                     case 'csrf_invalid': echo __('admin.errors.csrf_invalid'); break;
+                                    case 'backup_failed': echo __('admin.errors.backup_failed'); break;
                                     default: echo __('admin.errors.generic');
                                 }
                                 ?>
@@ -538,6 +540,76 @@ $nonce = SecurityHeaders::getNonce();
                                 </div>
                             </div>
                         </form>
+                        
+                        <!-- Backup & Wiederherstellung (außerhalb des Settings-Forms) -->
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">
+                                    <i class="bi bi-archive me-2"></i>
+                                    <?= __('admin.settings.backup.title') ?>
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <p class="text-muted">
+                                            <i class="bi bi-info-circle me-1"></i>
+                                            <?= __('admin.settings.backup.description') ?>
+                                        </p>
+                                        
+                                        <div class="alert alert-info">
+                                            <h6><i class="bi bi-box-seam me-2"></i><?= __('admin.settings.backup.includes_title') ?></h6>
+                                            <ul class="mb-0">
+                                                <li><?= __('admin.settings.backup.includes_content') ?> <code>/content/</code></li>
+                                                <li><?= __('admin.settings.backup.includes_config') ?> <code>config.php</code>, <code>system/settings.json</code></li>
+                                                <li><?= __('admin.settings.backup.includes_themes') ?> <code>/system/themes/</code></li>
+                                                <li><?= __('admin.settings.backup.includes_assets') ?> <code>/public/images/</code>, <code>/public/downloads/</code></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-4">
+                                        <div class="card bg-light">
+                                            <div class="card-body text-center">
+                                                <i class="bi bi-download fs-1 text-primary mb-3"></i>
+                                                <h6><?= __('admin.settings.backup.create_backup') ?></h6>
+                                                <p class="small text-muted mb-3">
+                                                    <?= __('admin.settings.backup.create_description') ?>
+                                                </p>
+                                                
+                                                <div class="alert alert-light border mb-3">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <small class="text-muted">
+                                                            <i class="bi bi-files me-1"></i>
+                                                            <strong><?= number_format($backupStats['files']) ?></strong> Dateien
+                                                        </small>
+                                                        <small class="text-muted">
+                                                            <i class="bi bi-hdd me-1"></i>
+                                                            <strong><?= $backupStats['size_formatted'] ?></strong>
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                                
+                                                <form method="POST" action="/admin?action=create_backup" class="d-inline">
+                                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($this->auth->generateCSRFToken()) ?>">
+                                                    <button type="submit" class="btn btn-primary" id="createBackupBtn">
+                                                        <i class="bi bi-archive me-2"></i>
+                                                        <?= __('admin.settings.backup.create_button') ?>
+                                                    </button>
+                                                </form>
+                                                
+                                                <div id="backupProgress" class="mt-3" style="display: none;">
+                                                    <div class="spinner-border spinner-border-sm me-2" role="status">
+                                                        <span class="visually-hidden">Loading...</span>
+                                                    </div>
+                                                    <small class="text-muted"><?= __('admin.settings.backup.creating') ?></small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -590,6 +662,41 @@ $nonce = SecurityHeaders::getNonce();
         document.addEventListener('DOMContentLoaded', function() {
             const currentTheme = document.getElementById('editor_theme').value;
             previewTheme(currentTheme);
+        });
+        
+        // Backup-Formular Handler
+        document.getElementById('createBackupBtn')?.addEventListener('click', function(e) {
+            const progressDiv = document.getElementById('backupProgress');
+            const button = this;
+            
+            // Zeige Progress
+            button.style.display = 'none';
+            progressDiv.style.display = 'block';
+            
+            // Funktion zum Zurücksetzen des UI
+            function resetBackupUI() {
+                button.style.display = 'block';
+                progressDiv.style.display = 'none';
+            }
+            
+            // Option 1: Timeout nach 5 Sekunden (Download sollte bis dahin gestartet sein)
+            const timeoutId = setTimeout(resetBackupUI, 5000);
+            
+            // Option 2: Zurücksetzen wenn Fenster wieder Fokus bekommt
+            // (passiert oft nach Download-Dialog)
+            const focusHandler = function() {
+                clearTimeout(timeoutId);
+                resetBackupUI();
+                window.removeEventListener('focus', focusHandler);
+            };
+            
+            // Fokus-Handler mit kurzer Verzögerung hinzufügen
+            // (damit er nicht sofort bei Form-Submit triggert)
+            setTimeout(() => {
+                window.addEventListener('focus', focusHandler);
+            }, 1000);
+            
+            // Form wird normal submitted, aber wir zeigen visuelles Feedback
         });
     </script>
 </body>

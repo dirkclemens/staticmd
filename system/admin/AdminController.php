@@ -108,6 +108,10 @@ class AdminController {
                 $this->saveSettings();
                 break;
                 
+            case 'create_backup':
+                $this->createBackup();
+                break;
+                
             default:
                 $this->showDashboard();
         }
@@ -645,6 +649,7 @@ class AdminController {
         
     $settings = $this->getSettings();
     $availableThemes = $this->getAvailableThemes();
+    $backupStats = $this->calculateBackupStats();
     include __DIR__ . '/templates/settings.php';
     }
 
@@ -833,5 +838,272 @@ class AdminController {
         ];
         
         return in_array($policy, $validPolicies) ? $policy : 'index,follow';
+    }
+    
+    /**
+     * Berechnet Statistiken für das Backup (Anzahl Dateien und Größe)
+     */
+    private function calculateBackupStats(): array
+    {
+        $totalFiles = 0;
+        $totalSize = 0;
+        
+        // Content-Ordner analysieren
+        $contentPath = $this->config['paths']['content'];
+        if (is_dir($contentPath)) {
+            $stats = $this->analyzeDirectory($contentPath);
+            $totalFiles += $stats['files'];
+            $totalSize += $stats['size'];
+        }
+        
+        // System-Einstellungen
+        $systemPath = $this->config['paths']['system'];
+        if (file_exists($systemPath . '/settings.json')) {
+            $totalFiles++;
+            $totalSize += filesize($systemPath . '/settings.json');
+        }
+        
+        // Config-Datei
+        $configPath = __DIR__ . '/../../config.php';
+        if (file_exists($configPath)) {
+            $totalFiles++;
+            $totalSize += filesize($configPath);
+        }
+        
+        // Themes analysieren
+        $themesPath = $this->config['paths']['themes'];
+        if (is_dir($themesPath)) {
+            $stats = $this->analyzeDirectory($themesPath);
+            $totalFiles += $stats['files'];
+            $totalSize += $stats['size'];
+        }
+        
+        // Public Assets analysieren
+        $publicPath = $this->config['paths']['public'];
+        foreach (['images', 'downloads', 'assets'] as $subdir) {
+            $path = $publicPath . '/' . $subdir;
+            if (is_dir($path)) {
+                $stats = $this->analyzeDirectory($path);
+                $totalFiles += $stats['files'];
+                $totalSize += $stats['size'];
+            }
+        }
+        
+        return [
+            'files' => $totalFiles,
+            'size' => $totalSize,
+            'size_formatted' => $this->formatBytes($totalSize, 1)
+        ];
+    }
+    
+    /**
+     * Analysiert ein Verzeichnis rekursiv und gibt Datei-Anzahl und Größe zurück
+     */
+    private function analyzeDirectory(string $path): array
+    {
+        $files = 0;
+        $size = 0;
+        
+        if (!is_dir($path)) {
+            return ['files' => 0, 'size' => 0];
+        }
+        
+        try {
+            $iterator = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($path, \RecursiveDirectoryIterator::SKIP_DOTS),
+                \RecursiveIteratorIterator::SELF_FIRST
+            );
+            
+            foreach ($iterator as $file) {
+                if ($file->isFile()) {
+                    // Bestimmte Dateien ausschließen
+                    $filename = $file->getFilename();
+                    if (in_array($filename, ['.DS_Store', 'Thumbs.db', '.gitignore'])) {
+                        continue;
+                    }
+                    
+                    $files++;
+                    $size += $file->getSize();
+                }
+            }
+        } catch (\Exception $e) {
+            // Bei Fehlern einfach 0 zurückgeben
+            return ['files' => 0, 'size' => 0];
+        }
+        
+        return ['files' => $files, 'size' => $size];
+    }
+    
+    /**
+     * Erstellt ein Backup aller wichtigen Dateien
+     */
+    private function createBackup(): void
+    {
+        $this->auth->requireLogin();
+        
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: /admin?action=settings');
+            exit;
+        }
+        
+        $csrfToken = $_POST['csrf_token'] ?? '';
+        if (!$this->auth->verifyCSRFToken($csrfToken)) {
+            header('Location: /admin?action=settings&error=csrf_invalid');
+            exit;
+        }
+        
+        try {
+            // Prüfe ob ZIP-Extension verfügbar ist
+            if (!class_exists('\ZipArchive')) {
+                throw new \Exception('ZIP-Extension ist nicht verfügbar. Bitte installieren Sie php-zip.');
+            }
+            
+            // Backup-Dateiname mit Zeitstempel
+            $timestamp = date('Y-m-d_H-i-s');
+            $backupFilename = "staticmd_backup_{$timestamp}.zip";
+            $backupPath = sys_get_temp_dir() . '/' . $backupFilename;
+            
+            // ZIP-Archiv erstellen
+            $zip = new \ZipArchive();
+            if ($zip->open($backupPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== TRUE) {
+                throw new \Exception('Konnte ZIP-Archiv nicht erstellen');
+            }
+            
+            // Content-Ordner hinzufügen
+            $this->addDirectoryToZip($zip, $this->config['paths']['content'], 'content/');
+            
+            // System-Einstellungen hinzufügen
+            $systemPath = $this->config['paths']['system'];
+            if (file_exists($systemPath . '/settings.json')) {
+                $zip->addFile($systemPath . '/settings.json', 'system/settings.json');
+            }
+            
+            // Config-Datei hinzufügen (ohne Passwort-Hash aus Sicherheitsgründen)
+            $this->addConfigToZip($zip);
+            
+            // Themes hinzufügen
+            $this->addDirectoryToZip($zip, $this->config['paths']['themes'], 'system/themes/');
+            
+            // Public Assets hinzufügen
+            $publicPath = $this->config['paths']['public'];
+            if (is_dir($publicPath . '/images')) {
+                $this->addDirectoryToZip($zip, $publicPath . '/images', 'public/images/');
+            }
+            if (is_dir($publicPath . '/downloads')) {
+                $this->addDirectoryToZip($zip, $publicPath . '/downloads', 'public/downloads/');
+            }
+            if (is_dir($publicPath . '/assets')) {
+                $this->addDirectoryToZip($zip, $publicPath . '/assets', 'public/assets/');
+            }
+            
+            // README für Backup hinzufügen
+            $readme = $this->generateBackupReadme($timestamp);
+            $zip->addFromString('README.md', $readme);
+            
+            $zip->close();
+            
+            // Backup zum Download anbieten
+            if (file_exists($backupPath)) {
+                header('Content-Type: application/zip');
+                header('Content-Disposition: attachment; filename="' . $backupFilename . '"');
+                header('Content-Length: ' . filesize($backupPath));
+                header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+                header('Pragma: no-cache');
+                
+                readfile($backupPath);
+                unlink($backupPath); // Temporäre Datei löschen
+                exit;
+            } else {
+                throw new \Exception('Backup-Datei konnte nicht erstellt werden');
+            }
+            
+        } catch (\Exception $e) {
+            error_log('Backup creation failed: ' . $e->getMessage());
+            header('Location: /admin?action=settings&error=backup_failed&message=' . urlencode($e->getMessage()));
+            exit;
+        }
+    }
+    
+    /**
+     * Fügt ein Verzeichnis rekursiv zum ZIP-Archiv hinzu
+     */
+    private function addDirectoryToZip(\ZipArchive $zip, string $sourcePath, string $zipPath): void
+    {
+        if (!is_dir($sourcePath)) {
+            return;
+        }
+        
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($sourcePath, \RecursiveDirectoryIterator::SKIP_DOTS),
+            \RecursiveIteratorIterator::SELF_FIRST
+        );
+        
+        foreach ($iterator as $file) {
+            $filePath = $file->getRealPath();
+            $relativePath = $zipPath . substr($filePath, strlen($sourcePath) + 1);
+            
+            if ($file->isDir()) {
+                $zip->addEmptyDir($relativePath);
+            } else {
+                // Bestimmte Dateien ausschließen
+                $filename = $file->getFilename();
+                if (in_array($filename, ['.DS_Store', 'Thumbs.db', '.gitignore'])) {
+                    continue;
+                }
+                
+                $zip->addFile($filePath, $relativePath);
+            }
+        }
+    }
+    
+    /**
+     * Fügt eine bereinigte Config-Datei zum ZIP hinzu
+     */
+    private function addConfigToZip(\ZipArchive $zip): void
+    {
+        $configPath = __DIR__ . '/../../config.php';
+        if (!file_exists($configPath)) {
+            return;
+        }
+        
+        $configContent = file_get_contents($configPath);
+        
+        // Passwort-Hash durch Platzhalter ersetzen
+        $configContent = preg_replace(
+            "/('password'\s*=>\s*')[^']*(')/",
+            "$1*** REMOVED FOR SECURITY ***$2",
+            $configContent
+        );
+        
+        $zip->addFromString('config.php', $configContent);
+    }
+    
+    /**
+     * Generiert eine README-Datei für das Backup
+     */
+    private function generateBackupReadme(string $timestamp): string
+    {
+        $settings = $this->getSettings();
+        $siteName = $settings['site_name'] ?? 'StaticMD';
+        
+        return "# StaticMD Backup\n\n" .
+               "**Site:** {$siteName}\n" .
+               "**Erstellt:** {$timestamp}\n" .
+               "**Version:** " . ($this->config['system']['version'] ?? '1.0.0') . "\n\n" .
+               "## Inhalt\n\n" .
+               "Dieses Backup enthält:\n\n" .
+               "- `content/` - Alle Markdown-Inhalte\n" .
+               "- `system/settings.json` - Website-Einstellungen\n" .
+               "- `system/themes/` - Alle Themes\n" .
+               "- `public/images/` - Hochgeladene Bilder\n" .
+               "- `public/assets/` - Öffentliche Assets\n" .
+               "- `public/downloads/` - Hochgeladene Dateien\n" .
+               "- `config.php` - Konfiguration (Passwort entfernt)\n\n" .
+               "## Wiederherstellung\n\n" .
+               "1. Entpacken Sie das Archiv in Ihr StaticMD-Verzeichnis\n" .
+               "2. Passen Sie `config.php` an (Passwort setzen)\n" .
+               "3. Stellen Sie sicher, dass die Verzeichnisrechte korrekt sind\n" .
+               "4. Testen Sie Ihre Installation\n\n" .
+               "**Wichtig:** Das Admin-Passwort wurde aus Sicherheitsgründen entfernt und muss neu gesetzt werden.\n";
     }
 }

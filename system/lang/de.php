@@ -55,7 +55,8 @@ return [
             'saved' => 'Datei wurde erfolgreich gespeichert.',
             'deleted' => 'Datei wurde erfolgreich gelöscht.',
             'success' => 'Aktion wurde erfolgreich ausgeführt.',
-            'settings_saved' => 'Einstellungen wurden erfolgreich gespeichert.'
+            'settings_saved' => 'Einstellungen wurden erfolgreich gespeichert.',
+            'backup_created' => 'Backup wurde erfolgreich erstellt.'
             ],
         'search' => [
             'result_limit_label' => 'Maximale Anzahl Suchergebnisse',
@@ -73,6 +74,7 @@ return [
             'filename_required' => 'Dateiname ist erforderlich.',
             'invalid_request' => 'Ungültige Anfrage.',
             'settings_save_failed' => 'Fehler beim Speichern der Einstellungen.',
+            'backup_failed' => 'Backup konnte nicht erstellt werden.',
             'generic' => 'Ein Fehler ist aufgetreten.'
         ],
         'dashboard' => [
@@ -161,6 +163,21 @@ return [
                 'features_robots_txt' => 'robots.txt: Automatisch generiert unter /robots.txt',
                 'features_meta_tags' => 'Meta-Tags: Automatisch in allen Templates eingefügt',
                 'features_http_headers' => 'HTTP-Headers: X-Robots-Tag bei noindex automatisch gesetzt'
+            ],
+            'backup' => [
+                'title' => 'Backup & Wiederherstellung',
+                'description' => 'Erstellen Sie ein vollständiges Backup Ihrer StaticMD-Installation. Das Backup enthält alle Inhalte, Einstellungen und Assets.',
+                'includes_title' => 'Backup enthält:',
+                'includes_content' => 'Alle Markdown-Inhalte aus',
+                'includes_config' => 'Konfigurationsdateien:',
+                'includes_themes' => 'Alle benutzerdefinierten Themes aus',
+                'includes_assets' => 'Hochgeladene Dateien aus',
+                'create_backup' => 'Backup erstellen',
+                'create_description' => 'Erstellt eine ZIP-Datei mit allen wichtigen Daten.',
+                'create_button' => 'Backup erstellen',
+                'creating' => 'Backup wird erstellt...',
+                'download_ready' => 'Backup ist bereit zum Download',
+                'security_note' => 'Hinweis: Das Admin-Passwort wird aus Sicherheitsgründen nicht im Backup gespeichert.'
             ]
         ],
         'error' => [
