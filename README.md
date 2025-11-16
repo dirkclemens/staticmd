@@ -4,7 +4,7 @@ StaticMD is a professional PHP-based CMS for Markdown content with Bootstrap fro
 
 **Perfect for**: Technical documentation, wikis, blogs, knowledge bases, image galleries, and content-driven websites.
 
-**New in 2024**: Gallery layouts, enhanced shortcode system, improved security, and comprehensive backup functionality.
+**New**: Gallery layouts, enhanced shortcode system, improved security, and comprehensive backup functionality.
 
 ---
 
