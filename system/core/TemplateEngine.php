@@ -46,7 +46,7 @@ class TemplateEngine
         extract($templateData);
         
         // Spezielle Template-Variablen setzen
-        $title = $templateData['content']['title'] ?? 'Unbenannte Seite';
+        $title = $templateData['content']['title'] ?? ''; //'Unbenannte Seite';
         $body = $templateData['content']['content'] ?? '';
         $meta = $templateData['content']['meta'] ?? [];
         $currentRoute = $templateData['current_route'] ?? '';

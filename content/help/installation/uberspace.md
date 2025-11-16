@@ -1,6 +1,6 @@
 ---
-Title: Uberspace Hosting
-Author: StaticMD Team
+Title: 12. Uberspace Hosting
+Author: System
 Tag: hosting, uberspace, deployment
 Layout: Standard
 ---

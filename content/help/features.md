@@ -1,80 +1,226 @@
+---
+Title: 2. Feature Overview
+Author: System
+Tag: features, documentation
+---
+
 # StaticMD - Feature Overview
 
+> **Status Legend**: ✅ Fully Implemented | 🚧 In Development | ❌ Not Implemented
+
+**Total Features**: 45+ implemented features across 8 major categories
+
 ## Main Features
-- 9 Frontend Themes (Bootstrap, Solarized, Monokai, GitHub, Static-MD, AdCore)
-- 5 Editor Themes (CodeMirror)
-- Live Theme Switching
-- Responsive Design
-- Complete Admin Dashboard
-- Professional Editor with Toolbar and Drag&Drop
-- Delete Function with Confirmation
-- Return-URL Navigation
-- Settings System
-- Auto-Save
-- Privacy Controls
-- Unicode/Umlaut Support
-- Yellow CMS Compatibility
-- Full-text Search
-- Shortcodes: `[pages]`, `[tags]`, `[folder]`, `[accordion]`, `[ download file.pdf]`, `[ image name.png]`
-- Tag System
-- Download Tag with Bootstrap Icon
-- Drag&Drop Upload for PDF/ZIP
-- Clean URLs
-- CSRF Protection
-- Content Security Policy (CSP)
-- Comprehensive Security Headers
-- Path Traversal Protection
-- XSS Protection
-- Session Security
-- Open Redirect Protection
-- SEO & Search Engine Control
-- Dynamic robots.txt Generation
-- Per-Page Robots Meta Tags
-- Breadcrumb Navigation
-- Subdirectory Support
+
+### 🎨 Frontend & Design
+- ✅ **9 Frontend Themes**: Bootstrap, Solarized Light/Dark, Monokai Light/Dark, GitHub Light/Dark, Static-MD, AdCore
+- ✅ **5 Editor Themes**: GitHub, Monokai, Solarized Light/Dark, Material
+- ✅ **Gallery Layout**: Special gallery layout with lightbox, grid display, and tag filtering
+- ✅ **Live Theme Switching**: Real-time theme preview in admin
+- ✅ **Responsive Design**: Bootstrap 5 based, mobile-friendly
+- ✅ **Theme Helper**: Centralized theme management and navigation building
+
+### 🛠️ Admin Interface
+- ✅ **Complete Admin Dashboard**: File statistics, recent files, system info
+- ✅ **Professional Editor**: CodeMirror with enhanced toolbar
+- ✅ **Drag & Drop Upload**: PDF/ZIP files with automatic download tag insertion
+- ✅ **Image Upload**: Drag & drop image upload with automatic insertion
+- ✅ **Delete Function**: File deletion with confirmation dialog
+- ✅ **Return-URL Navigation**: Smart navigation after edit operations
+- ✅ **Settings System**: Comprehensive JSON-based configuration
+- ✅ **Auto-Save**: Configurable intervals (30-300 seconds)
+- ✅ **Backup System**: Complete site backup with download
+
+### 📝 Content & Markdown
+- ✅ **Unicode/Umlaut Support**: Full German umlaut support with normalization
+- ✅ **Yellow CMS Compatibility**: Import and syntax compatibility
+- ✅ **Emoji Support**: ~150 GitHub-style emojis (`:smile:` → 😄)
+- ✅ **LaTeX Support**: Inline (`$formula$`) and block (`$$formula$$`) math
+- ✅ **Enhanced Markdown**: Headers with IDs, tables, code blocks, autolinks
+
+### 🔍 Search & Navigation
+- ✅ **Full-text Search**: Weighted relevance search with tag filtering
+- ✅ **Tag System**: Content tagging with `/tag/tagname` routes
+- ✅ **Navigation Ordering**: Configurable navigation priority system
+- ✅ **Breadcrumb Navigation**: Automatic breadcrumb generation
+- ✅ **Clean URLs**: SEO-friendly URL structure
+- ✅ **Subdirectory Support**: Nested content organization
+
+### 🎯 Shortcodes
+- ✅ **`[pages /path/ limit]`**: Automatic page listings with pagination
+- ✅ **`[tags /path/ limit]`**: Tag clouds with frequency-based sizing
+- ✅ **`[folder /path/ limit]`**: Horizontal subfolder navigation
+- ✅ **`[gallery folder]`**: Automatic image galleries with lightbox
+- ✅ **`[accordion*]`**: Bootstrap 5 collapsible accordions
+- ✅ **`[download file.pdf "Alt"]`**: Download links with Bootstrap icons
+- ✅ **`[image name.png "Alt" - 50%]`**: Yellow CMS image syntax
+- ✅ **Code-Block Protection**: Shortcodes in code blocks remain as text
+
+### 🔐 Security
+- ✅ **CSRF Protection**: All forms protected with CSRF tokens
+- ✅ **Content Security Policy (CSP)**: Context-aware CSP headers
+- ✅ **Comprehensive Security Headers**: X-Frame-Options, HSTS, X-XSS-Protection
+- ✅ **Path Traversal Protection**: Safe file path handling
+- ✅ **XSS Protection**: Input sanitization and output encoding
+- ✅ **Session Security**: Secure session management with timeouts
+- ✅ **Open Redirect Protection**: URL validation for redirects
+
+### 🌐 SEO & Search Engines
+- ✅ **Dynamic robots.txt Generation**: Context-aware robots.txt at `/robots.txt`
+- ✅ **Per-Page Robots Meta Tags**: `Robots: noindex,nofollow` in front matter
+- ✅ **SEO Settings**: Global crawler blocking and robots policy
+- ✅ **Meta Tag Generation**: Automatic meta descriptions and author tags
+- ✅ **Canonical URLs**: Support for canonical URL specification
+
+### 🎛️ Privacy & Control
+- ✅ **Privacy Controls**: Private pages visible only to admins
+- ✅ **Visibility Settings**: `Visibility: private` in front matter
+- ✅ **Admin-only Content**: Conditional content display
+- ✅ **Session-based Authentication**: Secure admin access
 
 ## Project Structure
 ```
 staticMD/
-├── index.php
-├── config.php
-├── .htaccess
-├── content/
+├── index.php                 # Frontend entry point
+├── config.php               # Main configuration
+├── .htaccess               # Apache rewrite rules
+├── assets.php              # Asset delivery system  
+├── robots.php              # Dynamic robots.txt
+├── content/                # Markdown content
 │   ├── index.md
-│   └── ...
-├── system/
-│   ├── core/
-│   ├── admin/
-│   └── themes/
-└── public/
-    ├── assets/
-    ├── images/
-    └── downloads/
+│   ├── about/
+│   ├── blog/
+│   └── help/
+├── system/                 # Core system
+│   ├── core/              # Core classes
+│   ├── admin/             # Admin interface
+│   ├── themes/            # Frontend themes
+│   ├── lang/              # Language files
+│   └── settings.json      # Site settings
+└── public/                # Public assets
+    ├── assets/            # General assets
+    │   └── galleries/     # Gallery images
+    ├── images/            # Uploaded images
+    └── downloads/         # PDF/ZIP files
 ```
 
-## Markdown Features
-```
-- [ download file.pdf "Alt-Text"] creates a download link with matching icon   
-- [ image image.jpg "Alt-Text" - 50%] for images   
-- [ pages /path/ limit] for overviews   
-- [ tags /path/ limit] for tag clouds   
-- [ folder /path/ limit] for horizontal subfolder navigation
-- [ accordionstart id "Title"]...[accordionstop] for accordions   
+## Shortcodes / Markdown Features
+
+### ✅ Implemented Shortcodes
+```markdown
+# Content Listing
+[pages /path/ limit]              # Page overviews with pagination
+[tags /path/ limit]               # Tag clouds with frequency sizing  
+[folder /path/ limit]             # Horizontal subfolder navigation
+
+# Media & Downloads  
+[download file.pdf "Alt-Text"]    # Download links with Bootstrap icons
+[image image.jpg "Alt-Text" - 50%] # Images with Yellow CMS syntax
+[gallery folder-name]             # Automatic image galleries
+
+# Interactive Elements
+[accordionstart id "Title"]
+Content here...
+[accordionstop]
 ```
 
-## SEO Front Matter
+### ✅ Enhanced Markdown
+```markdown
+# Headers with custom IDs {#custom-id}
+**Bold** and *italic* text
+~~Strikethrough~~ text
+`inline code` and ```code blocks```
+
+# Emoji support
+:smile: :heart: :rocket: :thumbsup:
+
+# LaTeX Math
+Inline: $E = mc^2$
+Block: $$\sum_{i=1}^n x_i$$
+
+# Auto-linking
+https://example.com becomes clickable
+```
+
+## Front Matter Support
+
+### ✅ Supported Fields
 ```markdown
 ---
-Title: Page Title
-Author: Author
-Tag: seo, robots
-Description: Meta description for search engines
-Robots: noindex,nofollow
-Canonical: https://your-domain.com/canonical-url
+Title: Page Title                    # Page title (required)
+Author: Author Name                  # Content author  
+Tag: seo, robots, documentation      # Comma-separated tags
+Description: Meta description        # SEO meta description
+Layout: gallery                      # Special layouts (wiki, gallery, etc.)
+Visibility: private                  # Privacy control (private/public)
+Robots: noindex,nofollow            # Per-page robots directive
+Date: 2024-01-15                    # Content date
 ---
 ```
 
-## Notes
-- PDF/ZIP files are uploaded to `/public/downloads/`
-- Download tag is automatically inserted
-- Parser shows the appropriate Bootstrap icon for each file type
+### 🎨 Special Layouts
+- **`Layout: gallery`**: Image gallery with lightbox and filtering
+- **`Layout: wiki`**: Standard wiki-style layout (default)
+- **`Layout: blog`**: Blog post layout with meta information
+- **`Layout: page`**: Simple page layout
+
+## Implementation Details
+
+### 📁 File Organization
+- **PDF/ZIP uploads**: Stored in `/public/downloads/`
+- **Image uploads**: Stored in `/public/images/`
+- **Gallery images**: Organized in `/public/assets/galleries/folder-name/`
+- **Content files**: Stored in `/content/` as Markdown files
+
+### 🔧 Technical Features
+- **Automatic tag insertion**: Upload creates appropriate shortcode
+- **Bootstrap icons**: PDF (📄), ZIP (📦), generic files (📁)
+- **Security validation**: File type and extension checking
+- **Unicode normalization**: NFC/NFD handling for German umlauts
+- **Clean URL routing**: `/content/about.md` → `/about`
+- **Asset routing**: `/assets/images/file.jpg` routes to `/public/images/file.jpg`
+
+### 🎯 Gallery System
+- **Automatic loading**: `[gallery folder]` loads all images from folder
+- **Lightbox integration**: GLightbox for full-screen viewing
+- **Tag filtering**: Images can be tagged and filtered
+- **Grid layout**: Responsive 4-column Bootstrap grid
+- **Hover effects**: Image scaling and info overlays
+
+### 🚀 Performance
+- **Lazy loading**: Images loaded on demand
+- **CSS/JS CDN**: Bootstrap and libraries from CDN
+- **Efficient routing**: Single entry point with clean URL rewriting
+- **Caching headers**: Appropriate cache control for static assets
+
+## Recent Additions
+
+### 🖼️ Gallery System (NEW)
+- **Gallery Layout**: Dedicated layout for image collections
+- **Automatic Gallery Loading**: `[gallery folder-name]` shortcode
+- **Lightbox Functionality**: GLightbox integration for full-screen viewing
+- **Tag-based Filtering**: Filter images by tags in gallery view
+- **Responsive Grid**: Bootstrap 5 responsive image grid
+- **Hover Effects**: Image scaling and information overlays
+
+### 🔧 Enhanced Shortcode System (IMPROVED)
+- **Pre-processing**: Shortcodes processed before Markdown parsing
+- **Code Block Protection**: Shortcodes in code blocks remain as text
+- **Parameter Flexibility**: Optional parameters and improved parsing
+- **Error Handling**: Graceful fallbacks for invalid shortcodes
+
+### 🎨 Theme System Expansion
+- **9 Complete Themes**: All themes fully functional
+- **Gallery Template**: Special gallery.php template for all themes
+- **Theme Helper**: Centralized navigation and breadcrumb generation
+- **Asset Integration**: Proper asset routing for theme resources
+
+### 🔐 Security Enhancements
+- **Enhanced CSP**: Context-aware Content Security Policy
+- **External Image Support**: CSP updated for gallery external images
+- **Asset Security**: Secure asset delivery with validation
+- **Path Normalization**: Unicode-safe path handling
+
+---
+
+*StaticMD Feature Set - Last Updated: November 2024*

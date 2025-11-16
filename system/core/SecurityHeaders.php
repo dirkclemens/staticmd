@@ -19,6 +19,9 @@ class SecurityHeaders
 
     /**
      * Generiert CSP-Direktiven basierend auf Kontext
+     * um nur Bilder der eigenen Domain zu erlauben, 
+     * muss "img-src 'self' data: blob:" sein 
+     * und darf nicht "img-src 'self' data: blob: https: http:" enthalten.
      */
     private static function getCSP(string $context): string
     {
@@ -27,7 +30,7 @@ class SecurityHeaders
             "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
             "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
             "font-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com data:",
-            "img-src 'self' data: blob:",
+            "img-src 'self' data: blob: https: http:",
             "connect-src 'self'",
             "media-src 'self'",
             "object-src 'none'",

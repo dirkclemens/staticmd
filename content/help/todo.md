@@ -1,8 +1,7 @@
 ---
-Title: Todo
+Title: 9. Todo
 Layout: Standard
 Author: dirk
-date: 2025-11-02
 Visibility: public
 ---
 

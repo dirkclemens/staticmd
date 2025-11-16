@@ -98,15 +98,33 @@ if (!$validation['valid']) {
 
 $sanitizedPath = $validation['sanitized_path'];
 
-// Vollständiger Pfad zur Asset-Datei
-$assetsDir = __DIR__ . '/public/assets/';
-$fullPath = $assetsDir . $sanitizedPath;
+// Vollständiger Pfad zur Asset-Datei - unterstützt sowohl assets/ als auch images/
+if (strpos($sanitizedPath, 'images/') === 0) {
+    // Bilder aus /public/images/ ausliefern
+    $assetsDir = __DIR__ . '/public/';
+    $fullPath = $assetsDir . $sanitizedPath;
+} else {
+    // Standard-Assets aus /public/assets/ ausliefern
+    $assetsDir = __DIR__ . '/public/assets/';
+    $fullPath = $assetsDir . $sanitizedPath;
+}
 
 // Realpath-Validierung (finale Sicherheitsprüfung)
 $realPath = realpath($fullPath);
 $realAssetsDir = realpath($assetsDir);
 
-if (!$realPath || !$realAssetsDir || strpos($realPath, $realAssetsDir) !== 0) {
+// Zusätzliche Validierung für images-Pfade
+$publicDir = realpath(__DIR__ . '/public/');
+$isValidPath = false;
+
+if ($realPath && $realAssetsDir && strpos($realPath, $realAssetsDir) === 0) {
+    $isValidPath = true;
+} elseif (strpos($sanitizedPath, 'images/') === 0 && $realPath && $publicDir && strpos($realPath, $publicDir) === 0) {
+    // Zusätzliche Validierung für images/ Pfade
+    $isValidPath = true;
+}
+
+if (!$isValidPath) {
     error_log('Assets Security: Path-Traversal verhindert - Path: ' . $fullPath);
     http_response_code(404);
     exit('Asset not found');

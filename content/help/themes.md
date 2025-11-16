@@ -1,132 +1,209 @@
 ---
-Title: Theme System
-Author: StaticMD Team
+Title: 7. Theme System
+Author: System
 Tag: themes, design, frontend
 Layout: Standard
 ---
 
 # Theme System
 
-Comprehensive documentation of the StaticMD theme system with 7 professional themes and guide for developing custom themes.
+Comprehensive documentation of the StaticMD theme system with **8 professional themes** and complete guide for developing custom themes.
+
+> **Available**: 8 public themes + 5 editor themes + gallery support + ThemeHelper system
 
 ---
 
 ## Overview
 
-StaticMD offers a flexible theme system with 7 pre-installed professional themes. The system supports both frontend themes for visitor view and editor themes for the admin interface.
+StaticMD offers a flexible theme system with **8 pre-installed professional themes** (excluding internal themes). The system supports both frontend themes for visitor view and editor themes for the admin interface.
+
+**Available for Public Use**: 8 themes
+**Total Installed**: 9 themes (including 1 internal theme)
 
 ## Available Themes
 
 ### Frontend Themes
 
-#### 1. Bootstrap (Default)
+#### 1. Bootstrap (Default) ✅
 - **Path**: `/system/themes/bootstrap/`
 - **Description**: Standard Bootstrap 5 theme with modern design
-- **Features**: Responsive grid, dark/light mode toggle, professional layout
+- **Features**: Responsive grid, navigation dropdown, professional layout, gallery support
 - **Target Audience**: Universal use, business-ready
+- **Special Layouts**: `template.php`, `gallery.php`
 
-#### 2. Solarized Light
+#### 2. Solarized Light ✅
 - **Path**: `/system/themes/solarized-light/`
 - **Description**: Eye-friendly light theme for developers
 - **Features**: Warm colors, high contrast, code-optimized
 - **Target Audience**: Developers, technical documentation
 
-#### 3. Solarized Dark
+#### 3. Solarized Dark ✅
 - **Path**: `/system/themes/solarized-dark/`
 - **Description**: Dark Solarized theme for nighttime work
 - **Features**: Dark background, muted colors, eye-friendly
 - **Target Audience**: Developers, dark mode preference
 
-#### 4. Monokai Light
+#### 4. Monokai Light ✅
 - **Path**: `/system/themes/monokai-light/`
 - **Description**: Light variant of the popular Monokai theme
 - **Features**: High-contrast colors, modern typography
 - **Target Audience**: Designers, creative projects
 
-#### 5. Monokai Dark
+#### 5. Monokai Dark ✅
 - **Path**: `/system/themes/monokai-dark/`
 - **Description**: Classic dark Monokai theme
 - **Features**: Dark background, bright accent colors
 - **Target Audience**: Developers, programmers
 
-#### 6. GitHub Light
+#### 6. GitHub Light ✅
 - **Path**: `/system/themes/github-light/`
 - **Description**: Authentic GitHub look for repositories
 - **Features**: GitHub-like design, Markdown-optimized
 - **Target Audience**: Open source projects, documentation
 
-#### 7. GitHub Dark
+#### 7. GitHub Dark ✅
 - **Path**: `/system/themes/github-dark/`
 - **Description**: Dark GitHub variant
 - **Features**: GitHub dark mode, professional
 - **Target Audience**: Developers, modern projects
 
+#### 8. Static-MD ✅
+- **Path**: `/system/themes/static-md/`
+- **Description**: Original StaticMD theme with clean design
+- **Features**: Minimal layout, fast loading, content-focused
+- **Target Audience**: Documentation sites, content-heavy projects
+
 ### Editor Themes
 
-#### CodeMirror Themes
-- **GitHub**: Standard light editor
-- **Monokai**: Dark editor with syntax highlighting
-- **Solarized Light**: Light Solarized editor
-- **Solarized Dark**: Dark Solarized editor
-- **Material**: Material Design editor
+#### CodeMirror Themes (5 Available) ✅
+- **GitHub**: Standard light editor with clean syntax highlighting
+- **Monokai**: Dark editor with vibrant colors and excellent contrast
+- **Solarized Light**: Light Solarized editor with warm, eye-friendly colors
+- **Solarized Dark**: Dark Solarized editor with muted, comfortable colors
+- **Material**: Material Design editor with modern flat design
+
+**Features**: Live preview, theme switching in settings, syntax highlighting for Markdown, real-time theme preview
 
 ---
 
 ## Theme Structure
 
-### Directory Structure
+### Directory Structure ✅
 ```
 system/themes/
+├── ThemeHelper.php       # Shared theme functionality
 ├── bootstrap/
-│   ├── template.php      # PHP Template
-│   └── template.css      # Theme-specific CSS
+│   ├── template.php      # Main template
+│   ├── gallery.php       # Gallery layout (NEW)
+│   └── template.css      # Theme CSS
 ├── solarized-light/
-│   ├── template.php
-│   └── template.css
-└── [other themes...]
+├── solarized-dark/
+├── monokai-light/
+├── monokai-dark/
+├── github-light/
+├── github-dark/
+└── static-md/
+    ├── template.php
+    └── template.css
 ```
 
-### Template File (template.php)
+**Note**: All themes include gallery layout support for image collections.
+
+### Template File (template.php) ✅
 ```php
 <?php
-// Theme: Bootstrap
-// Version: 1.0.0
-// Author: StaticMD Team
+/**
+ * Bootstrap Theme - Main Template
+ * Uses Bootstrap 5 for modern, responsive design
+ */
 
-$siteName = $this->getSetting('site_name', 'StaticMD');
-$currentTheme = $this->getSetting('frontend_theme', 'bootstrap');
+// Theme configuration
+$siteName = $config['system']['name'] ?? 'StaticMD';
+$currentRoute = $_GET['route'] ?? 'index';
+
+// Load settings
+$settingsFile = $config['paths']['system'] . '/settings.json';
+$settings = [];
+if (file_exists($settingsFile)) {
+    $settings = json_decode(file_get_contents($settingsFile), true) ?: [];
+}
+$siteName = $settings['site_name'] ?? $siteName;
+$siteLogo = $settings['site_logo'] ?? '';
+
+// Theme Helper for navigation
+require_once __DIR__ . '/../ThemeHelper.php';
+$themeHelper = new \StaticMD\Themes\ThemeHelper($this->contentLoader);
+$navItems = $themeHelper->buildNavigation();
+
+// Navigation ordering from settings
+$navigationOrder = $this->contentLoader->getNavigationOrder();
+uksort($navItems, function($a, $b) use ($navigationOrder) {
+    $orderA = $navigationOrder[$a] ?? 999;
+    $orderB = $navigationOrder[$b] ?? 999;
+    return $orderA <=> $orderB;
+});
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($title ?? $siteName) ?></title>
-    
-    <!-- Theme CSS -->
-    <link href="/system/themes/<?= $currentTheme ?>/template.css" rel="stylesheet">
+    <title><?= htmlspecialchars($title) ?> - <?= htmlspecialchars($siteName) ?></title>
     
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- Theme CSS -->
+    <style><?php include __DIR__ . '/template.css'; ?></style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <!-- Navigation content -->
+    <!-- Navigation with dropdown support -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <!-- Logo and site name -->
+            <a class="navbar-brand" href="/">
+                <?php if (!empty($siteLogo)): ?>
+                    <img src="<?= htmlspecialchars($siteLogo) ?>" alt="Logo" style="height: 30px;">
+                <?php endif; ?>
+                <?= htmlspecialchars($siteName) ?>
+            </a>
+            
+            <!-- Navigation items with dropdown -->
+            <div class="navbar-nav">
+                <?php foreach ($navItems as $section => $nav): ?>
+                    <?php if (!empty($nav['pages'])): ?>
+                    <!-- Dropdown for folders -->
+                    <div class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <?= htmlspecialchars($nav['title']) ?>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <?php foreach ($nav['pages'] as $page): ?>
+                            <li><a class="dropdown-item" href="/<?= $page['route'] ?>">
+                                <?= htmlspecialchars($page['title']) ?>
+                            </a></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                    <?php else: ?>
+                    <!-- Direct link -->
+                    <a class="nav-link" href="/<?= $nav['route'] ?>">
+                        <?= htmlspecialchars($nav['title']) ?>
+                    </a>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </div>
+        </div>
     </nav>
     
     <!-- Main Content -->
     <main class="container mt-4">
-        <?= $content ?>
+        <?= $body ?>
     </main>
     
-    <!-- Footer -->
-    <footer class="bg-light mt-5 py-4">
-        <!-- Footer content -->
-    </footer>
-    
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
 ```
@@ -135,14 +212,26 @@ $currentTheme = $this->getSetting('frontend_theme', 'bootstrap');
 
 ## Theme Selection and Management
 
-### Admin Interface
+### Admin Interface ✅
 
-Themes can be managed via **Admin → Settings → Theme Settings**:
+Themes can be managed via **Admin → Settings**:
 
-1. **Frontend Theme Selection**: Dropdown with all available themes
-2. **Editor Theme Selection**: CodeMirror theme for admin editor
-3. **Live Preview**: Immediate view of changes
-4. **Theme Information**: Details about each theme
+#### Frontend Theme Section
+1. **Theme Dropdown**: Shows all 8 public themes (excludes internal themes)
+2. **Theme Preview**: Visual theme selector with description
+3. **Live Application**: Changes apply immediately without restart
+4. **Theme Validation**: Automatic validation of theme files
+
+#### Editor Theme Section
+1. **CodeMirror Theme Selection**: 5 available editor themes
+2. **Live Preview**: Real-time preview of editor appearance
+3. **Syntax Highlighting**: Preview shows actual markdown syntax
+4. **Theme Switching**: Instant theme changes in editor
+
+#### Settings Storage
+- **Frontend Theme**: Stored in `system/settings.json` as `frontend_theme`
+- **Editor Theme**: Stored as `editor_theme`
+- **Auto-Save**: Settings saved automatically on change
 
 ### Programmatic Selection
 
@@ -318,32 +407,40 @@ body {
 
 ## Theme Variables
 
-### Available Variables in Templates
+### Available Variables in Templates ✅
 
 ```php
-// Content variables
-$content         // Processed Markdown content
-$title          // Page title
-$author         // Page author
-$tags           // Comma-separated tags
-$description    // Meta description
+// Content variables (from ContentLoader)
+$body           // Processed Markdown content (main variable)
+$title          // Page title from front matter
+$meta           // Array with all front matter data
+$content        // Content array with route, file_path, etc.
 
-// Navigation
-$navigation     // Array with navigation items
-$breadcrumb     // Breadcrumb navigation
+// Navigation (from ThemeHelper)
+$navItems       // Navigation array built by ThemeHelper
+$breadcrumbs    // Breadcrumb array (optional)
 
-// Settings
-$siteName       // Site name from settings
-$siteDescription // Site description
-$currentTheme   // Current theme
+// Settings (from settings.json)
+$settings       // Complete settings array
+$siteName       // Site name: $settings['site_name']
+$siteLogo       // Site logo: $settings['site_logo']
+$navigationOrder // Navigation priority: $settings['navigation_order']
 
-// SEO
-$robotsMeta     // Robots meta tags
-$enableSeoMeta  // SEO enabled/disabled
+// System variables
+$config         // Complete configuration array
+$currentRoute   // Current route from $_GET['route']
+$_SESSION       // Admin session data
 
-// System
-$isAdmin        // Is admin logged in
-$adminToolbar   // Admin toolbar HTML
+// SEO variables (from SecurityHeaders)
+$robotsMeta     // Generated robots meta tags
+
+// Theme variables
+$this->contentLoader  // Access to ContentLoader instance
+
+// Example usage:
+$author = $meta['author'] ?? '';
+$tags = $meta['tag'] ?? '';
+$isPrivate = ($meta['visibility'] ?? 'public') === 'private';
 ```
 
 ---
@@ -404,6 +501,45 @@ echo "<link rel='preload' href='/system/themes/{$currentTheme}/template.css' as=
 ]
 ```
 
+## New Features & Gallery Support
+
+### 🖼️ Gallery Layout System (NEW)
+All themes now support gallery layouts:
+
+```php
+// Special gallery template: gallery.php
+// Activated with: Layout: gallery in front matter
+// Features:
+- Responsive image grid
+- GLightbox integration
+- Tag-based filtering
+- Hover effects and overlays
+- Automatic image loading via [gallery] shortcode
+```
+
+### 🔧 Theme Helper System ✅
+```php
+// Centralized theme functionality
+class ThemeHelper {
+    public function buildNavigation()     // Auto-generate navigation
+    public function renderBreadcrumbs()   // Breadcrumb generation
+    public function encodeUrlPath()       // Unicode-safe URL encoding
+    public function getNavigationOrder()  // Configurable navigation sorting
+}
+```
+
+### 🚀 Performance Features
+- **Inline CSS**: CSS embedded directly in templates
+- **CDN Integration**: Bootstrap and icons from CDN
+- **Asset Routing**: Efficient asset delivery via assets.php
+- **Theme Caching**: Automatic theme file caching
+
+### 🔐 Security Integration
+- **CSP Compatibility**: All themes work with Content Security Policy
+- **XSS Protection**: Proper output escaping in all templates
+- **Admin Integration**: Conditional admin toolbar display
+- **Session Security**: Admin-only content support
+
 ---
 
-*StaticMD Theme System v2.0 - Professional Theme Architecture*
+*StaticMD Theme System v2.1 - 8 Professional Themes with Gallery Support*

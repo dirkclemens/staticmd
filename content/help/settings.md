@@ -1,5 +1,5 @@
 ---
-Title: Settings System
+Title: 3. Settings System
 Author: System
 Tag: admin, configuration, settings
 Layout: Standard
@@ -24,18 +24,22 @@ The StaticMD settings system uses JSON-based configuration with a user-friendly 
 - **Type**: String
 - **Default**: `"StaticMD"`
 - **Description**: Website name, displayed in browser tab and header
+- **Status**: ✅ **Implemented**
 
 #### Site Logo
 - **Key**: `site_logo`
-- **Type**: String (path)
+- **Type**: String (URL)
 - **Default**: `""`
-- **Description**: Path to logo image (relative to `/public/images/`)
+- **Description**: URL to logo image (full URL or relative path)
+- **Status**: ✅ **Implemented**
 
-#### Site Description
-- **Key**: `site_description`
+#### Language
+- **Key**: `language`
 - **Type**: String
-- **Default**: `"Professional Markdown CMS"`
-- **Description**: Brief website description for meta tags
+- **Default**: `"en"`
+- **Options**: `en` (English), `de` (Deutsch)
+- **Description**: Interface language for admin and frontend
+- **Status**: ✅ **Implemented**
 
 ### Frontend Themes
 
@@ -43,6 +47,7 @@ The StaticMD settings system uses JSON-based configuration with a user-friendly 
 - **Key**: `frontend_theme`
 - **Type**: String
 - **Default**: `"bootstrap"`
+- **Status**: ✅ **Implemented**
 - **Options**: 
   - `bootstrap` - Standard Bootstrap Theme
   - `solarized-light` - Solarized Light Theme
@@ -51,11 +56,14 @@ The StaticMD settings system uses JSON-based configuration with a user-friendly 
   - `monokai-dark` - Monokai Dark Theme
   - `github-light` - GitHub Light Theme
   - `github-dark` - GitHub Dark Theme
+  - `adcore` - Adcore Custom Theme
+  - `static-md` - StaticMD Default Theme
 
 #### Editor Theme
 - **Key**: `editor_theme`
 - **Type**: String
 - **Default**: `"github"`
+- **Status**: ✅ **Implemented**
 - **Options**: 
   - `github` - GitHub Light Editor
   - `monokai` - Monokai Dark Editor
@@ -65,33 +73,37 @@ The StaticMD settings system uses JSON-based configuration with a user-friendly 
 
 ### SEO Settings
 
-#### Enable SEO Meta Tags
-- **Key**: `enable_seo_meta`
-- **Type**: Boolean
-- **Default**: `true`
-- **Description**: Enable automatic generation of SEO meta tags
-
-#### Default Robots Setting
-- **Key**: `default_robots`
+#### SEO Robots Policy
+- **Key**: `seo_robots_policy`
 - **Type**: String
 - **Default**: `"index,follow"`
+- **Status**: ✅ **Implemented**
 - **Options**: 
   - `index,follow` - Allow indexing and following links
   - `noindex,nofollow` - Block indexing and following links
   - `index,nofollow` - Allow indexing but block following links
   - `noindex,follow` - Block indexing but allow following links
 
-#### Enable Search Engine Blocking
-- **Key**: `block_search_engines`
+#### Block Search Engine Crawlers
+- **Key**: `seo_block_crawlers`
 - **Type**: Boolean
 - **Default**: `false`
+- **Status**: ✅ **Implemented**
 - **Description**: Globally block search engines from indexing the site
+
+#### Generate robots.txt
+- **Key**: `seo_generate_robots_txt`
+- **Type**: Boolean
+- **Default**: `true`
+- **Status**: ✅ **Implemented**
+- **Description**: Automatically generate robots.txt at `/robots.txt`
 
 ### Navigation Settings
 
 #### Navigation Order
 - **Key**: `navigation_order`
 - **Type**: Object
+- **Status**: ✅ **Implemented**
 - **Description**: Custom ordering for main navigation items
 - **Example**:
 ```json
@@ -102,73 +114,40 @@ The StaticMD settings system uses JSON-based configuration with a user-friendly 
 }
 ```
 
-#### Show Homepage in Navigation
-- **Key**: `show_homepage_in_nav`
-- **Type**: Boolean
-- **Default**: `true`
-- **Description**: Display homepage link in main navigation
-
 ### Editor Settings
 
 #### Auto-Save Interval
 - **Key**: `auto_save_interval`
 - **Type**: Integer (seconds)
-- **Default**: `60`
-- **Options**: `30`, `60`, `120`, `300` or `0` (disabled)
+- **Default**: `30`
+- **Status**: ✅ **Implemented**
+- **Options**: `30` to `300` seconds (slider in admin)
 - **Description**: Automatic saving interval for editor content
 
-#### Show Line Numbers
-- **Key**: `editor_line_numbers`
-- **Type**: Boolean
-- **Default**: `true`
-- **Description**: Display line numbers in code editor
+### Dashboard Settings
 
-#### Enable Live Preview
-- **Key**: `enable_live_preview`
-- **Type**: Boolean
-- **Default**: `true`
-- **Description**: Enable real-time preview in editor
-
-### Content Settings
-
-#### Default Layout
-- **Key**: `default_layout`
-- **Type**: String
-- **Default**: `"wiki"`
-- **Options**: `standard`, `wiki`, `blog`, `page`
-- **Description**: Default layout for new pages
-
-#### Enable Tag Clouds
-- **Key**: `enable_tag_clouds`
-- **Type**: Boolean
-- **Default**: `true`
-- **Description**: Enable tag cloud generation for folders
-
-#### Pages Per Folder Overview
-- **Key**: `pages_per_folder`
+#### Recent Files Count
+- **Key**: `recent_files_count`
 - **Type**: Integer
 - **Default**: `20`
-- **Description**: Maximum pages shown in folder overviews
+- **Status**: ✅ **Implemented**
+- **Range**: 5-50 (slider in admin)
+- **Description**: Number of recent files shown in dashboard
 
-### Search Settings
-
-#### Enable Search
-- **Key**: `enable_search`
+#### Show File Statistics
+- **Key**: `show_file_stats`
 - **Type**: Boolean
 - **Default**: `true`
-- **Description**: Enable site-wide search functionality
+- **Status**: ✅ **Implemented**
+- **Description**: Display file statistics in dashboard
 
-#### Search Results Per Page
-- **Key**: `search_results_per_page`
+#### Search Result Limit
+- **Key**: `search_result_limit`
 - **Type**: Integer
-- **Default**: `10`
-- **Description**: Number of search results per page
-
-#### Search in Content
-- **Key**: `search_in_content`
-- **Type**: Boolean
-- **Default**: `true`
-- **Description**: Include page content in search results
+- **Default**: `200`
+- **Status**: ✅ **Implemented**
+- **Range**: 10-200 (slider in admin)
+- **Description**: Maximum search results returned
 
 ---
 
@@ -179,10 +158,9 @@ The StaticMD settings system uses JSON-based configuration with a user-friendly 
 ```json
 {
     "site_name": "StaticMD",
-    "site_logo": "",
+    "site_logo": "https://staticmd.adcore.de/logo.png",
     "frontend_theme": "bootstrap",
     "recent_files_count": 20,
-    "items_per_page": 25,
     "editor_theme": "github",
     "show_file_stats": true,
     "auto_save_interval": 30,
@@ -206,13 +184,14 @@ The StaticMD settings system uses JSON-based configuration with a user-friendly 
 
 Access via **Admin → Settings**:
 
-1. **General Tab**: Basic website settings
-2. **Themes Tab**: Frontend and editor theme selection
-3. **SEO Tab**: Search engine optimization settings
-4. **Navigation Tab**: Navigation structure and ordering
-5. **Editor Tab**: Editor behavior and preferences
-6. **Content Tab**: Content display and organization
-7. **Search Tab**: Search functionality configuration
+**Single-Page Interface** with the following sections:
+1. **Website Settings**: Site name, logo, language
+2. **Dashboard Settings**: Recent files, statistics, search limits
+3. **Frontend Theme**: Theme selection with 9 available themes
+4. **Editor Settings**: Editor theme with live preview, auto-save interval
+5. **Navigation Settings**: Custom ordering with live preview
+6. **SEO Settings**: Robots policy, crawler blocking, robots.txt generation
+7. **Backup System**: Create downloadable backups with statistics
 
 ---
 

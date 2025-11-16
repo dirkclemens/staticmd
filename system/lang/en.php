@@ -231,6 +231,7 @@ return [
             'layout_wiki' => 'Wiki',
             'layout_blog' => 'Blog',
             'layout_page' => 'Page',
+            'layout_gallery' => 'Gallery',
             'author' => 'Author',
             'tags' => 'Tag / Tags',
             'visibility' => 'Visibility',

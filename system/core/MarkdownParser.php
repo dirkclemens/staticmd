@@ -452,14 +452,15 @@ class MarkdownParser
         $emojiCode = $matches[1];
         
         // Emoji-Mapping (die wichtigsten ~150 Emojis)
+        // Quelle: https://gist.github.com/rxaviers/7360908
         $emojiMap = [
             // Gesichter & Menschen
-            'smile' => '😄', 'grin' => '😁', 'joy' => '😂', 'smiley' => '😃',
+            'bowtie' => '🎀', 'smile' => '😄', 'laughing' => '😆', 'satisfied' => '😆', 'grinning' => '😀', 'grin' => '😁', 'joy' => '😂', 'smiley' => '😃',
             'blush' => '😊', 'relaxed' => '☺️', 'wink' => '😉', 'heart_eyes' => '😍',
-            'kissing_heart' => '😘', 'kissing' => '😗', 'stuck_out_tongue' => '😛',
-            'stuck_out_tongue_winking_eye' => '😜', 'sunglasses' => '😎', 'smirk' => '😏',
-            'unamused' => '😒', 'sweat_smile' => '😅', 'pensive' => '😔', 'confused' => '😕',
-            'disappointed' => '😞', 'cry' => '😢', 'sob' => '😭', 'angry' => '😠',
+            'kissing_heart' => '😘', 'kissing' => '😗', 'kissing_closed_eyes' => '😚', 'kissing_smiling_eyes' => '😙', 'stuck_out_tongue' => '😛',
+            'stuck_out_tongue_closed_eyes' => '😝', 'stuck_out_tongue_winking_eye' => '😜', 'sunglasses' => '😎', 'smirk' => '😏',
+            'unamused' => '😒', 'flushed' => '😳', 'relieved' => '😌', 'sweat_smile' => '😅', 'pensive' => '😔', 'confused' => '😕',
+            'disappointed' => '😞', 'worried' => '😟', 'frowning' => '😦', 'anguished' => '😧', 'open_mouth' => '😮', 'grimacing' => '😬', 'cry' => '😢', 'sob' => '😭', 'angry' => '😠',
             'rage' => '😡', 'tired_face' => '😫', 'sleeping' => '😴', 'mask' => '😷',
             'innocent' => '😇', 'thumbsup' => '👍', 'thumbsdown' => '👎', '+1' => '👍',
             '-1' => '👎', 'ok_hand' => '👌', 'wave' => '👋', 'clap' => '👏',
@@ -496,22 +497,44 @@ class MarkdownParser
             'sunny' => '☀️', 'cloud' => '☁️', 'rain' => '🌧️', 'snow' => '❄️',
             'lightning' => '⚡', 'rainbow' => '🌈', 'ocean' => '🌊', 'volcano' => '🌋',
             
+            // Zahlen & Symbole
+            'zero' => '0️⃣', 'one' => '1️⃣', 'two' => '2️⃣', 'three' => '3️⃣', 'four' => '4️⃣',
+            'five' => '5️⃣', 'six' => '6️⃣', 'seven' => '7️⃣', 'eight' => '8️⃣', 'nine' => '9️⃣',
+            'keycap_ten' => '🔟', '1234' => '🔢', 'hash' => '#️⃣', 'symbols' => '🔣',
+            'capital_abcd' => '🔠', 'abcd' => '🔡', 'abc' => '🔤',
+            
             // Symbole & Zeichen
             'checkmark' => '✅', 'x' => '❌', 'warning' => '⚠️', 'question' => '❓',
-            'exclamation' => '❗', 'information_source' => 'ℹ️', 'ok' => '🆗',
+            'exclamation' => '❗', 'heavy_exclamation_mark' => '❗', 'bangbang' => '‼️', 'interrobang' => '⁉️',
+            'information_source' => 'ℹ️', 'ok' => '🆗', 'end' => '🔚', 'on' => '🔛', 'soon' => '🔜',
             'new' => '🆕', 'cool' => '🆒', 'free' => '🆓', '100' => '💯',
+            'top' => '🔝', 'up' => '🆙', 'ng' => '🆖', 'heavy_dollar_sign' => '💲',
+            'copyright' => '©️', 'registered' => '®️', 'tm' => '™️', 'o' => '⭕',
+            'heavy_multiplication_x' => '✖️', 'heavy_plus_sign' => '➕', 'heavy_minus_sign' => '➖', 'heavy_division_sign' => '➗',
+            'white_flower' => '💮', 'heavy_check_mark' => '✔️', 'ballot_box_with_check' => '☑️',
+            'radio_button' => '🔘', 'link' => '🔗', 'curly_loop' => '➰', 'wavy_dash' => '〰️',
+            'part_alternation_mark' => '〽️', 'trident' => '🔱',
             
             // Pfeile & Navigation
             'arrow_up' => '⬆️', 'arrow_down' => '⬇️', 'arrow_left' => '⬅️', 'arrow_right' => '➡️',
             'arrow_forward' => '▶️', 'arrow_backward' => '◀️', 'fast_forward' => '⏩',
             'rewind' => '⏪', 'repeat' => '🔁', 'arrows_clockwise' => '🔃',
+            'arrow_upper_left' => '↖️', 'arrow_upper_right' => '↗️', 'arrow_lower_left' => '↙️',
+            'arrow_lower_right' => '↘️', 'arrow_up_down' => '↕️', 'left_right_arrow' => '↔️',
+            'arrow_up_small' => '🔼', 'arrow_down_small' => '🔽', 'arrow_double_up' => '⏫',
+            'arrow_double_down' => '⏬', 'arrow_heading_up' => '⤴️', 'arrow_heading_down' => '⤵️',
+            'leftwards_arrow_with_hook' => '↩️', 'arrow_right_hook' => '↪️', 'arrows_counterclockwise' => '🔄',
+            'twisted_rightwards_arrows' => '🔀', 'repeat_one' => '🔂',
             
             // Aktivitäten & Sport
             'soccer' => '⚽', 'basketball' => '🏀', 'football' => '🏈', 'tennis' => '🎾',
             'golf' => '⛳', 'swimmer' => '🏊', 'runner' => '🏃', 'bicyclist' => '🚴',
             
             // Zeit & Kalender
-            'clock1' => '🕐', 'clock2' => '🕑', 'clock3' => '🕒', 'clock12' => '🕛',
+            'clock1' => '🕐', 'clock130' => '🕜', 'clock2' => '🕑', 'clock230' => '🕝', 'clock3' => '🕒', 'clock330' => '🕞',
+            'clock4' => '🕓', 'clock430' => '🕟', 'clock5' => '🕔', 'clock530' => '🕠', 'clock6' => '🕕', 'clock630' => '🕡',
+            'clock7' => '🕖', 'clock730' => '🕢', 'clock8' => '🕗', 'clock830' => '🕣', 'clock9' => '🕘', 'clock930' => '🕤',
+            'clock10' => '🕙', 'clock1030' => '🕥', 'clock11' => '🕚', 'clock1130' => '🕦', 'clock12' => '🕛', 'clock1230' => '🕧',
             'calendar' => '📅', 'date' => '📆', 'alarm_clock' => '⏰', 'watch' => '⌚',
             
             // Büro & Schule
@@ -530,7 +553,14 @@ class MarkdownParser
             
             // Gebäude & Orte
             'house' => '🏠', 'office' => '🏢', 'hospital' => '🏥', 'school' => '🏫',
-            'hotel' => '🏨', 'bank' => '🏦', 'church' => '⛪', 'factory' => '🏭'
+            'hotel' => '🏨', 'bank' => '🏦', 'church' => '⛪', 'factory' => '🏭',
+            
+            // Geometrische Formen
+            'black_square' => '⬛', 'white_square' => '⬜', 'white_check_mark' => '✅',
+            'black_square_button' => '🔲', 'white_square_button' => '🔳', 'black_circle' => '⚫',
+            'white_circle' => '⚪', 'red_circle' => '🔴', 'large_blue_circle' => '🔵',
+            'large_blue_diamond' => '🔷', 'large_orange_diamond' => '🔶', 'small_blue_diamond' => '🔹',
+            'small_orange_diamond' => '🔸', 'small_red_triangle' => '🔺', 'small_red_triangle_down' => '🔻'
         ];
         
         // Emoji zurückgeben oder ursprünglichen Code beibehalten

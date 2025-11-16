@@ -1,3 +1,10 @@
+---
+Title: 11. Deployment Guide
+Author: System
+Tag: hosting, uberspace, deployment
+Layout: Standard
+---
+
 # StaticMD Deployment Guide
 
 ## 🛠 Pre-Deployment Setup

@@ -1,5 +1,5 @@
 ---
-Title: SEO & Search Engine Control
+Title: 6. SEO & Search Engine Control
 Author: System
 Tag: seo, robots, documentation
 ---

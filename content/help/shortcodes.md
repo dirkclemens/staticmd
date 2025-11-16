@@ -1,6 +1,6 @@
 ---
-Title: Shortcodes Reference
-Author: StaticMD Team
+Title: 4. Shortcodes Reference
+Author: System
 Tag: shortcodes, markdown, content
 Layout: Standard
 ---

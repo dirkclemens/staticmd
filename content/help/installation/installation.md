@@ -1,3 +1,10 @@
+---
+Title: 10. Installation Guide
+Author: System
+Tag: installation, hosting, uberspace
+Layout: Standard
+---
+
 # StaticMD - Installation Guide
 
 Complete guide for installing and configuring StaticMD on your server.

@@ -1,10 +1,12 @@
 ---
 Title: About StaticMD
 Author: System
-Layout: Standard
 Tag: about, info, cms
 Description: Learn more about StaticMD - the professional Markdown CMS
 Visibility: public
+---
+
+[pages /about/]
 ---
 
 # About StaticMD

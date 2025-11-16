@@ -152,6 +152,7 @@ $nonce = SecurityHeaders::getNonce();
                                     <option value="wiki" <?= ($meta['Layout'] ?? $meta['layout'] ?? '') === 'wiki' ? 'selected' : '' ?>><?= __('admin.editor.layout_wiki') ?></option>
                                     <option value="blog" <?= ($meta['Layout'] ?? $meta['layout'] ?? '') === 'blog' ? 'selected' : '' ?>><?= __('admin.editor.layout_blog') ?></option>
                                     <option value="page" <?= ($meta['Layout'] ?? $meta['layout'] ?? '') === 'page' ? 'selected' : '' ?>><?= __('admin.editor.layout_page') ?></option>
+                                    <option value="gallery" <?= ($meta['Layout'] ?? $meta['layout'] ?? '') === 'gallery' ? 'selected' : '' ?>><?= __('admin.editor.layout_gallery') ?></option>
                                 </select>
                             </div>
                             

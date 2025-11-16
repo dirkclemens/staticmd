@@ -78,17 +78,17 @@ class ContentLoader
         // Separate front matter and content
         $parsed = $this->parseFrontMatter($rawContent);
         
-        // Convert Markdown to HTML
-        $htmlContent = $this->parser->parse($parsed['content']);
+        // Process shortcodes BEFORE Markdown parsing to prevent code-block conversion
+        $contentWithShortcodes = $this->processShortcodes($parsed['content'], $route);
         
-        // Process accordion shortcodes after Markdown parsing
+        // Convert Markdown to HTML
+        $htmlContent = $this->parser->parse($contentWithShortcodes);
+        
+        // Process accordion shortcodes after Markdown parsing (they need HTML structure)
         $htmlContent = $this->processAccordionShortcodes($htmlContent);
         
-        // Process pages/tags shortcodes after Markdown parsing
-        $htmlContent = $this->processShortcodes($htmlContent, $route);
-        
         return [
-            'title' => $parsed['meta']['title'] ?? 'Unbenannte Seite',
+            'title' => $parsed['meta']['title'] ?? '', //'Unbenannte Seite',
             'content' => $htmlContent,
             'meta' => $parsed['meta'],
             'route' => $route,
@@ -352,16 +352,37 @@ class ContentLoader
     }
 
     /**
-     * Verarbeitet Shortcodes in HTML-Content
+     * Verarbeitet Shortcodes in Raw-Markdown-Content (vor HTML-Konvertierung)
+     * Schützt Shortcodes in Code-Blocks vor Verarbeitung
      */
     private function processShortcodes(string $content, string $currentRoute): string
     {
-        // Pattern for shortcodes in HTML (also in <p> tags)
-        $pattern = '/(?:<p>)?\[([a-zA-Z]+)\s+([^\]]+)\](?:<\/p>)?/';
+        // 1. Code-Blocks temporär durch Platzhalter ersetzen
+        $codeBlocks = [];
+        $codeIndex = 0;
         
-        return preg_replace_callback($pattern, function($matches) use ($currentRoute) {
+        // Schütze Fenced Code Blocks (```)
+        $content = preg_replace_callback('/```[\s\S]*?```/', function($matches) use (&$codeBlocks, &$codeIndex) {
+            $placeholder = '___CODE_BLOCK_' . $codeIndex . '___';
+            $codeBlocks[$placeholder] = $matches[0];
+            $codeIndex++;
+            return $placeholder;
+        }, $content);
+        
+        // Schütze Inline Code (`)
+        $content = preg_replace_callback('/`[^`]+`/', function($matches) use (&$codeBlocks, &$codeIndex) {
+            $placeholder = '___INLINE_CODE_' . $codeIndex . '___';
+            $codeBlocks[$placeholder] = $matches[0];
+            $codeIndex++;
+            return $placeholder;
+        }, $content);
+        
+        // 2. Shortcodes verarbeiten (jetzt sicher außerhalb von Code-Blocks)
+        $pattern = '/\[([a-zA-Z]+)(?:\s+([^\]]+))?\]/';
+        
+        $content = preg_replace_callback($pattern, function($matches) use ($currentRoute) {
             $shortcode = strtolower(trim($matches[1]));
-            $params = array_filter(array_map('trim', explode(' ', $matches[2])));
+            $params = isset($matches[2]) ? array_filter(array_map('trim', explode(' ', $matches[2]))) : [];
             
             switch ($shortcode) {
                 case 'pages':
@@ -370,10 +391,17 @@ class ContentLoader
                     return $this->processTagsShortcode($params, $currentRoute);
                 case 'folder':
                     return $this->processFolderShortcode($params, $currentRoute);
+                case 'gallery':
+                    return $this->processGalleryShortcode($params, $currentRoute);
                 default:
                     return $matches[0]; // Leave unknown shortcodes unchanged
             }
         }, $content);
+        
+        // 3. Code-Blocks wieder einsetzen
+        $content = str_replace(array_keys($codeBlocks), array_values($codeBlocks), $content);
+        
+        return $content;
     }
 
     /**
@@ -471,6 +499,142 @@ class ContentLoader
         
         // Generate horizontal folder navigation
         return $this->generateFolderNavigation($subfolders, $targetPath);
+    }
+
+    /**
+     * Verarbeitet [gallery /pfad/ limit] Shortcode
+     * Lädt automatisch alle Bilder aus einem Verzeichnis
+     */
+    private function processGalleryShortcode(array $params, string $currentRoute): string
+    {
+        // Parameter parsen: [gallery /images/galleries/paris/] oder [gallery paris 20]
+        $targetPath = isset($params[0]) ? trim($params[0], ' ') : '';
+        $limit = isset($params[1]) ? (int)$params[1] : 100;
+        
+        // Pfad-Handling
+        if (empty($targetPath)) {
+            return '<div class="alert alert-warning">Gallery-Shortcode: Pfad-Parameter erforderlich. Beispiel: [gallery paris] oder [gallery /assets/galleries/paris/]</div>';
+        }
+        
+        // Determine if it's a relative path from /public/assets/ or absolute path
+        if (strpos($targetPath, '/') === 0) {
+            // Absolute path: /assets/galleries/paris/ -> /public/assets/galleries/paris/
+            $imagePath = $this->config['paths']['public'] . $targetPath;
+            $urlPath = $targetPath;
+        } else {
+            // Relative path: paris -> /public/assets/galleries/paris/
+            $imagePath = $this->config['paths']['public'] . '/assets/galleries/' . $targetPath;
+            $urlPath = '/assets/galleries/' . $targetPath;
+        }
+        
+        // Check if directory exists
+        if (!is_dir($imagePath)) {
+            return '<div class="alert alert-warning">Gallery-Verzeichnis nicht gefunden: ' . htmlspecialchars($imagePath) . '</div>';
+        }
+        
+        // Get all image files
+        $images = $this->getImageFiles($imagePath, $urlPath, $limit);
+        
+        if (empty($images)) {
+            return '<div class="alert alert-info">Keine Bilder in "' . htmlspecialchars($targetPath) . '" gefunden.</div>';
+        }
+        
+        // Generate gallery HTML
+        return $this->generateAutoGalleryHTML($images, $targetPath);
+    }
+
+    /**
+     * Sammelt alle Bilddateien aus einem Verzeichnis
+     */
+    private function getImageFiles(string $imagePath, string $urlPath, int $limit): array
+    {
+        $images = [];
+        $supportedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        
+        try {
+            $iterator = new \DirectoryIterator($imagePath);
+            $count = 0;
+            
+            foreach ($iterator as $item) {
+                if ($item->isDot() || $count >= $limit) {
+                    continue;
+                }
+                
+                if ($item->isFile()) {
+                    $extension = strtolower($item->getExtension());
+                    if (in_array($extension, $supportedExtensions)) {
+                        $filename = $item->getFilename();
+                        $images[] = [
+                            'filename' => $filename,
+                            'url' => rtrim($urlPath, '/') . '/' . $filename,
+                            'alt' => $this->generateImageAltText($filename),
+                            'title' => $this->generateImageTitle($filename)
+                        ];
+                        $count++;
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            error_log('Gallery Shortcode Error: ' . $e->getMessage());
+            return [];
+        }
+        
+        // Sort images by filename
+        usort($images, function($a, $b) {
+            return strcmp($a['filename'], $b['filename']);
+        });
+        
+        return $images;
+    }
+    
+    /**
+     * Generiert Alt-Text aus Dateiname
+     */
+    private function generateImageAltText(string $filename): string
+    {
+        $name = pathinfo($filename, PATHINFO_FILENAME);
+        
+        // Remove common date/time patterns
+        $name = preg_replace('/^\d{4}_\d{4}_\d{6}/', '', $name);
+        $name = preg_replace('/^\d+_/', '', $name);
+        
+        // Replace underscores and dashes with spaces
+        $name = str_replace(['_', '-'], ' ', $name);
+        
+        // Capitalize words
+        return ucwords(trim($name)) ?: 'Bild';
+    }
+    
+    /**
+     * Generiert Titel aus Dateiname (für Lightbox)
+     */
+    private function generateImageTitle(string $filename): string
+    {
+        $name = pathinfo($filename, PATHINFO_FILENAME);
+        
+        // Keep original formatting but clean up
+        $name = str_replace('_', ' ', $name);
+        return $name;
+    }
+    
+    /**
+     * Generiert HTML für automatische Galerie
+     */
+    private function generateAutoGalleryHTML(array $images, string $path): string
+    {
+        $html = '<div class="auto-gallery-info mb-3">';
+        $html .= '<small class="text-muted"><i class="bi bi-images"></i> ' . count($images) . ' Bilder aus ' . htmlspecialchars($path) . '</small>';
+        $html .= '</div>';
+        
+        // Generate images in the format expected by gallery.js
+        foreach ($images as $image) {
+            $html .= '<img src="' . htmlspecialchars($image['url']) . '" ';
+            $html .= 'alt="' . htmlspecialchars($image['alt']) . '" ';
+            $html .= 'title="' . htmlspecialchars($image['title']) . '" ';
+            $html .= 'loading="lazy" />' . "\n";
+        }
+        
+        return $html;
     }
 
     /**
@@ -672,7 +836,7 @@ class ContentLoader
         }
         
         $html .= '</div>';
-        
+        $html .= '</div>';
         return $html;
     }
 
