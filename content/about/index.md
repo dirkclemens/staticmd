@@ -5,7 +5,6 @@ Tag: about, info, cms
 Description: Learn more about StaticMD - the professional Markdown CMS
 Visibility: public
 ---
-
 [pages /about/]
 ---
 

@@ -259,7 +259,7 @@ class ContentLoader
         $html .= '<div class="overview-header mb-4">';
         $html .= '<h1><i class="bi bi-folder2-open me-2"></i>' . htmlspecialchars($folderTitle) . '</h1>';
         $totalItems = count($files) + count($subfolders);
-        $html .= '<p class="lead">' . sprintf(\StaticMD\Core\I18n::t('core.content_overview'), count($files));
+        $html .= '<p class="lead">' . \StaticMD\Core\I18n::t('core.content_overview', ['pages' => count($files)]);
         if (count($subfolders) > 0) {
             $html .= ', ' . count($subfolders) . ' Unterordner';
         }

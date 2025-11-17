@@ -4,10 +4,10 @@
 **/backup_*
 **/assets/*.woff
 **/assets/*.woff2
+**/assets/galleries/*
 **/public/assets/galleries/*
 **/content/tech/*
-**/content/test/*
-**/content/bilder/*
+**/content/photos/*
 **/system/themes/adcore/*
 **/logo/*
 **/*.code-workspace

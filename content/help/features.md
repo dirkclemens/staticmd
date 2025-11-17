@@ -1,6 +1,7 @@
 ---
 Title: 2. Feature Overview
 Author: System
+Layout: Standard
 Tag: features, documentation
 ---
 

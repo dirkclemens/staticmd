@@ -616,7 +616,7 @@ class AdminController {
             $contentDir . '/' . $route . '/page' . $extension
         ];
         
-        // Für Startseite
+        // Für root "/" auch index.md und home.md prüfen
         if ($route === 'index') {
             array_unshift($possiblePaths, $contentDir . '/index' . $extension);
             array_push($possiblePaths, $contentDir . '/home' . $extension);
@@ -699,6 +699,7 @@ class AdminController {
             'editor_theme' => $_POST['editor_theme'] ?? 'github',
             'show_file_stats' => isset($_POST['show_file_stats']),
             'auto_save_interval' => max(30, min(300, (int)($_POST['auto_save_interval'] ?? 60))),
+            'navigation_show_dropdowns' => isset($_POST['navigation_show_dropdowns']),
             'navigation_order' => $this->parseNavigationOrder($_POST['navigation_order'] ?? ''),
             'language' => $lang,
             'search_result_limit' => max(10, min(200, (int)($_POST['search_result_limit'] ?? 50))),
@@ -730,6 +731,7 @@ class AdminController {
             'editor_theme' => 'github',
             'show_file_stats' => true,
             'auto_save_interval' => 60,
+            'navigation_show_dropdowns' => true,
             'navigation_order' => [
                 'about' => 1,
                 'blog' => 2,

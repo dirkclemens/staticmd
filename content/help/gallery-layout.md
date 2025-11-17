@@ -1,6 +1,7 @@
 ---
 Title: 8. Gallery Layout - Guide
 Author: System
+Layout: Standard
 Tag: gallery, layout, guide, documentation
 Description: Complete guide for the Gallery Layout in StaticMD
 ---

@@ -246,7 +246,7 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a class="nav-link <?= $currentRoute === 'index' ? 'active' : '' ?>" href="/">
-                            <i class="bi bi-house me-1"></i> <!--Startseite-->
+                            <i class="bi bi-house me-1"></i> 
                         </a>
                     </li>
                     

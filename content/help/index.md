@@ -1,15 +1,17 @@
 ---
 Title: 1. Overview
 Visibility: public
+Layout: Standard
 ---
-
+[pages /help/]
+---
 # Welcome to StaticMD
 
 StaticMD is a professional PHP-based CMS for Markdown content with Bootstrap frontend and comprehensive admin interface. The software features a complete **gallery system**, **9 beautiful themes**, **advanced security**, and **45+ implemented features**.
 
 **Perfect for**: Technical documentation, wikis, blogs, knowledge bases, image galleries, and content-driven websites.
 
-**New in 2024**: Gallery layouts, enhanced shortcode system, improved security, and comprehensive backup functionality.
+**New**: Gallery layouts, enhanced shortcode system, improved security, and comprehensive backup functionality.
 
 ---
 

@@ -174,15 +174,15 @@ class ThemeHelper
             $html .= '</li>';
         }
         
-        // Add back link (only when not on home page)
-        $isHomePage = count($breadcrumbs) === 1 && ($breadcrumbs[0]['route'] ?? '') === '';
-        if (!$isHomePage) {
-            $html .= '<li class="breadcrumb-item">';
-            $html .= '<a onclick="window.history.back()" title="' . \StaticMD\Core\I18n::t('common.back_button_tooltip') . '">';
-            $html .= '<i class="bi bi-arrow-left me-1"></i> ' . \StaticMD\Core\I18n::t('common.back_button');
-            $html .= '</a>';
-            $html .= '</li>';
-        }
+        // // Add back link (only when not on home page)
+        // $isHomePage = count($breadcrumbs) === 1 && ($breadcrumbs[0]['route'] ?? '') === '';
+        // if (!$isHomePage) {
+        //     $html .= '<li class="breadcrumb-item">';
+        //     $html .= '<a onclick="window.history.back()" title="' . \StaticMD\Core\I18n::t('common.back_button_tooltip') . '">';
+        //     $html .= '<i class="bi bi-arrow-left me-1"></i> ' . \StaticMD\Core\I18n::t('common.back_button');
+        //     $html .= '</a>';
+        //     $html .= '</li>';
+        // }
         
         $html .= '</ol>';
         $html .= '</nav>';

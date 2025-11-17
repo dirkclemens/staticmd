@@ -327,25 +327,22 @@ class SearchEngine
         if (!empty($results)) {
             $html .= '<p class="lead">';
             if ($totalTime > 0) {
-                $html .= sprintf(
-                    \StaticMD\Core\I18n::t('core.search_results_count_with_time'),
-                    count($results),
-                    '<strong>' . htmlspecialchars($query) . '</strong>',
-                    number_format($totalTime, 3)
-                );
+                $html .= \StaticMD\Core\I18n::t('core.search_results_count_with_time', [
+                    'count' => count($results),
+                    'query' => '<strong>' . htmlspecialchars($query) . '</strong>',
+                    'time' => number_format($totalTime, 3)
+                ]);
             } else {
-                $html .= sprintf(
-                    \StaticMD\Core\I18n::t('core.search_results_count'),
-                    count($results),
-                    '<strong>' . htmlspecialchars($query) . '</strong>'
-                );
+                $html .= \StaticMD\Core\I18n::t('core.search_results_count', [
+                    'count' => count($results),
+                    'query' => '<strong>' . htmlspecialchars($query) . '</strong>'
+                ]);
             }
             $html .= '</p>';
         } else {
-            $html .= '<p class="lead text-muted">' . sprintf(
-                \StaticMD\Core\I18n::t('core.search_no_results'),
-                '<strong>' . htmlspecialchars($query) . '</strong>'
-            ) . '</p>';
+            $html .= '<p class="lead text-muted">' . \StaticMD\Core\I18n::t('core.search_no_results', [
+                'query' => '<strong>' . htmlspecialchars($query) . '</strong>'
+            ]) . '</p>';
         }
         $html .= '</div>';
         

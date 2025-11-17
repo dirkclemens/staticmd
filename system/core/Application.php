@@ -113,10 +113,10 @@ class Application
         $searchHTML = $searchEngine->generateSearchResultsHTML($results, $query, $searchTime);
         
         $content = [
-            'title' => empty($query) ? I18n::t('core.search_title') : sprintf(I18n::t('core.search_results_title'), $query),
+            'title' => empty($query) ? I18n::t('core.search_title') : I18n::t('core.search_results_title', ['query' => $query]),
             'content' => $searchHTML,
             'meta' => [
-                'title' => empty($query) ? I18n::t('core.search_title') : sprintf(I18n::t('core.search_results_title'), $query),
+                'title' => empty($query) ? I18n::t('core.search_title') : I18n::t('core.search_results_title', ['query' => $query]),
                 'description' => I18n::t('core.search_description'),
                 'search_results' => true,
                 'search_query' => $query,
@@ -199,11 +199,11 @@ class Application
         $tagHTML = $searchEngine->generateTagPageHTML($results, $tagName, $searchTime);
         
         $content = [
-            'title' => sprintf(I18n::t('core.tag_title'), $tagName),
+            'title' => I18n::t('core.tag_title', ['tag' => $tagName]),
             'content' => $tagHTML,
             'meta' => [
-                'title' => sprintf(I18n::t('core.tag_title'), $tagName),
-                'description' => sprintf(I18n::t('core.tag_description'), $tagName),
+                'title' => I18n::t('core.tag_title', ['tag' => $tagName]),
+                'description' => I18n::t('core.tag_description', ['tag' => $tagName]),
                 'tag_page' => true,
                 'tag_name' => $tagName,
                 'result_count' => count($results)

@@ -1,222 +1,222 @@
 /* Monokai Light Theme - Styles */
-:root {
-    /* Monokai Light Colors */
-    --monokai-bg: #fafafa;
-    --monokai-paper: #ffffff;
-    --monokai-text: #49483e;
-    --monokai-comment: #75715e;
-    --monokai-red: #f92672;
-    --monokai-orange: #fd971f;
-    --monokai-yellow: #f4bf75;
-    --monokai-green: #a6e22e;
-    --monokai-blue: #66d9ef;
-    --monokai-purple: #ae81ff;
-    --monokai-pink: #f92672;
-    --monokai-border: #e0e0e0;
-    --monokai-sidebar: #f5f5f5;
-}
+    :root {
+        /* Monokai Light Colors */
+        --smd-bg: #fafafa;
+        --smd-paper: #ffffff;
+        --smd-text: #49483e;
+        --smd-comment: #75715e;
+        --smd-red: #f92672;
+        --smd-orange: #fd971f;
+        --smd-yellow: #f4bf75;
+        --smd-green: #a6e22e;
+        --smd-blue: #66d9ef;
+        --smd-purple: #ae81ff;
+        --smd-pink: #f92672;
+        --smd-border: #e0e0e0;
+        --smd-sidebar: #f5f5f5;
+    }
 
-body {
-    background-color: var(--monokai-bg);
-    color: var(--monokai-text);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
+    body {
+        background-color: var(--smd-bg);
+        color: var(--smd-text);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-.navbar {
-    background-color: var(--monokai-paper) !important;
-    border-bottom: 2px solid var(--monokai-border);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
+    .navbar {
+        background-color: var(--smd-paper) !important;
+        border-bottom: 2px solid var(--smd-border);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
 
-.navbar-brand, .navbar-nav .nav-link {
-    color: var(--monokai-text) !important;
-}
+    .navbar-brand, .navbar-nav .nav-link {
+        color: var(--smd-text) !important;
+    }
 
-.navbar-nav .nav-link:hover {
-    color: var(--monokai-blue) !important;
-}
+    .navbar-nav .nav-link:hover {
+        color: var(--smd-blue) !important;
+    }
 
-.btn-primary {
-    background-color: var(--monokai-blue);
-    border-color: var(--monokai-blue);
-    color: var(--monokai-text);
-}
+    .btn-primary {
+        background-color: var(--smd-blue);
+        border-color: var(--smd-blue);
+        color: var(--smd-text);
+    }
 
-.btn-primary:hover {
-    background-color: var(--monokai-purple);
-    border-color: var(--monokai-purple);
-}
+    .btn-primary:hover {
+        background-color: var(--smd-purple);
+        border-color: var(--smd-purple);
+    }
 
-.btn-warning {
-    background-color: var(--monokai-orange);
-    border-color: var(--monokai-orange);
-    color: var(--monokai-paper);
-}
+    .btn-warning {
+        background-color: var(--smd-orange);
+        border-color: var(--smd-orange);
+        color: var(--smd-paper);
+    }
 
-.btn-success {
-    background-color: var(--monokai-green);
-    border-color: var(--monokai-green);
-    color: var(--monokai-text);
-}
+    .btn-success {
+        background-color: var(--smd-green);
+        border-color: var(--smd-green);
+        color: var(--smd-text);
+    }
 
-.btn-danger {
-    background-color: var(--monokai-red);
-    border-color: var(--monokai-red);
-}
+    .btn-danger {
+        background-color: var(--smd-red);
+        border-color: var(--smd-red);
+    }
 
-.btn-outline-primary {
-    color: var(--monokai-blue);
-    border-color: var(--monokai-blue);
-}
+    .btn-outline-primary {
+        color: var(--smd-blue);
+        border-color: var(--smd-blue);
+    }
 
-.btn-outline-primary:hover {
-    background-color: var(--monokai-blue);
-    border-color: var(--monokai-blue);
-    color: var(--monokai-text);
-}
+    .btn-outline-primary:hover {
+        background-color: var(--smd-blue);
+        border-color: var(--smd-blue);
+        color: var(--smd-text);
+    }
 
-.card {
-    background-color: var(--monokai-paper);
-    border: 1px solid var(--monokai-border);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
+    .card {
+        background-color: var(--smd-paper);
+        border: 1px solid var(--smd-border);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
 
-.card-header {
-    background-color: var(--monokai-sidebar);
-    color: var(--monokai-text);
-    border-bottom: 1px solid var(--monokai-border);
-}
+    .card-header {
+        background-color: var(--smd-sidebar);
+        color: var(--smd-text);
+        border-bottom: 1px solid var(--smd-border);
+    }
 
-.breadcrumb {
-    background-color: var(--monokai-sidebar);
-    border: 1px solid var(--monokai-border);
-}
+    .breadcrumb {
+        background-color: var(--smd-sidebar);
+        border: 1px solid var(--smd-border);
+    }
 
-.breadcrumb-item a {
-    color: var(--monokai-blue);
-}
+    .breadcrumb-item a {
+        color: var(--smd-blue);
+    }
 
-.breadcrumb-item .btn-outline-secondary {
-    color: var(--monokai-comment);
-    border-color: var(--monokai-selection);
-    background-color: transparent;
-    font-size: 0.875rem;
-    padding: 0.25rem 0.5rem;
-}
+    .breadcrumb-item .btn-outline-secondary {
+        color: var(--smd-comment);
+        border-color: var(--smd-selection);
+        background-color: transparent;
+        font-size: 0.875rem;
+        padding: 0.25rem 0.5rem;
+    }
 
-.breadcrumb-item .btn-outline-secondary:hover {
-    color: var(--monokai-text);
-    background-color: var(--monokai-background);
-    border-color: var(--monokai-selection);
-}
+    .breadcrumb-item .btn-outline-secondary:hover {
+        color: var(--smd-text);
+        background-color: var(--smd-background);
+        border-color: var(--smd-selection);
+    }
 
-.badge {
-    background-color: var(--monokai-purple) !important;
-}
+    .badge {
+        background-color: var(--smd-purple) !important;
+    }
 
-.badge.bg-primary {
-    background-color: var(--monokai-blue) !important;
-    color: var(--monokai-text) !important;
-}
+    .badge.bg-primary {
+        background-color: var(--smd-blue) !important;
+        color: var(--smd-text) !important;
+    }
 
-.badge.bg-success {
-    background-color: var(--monokai-green) !important;
-    color: var(--monokai-text) !important;
-}
+    .badge.bg-success {
+        background-color: var(--smd-green) !important;
+        color: var(--smd-text) !important;
+    }
 
-.badge.bg-warning {
-    background-color: var(--monokai-orange) !important;
-    color: var(--monokai-paper) !important;
-}
+    .badge.bg-warning {
+        background-color: var(--smd-orange) !important;
+        color: var(--smd-paper) !important;
+    }
 
-.alert-info {
-    background-color: rgba(102, 217, 239, 0.1);
-    border-color: var(--monokai-blue);
-    color: var(--monokai-text);
-}
+    .alert-info {
+        background-color: rgba(102, 217, 239, 0.1);
+        border-color: var(--smd-blue);
+        color: var(--smd-text);
+    }
 
-.alert-success {
-    background-color: rgba(166, 226, 46, 0.1);
-    border-color: var(--monokai-green);
-    color: var(--monokai-text);
-}
+    .alert-success {
+        background-color: rgba(166, 226, 46, 0.1);
+        border-color: var(--smd-green);
+        color: var(--smd-text);
+    }
 
-.dropdown-menu {
-    background-color: var(--monokai-paper);
-    border: 1px solid var(--monokai-border);
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
+    .dropdown-menu {
+        background-color: var(--smd-paper);
+        border: 1px solid var(--smd-border);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
 
-.dropdown-item {
-    color: var(--monokai-text);
-}
+    .dropdown-item {
+        color: var(--smd-text);
+    }
 
-.dropdown-item:hover {
-    background-color: var(--monokai-sidebar);
-    color: var(--monokai-text);
-}
+    .dropdown-item:hover {
+        background-color: var(--smd-sidebar);
+        color: var(--smd-text);
+    }
 
-.form-control {
-    background-color: var(--monokai-paper);
-    border-color: var(--monokai-border);
-    color: var(--monokai-text);
-}
+    .form-control {
+        background-color: var(--smd-paper);
+        border-color: var(--smd-border);
+        color: var(--smd-text);
+    }
 
-.form-control:focus {
-    background-color: var(--monokai-paper);
-    border-color: var(--monokai-blue);
-    color: var(--monokai-text);
-    box-shadow: 0 0 0 0.2rem rgba(102, 217, 239, 0.25);
-}
+    .form-control:focus {
+        background-color: var(--smd-paper);
+        border-color: var(--smd-blue);
+        color: var(--smd-text);
+        box-shadow: 0 0 0 0.2rem rgba(102, 217, 239, 0.25);
+    }
 
-pre {
-    background-color: var(--monokai-sidebar);
-    border: 1px solid var(--monokai-border);
-    color: var(--monokai-text);
-}
+    pre {
+        background-color: var(--smd-sidebar);
+        border: 1px solid var(--smd-border);
+        color: var(--smd-text);
+    }
 
-code {
-    background-color: var(--monokai-sidebar);
-    color: var(--monokai-red);
-    padding: 2px 4px;
-    border-radius: 3px;
-}
+    code {
+        background-color: var(--smd-sidebar);
+        color: var(--smd-red);
+        padding: 2px 4px;
+        border-radius: 3px;
+    }
 
-blockquote {
-    border-left: 4px solid var(--monokai-blue);
-    background-color: var(--monokai-sidebar);
-    color: var(--monokai-text);
-    padding: 15px;
-    margin: 15px 0;
-}
+    blockquote {
+        border-left: 4px solid var(--smd-blue);
+        background-color: var(--smd-sidebar);
+        color: var(--smd-text);
+        padding: 15px;
+        margin: 15px 0;
+    }
 
-.admin-toolbar {
-    position: fixed;
-    top: 50%;
-    right: 20px;
-    transform: translateY(-50%);
-    z-index: 1000;
-}
+    .admin-toolbar {
+        position: fixed;
+        top: 50%;
+        right: 20px;
+        transform: translateY(-50%);
+        z-index: 1000;
+    }
 
-footer {
-    background-color: var(--monokai-comment);
-    color: var(--monokai-paper);
-    border-top: 1px solid var(--monokai-border);
-}
+    footer {
+        background-color: var(--smd-comment);
+        color: var(--smd-paper);
+        border-top: 1px solid var(--smd-border);
+    }
 
-a {
-    color: var(--monokai-blue);
-}
+    a {
+        color: var(--smd-blue);
+    }
 
-a:hover {
-    color: var(--monokai-purple);
-}
+    a:hover {
+        color: var(--smd-purple);
+    }
 
-h1, h2, h3, h4, h5, h6 {
-    color: var(--monokai-text);
-    font-weight: 600;
-}
+    h1, h2, h3, h4, h5, h6 {
+        color: var(--smd-text);
+        font-weight: 600;
+    }
 
-.text-muted {
-    color: var(--monokai-comment) !important;
-}
+    .text-muted {
+        color: var(--smd-comment) !important;
+    }

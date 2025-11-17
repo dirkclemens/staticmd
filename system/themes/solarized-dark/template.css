@@ -1,188 +1,188 @@
 /* Solarized Dark Theme - Styles */
 :root {
     /* Solarized Dark Colors */
-    --sol-base03: #002b36;
-    --sol-base02: #073642;
-    --sol-base01: #586e75;
-    --sol-base00: #657b83;
-    --sol-base0: #839496;
-    --sol-base1: #93a1a1;
-    --sol-base2: #eee8d5;
-    --sol-base3: #fdf6e3;
-    --sol-yellow: #b58900;
-    --sol-orange: #cb4b16;
-    --sol-red: #dc322f;
-    --sol-magenta: #d33682;
-    --sol-violet: #6c71c4;
-    --sol-blue: #268bd2;
-    --sol-cyan: #2aa198;
-    --sol-green: #859900;
+    --smd-base03: #002b36;
+    --smd-base02: #073642;
+    --smd-base01: #586e75;
+    --smd-base00: #657b83;
+    --smd-base0: #839496;
+    --smd-base1: #93a1a1;
+    --smd-base2: #eee8d5;
+    --smd-base3: #fdf6e3;
+    --smd-yellow: #b58900;
+    --smd-orange: #cb4b16;
+    --smd-red: #dc322f;
+    --smd-magenta: #d33682;
+    --smd-violet: #6c71c4;
+    --smd-blue: #268bd2;
+    --smd-cyan: #2aa198;
+    --smd-green: #859900;
 }
 
 body {
-    background-color: var(--sol-base03);
-    color: var(--sol-base0);
+    background-color: var(--smd-base03);
+    color: var(--smd-base0);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .navbar {
-    background-color: var(--sol-base02) !important;
-    border-bottom: 2px solid var(--sol-base01);
+    background-color: var(--smd-base02) !important;
+    border-bottom: 2px solid var(--smd-base01);
 }
 
 .navbar-brand, .navbar-nav .nav-link {
-    color: var(--sol-base1) !important;
+    color: var(--smd-base1) !important;
 }
 
 .navbar-nav .nav-link:hover {
-    color: var(--sol-blue) !important;
+    color: var(--smd-blue) !important;
 }
 
 .btn-primary {
-    background-color: var(--sol-blue);
-    border-color: var(--sol-blue);
+    background-color: var(--smd-blue);
+    border-color: var(--smd-blue);
 }
 
 .btn-primary:hover {
-    background-color: var(--sol-cyan);
-    border-color: var(--sol-cyan);
+    background-color: var(--smd-cyan);
+    border-color: var(--smd-cyan);
 }
 
 .btn-warning {
-    background-color: var(--sol-yellow);
-    border-color: var(--sol-yellow);
-    color: var(--sol-base03);
+    background-color: var(--smd-yellow);
+    border-color: var(--smd-yellow);
+    color: var(--smd-base03);
 }
 
 .btn-success {
-    background-color: var(--sol-green);
-    border-color: var(--sol-green);
+    background-color: var(--smd-green);
+    border-color: var(--smd-green);
 }
 
 .btn-danger {
-    background-color: var(--sol-red);
-    border-color: var(--sol-red);
+    background-color: var(--smd-red);
+    border-color: var(--smd-red);
 }
 
 .btn-outline-primary {
-    color: var(--sol-blue);
-    border-color: var(--sol-blue);
+    color: var(--smd-blue);
+    border-color: var(--smd-blue);
 }
 
 .btn-outline-primary:hover {
-    background-color: var(--sol-blue);
-    border-color: var(--sol-blue);
+    background-color: var(--smd-blue);
+    border-color: var(--smd-blue);
 }
 
 .card {
-    background-color: var(--sol-base02);
-    border: 1px solid var(--sol-base01);
-    color: var(--sol-base0);
+    background-color: var(--smd-base02);
+    border: 1px solid var(--smd-base01);
+    color: var(--smd-base0);
 }
 
 .card-header {
-    background-color: var(--sol-base01);
-    color: var(--sol-base1);
-    border-bottom: 1px solid var(--sol-base00);
+    background-color: var(--smd-base01);
+    color: var(--smd-base1);
+    border-bottom: 1px solid var(--smd-base00);
 }
 
 .breadcrumb {
-    background-color: var(--sol-base02);
+    background-color: var(--smd-base02);
 }
 
 .breadcrumb-item a {
-    color: var(--sol-blue);
+    color: var(--smd-blue);
 }
 
 .breadcrumb-item.active {
-    color: var(--sol-base1);
+    color: var(--smd-base1);
 }
 
 .breadcrumb-item .btn-outline-secondary {
-    color: var(--sol-base1);
-    border-color: var(--sol-base01);
+    color: var(--smd-base1);
+    border-color: var(--smd-base01);
     background-color: transparent;
     font-size: 0.875rem;
     padding: 0.25rem 0.5rem;
 }
 
 .breadcrumb-item .btn-outline-secondary:hover {
-    color: var(--sol-base2);
-    background-color: var(--sol-base02);
-    border-color: var(--sol-base01);
+    color: var(--smd-base2);
+    background-color: var(--smd-base02);
+    border-color: var(--smd-base01);
 }
 
 .badge {
-    background-color: var(--sol-violet) !important;
+    background-color: var(--smd-violet) !important;
 }
 
 .badge.bg-primary {
-    background-color: var(--sol-blue) !important;
+    background-color: var(--smd-blue) !important;
 }
 
 .badge.bg-success {
-    background-color: var(--sol-green) !important;
+    background-color: var(--smd-green) !important;
 }
 
 .badge.bg-warning {
-    background-color: var(--sol-yellow) !important;
-    color: var(--sol-base03) !important;
+    background-color: var(--smd-yellow) !important;
+    color: var(--smd-base03) !important;
 }
 
 .alert-info {
-    background-color: var(--sol-base02);
-    border-color: var(--sol-cyan);
-    color: var(--sol-base1);
+    background-color: var(--smd-base02);
+    border-color: var(--smd-cyan);
+    color: var(--smd-base1);
 }
 
 .alert-success {
     background-color: rgba(133, 153, 0, 0.2);
-    border-color: var(--sol-green);
-    color: var(--sol-green);
+    border-color: var(--smd-green);
+    color: var(--smd-green);
 }
 
 .dropdown-menu {
-    background-color: var(--sol-base02);
-    border: 1px solid var(--sol-base01);
+    background-color: var(--smd-base02);
+    border: 1px solid var(--smd-base01);
 }
 
 .dropdown-item {
-    color: var(--sol-base0);
+    color: var(--smd-base0);
 }
 
 .dropdown-item:hover {
-    background-color: var(--sol-base01);
-    color: var(--sol-base1);
+    background-color: var(--smd-base01);
+    color: var(--smd-base1);
 }
 
 .form-control {
-    background-color: var(--sol-base02);
-    border-color: var(--sol-base01);
-    color: var(--sol-base0);
+    background-color: var(--smd-base02);
+    border-color: var(--smd-base01);
+    color: var(--smd-base0);
 }
 
 .form-control:focus {
-    background-color: var(--sol-base02);
-    border-color: var(--sol-blue);
-    color: var(--sol-base1);
+    background-color: var(--smd-base02);
+    border-color: var(--smd-blue);
+    color: var(--smd-base1);
     box-shadow: 0 0 0 0.2rem rgba(38, 139, 210, 0.25);
 }
 
 pre {
-    background-color: var(--sol-base02);
-    border: 1px solid var(--sol-base01);
-    color: var(--sol-base0);
+    background-color: var(--smd-base02);
+    border: 1px solid var(--smd-base01);
+    color: var(--smd-base0);
 }
 
 code {
-    background-color: var(--sol-base02);
-    color: var(--sol-base1);
+    background-color: var(--smd-base02);
+    color: var(--smd-base1);
 }
 
 blockquote {
-    border-left: 4px solid var(--sol-blue);
-    background-color: var(--sol-base02);
-    color: var(--sol-base0);
+    border-left: 4px solid var(--smd-blue);
+    background-color: var(--smd-base02);
+    color: var(--smd-base0);
 }
 
 .admin-toolbar {
@@ -194,28 +194,28 @@ blockquote {
 }
 
 footer {
-    background-color: var(--sol-base02);
-    color: var(--sol-base1);
-    border-top: 1px solid var(--sol-base01);
+    background-color: var(--smd-base02);
+    color: var(--smd-base1);
+    border-top: 1px solid var(--smd-base01);
 }
 
 a {
-    color: var(--sol-blue);
+    color: var(--smd-blue);
 }
 
 a:hover {
-    color: var(--sol-cyan);
+    color: var(--smd-cyan);
 }
 
 /* Text Farben für bessere Lesbarkeit */
 h1, h2, h3, h4, h5, h6 {
-    color: var(--sol-base1);
+    color: var(--smd-base1);
 }
 
 .text-muted {
-    color: var(--sol-base01) !important;
+    color: var(--smd-base01) !important;
 }
 
 .text-light {
-    color: var(--sol-base1) !important;
+    color: var(--smd-base1) !important;
 }

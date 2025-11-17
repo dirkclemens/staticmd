@@ -100,6 +100,16 @@ The StaticMD settings system uses JSON-based configuration with a user-friendly 
 
 ### Navigation Settings
 
+#### Navigation Show Dropdowns
+- **Key**: `navigation_show_dropdowns`
+- **Type**: Boolean
+- **Default**: `true`
+- **Status**: ✅ **Implemented**
+- **Description**: Controls whether top-level navigation displays dropdown menus for folders with subpages
+- **Options**: 
+  - `true` - Show dropdown menus for folders with subpages (default)
+  - `false` - Display all navigation links directly (flat navigation)
+
 #### Navigation Order
 - **Key**: `navigation_order`
 - **Type**: Object
@@ -164,6 +174,7 @@ The StaticMD settings system uses JSON-based configuration with a user-friendly 
     "editor_theme": "github",
     "show_file_stats": true,
     "auto_save_interval": 30,
+    "navigation_show_dropdowns": true,
     "navigation_order": {
         "blog": 1,
         "help": 2,
@@ -189,7 +200,7 @@ Access via **Admin → Settings**:
 2. **Dashboard Settings**: Recent files, statistics, search limits
 3. **Frontend Theme**: Theme selection with 9 available themes
 4. **Editor Settings**: Editor theme with live preview, auto-save interval
-5. **Navigation Settings**: Custom ordering with live preview
+5. **Navigation Settings**: Dropdown behavior control, custom ordering with live preview
 6. **SEO Settings**: Robots policy, crawler blocking, robots.txt generation
 7. **Backup System**: Create downloadable backups with statistics
 
@@ -334,7 +345,7 @@ class SettingsManager
         'general' => ['site_name', 'site_logo', 'site_description'],
         'themes' => ['frontend_theme', 'editor_theme'],
         'seo' => ['enable_seo_meta', 'default_robots', 'block_search_engines'],
-        'navigation' => ['navigation_order', 'show_homepage_in_nav'],
+        'navigation' => ['navigation_show_dropdowns', 'navigation_order', 'show_homepage_in_nav'],
         'editor' => ['auto_save_interval', 'editor_line_numbers', 'enable_live_preview'],
         'content' => ['default_layout', 'enable_tag_clouds', 'pages_per_folder'],
         'search' => ['enable_search', 'search_results_per_page', 'search_in_content']

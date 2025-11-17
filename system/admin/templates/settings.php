@@ -347,6 +347,21 @@ $nonce = SecurityHeaders::getNonce();
                                     <div class="row">
                                         <div class="col-md-8">
                                             <div class="mb-3">
+                                                <label class="form-label"><?= __('admin.settings.navigation_show_dropdowns') ?></label>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="navigation_show_dropdowns" 
+                                                           name="navigation_show_dropdowns" value="true"
+                                                           <?= ($settings['navigation_show_dropdowns'] ?? true) ? 'checked' : '' ?>>
+                                                    <label class="form-check-label" for="navigation_show_dropdowns">
+                                                        <?= __('admin.settings.navigation_show_dropdowns_help') ?>
+                                                    </label>
+                                                    <div class="form-text">
+                                                        <?= __('admin.settings.navigation_show_dropdowns_description') ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="mb-3">
                                                 <label for="navigation_order" class="form-label"><?= __('admin.settings.navigation_order') ?></label>
                                                 <textarea class="form-control" id="navigation_order" name="navigation_order" 
                                                         rows="6" placeholder="about&#10;blog&#10;tech&#10;diy"><?php

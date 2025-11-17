@@ -1,6 +1,7 @@
 ---
 Title: 5. Security & CSP
 Author: System
+Layout: Standard
 Tag: security, csp, documentation
 ---
 
