@@ -772,6 +772,16 @@ class AdminController {
     private function parseNavigationOrder(string $input): array
     {
         $order = [];
+        
+        // Prüfe ob es JSON ist (von SortableJS Drag & Drop)
+        if (!empty($input) && $input[0] === '{') {
+            $decoded = json_decode($input, true);
+            if (is_array($decoded)) {
+                return $decoded;
+            }
+        }
+        
+        // Fallback: Alte Text-basierte Eingabe parsen
         $lines = explode("\n", trim($input));
         $priority = 1;
         

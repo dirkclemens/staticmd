@@ -852,7 +852,8 @@ class ContentLoader
                 $html .= '<div class="mb-2">';
                 $html .= '<a href="/' . $this->encodeUrlPath($fileRoute) . '" class="text-decoration-none d-block">';
                 $html .= '<i class="bi bi-file-earmark-text me-2 text-muted"></i>';
-                $html .= '<small>' . htmlspecialchars($title) . '</small>';
+                // $html .= '<small>' . htmlspecialchars($title) . '</small>';
+                $html .= htmlspecialchars($title);
                 $html .= '</a>';
                 $html .= '</div>';
             }

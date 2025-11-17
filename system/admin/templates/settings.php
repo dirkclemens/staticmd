@@ -21,6 +21,46 @@ $nonce = SecurityHeaders::getNonce();
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     
     <link rel="stylesheet" href="/public/admin.css">
+    
+    <style nonce="<?= $nonce ?>">
+        #nav-items-sortable .list-group-item {
+            cursor: move;
+            transition: all 0.2s ease;
+        }
+        #nav-items-sortable .list-group-item:hover {
+            background-color: #f8f9fa;
+        }
+        #nav-items-sortable .sortable-ghost {
+            opacity: 0.4;
+            background: #e9ecef;
+        }
+        #nav-items-sortable .bi-grip-vertical {
+            cursor: grab;
+        }
+        #nav-items-sortable .bi-grip-vertical:active {
+            cursor: grabbing;
+        }
+    </style>
+    
+    <style nonce="<?= $nonce ?>">
+        #nav-items-sortable .list-group-item {
+            cursor: move;
+            transition: all 0.2s ease;
+        }
+        #nav-items-sortable .list-group-item:hover {
+            background-color: #f8f9fa;
+        }
+        #nav-items-sortable .sortable-ghost {
+            opacity: 0.4;
+            background: #e9ecef;
+        }
+        #nav-items-sortable .bi-grip-vertical {
+            cursor: grab;
+        }
+        #nav-items-sortable .bi-grip-vertical:active {
+            cursor: grabbing;
+        }
+    </style>
 </head>
 <body>
     <!-- Admin Header -->
@@ -362,25 +402,64 @@ $nonce = SecurityHeaders::getNonce();
                                             </div>
                                             
                                             <div class="mb-3">
-                                                <label for="navigation_order" class="form-label"><?= __('admin.settings.navigation_order') ?></label>
-                                                <textarea class="form-control" id="navigation_order" name="navigation_order" 
-                                                        rows="6" placeholder="about&#10;blog&#10;tech&#10;diy"><?php
-                                                        // Navigation-Order als Text formatieren
-                                                        $navOrder = $settings['navigation_order'] ?? [];
-                                                        $orderText = '';
-                                                        foreach ($navOrder as $section => $priority) {
-                                                            $orderText .= $section . ':' . $priority . "\n";
+                                                <label class="form-label">
+                                                    <i class="bi bi-arrows-move me-1"></i>
+                                                    <?= __('admin.settings.navigation_order') ?>
+                                                </label>
+                                                
+                                                <!-- Sortierbare Liste -->
+                                                <div id="nav-items-sortable" class="list-group">
+                                                    <?php
+                                                    // Sammle Navigation-Sections
+                                                    $contentPath = $this->config['paths']['content'];
+                                                    $navOrder = $settings['navigation_order'] ?? [];
+                                                    $sections = [];
+                                                    
+                                                    if (is_dir($contentPath)) {
+                                                        $items = glob($contentPath . '/*');
+                                                        foreach ($items as $item) {
+                                                            $basename = basename($item);
+                                                            if (is_dir($item)) {
+                                                                $sections[] = $basename;
+                                                            } elseif (is_file($item) && str_ends_with($basename, '.md')) {
+                                                                $section = substr($basename, 0, -3);
+                                                                if ($section !== 'index') {
+                                                                    $sections[] = $section;
+                                                                }
+                                                            }
                                                         }
-                                                        echo htmlspecialchars(trim($orderText));
-                                                        ?></textarea>
-                                                <div class="form-text">
-                                                    <strong><?= __('admin.settings.navigation_format') ?></strong><br>
-                                                    <code>section</code> <?= __('admin.settings.navigation_or') ?> <code>section:<?= __('admin.settings.navigation_priority') ?></code><br>
-                                                    <strong><?= __('admin.settings.navigation_example') ?></strong><br>
-                                                    <code>about:1</code><br>
-                                                    <code>blog:2</code><br>
-                                                    <code>tech</code> <?= __('admin.settings.navigation_auto') ?><br>
-                                                    <code>diy</code>
+                                                        $sections = array_unique($sections);
+                                                        
+                                                        // Sortiere nach aktueller Order
+                                                        usort($sections, function($a, $b) use ($navOrder) {
+                                                            $orderA = $navOrder[$a] ?? 999;
+                                                            $orderB = $navOrder[$b] ?? 999;
+                                                            if ($orderA === $orderB) {
+                                                                return strcasecmp($a, $b);
+                                                            }
+                                                            return $orderA <=> $orderB;
+                                                        });
+                                                    }
+                                                    
+                                                    foreach ($sections as $index => $section):
+                                                    ?>
+                                                    <div class="list-group-item d-flex justify-content-between align-items-center" 
+                                                         data-section="<?= htmlspecialchars($section) ?>">
+                                                        <span>
+                                                            <i class="bi bi-grip-vertical me-2 text-muted"></i>
+                                                            <strong><?= htmlspecialchars($section) ?></strong>
+                                                        </span>
+                                                        <span class="badge bg-primary" title="<?= __('admin.settings.navigation_position') ?>"><?= $index + 1 ?></span>
+                                                    </div>
+                                                    <?php endforeach; ?>
+                                                </div>
+                                                
+                                                <!-- Hidden Input für Form-Submit -->
+                                                <input type="hidden" name="navigation_order" id="navigation_order_input" value="">
+                                                
+                                                <div class="form-text mt-2">
+                                                    <i class="bi bi-info-circle me-1"></i>
+                                                    <?= __('admin.settings.navigation_drag_hint') ?>
                                                 </div>
                                             </div>
                                         </div>
@@ -633,6 +712,7 @@ $nonce = SecurityHeaders::getNonce();
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     
     <script nonce="<?= $nonce ?>">
         let timeRemaining = <?= $timeRemaining ?>;
@@ -678,7 +758,46 @@ $nonce = SecurityHeaders::getNonce();
         document.addEventListener('DOMContentLoaded', function() {
             const currentTheme = document.getElementById('editor_theme').value;
             previewTheme(currentTheme);
+            
+            // SortableJS für Navigation-Sortierung initialisieren
+            const navItems = document.getElementById('nav-items-sortable');
+            if (navItems) {
+                const sortable = new Sortable(navItems, {
+                    animation: 150,
+                    handle: '.bi-grip-vertical',
+                    ghostClass: 'sortable-ghost',
+                    onEnd: function() {
+                        updateNavigationOrder();
+                    }
+                });
+                
+                // Initial order setzen
+                updateNavigationOrder();
+            }
         });
+        
+        // Navigation-Order aktualisieren
+        function updateNavigationOrder() {
+            const items = document.querySelectorAll('#nav-items-sortable .list-group-item');
+            const order = {};
+            
+            items.forEach((item, index) => {
+                const section = item.dataset.section;
+                order[section] = index + 1;
+                
+                // Badge aktualisieren
+                const badge = item.querySelector('.badge');
+                if (badge) {
+                    badge.textContent = index + 1;
+                }
+            });
+            
+            // Hidden Input aktualisieren (als JSON)
+            const input = document.getElementById('navigation_order_input');
+            if (input) {
+                input.value = JSON.stringify(order);
+            }
+        }
         
         // Backup-Formular Handler
         document.getElementById('createBackupBtn')?.addEventListener('click', function(e) {
