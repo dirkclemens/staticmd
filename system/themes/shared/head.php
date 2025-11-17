@@ -47,7 +47,7 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
     <title><?= htmlspecialchars($title) ?> - <?= htmlspecialchars($siteName) ?></title>
     
     <!-- Favicon -->  
-    <link rel="icon" type="image/png" href="/public/images/favicon.png">
+    <link rel="icon" type="image/png" href="/public/assets/favicon.ico">
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">

@@ -29,10 +29,12 @@ class ThemeHelper
         foreach ($pages as $page) {
             $parts = explode('/', $page['route']);
             $section = $parts[0];
-            
+            // $title = ucwords(str_replace(['-', '_'], ' ', $section));
+            $title = str_replace(['-', '_'], ' ', $section);
+
             if (!isset($navItems[$section])) {
                 $navItems[$section] = [
-                    'title' => ucwords(str_replace(['-', '_'], ' ', $section)),
+                    'title' => $title,
                     'route' => $section,
                     'pages' => []
                 ];
@@ -127,7 +129,8 @@ class ThemeHelper
         
     // Convert route to readable title
         $title = str_replace(['/', '-', '_'], ' ', $route);
-        return ucwords($title);
+        // return ucwords($title);
+        return $title;
     }
     
     /**

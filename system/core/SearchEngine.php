@@ -310,7 +310,8 @@ class SearchEngine
     private function generateTitle(string $route): string
     {
         $title = str_replace(['/', '-', '_'], ' ', $route);
-        return ucwords($title);
+        // return ucwords($title);
+        return $title;
     }
 
     /**

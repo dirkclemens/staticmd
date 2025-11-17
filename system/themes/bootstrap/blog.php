@@ -25,7 +25,7 @@ include __DIR__ . '/../shared/head.php';
             <?= $themeHelper->renderBreadcrumbs($breadcrumbs ?? []) ?>
             
             <div class="row">
-                <div class="col-lg-10">
+                <div class="col-lg-12"> <!-- Full-width for blog layout, no sidebar -->
                     
                     <!-- Meta-Informationen -->
                     <?php if (!empty($meta) && ($meta['author'] ?? $meta['date'] ?? null)): ?>

@@ -143,7 +143,8 @@ class TemplateEngine
         
         // Route zu lesbarem Titel konvertieren
         $title = str_replace(['/', '-', '_'], ' ', $route);
-        return ucwords($title);
+        // return ucwords($title);
+        return $title;
     }
 
     /**

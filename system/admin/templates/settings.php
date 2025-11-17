@@ -262,7 +262,7 @@ $nonce = SecurityHeaders::getNonce();
                                                 <select class="form-select" id="frontend_theme" name="frontend_theme">
                                                     <?php foreach ($availableThemes as $theme): ?>
                                                         <option value="<?= htmlspecialchars($theme) ?>" <?= ($settings['frontend_theme'] ?? 'bootstrap') === $theme ? 'selected' : '' ?>>
-                                                            <?= ucfirst(str_replace(['-', '_'], [' ', ' '], $theme)) ?>
+                                                            <?= str_replace(['-', '_'], [' ', ' '], $theme) ?>
                                                         </option>
                                                     <?php endforeach; ?>
                                                 </select>

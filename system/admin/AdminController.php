@@ -258,8 +258,10 @@ class AdminController {
             } else {
                 //error_log('DEBUG: Datei konnte nicht gelesen werden oder existiert nicht!');
                 $isNewFile = true;
+                // $title = ucwords(str_replace(['/', '-', '_'], ' ', $file));
+                $title = str_replace(['/', '-', '_'], ' ', $file);
                 $meta = [
-                    'title' => ucwords(str_replace(['/', '-', '_'], ' ', $file)),
+                    'title' => $title,
                     'author' => $this->auth->getUsername(),
                     'date' => date('Y-m-d')
                 ];

@@ -228,7 +228,7 @@ class ContentLoader
         });
         
         // Generate HTML for overview page
-        $folderTitle = ucwords(str_replace(['/', '-', '_'], ' ', $route));
+        $folderTitle = str_replace(['/', '-', '_'], ' ', $route);
         $html = $this->generateFolderOverviewHTML($folderTitle, $files, $subfolders, $route);
         
         return [
@@ -626,7 +626,8 @@ class ContentLoader
         $name = str_replace(['_', '-'], ' ', $name);
         
         // Capitalize words
-        return ucwords(trim($name)) ?: 'Bild';
+        // return ucwords(trim($name)) ?: 'Bild';
+        return trim($name) ?: 'Bild';
     }
     
     /**
@@ -1039,7 +1040,8 @@ class ContentLoader
         
         // Convert route to readable title
         $title = str_replace(['/', '-', '_'], ' ', $route);
-        return ucwords($title);
+        // return ucwords($title);
+        return $title;
     }
 
     /**
@@ -1319,7 +1321,8 @@ class ContentLoader
             }
         }
         
-        return ucwords(str_replace(['-', '_'], ' ', $fallbackName));
+        // return ucwords(str_replace(['-', '_'], ' ', $fallbackName));
+        return trim(str_replace(['-', '_'], ' ', $fallbackName));
     }
     
     /**
@@ -1437,7 +1440,8 @@ class ContentLoader
         // Fallback: Ordnername mit Ersetzungen
         $title = basename($folderPath);
         $title = str_replace(['-', '_'], ' ', $title);
-        return ucwords($title);
+        // return ucwords($title);
+        return trim($title);
     }
 
     /**

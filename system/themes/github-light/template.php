@@ -37,7 +37,8 @@ function generateTitle($route) {
     
     // Convert route to readable title
     $title = str_replace(['/', '-', '_'], ' ', $route);
-    return ucwords($title);
+    // return ucwords($title);
+    return $title;
 }
 
 // Sort navigation - load from settings

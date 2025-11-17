@@ -55,12 +55,6 @@
     .bg-primary {
         background-color: var(--smd-primary)!important;
     }
-
-    .navbar-brand {
-        color: var(--smd-primary);
-        font-weight: 300;
-        font-size: 1.5rem;
-    }
     
     .navbar-brand {
         color: var(--smd-primary);
@@ -142,6 +136,7 @@
         background-color: #f8f9fa;
         border-radius: 0.5rem;
         padding: 1.5rem;
+        min-height: 100%;
     }
 
     .sidebar h5 {
@@ -149,6 +144,42 @@
         border-bottom: 2px solid var(--smd-primary);
         padding-bottom: 0.5rem;
         margin-bottom: 1rem;
+    }
+
+    /* Sidebar Navigation Collapse Styles */
+    .sidebar .list-group-item[data-bs-toggle="collapse"] {
+        cursor: pointer;
+    }
+    
+    .sidebar .list-group-item[data-bs-toggle="collapse"] .bi-chevron-down {
+        transition: transform 0.3s ease;
+        font-size: 0.8em;
+    }
+    
+    .sidebar .list-group-item[data-bs-toggle="collapse"][aria-expanded="true"] .bi-chevron-down {
+        transform: rotate(180deg);
+    }
+    
+    .sidebar .collapse .list-group {
+        border-left: 2px solid var(--smd-primary);
+        margin-left: 0.5rem;
+    }
+    
+    .sidebar .collapse .list-group-item {
+        border: none;
+        border-radius: 0;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.9em;
+        background-color: transparent;
+    }
+    
+    .sidebar .collapse .list-group-item:hover {
+        background-color: rgba(0, 123, 255, 0.05);
+    }
+    
+    .sidebar .collapse .list-group-item.active {
+        background-color: var(--smd-primary);
+        color: white;
     }
 
     .meta-info {
