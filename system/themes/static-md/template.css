@@ -1,6 +1,6 @@
 /* StaticMD Theme - Styles */
     :root {
-        --smd-primary: #AC1200;
+        --smd-primary: #007bff;
         --smd-secondary: #6c757d;
         --smd-base03: #002b36;
         --smd-base02: #073642;
@@ -28,13 +28,16 @@
 
     a {
         color: var(--smd-primary);
+        text-decoration: underline;
     }   
     a.nav-link {
         color: var(--smd-primary);
+        text-decoration: underline;
     }
     a.nav-link.active {
-        /* background-color: var(--smd-base0); */
+        /* background-color: var(--smd-base3); */
         color: var(--smd-primary);
+        text-decoration: underline;
     }
     .list-group-item.active {
         background-color: var(--smd-primary);
@@ -53,6 +56,12 @@
         background-color: var(--smd-primary)!important;
     }
 
+    .navbar-brand {
+        color: var(--smd-primary);
+        font-weight: 300;
+        font-size: 1.5rem;
+    }
+    
     .navbar-brand {
         color: var(--smd-primary);
         font-weight: 300;

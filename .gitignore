@@ -9,6 +9,7 @@
 **/content/tech/*
 **/content/test/*
 **/content/photos/*
+**/content/blog/*
 **/system/themes/adcore/*
 **/logo/*
 **/*.code-workspace

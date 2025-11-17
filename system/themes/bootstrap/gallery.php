@@ -4,69 +4,19 @@
  * Spezielles Layout für Bildergalerien mit responsivem Grid
  */
 
-// Theme-Konfiguration
+// Theme configuration
 $siteName = $config['system']['name'] ?? 'StaticMD';
-$siteUrl = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']);
 $currentRoute = $_GET['route'] ?? 'index';
+$currentTheme = 'bootstrap';
 
-// Load settings
-$settingsFile = $config['paths']['system'] . '/settings.json';
-$settings = [];
-if (file_exists($settingsFile)) {
-    $settings = json_decode(file_get_contents($settingsFile), true) ?: [];
-}
-$siteName = $settings['site_name'] ?? $siteName;
-$siteLogo = $settings['site_logo'] ?? '';
-
-// Theme Helper for common functions
-require_once __DIR__ . '/../ThemeHelper.php';
-$themeHelper = new \StaticMD\Themes\ThemeHelper($this->contentLoader);
-
-// Navigation erstellen
-$navItems = $themeHelper->buildNavigation();
-
-// Sort navigation - load from settings
-$navigationOrder = $this->contentLoader->getNavigationOrder();
-
-// Apply sorting
-uksort($navItems, function($a, $b) use ($navigationOrder) {
-    $orderA = $navigationOrder[$a] ?? 999;
-    $orderB = $navigationOrder[$b] ?? 999;
-    
-    if ($orderA === $orderB) {
-        return strcasecmp($a, $b);
-    }
-    
-    return $orderA <=> $orderB;
-});
+// Include shared head section
+include __DIR__ . '/../shared/head.php';
 ?>
-<!DOCTYPE html>
-<html lang="de" data-bs-theme="light">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="<?= htmlspecialchars($meta['description'] ?? 'Galerie - Powered by StaticMD') ?>">
-    <meta name="author" content="<?= htmlspecialchars($meta['author'] ?? '') ?>">
-    
-    <!-- SEO/Robots Meta-Tags -->
-    <?= $robotsMeta ?>
-    
-    <title><?= htmlspecialchars($title) ?> - <?= htmlspecialchars($siteName) ?></title>
-    
-    <!-- Favicon -->  
-    <link rel="icon" type="image/png" href="/public/images/favicon.png">
-
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
-    
     <!-- GLightbox CSS für Lightbox-Funktionalität -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
-    
+
     <!-- Custom Gallery CSS -->
     <style>
-        <?php include __DIR__ . '/template.css'; ?>
-        
         /* Gallery-spezifische Styles */
         .gallery-header {
             text-align: center;
@@ -220,125 +170,28 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
             }
         }
     </style>
-
-    <?php if (isset($meta['css'])): ?>
-    <style><?= $meta['css'] ?></style>
-    <?php endif; ?>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <?php if (!empty($siteLogo)): ?>
-                    <img src="<?= htmlspecialchars($siteLogo) ?>" alt="Logo" style="height: 30px;" class="me-2">
-                <?php else: ?>
-                    <i class="bi bi-images me-2"></i>
-                <?php endif; ?>
-                <?= htmlspecialchars($siteName) ?>
-            </a>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link <?= $currentRoute === 'index' ? 'active' : '' ?>" href="/">
-                            <i class="bi bi-house me-1"></i> 
-                        </a>
-                    </li>
-                    
-                    <?php foreach ($navItems as $section => $nav): ?>
-                        <?php if ($section !== 'index' && $section !== 'home'): ?>
-                            <?php if (!empty($nav['pages']) && count($nav['pages']) > 0): ?>
-                            <!-- Dropdown für Ordner mit Unterseiten -->
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle <?= strpos($currentRoute, $section) === 0 ? 'active' : '' ?>" 
-                                   href="#" role="button" data-bs-toggle="dropdown">
-                                    <?= htmlspecialchars($nav['title']) ?>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($nav['route']) ?>"><?= \StaticMD\Core\I18n::t('core.overview') ?></a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <?php foreach ($nav['pages'] as $page): ?>
-                                    <li><a class="dropdown-item" href="/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($page['route']) ?>">
-                                        <?= htmlspecialchars($page['title'] ?? basename($page['route'])) ?>
-                                    </a></li>
-                                    <?php endforeach; ?>
-                                </ul>
-                            </li>
-                            <?php else: ?>
-                            <!-- Normaler Link für einzelne Dateien -->
-                            <li class="nav-item">
-                                <a class="nav-link <?= $currentRoute === $section ? 'active' : '' ?>" 
-                                   href="/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($nav['route']) ?>">
-                                    <?= htmlspecialchars($nav['title']) ?>
-                                </a>
-                            </li>
-                            <?php endif; ?>
-                        <?php endif; ?>
-                    <?php endforeach; ?>
-                </ul>
-                
-                <!-- Suchformular -->
-                <form class="d-flex me-3" action="/search" method="GET">
-                    <input class="form-control me-2" type="search" name="q" placeholder="Suchen..." 
-                           value="<?= htmlspecialchars($_GET['q'] ?? '') ?>" style="width: 250px;">
-                    <button class="btn btn-outline-primary" type="submit">
-                        <i class="bi bi-search"></i>
-                    </button>
-                </form>
-                
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin">
-                            <i class="bi bi-gear me-1"></i> Admin
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Hauptinhalt -->
+    <?php 
+    // Include shared navigation
+    include __DIR__ . '/../shared/navigation.php';
+    ?>
+    
+    <!-- Main Content -->
     <div class="content-wrapper">
         <div class="container-fluid px-4">
             <!-- Breadcrumb Navigation -->
             <?= $themeHelper->renderBreadcrumbs($breadcrumbs ?? []) ?>
             
             <!-- Gallery Header -->
+
+            <?php if (isset($title) && strlen($title) > 0): ?> 
+                
             <div class="gallery-header">
                 <h1><i class="bi bi-images me-3"></i><?= htmlspecialchars($title) ?></h1>
                 <?php if (!empty($meta['description'])): ?>
                 <p class="lead"><?= htmlspecialchars($meta['description']) ?></p>
                 <?php endif; ?>
-            </div>
-            
-            <!-- Meta-Informationen -->
-            <?php if (!empty($meta) && ($meta['author'] ?? $meta['date'] ?? null)): ?>
-            <div class="gallery-stats">
-                <div class="row justify-content-center">
-                    <?php if (isset($meta['author'])): ?>
-                    <div class="col-auto stat-item">
-                        <span class="stat-number"><i class="bi bi-person"></i></span>
-                        <small class="text-muted"><?= htmlspecialchars($meta['author']) ?></small>
-                    </div>
-                    <?php endif; ?>
-                    
-                    <?php if (isset($meta['date'])): ?>
-                    <div class="col-auto stat-item">
-                        <span class="stat-number"><i class="bi bi-calendar"></i></span>
-                        <small class="text-muted"><?= htmlspecialchars($meta['date']) ?></small>
-                    </div>
-                    <?php endif; ?>
-                    
-                    <div class="col-auto stat-item">
-                        <span class="stat-number" id="image-count">0</span>
-                        <small class="text-muted">Bilder</small>
-                    </div>
-                </div>
             </div>
             <?php endif; ?>
             
@@ -389,49 +242,21 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
                 </div>
             </article>
         </div>
-    </div>
+    </div>    
 
-    <!-- Admin-Toolbar (nur wenn eingeloggt) -->
-    <?php if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in']): ?>
-    <div class="admin-toolbar">
-        <div class="btn-group-vertical" role="group">
-            <a href="/admin" class="btn btn-primary btn-sm" title="Admin Dashboard">
-                <i class="bi bi-gear"></i>
-            </a>
-            <?php if (isset($content['file_path'])): ?>
-            <a href="/admin?action=edit&file=<?= urlencode($content['route']) ?>&return_url=<?= urlencode($_SERVER['REQUEST_URI']) ?>" class="btn btn-warning btn-sm" title="Galerie bearbeiten">
-                <i class="bi bi-pencil"></i>
-            </a>
-            <?php endif; ?>
-        </div>
-    </div>
-    <?php endif; ?>
-
-    <!-- Footer -->
-    <footer class="py-4">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-8">
-                    <p class="mb-1">&copy; <?= date('Y') ?> <?= htmlspecialchars($siteName) ?></p>
-                    <p class="mb-0">
-                        <small class="text-light">Galerie-Layout - Powered by StaticMD</small>
-                    </p>
-                </div>
-                <div class="col-md-4 text-md-end">
-                    <a href="/admin" class="text-light text-decoration-none">
-                        <i class="bi bi-shield-lock me-1"></i> Admin-Bereich
-                    </a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <?php 
+    // Admin-Toolbar mit geteilter Komponente
+    include __DIR__ . '/../shared/admin-toolbar.php';
     
+    // Footer mit geteilter Komponente
+    include __DIR__ . '/../shared/footer.php'; 
+    
+    // Scripts mit geteilter Komponente (vereinfacht für Blog)
+    include __DIR__ . '/../shared/scripts.php'; 
+    ?>
     <!-- GLightbox JS für Lightbox-Funktionalität -->
     <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
-       
+        
     <!-- Gallery Custom JS -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -532,7 +357,7 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
                         }
                     });
                     
-                    // Update image count
+                    // Update image count (nur wenn Element existiert)
                     setTimeout(() => {
                         const visibleItems = document.querySelectorAll('.gallery-item:not([style*="display: none"])');
                         const imageCountElement = document.getElementById('image-count');
@@ -556,7 +381,7 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
                 }
             });
         });
-    </script>
+    </script>  
     
     <?php if (isset($meta['js'])): ?>
     <script><?= $meta['js'] ?></script>

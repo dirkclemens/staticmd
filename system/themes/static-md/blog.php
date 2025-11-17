@@ -1,94 +1,99 @@
 <?php
 /**
- * basic blog template
+ * StaticMD Theme - Blog Template (Modular)
+ * Vereinfachte Darstellung für Blog-Listen
  */
 
 // Theme configuration
 $siteName = $config['system']['name'] ?? 'StaticMD';
 $currentRoute = $_GET['route'] ?? 'index';
+$currentTheme = 'static-md';
 
-// Load settings
-$settingsFile = $config['paths']['system'] . '/settings.json';
-$settings = [];
-if (file_exists($settingsFile)) {
-    $settings = json_decode(file_get_contents($settingsFile), true) ?: [];
-}
-$siteName = $settings['site_name'] ?? $siteName;
-$siteLogo = $settings['site_logo'] ?? '';
-
-// Theme Helper for navigation
-require_once __DIR__ . '/../ThemeHelper.php';
-$themeHelper = new \StaticMD\Themes\ThemeHelper($this->contentLoader);
-$navItems = $themeHelper->buildNavigation();
-
-// Navigation ordering from settings
-$navigationOrder = $this->contentLoader->getNavigationOrder();
-uksort($navItems, function($a, $b) use ($navigationOrder) {
-    $orderA = $navigationOrder[$a] ?? 999;
-    $orderB = $navigationOrder[$b] ?? 999;
-    return $orderA <=> $orderB;
-});
+// Include shared head section
+include __DIR__ . '/../shared/head.php';
 ?>
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($title) ?> - <?= htmlspecialchars($siteName) ?></title>
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
-    
-    <!-- Theme CSS -->
-    <style><?php include __DIR__ . '/template.css'; ?></style>
 </head>
 <body>
-    <!-- Navigation with dropdown support -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <?php 
+    // Include shared navigation
+    include __DIR__ . '/navigation.php';
+    ?>
+    
+    <div class="content-wrapper">
         <div class="container">
-            <!-- Logo and site name -->
-            <a class="navbar-brand" href="/">
-                <?php if (!empty($siteLogo)): ?>
-                    <img src="<?= htmlspecialchars($siteLogo) ?>" alt="Logo" style="height: 30px;">
-                <?php endif; ?>
-                <?= htmlspecialchars($siteName) ?>
-            </a>
+            <!-- Breadcrumb Navigation -->
+            <?= $themeHelper->renderBreadcrumbs($breadcrumbs ?? []) ?>
             
-            <!-- Navigation items with dropdown -->
-            <div class="navbar-nav">
-                <?php foreach ($navItems as $section => $nav): ?>
-                    <?php if (!empty($nav['pages'])): ?>
-                    <!-- Dropdown for folders -->
-                    <div class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                            <?= htmlspecialchars($nav['title']) ?>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <?php foreach ($nav['pages'] as $page): ?>
-                            <li><a class="dropdown-item" href="/<?= $page['route'] ?>">
-                                <?= htmlspecialchars($page['title']) ?>
-                            </a></li>
-                            <?php endforeach; ?>
-                        </ul>
+            <div class="row">
+                <div class="col-lg-10">
+                    
+                    <!-- Meta-Informationen -->
+                    <?php if (!empty($meta) && ($meta['author'] ?? $meta['date'] ?? null)): ?>
+                    <div class="meta-info">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <?php if (isset($meta['author'])): ?>
+                                <i class="bi bi-person me-1"></i>
+                                <span class="me-3"><?= htmlspecialchars($meta['author']) ?></span>
+                                <?php endif; ?>
+                                
+                                <?php if (isset($meta['date'])): ?>
+                                <i class="bi bi-calendar me-1"></i>
+                                <span><?= htmlspecialchars($meta['date']) ?></span>
+                                <?php endif; ?>
+                            </div>
+                            
+                            <?php if (isset($content['modified'])): ?>
+                            <div class="col-auto text-muted">
+                                <small>
+                                    <i class="bi bi-clock me-1"></i>
+                                    Aktualisiert: <?= date('d.m.Y H:i', $content['modified']) ?>
+                                </small>
+                            </div>
+                            <?php endif; ?>
+                        </div>
                     </div>
-                    <?php else: ?>
-                    <!-- Direct link -->
-                    <a class="nav-link" href="/<?= $nav['route'] ?>">
-                        <?= htmlspecialchars($nav['title']) ?>
-                    </a>
                     <?php endif; ?>
-                <?php endforeach; ?>
+                    
+                    <!-- Erfolgsmeldung nach Speichern -->
+                    <?php if (isset($_GET['saved'])): ?>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="bi bi-check-circle me-2"></i>
+                        Die Seite wurde erfolgreich gespeichert.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    <?php endif; ?>
+                    
+                    <!-- Private Seiten-Hinweis für Admins -->
+                    <?php 
+                    $visibility = $meta['Visibility'] ?? $meta['visibility'] ?? 'public';
+                    if ($visibility === 'private'): 
+                    ?>
+                    <div class="alert alert-warning" role="alert">
+                        <i class="bi bi-lock me-2"></i>
+                        <strong>Private Seite:</strong> Diese Seite ist nur für angemeldete Admins sichtbar.
+                    </div>
+                    <?php endif; ?>
+                    
+                    <!-- Main Content -->
+                    <main class="container mt-4">
+                        <?= $body ?>
+                    </main>
+                </div>
+                            
             </div>
         </div>
-    </nav>
+    </div>    
     
-    <!-- Main Content -->
-    <main class="container mt-4">
-        <?= $body ?>
-    </main>
+    <?php 
+    // Admin-Toolbar mit geteilter Komponente
+    include __DIR__ . '/../shared/admin-toolbar.php';
     
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    // Footer mit geteilter Komponente
+    include __DIR__ . '/../shared/footer.php'; 
+    
+    // Scripts mit geteilter Komponente (vereinfacht für Blog)
+    include __DIR__ . '/../shared/scripts.php'; 
+    ?>
 </body>
 </html>

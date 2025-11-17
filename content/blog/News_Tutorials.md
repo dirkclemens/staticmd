@@ -1,22 +1,18 @@
 ---
 Title: StaticMD Blog - News & Tutorials
 Author: System
-Date: 2025-10-26
+Date: 2025-11-16
 Layout: blog
 Tag: blog, news, tutorials, cms, markdown
 Description: Official StaticMD blog with updates, tutorials and best practices
 Visibility: public
 ---
 
-# StaticMD Blog - News & Tutorials
-
-🎉 **Welcome to the official StaticMD blog!** Here you'll find everything about updates, new features and best practices.
-
 ## 📰 Latest News
 
 ### 🚀 StaticMD 2.0 - Major Update Available!
 
-**October 26, 2025** - The biggest update in StaticMD history is here!
+**November 16, 2025** - StaticMD 2.1 brings powerful blog features with date-sorted display and elegant pagination!
 
 **New Features:**
 - **7 professional frontend themes** (Solarized, Monokai, GitHub)
@@ -73,7 +69,7 @@ Visibility: public
 
 ## 📋 All Blog Articles
 
-[pages /blog/ 50 rows]
+[bloglist /blog/ 5]
 
 ## 🏷️ Popular Tags
 

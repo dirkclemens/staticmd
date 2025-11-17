@@ -393,6 +393,8 @@ class ContentLoader
                     return $this->processFolderShortcode($params, $currentRoute);
                 case 'gallery':
                     return $this->processGalleryShortcode($params, $currentRoute);
+                case 'bloglist':
+                    return $this->processBloglistShortcode($params, $currentRoute);
                 default:
                     return $matches[0]; // Leave unknown shortcodes unchanged
             }
@@ -541,6 +543,28 @@ class ContentLoader
         
         // Generate gallery HTML
         return $this->generateAutoGalleryHTML($images, $targetPath);
+    }
+
+    /**
+     * Verarbeitet [bloglist /pfad/ per_page page] Shortcode
+     * Zeigt nach Datum sortierte Blog-Einträge mit Pagination
+     */
+    private function processBloglistShortcode(array $params, string $currentRoute): string
+    {
+        // Parameter parsen: [bloglist /blog/ 5 1] - Pfad, Einträge pro Seite, aktuelle Seite
+        $targetPath = isset($params[0]) ? trim($params[0], ' /') : trim($currentRoute, '/');
+        $perPage = isset($params[1]) ? (int)$params[1] : $this->getItemsPerPage();
+        $currentPage = isset($params[2]) ? max(1, (int)$params[2]) : $this->getCurrentPage();
+        
+        // Hole Blog-Einträge mit Pagination
+        $blogData = $this->getBlogList($targetPath, $perPage, $currentPage);
+        
+        if (empty($blogData['items'])) {
+            return '<div class="alert alert-info">Keine Blog-Einträge in "' . htmlspecialchars($targetPath ?: '/') . '" gefunden.</div>';
+        }
+        
+        // Generate blog list HTML with pagination
+        return $this->generateBlogListHTML($blogData, $targetPath, $currentPage, $perPage);
     }
 
     /**
@@ -1435,5 +1459,330 @@ class ContentLoader
         $html .= '</nav>';
         
         return $html;
+    }
+    
+    /**
+     * Holt Blog-Einträge mit Datumsortierung und Pagination
+     */
+    private function getBlogList(string $route, int $perPage, int $currentPage): array
+    {
+        $contentDir = $this->config['paths']['content'];
+        $folderPath = $contentDir . '/' . $route;
+        
+        if (!is_dir($folderPath)) {
+            return ['items' => [], 'total' => 0, 'pages' => 0];
+        }
+        
+        $files = [];
+        $extension = $this->config['markdown']['file_extension'];
+        
+        $iterator = new \DirectoryIterator($folderPath);
+        foreach ($iterator as $file) {
+            if ($file->isDot() || !$file->isFile()) {
+                continue;
+            }
+            
+            $filename = $file->getFilename();
+            if (!str_ends_with($filename, $extension)) {
+                continue;
+            }
+            
+            // Skip index.md
+            if ($filename === 'index' . $extension) {
+                continue;
+            }
+            
+            $filePath = $file->getPathname();
+            $baseName = substr($filename, 0, -strlen($extension));
+            $fileRoute = empty($route) ? $baseName : $route . '/' . $baseName;
+            
+            // Metadaten lesen
+            $rawContent = file_get_contents($filePath);
+            $parsed = $this->parseFrontMatter($rawContent);
+            
+            // Nur Dateien mit blog layout oder ohne Layout im blog-Ordner
+            $layout = $parsed['meta']['Layout'] ?? $parsed['meta']['layout'] ?? '';
+            $isInBlogFolder = strpos($route, 'blog') !== false;
+            
+            if ($layout !== 'blog' && !$isInBlogFolder) {
+                continue;
+            }
+            
+            $title = $parsed['meta']['Title'] ?? $parsed['meta']['title'] ?? $this->generateTitle(basename($fileRoute));
+            $date = $parsed['meta']['Date'] ?? $parsed['meta']['date'] ?? '';
+            $author = $parsed['meta']['Author'] ?? $parsed['meta']['author'] ?? '';
+            $description = $parsed['meta']['Description'] ?? $parsed['meta']['description'] ?? '';
+            $tags = $parsed['meta']['Tag'] ?? $parsed['meta']['tags'] ?? '';
+            $visibility = $parsed['meta']['Visibility'] ?? $parsed['meta']['visibility'] ?? 'public';
+            
+            // Private Seiten ausblenden wenn nicht angemeldet
+            if ($visibility === 'private' && !$this->shouldShowPrivateContent()) {
+                continue;
+            }
+            
+            // Fallback-Beschreibung aus Inhalt
+            if (empty($description)) {
+                $contentLines = explode("\n", trim($parsed['content']));
+                $preview = '';
+                foreach ($contentLines as $line) {
+                    $line = trim($line);
+                    if (!empty($line) && !str_starts_with($line, '#')) {
+                        $preview = substr($line, 0, 200);
+                        if (strlen($line) > 200) {
+                            $preview .= '...';
+                        }
+                        break;
+                    }
+                }
+                $description = $preview;
+            }
+            
+            // Datum für Sortierung vorbereiten
+            $sortDate = $this->parseDate($date, filemtime($filePath));
+            
+            $files[] = [
+                'title' => $title,
+                'route' => $fileRoute,
+                'date' => $date,
+                'sort_date' => $sortDate,
+                'author' => $author,
+                'description' => $description,
+                'tags' => $tags,
+                'modified' => filemtime($filePath),
+                'visibility' => $visibility
+            ];
+        }
+        
+        // Nach Datum sortieren (neueste zuerst)
+        usort($files, function($a, $b) {
+            return $b['sort_date'] <=> $a['sort_date'];
+        });
+        
+        $total = count($files);
+        $totalPages = ceil($total / $perPage);
+        $offset = ($currentPage - 1) * $perPage;
+        $items = array_slice($files, $offset, $perPage);
+        
+        return [
+            'items' => $items,
+            'total' => $total,
+            'pages' => $totalPages,
+            'current_page' => $currentPage,
+            'per_page' => $perPage
+        ];
+    }
+    
+    /**
+     * Generiert HTML für Blog-Liste mit Pagination
+     */
+    private function generateBlogListHTML(array $blogData, string $route, int $currentPage, int $perPage): string
+    {
+        $html = '<div class="blog-list">';
+        
+        // Blog-Einträge
+        foreach ($blogData['items'] as $item) {
+            $html .= '<article class="blog-entry card mb-4">';
+            $html .= '<div class="card-body">';
+            
+            // Titel
+            $html .= '<h3 class="card-title">';
+            $html .= '<a href="/' . $this->encodeUrlPath($item['route']) . '" class="text-decoration-none">';
+            $html .= htmlspecialchars($item['title']);
+            $html .= '</a>';
+            $html .= '</h3>';
+            
+            // Meta-Informationen
+            $html .= '<div class="blog-meta mb-3">';
+            if (!empty($item['date'])) {
+                $html .= '<span class="text-muted me-3">';
+                $html .= '<i class="bi bi-calendar me-1"></i>';
+                $html .= htmlspecialchars($item['date']);
+                $html .= '</span>';
+            }
+            if (!empty($item['author'])) {
+                $html .= '<span class="text-muted me-3">';
+                $html .= '<i class="bi bi-person me-1"></i>';
+                $html .= htmlspecialchars($item['author']);
+                $html .= '</span>';
+            }
+            $html .= '</div>';
+            
+            // Beschreibung
+            if (!empty($item['description'])) {
+                $html .= '<p class="card-text">' . htmlspecialchars($item['description']) . '</p>';
+            }
+            
+            // Tags
+            if (!empty($item['tags'])) {
+                $html .= '<div class="blog-tags mb-2">';
+                $tags = array_map('trim', explode(',', $item['tags']));
+                foreach ($tags as $tag) {
+                    if (!empty($tag)) {
+                        $html .= '<a href="/tag/' . urlencode($tag) . '" class="badge bg-secondary me-1 text-decoration-none">';
+                        $html .= htmlspecialchars($tag);
+                        $html .= '</a>';
+                    }
+                }
+                $html .= '</div>';
+            }
+            
+            // Weiterlesen-Link
+            $html .= '<a href="/' . $this->encodeUrlPath($item['route']) . '" class="btn btn-primary btn-sm">';
+            $html .= 'Weiterlesen <i class="bi bi-arrow-right"></i>';
+            $html .= '</a>';
+            
+            $html .= '</div>';
+            $html .= '</article>';
+        }
+        
+        // Pagination
+        if ($blogData['pages'] > 1) {
+            $html .= $this->generatePagination($blogData, $route);
+        }
+        
+        $html .= '</div>';
+        return $html;
+    }
+    
+    /**
+     * Generiert Pagination-HTML
+     */
+    private function generatePagination(array $blogData, string $route): string
+    {
+        $currentPage = $blogData['current_page'];
+        $totalPages = $blogData['pages'];
+        $perPage = $blogData['per_page'];
+        
+        $html = '<nav aria-label="Blog pagination" class="mt-4">';
+        $html .= '<ul class="pagination justify-content-center">';
+        
+        // Vorherige Seite
+        if ($currentPage > 1) {
+            $prevUrl = $this->getPaginationUrl($route, $currentPage - 1, $perPage);
+            $html .= '<li class="page-item">';
+            $html .= '<a class="page-link" href="' . htmlspecialchars($prevUrl) . '">';
+            $html .= '<i class="bi bi-chevron-left"></i> Vorherige';
+            $html .= '</a>';
+            $html .= '</li>';
+        } else {
+            $html .= '<li class="page-item disabled">';
+            $html .= '<span class="page-link"><i class="bi bi-chevron-left"></i> Vorherige</span>';
+            $html .= '</li>';
+        }
+        
+        // Seitennummern
+        $startPage = max(1, $currentPage - 2);
+        $endPage = min($totalPages, $currentPage + 2);
+        
+        if ($startPage > 1) {
+            $html .= '<li class="page-item">';
+            $html .= '<a class="page-link" href="' . htmlspecialchars($this->getPaginationUrl($route, 1, $perPage)) . '">1</a>';
+            $html .= '</li>';
+            if ($startPage > 2) {
+                $html .= '<li class="page-item disabled"><span class="page-link">...</span></li>';
+            }
+        }
+        
+        for ($i = $startPage; $i <= $endPage; $i++) {
+            if ($i == $currentPage) {
+                $html .= '<li class="page-item active">';
+                $html .= '<span class="page-link">' . $i . '</span>';
+                $html .= '</li>';
+            } else {
+                $html .= '<li class="page-item">';
+                $html .= '<a class="page-link" href="' . htmlspecialchars($this->getPaginationUrl($route, $i, $perPage)) . '">' . $i . '</a>';
+                $html .= '</li>';
+            }
+        }
+        
+        if ($endPage < $totalPages) {
+            if ($endPage < $totalPages - 1) {
+                $html .= '<li class="page-item disabled"><span class="page-link">...</span></li>';
+            }
+            $html .= '<li class="page-item">';
+            $html .= '<a class="page-link" href="' . htmlspecialchars($this->getPaginationUrl($route, $totalPages, $perPage)) . '">' . $totalPages . '</a>';
+            $html .= '</li>';
+        }
+        
+        // Nächste Seite
+        if ($currentPage < $totalPages) {
+            $nextUrl = $this->getPaginationUrl($route, $currentPage + 1, $perPage);
+            $html .= '<li class="page-item">';
+            $html .= '<a class="page-link" href="' . htmlspecialchars($nextUrl) . '">';
+            $html .= 'Nächste <i class="bi bi-chevron-right"></i>';
+            $html .= '</a>';
+            $html .= '</li>';
+        } else {
+            $html .= '<li class="page-item disabled">';
+            $html .= '<span class="page-link">Nächste <i class="bi bi-chevron-right"></i></span>';
+            $html .= '</li>';
+        }
+        
+        $html .= '</ul>';
+        $html .= '</nav>';
+        
+        return $html;
+    }
+    
+    /**
+     * Hilfsfunktionen für Blog-Liste
+     */
+    private function parseDate(string $dateString, int $fallbackTimestamp): int
+    {
+        if (empty($dateString)) {
+            return $fallbackTimestamp;
+        }
+        
+        // Verschiedene Datumsformate unterstützen
+        $formats = [
+            'Y-m-d',     // 2025-01-15
+            'd.m.Y',     // 15.01.2025
+            'Y/m/d',     // 2025/01/15
+            'Y-m-d H:i:s' // 2025-01-15 14:30:00
+        ];
+        
+        foreach ($formats as $format) {
+            $date = \DateTime::createFromFormat($format, $dateString);
+            if ($date !== false) {
+                return $date->getTimestamp();
+            }
+        }
+        
+        // Fallback: Dateimodifikationszeit
+        return $fallbackTimestamp;
+    }
+    
+    private function getItemsPerPage(): int
+    {
+        $settingsFile = $this->config['paths']['system'] . '/settings.json';
+        if (file_exists($settingsFile)) {
+            $settings = json_decode(file_get_contents($settingsFile), true);
+            return $settings['items_per_page'] ?? 10;
+        }
+        return 10;
+    }
+    
+    private function getCurrentPage(): int
+    {
+        return isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+    }
+    
+    private function getPaginationUrl(string $route, int $page, int $perPage): string
+    {
+        $baseUrl = '/' . ($route ? $this->encodeUrlPath($route) : '');
+        $params = [];
+        
+        if ($page > 1) {
+            $params['page'] = $page;
+        }
+        
+        // Weitere URL-Parameter beibehalten (außer page)
+        foreach ($_GET as $key => $value) {
+            if ($key !== 'page' && $key !== 'route') {
+                $params[$key] = $value;
+            }
+        }
+        
+        return $baseUrl . (!empty($params) ? '?' . http_build_query($params) : '');
     }
 }
