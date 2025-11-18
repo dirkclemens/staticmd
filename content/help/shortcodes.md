@@ -1,8 +1,8 @@
 ---
 Title: 4. Shortcodes Reference
-Author: System
 Tag: shortcodes, markdown, content
-Layout: Standard
+Author: System
+Visibility: public
 ---
 
 # Shortcodes Reference
@@ -16,8 +16,7 @@ Comprehensive documentation of all available shortcodes in StaticMD for advanced
 Shortcodes extend the standard Markdown syntax with dynamic content and advanced layout options. StaticMD supports both custom shortcodes and Yellow CMS-compatible syntax.
 
 ## Content Shortcodes
-
-### [pages] - Generate Page Lists
+### [&#8203;pages] - Generate Page Lists
 
 Automatically generates lists of Markdown files from a specific directory.
 
@@ -65,7 +64,7 @@ Automatically generates lists of Markdown files from a specific directory.
 - **Date**: By last modification (newest first)
 - **Title**: By extracted title from Front Matter
 
-### [folder] - Display Subfolders
+### [&#8203;folder] - Display Subfolders
 
 Displays a horizontal navigation of direct subfolders within a directory.
 
@@ -109,7 +108,7 @@ Displays a horizontal navigation of direct subfolders within a directory.
 - **Content Detection**: Only displays folders with Markdown content
 - **Icon Integration**: Bootstrap folder icons for visual clarity
 
-### [tags] - Create Tag Clouds
+### [&#8203;tags] - Create Tag Clouds
 
 Creates tag clouds with all available tags from a directory.
 
