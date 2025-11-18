@@ -21,7 +21,7 @@
 /*.md
 !/README.md
 !public/assets/README.md
-!public/assets/galleriesREADME.md
+!public/assets/galleries/README.md
 !public/downloads/README.md
 !public/images/README.md
 
