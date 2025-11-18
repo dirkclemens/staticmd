@@ -39,32 +39,34 @@ Description: A beautiful collection of images
 
 ### 1. Local Images (recommended)
 
-**Step 1:** Upload images to `/public/images/`
+**Step 1:** Upload images to `/public/assets/galleries/`
 
-> **Important:** Files in `/public/images/` are accessed via `/assets/images/` URLs due to the asset routing system.
+> **Important:** Files in `/public/assets/galleries/` are accessed via `/assets/galleries/...` URLs due to the asset routing system.
 ```bash
 # Example structure:
-/public/images/
-  ├── gallery1/
-  │   ├── image1.jpg
-  │   ├── image2.jpg
-  │   └── image3.jpg
-  └── portfolio/
-      ├── project1.png
-      └── project2.png
+/public/assets/galleries/
+                ├── gallery1/
+                │   ├── image1.jpg
+                │   ├── image2.jpg
+                │   └── image3.jpg
+                └── portfolio/
+                    ├── project1.png
+                    └── project2.png
 ```
 
 **Step 2:** Include images in Markdown
 ```markdown
-![Description](/assets/images/gallery1/image1.jpg "Nature")
-![Another Image](/assets/images/gallery1/image2.jpg "Landscape")
+![Paris, Galeries Lafayette](/assets/galleries/paris/1_20110223_073728.jpg "Paris, Galeries Lafayette")
+
+![Description](/assets/galleries/gallery1/image1.jpg "Nature")
+![Another Image](/assets/galleries/gallery1/image2.jpg "Landscape")
 
 # Real example with Paris gallery:
-![Paris](/assets/images/galleries/paris/1_20110223_073728.jpg "Paris")
+![Paris](/assets/galleries/paris/1_20110223_073728.jpg "Paris")
 
 # Test multiple images:
-![Paris Street](/assets/images/galleries/paris/2010_0516_121252.jpg "Paris Street")
-![Paris Architecture](/assets/images/galleries/paris/2010_0516_155733.jpg "Paris Architecture")
+![Paris Street](/assets/galleries/paris/2010_0516_121252.jpg "Paris Street")
+![Paris Architecture](/assets/galleries/paris/2010_0516_155733.jpg "Paris Architecture")
 ```
 
 ### 2. External Images
@@ -107,9 +109,9 @@ When tags are defined in the front matter, filter buttons are automatically crea
 Tag: nature, architecture, portrait
 ---
 
-![Tree](/assets/images/gallery1/tree.jpg "Nature")
-![Building](/assets/images/gallery1/building.jpg "Architecture")
-![Person](/assets/images/gallery1/person.jpg "Portrait")
+![Tree](/assets/galleries/gallery1/tree.jpg "Nature")
+![Building](/assets/galleries/gallery1/building.jpg "Architecture")
+![Person](/assets/galleries/gallery1/person.jpg "Portrait")
 ```
 
 Images can then be filtered by tags.
@@ -183,16 +185,16 @@ Description: A collection of my best nature shots from 2024
 This gallery showcases my favorite nature subjects from this year.
 
 ## Spring
-![Cherry Blossom](/assets/images/nature/cherry-blossom.jpg "Spring")
-![Forest Path](/assets/images/nature/forest-path.jpg "Spring")
+![Cherry Blossom](/assets/galleries/nature/cherry-blossom.jpg "Spring")
+![Forest Path](/assets/galleries/nature/forest-path.jpg "Spring")
 
 ## Summer
-![Sunflower Field](/assets/images/nature/sunflower-field.jpg "Summer")
-![Mountain Lake](/assets/images/nature/mountain-lake.jpg "Summer")
+![Sunflower Field](/assets/galleries/nature/sunflower-field.jpg "Summer")
+![Mountain Lake](/assets/galleries/nature/mountain-lake.jpg "Summer")
 
 ## Autumn
-![Autumn Forest](/assets/images/nature/autumn-forest.jpg "Autumn")
-![Morning Fog](/assets/images/nature/morning-fog.jpg "Autumn")
+![Autumn Forest](/assets/galleries/nature/autumn-forest.jpg "Autumn")
+![Morning Fog](/assets/galleries/nature/morning-fog.jpg "Autumn")
 ```
 
 ## Troubleshooting
@@ -226,16 +228,3 @@ This gallery showcases my favorite nature subjects from this year.
 - Consistent tag naming
 - Not too many tags per gallery (max. 5-7)
 - Use logical categories
-
-### 📁 File Organization
-```
-/public/images/
-  ├── galleries/
-  │   ├── 2024-vacation/
-  │   ├── portfolio/
-  │   └── events/
-  └── uploads/
-      └── temp/
-```
-
-The Gallery Layout provides a professional and user-friendly solution for displaying image galleries in StaticMD!

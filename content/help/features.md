@@ -221,7 +221,3 @@ Date: 2024-01-15                    # Content date
 - **External Image Support**: CSP updated for gallery external images
 - **Asset Security**: Secure asset delivery with validation
 - **Path Normalization**: Unicode-safe path handling
-
----
-
-*StaticMD Feature Set - Last Updated: November 2024*

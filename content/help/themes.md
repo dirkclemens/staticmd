@@ -94,6 +94,8 @@ system/themes/
 ├── ThemeHelper.php       # Shared theme functionality
 ├── bootstrap/
 │   ├── template.php      # Main template
+│   ├── page.php          # plain layout (NEW)
+│   ├── blog.php          # Bogging layout (NEW)
 │   ├── gallery.php       # Gallery layout (NEW)
 │   └── template.css      # Theme CSS
 ├── solarized-light/
@@ -102,9 +104,16 @@ system/themes/
 ├── monokai-dark/
 ├── github-light/
 ├── github-dark/
-└── static-md/
-    ├── template.php
-    └── template.css
+├── static-md/
+│   ├── template.php
+│   └── template.css
+├── shared/                 
+│   ├── admin-toolbar.php
+│   ├── footer.php
+│   ├── header.php
+│   ├── navigation.php
+│   ├── scripts.php
+│   └── sidebar.php
 ```
 
 **Note**: All themes include gallery layout support for image collections.
@@ -527,19 +536,3 @@ class ThemeHelper {
     public function getNavigationOrder()  // Configurable navigation sorting
 }
 ```
-
-### 🚀 Performance Features
-- **Inline CSS**: CSS embedded directly in templates
-- **CDN Integration**: Bootstrap and icons from CDN
-- **Asset Routing**: Efficient asset delivery via assets.php
-- **Theme Caching**: Automatic theme file caching
-
-### 🔐 Security Integration
-- **CSP Compatibility**: All themes work with Content Security Policy
-- **XSS Protection**: Proper output escaping in all templates
-- **Admin Integration**: Conditional admin toolbar display
-- **Session Security**: Admin-only content support
-
----
-
-*StaticMD Theme System v2.1 - 8 Professional Themes with Gallery Support*

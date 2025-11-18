@@ -128,7 +128,7 @@ staticMD/
 - **Project Repository**: https://github.com/dirkclemens/staticMD
 - **robots.txt**: https://flat.adcore.de/robots.txt - Dynamic SEO control
 
-## 🆕 Recent Updates (November 2024)
+## 🆕 Recent Updates
 - **Gallery System**: Complete image gallery solution with lightbox
 - **Enhanced Shortcodes**: Code-block protection and improved processing
 - **Security Improvements**: Enhanced CSP and asset security

@@ -1,7 +1,7 @@
 ---
 Title: 10. Installation Guide
 Author: System
-Tag: installation, hosting, uberspace
+Tag: installation, hosting
 Layout: Standard
 ---
 
@@ -70,7 +70,7 @@ chmod 644 /var/www/html/staticMD/config.php
 
 ## 🛠 Configuration
 ### Download Tag and Download Directory
-PDF and ZIP files are uploaded via drag&drop to `/public/downloads/` and linked with `[download file.pdf "Alt-Text"]`. The parser shows the appropriate Bootstrap icon.
+PDF and ZIP files are uploaded via drag&drop to `/public/downloads/` and linked with `[download filename.pdf "Alt-Text"]`. The parser shows the appropriate Bootstrap icon.
 
 ### Change Admin Credentials
 ```php
@@ -155,8 +155,8 @@ chmod -R 755 content/
 
 ### Umlauts in URLs Not Working
 ```bash
-sudo apt-get install php8.3-intl
-sudo yum install php83-intl
+sudo apt-get install php8.4-intl
+sudo yum install php84-intl
 ```
 
 ---
@@ -229,15 +229,3 @@ tail -f /var/log/php_errors.log
 - [ ] Implement analytics
 - [ ] Set up monitoring
 - [ ] Plan maintenance intervals
-
----
-
-## 📞 Support & Help
-
-### Documentation
-- **help/README.md**: Feature overview
-- **CHANGELOG.md**: Development history
-
-### Live Example
-- **Demo**: https://staticMD.adcore.de
-- **Admin Demo**: Full functionality

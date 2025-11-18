@@ -104,7 +104,7 @@ The StaticMD settings system uses JSON-based configuration with a user-friendly 
 - **Key**: `navigation_show_dropdowns`
 - **Type**: Boolean
 - **Default**: `true`
-- **Status**: ✅ **Implemented**
+- **Status**: ✅ **Implemented** but not available in every theme
 - **Description**: Controls whether top-level navigation displays dropdown menus for folders with subpages
 - **Options**: 
   - `true` - Show dropdown menus for folders with subpages (default)
@@ -113,8 +113,8 @@ The StaticMD settings system uses JSON-based configuration with a user-friendly 
 #### Navigation Order
 - **Key**: `navigation_order`
 - **Type**: Object
-- **Status**: ✅ **Implemented**
-- **Description**: Custom ordering for main navigation items
+- **Status**: ✅ **Implemented** 
+- **Description**: Custom ordering (UI: drag & drop) for main navigation items
 - **Example**:
 ```json
 {
@@ -508,7 +508,3 @@ if (json_last_error() !== JSON_ERROR_NONE) {
     throw new Exception('Invalid JSON in settings.json: ' . json_last_error_msg());
 }
 ```
-
----
-
-*StaticMD Settings System v2.0 - Flexible Configuration Management*

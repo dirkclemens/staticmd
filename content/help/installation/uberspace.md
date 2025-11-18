@@ -48,8 +48,8 @@ cd ~/html
 # Show available PHP versions
 uberspace tools version list php
 
-# Activate PHP 8.3
-uberspace tools version use php 8.3
+# Activate PHP 8.4
+uberspace tools version use php 8.4
 
 # Check version
 php --version
@@ -108,56 +108,64 @@ Create Uberspace-optimized `.htaccess`:
 ```apache
 # StaticMD - Uberspace Configuration
 RewriteEngine On
+RewriteBase /
 
-# Security Headers
-Header always set X-Frame-Options "SAMEORIGIN"
-Header always set X-Content-Type-Options "nosniff"
-Header always set Referrer-Policy "strict-origin-when-cross-origin"
+# Verzeichnis-Zugriff verhindern für System-Ordner
+RewriteCond %{THE_REQUEST} \s/+system/
+RewriteRule ^system/ - [F,L]
 
-# Block access to system files
-RedirectMatch 403 ^/system/
-RedirectMatch 403 ^/content/
-RedirectMatch 403 ^/(config|composer)\.(php|json|lock)$
-RedirectMatch 403 ^/\.
+RewriteCond %{THE_REQUEST} \s/+content/
+RewriteRule ^content/ - [F,L]
 
-# Assets routing
-RewriteRule ^assets/(.+)$ assets.php?file=$1 [QSA,L]
+# Debug-Dateien temporär erlauben
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteCond %{REQUEST_URI} debug
+RewriteRule ^(.*)$ - [L]
 
-# Robots.txt routing  
+# Assets über PHP-Handler ausliefern (funktioniert zuverlässig)
+RewriteRule ^assets/(.+)$ assets.php?asset=$1 [L,QSA]
+
+# robots.txt dynamisch generieren
 RewriteRule ^robots\.txt$ robots.php [L]
 
-# Admin interface
+# Admin-Bereich weiterleiten
 RewriteRule ^admin/?$ system/admin/index.php [L]
-RewriteRule ^admin/(.+)$ system/admin/index.php?route=$1 [QSA,L]
+RewriteRule ^admin/(.+)$ system/admin/index.php?route=$1 [L,QSA]
 
-# Main routing
+# Logo und Favicon direkt ausliefern (falls im Root-Verzeichnis)
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^(logo\.png|favicon\.ico)$ $1 [L]
+
+# Alle anderen Anfragen an index.php weiterleiten
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php?route=$1 [QSA,L]
+RewriteRule ^(.*)$ index.php?route=$1 [L,QSA]
 
-# Performance
-<IfModule mod_expires.c>
-    ExpiresActive on
-    ExpiresByType text/css "access plus 1 month"
-    ExpiresByType application/javascript "access plus 1 month"
-    ExpiresByType image/png "access plus 1 year"
-    ExpiresByType image/jpg "access plus 1 year"
-    ExpiresByType image/jpeg "access plus 1 year"
-    ExpiresByType image/svg+xml "access plus 1 year"
+# Security Headers
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options nosniff
+    Header always set X-Frame-Options DENY
+    Header always set X-XSS-Protection "1; mode=block"
 </IfModule>
 
-# Compression
-<IfModule mod_deflate.c>
-    AddOutputFilterByType DEFLATE text/plain
-    AddOutputFilterByType DEFLATE text/html
-    AddOutputFilterByType DEFLATE text/xml
-    AddOutputFilterByType DEFLATE text/css
-    AddOutputFilterByType DEFLATE application/xml
-    AddOutputFilterByType DEFLATE application/xhtml+xml
-    AddOutputFilterByType DEFLATE application/rss+xml
-    AddOutputFilterByType DEFLATE application/javascript
-    AddOutputFilterByType DEFLATE application/x-javascript
-</IfModule>
+# Disable server signature
+ServerSignature Off
+
+# Prevent access to sensitive files
+<Files "*.md">
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files "config.php">
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files "composer.json">
+    Order allow,deny
+    Deny from all
+</Files>
 ```
 
 ---
@@ -185,18 +193,3 @@ ls -la ~/tmp/sessions/
 # Fix permissions
 chmod 700 ~/tmp/sessions
 ```
-
-## Support
-
-### Uberspace-specific Help
-- **Manual**: [manual.uberspace.de](https://manual.uberspace.de)
-- **Support**: Ticket system in Uberspace dashboard
-- **Community**: [Twitter @ubernauten](https://twitter.com/ubernauten)
-
-### StaticMD Support  
-- **GitHub**: Issues and Discussions
-- **Documentation**: Complete docs in `/content/help/` directory
-
----
-
-*StaticMD on Uberspace - Professional German Hosting for Developers*

@@ -1,7 +1,7 @@
 ---
 Title: 11. Deployment Guide
 Author: System
-Tag: hosting, uberspace, deployment
+Tag: hosting, deployment
 Layout: Standard
 ---
 
@@ -42,7 +42,7 @@ In `config.php`:
 
 ## 🌐 Uberspace Server Configuration
 ### Download Directory
-Static downloads are stored under `/public/downloads/` and served via `/downloads/file.pdf`.
+Static downloads are stored under `/public/downloads/` and served via `/downloads/filename.pdf`.
 
 ### Uberspace Setup
 - Upload files to `/var/www/virtual/USER/html/`
@@ -70,12 +70,6 @@ server {
 - FTP/SFTP Upload
 - Git Deployment
 - ZIP Upload
-
-## ✅ Test After Deployment
-- Frontend: `http://your-domain.com/`
-- Admin: `http://your-domain.com/admin`
-- Editor: Create new page
-- Navigation: Check all links
 
 ## 🔒 Security Features (automatically enabled)
 

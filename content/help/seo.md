@@ -213,7 +213,3 @@ All StaticMD themes automatically support:
 ### Sensitive Content
 - Front Matter: `Robots: noindex,nofollow`
 - Additionally: HTTP Auth or IP restrictions
-
----
-
-*SEO control in StaticMD is flexible and multi-layered - configurable from global to per-page.*

@@ -177,7 +177,3 @@ if ($context === 'special') {
 - Older browsers ignore CSP headers
 - X-XSS-Protection active as fallback
 - Basic security through input validation
-
----
-
-*StaticMD achieves **CSP Level 2** compliance and meets modern web security standards.*

@@ -17,6 +17,8 @@ Visibility: public
 - [x] SEO control with robots.txt generator
 - [x] Per-page robots meta tags via Front Matter
 - [x] Search engine blocking (global/per page)
+- [x] Layout system: Standard, Wiki, Blog, Page
+- [x] Backup/restore functionality in admin
 
 ## 🔄 In Progress
 - [ ] Move/rename pages in admin
@@ -24,10 +26,8 @@ Visibility: public
 - [ ] Performance optimization for large folders
 
 ## 📋 Planned Features
-- [ ] Layout system: Standard, Wiki, Blog, Page
 - [ ] Automatic sitemap generation (XML)
 - [ ] RSS/Atom feed for blog sections
-- [ ] Backup/restore functionality in admin
 - [ ] Advanced tag management
 - [ ] Comment system (optional)
 - [ ] SEO analytics integration (Google/Bing Webmaster Tools)
@@ -36,11 +36,3 @@ Visibility: public
 ## 🎨 Design & UX
 - [ ] Dark mode toggle in frontend
 - [ ] Extended editor functions (table editor)
-- [ ] Mobile admin interface optimization
-- [ ] Print stylesheet for better print view
-
-## 🔧 Technical Improvements
-- [ ] Docker container for easy development
-- [ ] Unit tests for core functions
-- [ ] GitHub Actions for CI/CD
-- [ ] Composer package management

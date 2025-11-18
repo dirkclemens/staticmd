@@ -65,6 +65,50 @@ Automatically generates lists of Markdown files from a specific directory.
 - **Date**: By last modification (newest first)
 - **Title**: By extracted title from Front Matter
 
+### [folder] - Display Subfolders
+
+Displays a horizontal navigation of direct subfolders within a directory.
+
+#### Basic Syntax
+```markdown
+[folder /path/ limit]
+[folder]
+```
+
+#### Parameters
+- **`/path/`**: Path to directory (relative to `/content/`)
+- **`limit`**: Maximum number of subfolders (default: 1000)
+
+#### Examples
+
+**Display Tech Subfolders**:
+```markdown
+[folder /tech/ 10]
+```
+
+**Current Directory**:
+```markdown
+[folder]
+```
+
+**Root Directory**:
+```markdown
+[folder / 20]
+```
+
+#### Output Format
+- Horizontal button navigation with Bootstrap styling
+- Only shows folders containing `.md` files
+- Extracts folder titles from `index.md` front matter or uses folder name
+- Sorted alphabetically by title
+- Responsive flex layout with gap spacing
+
+#### Features
+- **Smart Title Extraction**: Reads `Title` from folder's `index.md`
+- **Fallback Naming**: Uses folder name with dashes/underscores replaced by spaces
+- **Content Detection**: Only displays folders with Markdown content
+- **Icon Integration**: Bootstrap folder icons for visual clarity
+
 ### [tags] - Create Tag Clouds
 
 Creates tag clouds with all available tags from a directory.
@@ -358,7 +402,3 @@ StaticMD is fully compatible with Yellow CMS shortcodes:
 <!-- StaticMD Equivalent -->
 [pages /blog/ 10]
 ```
-
----
-
-*StaticMD Shortcodes - Advanced Content Functionality for Markdown*
