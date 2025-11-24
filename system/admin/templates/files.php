@@ -3,14 +3,14 @@ $pageTitle = __('admin.files.title');
 $currentUser = $this->auth->getUsername();
 $timeRemaining = $this->auth->getTimeRemaining();
 
-// Helper-Funktion für pfad-sichere URL-Encoding
+// Helper function for path-safe URL encoding
 function encodeUrlPath($path) {
     $parts = explode('/', $path);
     $encodedParts = array_map('rawurlencode', $parts);
     return implode('/', $encodedParts);
 }
 
-// Helper-Funktion für Byte-Formatierung
+// Helper function for byte formatting
 function formatBytes(int $bytes, int $precision = 2): string {
     $units = ['Byte', 'KB', 'MB', 'GB'];
     for ($i = 0; $bytes > 1024 && $i < count($units) - 1; $i++) {
@@ -21,7 +21,7 @@ function formatBytes(int $bytes, int $precision = 2): string {
 
 ?>
 <?php
-// Security Headers setzen
+// Set security headers
 require_once __DIR__ . '/../../core/SecurityHeaders.php';
 use StaticMD\Core\SecurityHeaders;
 SecurityHeaders::setAllSecurityHeaders('admin');
@@ -63,14 +63,14 @@ $nonce = SecurityHeaders::getNonce();
                     </a>
                     <ul class="dropdown-menu" style="right: 0; left: auto;">
                         <li><a class="dropdown-item" href="/admin">
-                            <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                            <i class="bi bi-speedometer2 me-2"></i><?= __('admin.common.dashboard') ?>
                         </a></li>
                         <li><a class="dropdown-item" href="/">
-                            <i class="bi bi-house me-2"></i>Zur Website
+                            <i class="bi bi-house me-2"></i><?= __('admin.common.view_site') ?>
                         </a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="/admin?action=logout">
-                            <i class="bi bi-box-arrow-right me-2"></i>Abmelden
+                            <i class="bi bi-box-arrow-right me-2"></i><?= __('admin.common.logout') ?>
                         </a></li>
                     </ul>
                 </div>
@@ -135,7 +135,7 @@ $nonce = SecurityHeaders::getNonce();
                     </ul>
                 </div>
             </nav>
-            <!-- Hauptinhalt -->
+            <!-- Main content -->
             <main class="col-md-9 col-lg-10 admin-content">
                 <div class="card files-container">
                     <div class="card-header">
@@ -162,7 +162,7 @@ $nonce = SecurityHeaders::getNonce();
                                     <i class="bi bi-trash me-1"></i> <?= __('admin.files.delete_selected') ?>
                                 </button>
                                 <button class="btn btn-outline-secondary btn-sm" id="deselectAll">
-                                    <i class="bi bi-x-circle me-1"></i> Auswahl aufheben
+                                    <i class="bi bi-x-circle me-1"></i> <?= __('admin.files.deselect_all') ?>
                                 </button>
                             </div>
                         </div>
@@ -460,7 +460,7 @@ $nonce = SecurityHeaders::getNonce();
             }
         }
         
-        // Auswahl aufheben
+        // Deselect all
         document.getElementById('deselectAll').addEventListener('click', function() {
             document.querySelectorAll('.file-checkbox:checked').forEach(checkbox => {
                 checkbox.checked = false;
@@ -469,7 +469,7 @@ $nonce = SecurityHeaders::getNonce();
             updateBulkActions();
         });
         
-        // Bulk-Delete
+        // Bulk delete
         document.getElementById('bulkDelete').addEventListener('click', function() {
             if (selectedFiles.size === 0) return;
             
@@ -512,12 +512,12 @@ $nonce = SecurityHeaders::getNonce();
                 updateBulkActions();
             }
             
-            // Escape: Auswahl aufheben
+            // Escape: Deselect all
             if (e.key === 'Escape') {
                 document.getElementById('deselectAll').click();
             }
             
-            // Ctrl+N: Neue Datei
+            // Ctrl+N: New file
             if (e.ctrlKey && e.key === 'n') {
                 e.preventDefault();
                 window.location.href = '/admin?action=new';

@@ -224,6 +224,7 @@ return [
             'new_page' => 'New page',
             'selected_count' => 'files selected',
             'delete_selected' => 'Delete selected',
+            'deselect_all' => 'Deselect all',
             'no_file_specified' => 'No file specified.',
             'invalid_filename' => 'Invalid filename.',
             'no_delete_permission' => 'No permission to delete the file.',

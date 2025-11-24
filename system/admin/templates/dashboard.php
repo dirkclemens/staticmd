@@ -1,16 +1,16 @@
 <?php
-// Security Headers setzen
+// Set security headers
 require_once __DIR__ . '/../../core/SecurityHeaders.php';
 use StaticMD\Core\SecurityHeaders;
 SecurityHeaders::setAllSecurityHeaders('admin');
 $nonce = SecurityHeaders::getNonce();
 
-// Admin-Layout Header
+// Admin layout header variables
 $pageTitle = $pageTitle ?? 'Dashboard';
 $currentUser = $this->auth->getUsername();
 $timeRemaining = $this->auth->getTimeRemaining();
 
-// Helper-Funktion für pfad-sichere URL-Encoding
+// Helper function for path-safe URL encoding
 function encodeUrlPath($path) {
     $parts = explode('/', $path);
     $encodedParts = array_map('rawurlencode', $parts);
@@ -130,7 +130,7 @@ function encodeUrlPath($path) {
                 </div>
             </nav>
 
-            <!-- Hauptinhalt -->
+            <!-- Main content -->
             <main class="col-md-9 col-lg-10 admin-content">
                 <?php if (isset($_GET['message'])): ?>
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -166,7 +166,7 @@ function encodeUrlPath($path) {
                 </div>
                 <?php endif; ?>
 
-                <!-- Dashboard Inhalt -->
+                <!-- Dashboard content -->
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h1 class="h3 mb-0">
                         <i class="bi bi-speedometer2 me-2 text-primary"></i>
@@ -182,7 +182,7 @@ function encodeUrlPath($path) {
                     </div>
                 </div>
 
-                <!-- Statistik-Karten -->
+                <!-- Statistics cards -->
                 <div class="row mb-4">
                     <div class="col-md-3">
                         <div class="card stat-card">
@@ -250,7 +250,7 @@ function encodeUrlPath($path) {
 
                 </div>
 
-                <!-- Neueste Dateien -->
+                <!-- Recent files -->
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
@@ -320,7 +320,7 @@ function encodeUrlPath($path) {
         </div>
     </div>
 
-    <!-- Bestätigungs-Modal für Löschung -->
+    <!-- Confirmation modal for deletion -->
     <div class="modal fade" id="deleteConfirmModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -351,7 +351,7 @@ function encodeUrlPath($path) {
         </div>
     </div>
 
-    <!-- Verstecktes Form für Löschung -->
+    <!-- Hidden form for deletion -->
     <form id="deleteForm" method="POST" action="/admin?action=delete" style="display: none;">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($this->auth->generateCSRFToken()) ?>">
         <input type="hidden" name="file" id="deleteFileInput">
@@ -360,7 +360,7 @@ function encodeUrlPath($path) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
     <script nonce="<?= $nonce ?>">
-        // Session-Timer
+        // Session timer
         let timeRemaining = <?= $timeRemaining ?>;
         
         function updateTimer() {
@@ -398,7 +398,7 @@ function encodeUrlPath($path) {
             });
         }, 5000);
         
-        // Löschbestätigung
+        // Delete confirmation
         let deleteModal;
         let currentDeleteFile = '';
         

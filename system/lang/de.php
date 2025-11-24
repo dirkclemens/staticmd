@@ -224,6 +224,7 @@ return [
             'new_page' => 'Neue Seite',
             'selected_count' => 'Dateien ausgewählt',
             'delete_selected' => 'Ausgewählte löschen',
+            'deselect_all' => 'Auswahl aufheben',
             'no_file_specified' => 'Keine Datei angegeben.',
             'invalid_filename' => 'Ungültiger Dateiname.',
             'no_delete_permission' => 'Keine Berechtigung zum Löschen der Datei.',

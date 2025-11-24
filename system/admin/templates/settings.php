@@ -4,7 +4,7 @@ $currentUser = $this->auth->getUsername();
 $timeRemaining = $this->auth->getTimeRemaining();
 ?>
 <?php
-// Security Headers setzen
+// Set security headers
 require_once __DIR__ . '/../../core/SecurityHeaders.php';
 use StaticMD\Core\SecurityHeaders;
 SecurityHeaders::setAllSecurityHeaders('admin');
@@ -153,7 +153,7 @@ $nonce = SecurityHeaders::getNonce();
                     </ul>
                 </div>
             </nav>
-            <!-- Hauptinhalt -->
+            <!-- Main content -->
             <main class="col-md-9 col-lg-10 admin-content">
                 <div class="card settings-container">
                     <form method="POST" action="/admin?action=save_settings" id="settings-form">
@@ -202,7 +202,7 @@ $nonce = SecurityHeaders::getNonce();
                             </div>
                             <?php endif; ?>
 
-                            <!-- Seiten-Einstellungen -->                                
+                            <!-- Website settings -->                                
                             <div class="card mt-4">                                                                
                                 <div class="card-header">
                                     <h5><i class="bi bi-globe me-2"></i><?= __('admin.settings.website') ?></h5>
@@ -245,7 +245,7 @@ $nonce = SecurityHeaders::getNonce();
                                 </div>    
                             </div>
                             
-                            <!-- Dashboard-Einstellungen -->
+                            <!-- Dashboard settings -->
                             <div class="card mt-4">                                                                
                                 <div class="card-header">
                                     <h5><i class="bi bi-speedometer2 me-2"></i><?= __('admin.settings.dashboard') ?></h5>
@@ -327,7 +327,7 @@ $nonce = SecurityHeaders::getNonce();
                                 </div>
                             </div>
                             
-                            <!-- Editor-Einstellungen -->
+                            <!-- Editor settings -->
                             <div class="card mt-4">                                                                
                                 <div class="card-header">
                                     <h5><i class="bi bi-pencil me-2"></i><?= __('admin.settings.editor') ?></h5>
