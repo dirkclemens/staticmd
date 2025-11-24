@@ -2,7 +2,7 @@
 
 namespace StaticMD\Core;
 
-use Normalizer;
+use StaticMD\Utilities\UnicodeNormalizer;
 
 /**
  * Router-Klasse
@@ -71,17 +71,8 @@ class Router
      */
     private function sanitizeRoute(string $route): string
     {
-        // URL decode - multiple times for combined Unicode characters
-        $route = urldecode($route);
-        $route = urldecode($route); // Double decoding for %CC%88 etc.
-        
-        // Normalize Unicode (NFD to NFC) - combined characters to single ones
-        if (class_exists('Normalizer') && function_exists('normalizer_normalize')) {
-            $route = normalizer_normalize($route, Normalizer::FORM_C);
-        } else {
-            // Simple fallback normalization
-            $route = $this->simpleUnicodeNormalize($route);
-        }
+        // URL decode and normalize Unicode
+        $route = UnicodeNormalizer::decodeAndNormalize($route);
         
         // Allowed characters: Unicode letters, numbers, -, _, /, . (for file extensions)
         // Umlauts and other Unicode characters are allowed
@@ -164,28 +155,7 @@ class Router
         }
     }
     
-    /**
-     * Einfache Unicode-Normalisierung als Fallback
-     */
-    private function simpleUnicodeNormalize(string $text): string
-    {
-        // Convert common combined Unicode characters to simple ones
-        // Use hex codes for combined characters
-        $replacements = [
-            "a\xCC\x88" => 'ä',  // ä (a + combining diaeresis)
-            "o\xCC\x88" => 'ö',  // ö (o + combining diaeresis)
-            "u\xCC\x88" => 'ü',  // ü (u + combining diaeresis)
-            "A\xCC\x88" => 'Ä',  // Ä (A + combining diaeresis)
-            "O\xCC\x88" => 'Ö',  // Ö (O + combining diaeresis)
-            "U\xCC\x88" => 'Ü',  // Ü (U + combining diaeresis)
-        ];
-        
-        foreach ($replacements as $combined => $simple) {
-            $text = str_replace($combined, $simple, $text);
-        }
-        
-        return $text;
-    }
+
 
     /**
      * Ermittelt die Basis-URL

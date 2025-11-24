@@ -271,7 +271,7 @@ class MarkdownParser
                 } elseif (isset($matches[3]) && $matches[3] !== '') {
                     $size = $matches[3];
                 }
-                $imagePath = '/public/images/' . $filename; // Physisch 
+                $imagePath = '/assets.php?asset=images/' . urlencode($filename);
                 $html = '<img src="' . htmlspecialchars($imagePath) . '"';
                 if ($altText !== '') {
                     $html .= ' alt="' . htmlspecialchars($altText) . '"';
@@ -279,6 +279,7 @@ class MarkdownParser
                 if (!empty($size)) {
                     $html .= ' style="width: ' . htmlspecialchars($size) . ';"';
                 }
+                $html .= ' class="img-fluid"'; // Bootstrap responsive class
                 $html .= '>';
                 return $html;
             },
@@ -335,6 +336,7 @@ class MarkdownParser
      * [image name.jpg - - 50%]
      * [image name.jpg 50%]
      * [image name.jpg]
+     * @deprecated Diese Methode wird nicht mehr verwendet
      */
     private function parseYellowImage(array $matches): string
     {
@@ -342,7 +344,7 @@ class MarkdownParser
         $altText = isset($matches[2]) && $matches[2] !== '' ? $matches[2] : '';
         $size = $matches[3] ?? '';
 
-        $imagePath = '/public/images/migration/' . $filename;
+        $imagePath = '/assets.php?asset=images/' . urlencode($filename);
         $html = '<img src="' . htmlspecialchars($imagePath) . '"';
         if ($altText !== '') {
             $html .= ' alt="' . htmlspecialchars($altText) . '"';
@@ -350,6 +352,7 @@ class MarkdownParser
         if (!empty($size)) {
             $html .= ' style="width: ' . htmlspecialchars($size) . ';"';
         }
+        $html .= ' class="img-fluid"';
         $html .= '>';
         return $html;
     }

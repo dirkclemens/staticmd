@@ -27,6 +27,22 @@ session_start();
 require_once __DIR__ . '/system/core/I18n.php';
 require_once __DIR__ . '/system/core/Router.php';
 require_once __DIR__ . '/system/core/MarkdownParser.php';
+
+// Include utilities
+require_once __DIR__ . '/system/utilities/FrontMatterParser.php';
+require_once __DIR__ . '/system/utilities/UnicodeNormalizer.php';
+require_once __DIR__ . '/system/utilities/TitleGenerator.php';
+require_once __DIR__ . '/system/utilities/UrlHelper.php';
+
+// Include renderers
+require_once __DIR__ . '/system/renderers/FolderOverviewRenderer.php';
+require_once __DIR__ . '/system/renderers/BlogListRenderer.php';
+
+// Include processors
+require_once __DIR__ . '/system/processors/ShortcodeProcessor.php';
+
+// Include core classes (continued)
+require_once __DIR__ . '/system/core/NavigationBuilder.php';
 require_once __DIR__ . '/system/core/ContentLoader.php';
 require_once __DIR__ . '/system/core/TemplateEngine.php';
 require_once __DIR__ . '/system/core/Application.php';

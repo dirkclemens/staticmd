@@ -2,6 +2,9 @@
 
 namespace StaticMD\Core;
 
+use StaticMD\Utilities\FrontMatterParser;
+use StaticMD\Utilities\TitleGenerator;
+
 require_once __DIR__ . '/Logger.php';
 /**
  * Template-Engine
@@ -83,68 +86,14 @@ class TemplateEngine
         foreach ($pages as &$page) {
             if (isset($page['path']) && file_exists($page['path'])) {
                 $content = file_get_contents($page['path']);
-                $frontMatter = $this->parseFrontMatter($content);
-                $page['title'] = $frontMatter['meta']['Title'] ?? $frontMatter['meta']['title'] ?? $this->generateTitle($page['route']);
+                $frontMatter = FrontMatterParser::parse($content);
+                $page['title'] = $frontMatter['meta']['Title'] ?? $frontMatter['meta']['title'] ?? TitleGenerator::fromRoute($page['route']);
             } else {
-                $page['title'] = $this->generateTitle($page['route']);
+                $page['title'] = TitleGenerator::fromRoute($page['route']);
             }
         }
         
         return $pages;
-    }
-    
-    /**
-     * Parst Front Matter aus Markdown-Content
-     */
-    private function parseFrontMatter(string $content): array
-    {
-        $meta = [];
-        $bodyContent = $content;
-        
-        // Front Matter erkennen (--- am Anfang)
-        if (strpos($content, '---') === 0) {
-            $parts = explode('---', $content, 3);
-            
-            if (count($parts) >= 3) {
-                $frontMatter = trim($parts[1]);
-                $bodyContent = trim($parts[2]);
-                
-                // Einfaches Key-Value Parsing (ohne YAML-Dependency)
-                $lines = explode("\n", $frontMatter);
-                foreach ($lines as $line) {
-                    $line = trim($line);
-                    if (empty($line) || strpos($line, ':') === false) {
-                        continue;
-                    }
-                    
-                    [$key, $value] = explode(':', $line, 2);
-                    $cleanKey = trim($key);
-                    $cleanValue = trim($value, ' "\'');
-                    
-                    $meta[$cleanKey] = $cleanValue;
-                }
-            }
-        }
-        
-        return [
-            'meta' => $meta,
-            'content' => $bodyContent
-        ];
-    }
-    
-    /**
-     * Generiert einen Titel aus der Route
-     */
-    private function generateTitle(string $route): string
-    {
-        if ($route === 'index') {
-            return $this->config['system']['name'] ?? 'StaticMD';
-        }
-        
-        // Route zu lesbarem Titel konvertieren
-        $title = str_replace(['/', '-', '_'], ' ', $route);
-        // return ucwords($title);
-        return $title;
     }
 
     /**

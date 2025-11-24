@@ -2,6 +2,10 @@
 
 namespace StaticMD\Core;
 
+use StaticMD\Utilities\FrontMatterParser;
+use StaticMD\Utilities\TitleGenerator;
+use StaticMD\Utilities\UrlHelper;
+
 /**
  * SearchEngine-Klasse
  * Durchsucht Markdown-Inhalte nach Begriffen
@@ -16,15 +20,7 @@ class SearchEngine
         $this->config = $config;
     }
     
-    /**
-     * Encodiert URL-Pfade ohne die Slashes zu kodieren
-     */
-    private function encodeUrlPath(string $path): string
-    {
-        $parts = explode('/', $path);
-        $encodedParts = array_map('rawurlencode', $parts);
-        return implode('/', $encodedParts);
-    }
+
 
     /**
      * Durchsucht alle Markdown-Dateien nach einem Begriff
@@ -113,7 +109,7 @@ class SearchEngine
         }
 
         // Front Matter parsen
-        $parsed = $this->parseFrontMatter($content);
+        $parsed = FrontMatterParser::parse($content);
         $meta = $parsed['meta'];
         $bodyContent = $parsed['content'];
 
@@ -168,7 +164,7 @@ class SearchEngine
 
         // Titel generieren falls nicht vorhanden
         if (empty($title)) {
-            $title = $this->generateTitle($route);
+            $title = TitleGenerator::fromRoute($route);
         }
 
         // Textvorschau generieren
@@ -268,53 +264,6 @@ class SearchEngine
     }
 
     /**
-     * Parst Front Matter (vereinfachte Version)
-     */
-    private function parseFrontMatter(string $content): array
-    {
-        $meta = [];
-        $bodyContent = $content;
-        
-        if (strpos($content, '---') === 0) {
-            $parts = explode('---', $content, 3);
-            
-            if (count($parts) >= 3) {
-                $frontMatter = trim($parts[1]);
-                $bodyContent = trim($parts[2]);
-                
-                $lines = explode("\n", $frontMatter);
-                foreach ($lines as $line) {
-                    $line = trim($line);
-                    if (empty($line) || strpos($line, ':') === false) {
-                        continue;
-                    }
-                    
-                    [$key, $value] = explode(':', $line, 2);
-                    $cleanKey = trim($key);
-                    $cleanValue = trim($value, ' "\'');
-                    
-                    $meta[$cleanKey] = $cleanValue;
-                }
-            }
-        }
-        
-        return [
-            'meta' => $meta,
-            'content' => $bodyContent
-        ];
-    }
-
-    /**
-     * Generiert Titel aus Route
-     */
-    private function generateTitle(string $route): string
-    {
-        $title = str_replace(['/', '-', '_'], ' ', $route);
-        // return ucwords($title);
-        return $title;
-    }
-
-    /**
      * Erstellt HTML für Suchergebnisseite
      */
     public function generateSearchResultsHTML(array $results, string $query, float $totalTime = 0.0): string
@@ -355,7 +304,7 @@ class SearchEngine
                 
                 // Titel
                 $html .= '<h3 class="mb-2">';
-                $html .= '<a href="/' . $this->encodeUrlPath($route) . '" class="text-decoration-none">';
+                $html .= '<a href="/' . UrlHelper::encodePath($route) . '" class="text-decoration-none">';
                 $html .= '<i class="bi bi-file-earmark-text me-2"></i>';
                 $html .= htmlspecialchars($title);
                 $html .= '</a>';
@@ -398,8 +347,8 @@ class SearchEngine
             }
         } else {
             $html .= '<div class="alert alert-info">';
-            $html .= '<h5><i class="bi bi-info-circle me-2"></i>Keine Ergebnisse gefunden</h5>';
-            $html .= '<p class="mb-0">' . \StaticMD\Core\I18n::t('core.search_suggestions') . '</p>';
+            $html .= '<h5><i class="bi bi-info-circle me-2"></i>' . I18n::t('core.no_results_found') . '</h5>';
+            $html .= '<p class="mb-0">' . I18n::t('core.search_suggestions') . '</p>';
             $html .= '</div>';
         }
         
@@ -471,7 +420,7 @@ class SearchEngine
         }
         
         // Front Matter parsen
-        $parsed = $this->parseFrontMatter($content);
+        $parsed = FrontMatterParser::parse($content);
         $meta = $parsed['meta'];
         $bodyContent = $parsed['content'];
         
@@ -500,7 +449,7 @@ class SearchEngine
         $route = str_replace($extension, '', $relativePath);
         
         // Titel und andere Metadaten
-        $title = $meta['Title'] ?? $meta['title'] ?? $this->generateTitle($route);
+        $title = $meta['Title'] ?? $meta['title'] ?? TitleGenerator::fromRoute($route);
         $description = $meta['description'] ?? '';
         $author = $meta['Author'] ?? $meta['author'] ?? '';
         
@@ -537,13 +486,13 @@ class SearchEngine
         
         if (!empty($results)) {
             $html .= '<p class="lead">';
-            $html .= count($results) . ' Seiten mit dem Tag "<strong>' . htmlspecialchars($tagName) . '</strong>"';
+            $html .= I18n::t('core.pages_with_tag_count', ['count' => count($results), 'tag' => htmlspecialchars($tagName)]);
             if ($searchTime > 0) {
                 $html .= ' (' . number_format($searchTime, 3) . ' Sekunden)';
             }
             $html .= '</p>';
         } else {
-            $html .= '<p class="lead text-muted">Keine Seiten mit dem Tag "<strong>' . htmlspecialchars($tagName) . '</strong>" gefunden.</p>';
+            $html .= '<p class="lead text-muted">' . I18n::t('core.no_pages_with_tag', ['tag' => htmlspecialchars($tagName)]) . '</p>';
         }
         $html .= '</div>';
         
@@ -555,7 +504,7 @@ class SearchEngine
                 
                 // Titel
                 $html .= '<h3 class="mb-2">';
-                $html .= '<a href="/' . $this->encodeUrlPath($route) . '" class="text-decoration-none">';
+                $html .= '<a href="/' . UrlHelper::encodePath($route) . '" class="text-decoration-none">';
                 $html .= '<i class="bi bi-file-earmark-text me-2"></i>';
                 $html .= htmlspecialchars($title);
                 $html .= '</a>';
@@ -600,8 +549,8 @@ class SearchEngine
             }
         } else {
             $html .= '<div class="alert alert-info">';
-            $html .= '<h5><i class="bi bi-info-circle me-2"></i>Keine Seiten gefunden</h5>';
-            $html .= '<p class="mb-0">Es wurden keine Seiten mit dem Tag "' . htmlspecialchars($tagName) . '" gefunden.</p>';
+            $html .= '<h5><i class="bi bi-info-circle me-2"></i>' . I18n::t('core.no_pages_found_short') . '</h5>';
+            $html .= '<p class="mb-0">' . I18n::t('core.no_pages_with_tag_short', ['tag' => htmlspecialchars($tagName)]) . '</p>';
             $html .= '</div>';
         }
         
@@ -668,7 +617,7 @@ class SearchEngine
         }
         
         // Front Matter parsen
-        $parsed = $this->parseFrontMatter($content);
+        $parsed = FrontMatterParser::parse($content);
         $meta = $parsed['meta'];
         
         // Tags extrahieren
@@ -699,13 +648,13 @@ class SearchEngine
         
         if (!empty($allTags)) {
             $html .= '<p class="lead">';
-            $html .= count($allTags) . ' verschiedene Tags gefunden';
+            $html .= I18n::t('core.tags_found_count', ['count' => count($allTags)]);
             if ($searchTime > 0) {
                 $html .= ' (' . number_format($searchTime, 3) . ' Sekunden)';
             }
             $html .= '</p>';
         } else {
-            $html .= '<p class="lead text-muted">Keine Tags gefunden.</p>';
+            $html .= '<p class="lead text-muted">' . I18n::t('core.no_tags_found_short') . '</p>';
         }
         $html .= '</div>';
         
@@ -730,8 +679,8 @@ class SearchEngine
             
         } else {
             $html .= '<div class="alert alert-info">';
-            $html .= '<h5><i class="bi bi-info-circle me-2"></i>Keine Tags gefunden</h5>';
-            $html .= '<p class="mb-0">Es wurden noch keine Tags in den Markdown-Dateien verwendet.</p>';
+            $html .= '<h5><i class="bi bi-info-circle me-2"></i>' . I18n::t('core.no_tags_found_short') . '</h5>';
+            $html .= '<p class="mb-0">' . I18n::t('core.no_tags_used') . '</p>';
             $html .= '</div>';
         }
         
