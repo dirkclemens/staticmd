@@ -241,6 +241,16 @@ return [
             'delete_modal_confirm' => 'Delete',
             'bulk_delete_confirm' => 'Are you sure you want to delete {count} file(s)?'
         ],
+        'upload' => [
+            'no_file' => 'No file uploaded.',
+            'invalid_type' => 'Invalid file type.',
+            'failed' => 'Upload failed.'
+        ],
+        'backup' => [
+            'zip_not_available' => 'ZIP extension is not available. Please install php-zip.',
+            'create_failed' => 'Could not create ZIP archive.',
+            'file_not_created' => 'Backup file could not be created.'
+        ],
         'editor' => [
             'file_route_placeholder' => 'e.g. my-page or blog/article',
             'title_placeholder' => 'Page title',

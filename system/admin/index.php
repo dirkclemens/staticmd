@@ -1,21 +1,19 @@
 <?php
-// DEBUG: PHP-Fehlermeldungen aktivieren
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 /**
- * StaticMD Admin - Haupteinstiegspunkt
- * Verwaltet alle Admin-Funktionen
+ * StaticMD Admin - Main Entry Point
+ * 
+ * Handles all administrative operations and routes requests to
+ * appropriate controllers. Configures session, security, and i18n.
  */
 
-// Autoloader und Konfiguration laden
+// Autoloader and configuration
 if (file_exists(__DIR__ . '/../../vendor/autoload.php')) {
     require_once __DIR__ . '/../../vendor/autoload.php';
 }
 
 $config = require_once __DIR__ . '/../../config.php';
 
-// Admin-Klassen einbinden
+// Include admin classes
 require_once __DIR__ . '/AdminAuth.php';
 require_once __DIR__ . '/AdminController.php';
 require_once __DIR__ . '/../core/I18n.php';
@@ -37,11 +35,11 @@ require_once __DIR__ . '/../processors/ShortcodeProcessor.php';
 // Include NavigationBuilder
 require_once __DIR__ . '/../core/NavigationBuilder.php';
 
-// Security Headers setzen (Admin-Kontext)
+// Set security headers (admin context)
 use StaticMD\Core\SecurityHeaders;
 SecurityHeaders::setAllSecurityHeaders('admin');
 
-// Session-Konfiguration VOR session_start()
+// Session configuration (must be set BEFORE session_start())
 $timeout = $config['admin']['session_timeout'];
 ini_set('session.gc_maxlifetime', $timeout);
 ini_set('session.cookie_lifetime', $timeout);
@@ -55,19 +53,21 @@ session_set_cookie_params([
     'samesite' => 'Strict'
 ]);
 
-// Session starten
+// Start session
 session_start();
 
 use StaticMD\Admin\AdminAuth;
 use StaticMD\Admin\AdminController;
 use StaticMD\Core\I18n;
 
-// Fehlerberichterstattung
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// Error reporting (configured by config.php in production)
+if ($config['system']['debug'] ?? false) {
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+}
 
 try {
-    // Sprache aus Settings laden (Default: en)
+    // Load language from settings (default: en)
     $settingsFile = $config['paths']['system'] . '/settings.json';
     $language = 'en';
     if (file_exists($settingsFile)) {
@@ -77,7 +77,7 @@ try {
         }
     }
 
-    // I18n initialisieren
+    // Initialize i18n system
     I18n::init($language, $config['paths']['system'] . '/lang');
     if (!function_exists('__')) {
         function __(string $key, array $placeholders = []): string {
@@ -85,15 +85,15 @@ try {
         }
     }
 
-    // Admin-Controller initialisieren
+    // Initialize admin controller
     $auth = new AdminAuth($config);
     $controller = new AdminController($config, $auth);
     
-    // Request verarbeiten
+    // Handle incoming request
     $controller->handleRequest();
     
 } catch (Exception $e) {
-    // Fehler-Template anzeigen
+    // Display error template
     http_response_code(500);
     include __DIR__ . '/templates/error.php';
 }

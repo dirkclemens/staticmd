@@ -3,20 +3,33 @@
 namespace StaticMD\Admin;
 
 /**
- * Admin-Authentifizierung
- * Verwaltet Login/Logout und Session-Management
+ * Admin Authentication Handler
+ * 
+ * Manages login/logout operations and session management with CSRF protection.
+ * Implements security features like session timeout and brute-force prevention.
  */
 class AdminAuth
 {
+    private const BRUTE_FORCE_DELAY_MICROSECONDS = 500000; // 0.5 seconds
+    
     private array $config;
 
+    /**
+     * Constructor
+     * 
+     * @param array $config Application configuration array
+     */
     public function __construct(array $config)
     {
         $this->config = $config;
     }
 
     /**
-     * Überprüft ob User eingeloggt ist
+     * Check if user is currently logged in and session is valid
+     * 
+     * Validates both session existence and timeout constraints.
+     * 
+     * @return bool True if user is authenticated and session is valid
      */
     public function isLoggedIn(): bool
     {
@@ -27,7 +40,15 @@ class AdminAuth
     }
 
     /**
-     * Versucht Login mit Benutzerdaten
+     * Attempt user login with provided credentials
+     * 
+     * Validates credentials against configured username/password hash.
+     * Implements brute-force protection via delay on failed attempts.
+     * Regenerates session ID on successful login for security.
+     * 
+     * @param string $username Username to authenticate
+     * @param string $password Plain-text password to verify
+     * @return bool True if login successful, false otherwise
      */
     public function login(string $username, string $password): bool
     {
@@ -40,26 +61,28 @@ class AdminAuth
             $_SESSION['admin_login_time'] = time();
             $_SESSION['admin_last_activity'] = time();
             
-            // Regenerate session for security
+            // Regenerate session ID to prevent session fixation attacks
             session_regenerate_id(true);
             
             return true;
         }
 
-        // Fehlgeschlagener Login - kurz warten (Brute-Force-Schutz)
-        usleep(500000); // 0.5 Sekunden
+        // Failed login - add delay for brute-force protection
+        usleep(self::BRUTE_FORCE_DELAY_MICROSECONDS);
         
         return false;
     }
 
     /**
-     * Loggt User aus
+     * Log out current user and destroy session
+     * 
+     * Clears session data and removes session cookie.
      */
     public function logout(): void
     {
         $_SESSION = [];
         
-        // Delete session cookie
+        // Delete session cookie if cookie-based sessions are enabled
         if (ini_get("session.use_cookies")) {
             $params = session_get_cookie_params();
             setcookie(session_name(), '', time() - 42000,
@@ -72,7 +95,10 @@ class AdminAuth
     }
 
     /**
-     * Erzwingt Login-Überprüfung
+     * Require valid login or redirect to login page
+     * 
+     * Checks authentication status and redirects to login if not authenticated.
+     * Updates last activity timestamp for authenticated users.
      */
     public function requireLogin(): void
     {
@@ -80,12 +106,17 @@ class AdminAuth
             header('Location: /admin?action=login');
             exit;
         }
-        // Track activity without changing login time
+        
+        // Track user activity without changing login time
         $_SESSION['admin_last_activity'] = time();
     }
 
     /**
-     * Generiert CSRF-Token
+     * Generate or retrieve existing CSRF token
+     * 
+     * Creates a new token if none exists in session.
+     * 
+     * @return string CSRF token string
      */
     public function generateCSRFToken(): string
     {
@@ -97,7 +128,12 @@ class AdminAuth
     }
 
     /**
-     * Verifiziert CSRF-Token
+     * Verify provided CSRF token matches session token
+     * 
+     * Uses timing-safe comparison to prevent timing attacks.
+     * 
+     * @param string $token Token to verify
+     * @return bool True if token is valid, false otherwise
      */
     public function verifyCSRFToken(string $token): bool
     {
@@ -105,7 +141,9 @@ class AdminAuth
     }
 
     /**
-     * Gibt aktuellen Admin-Username zurück
+     * Get current admin username from session
+     * 
+     * @return string|null Username if logged in, null otherwise
      */
     public function getUsername(): ?string
     {
@@ -113,7 +151,9 @@ class AdminAuth
     }
 
     /**
-     * Gibt verbleibende Session-Zeit zurück (in Sekunden)
+     * Calculate remaining session time before timeout
+     * 
+     * @return int Remaining seconds, 0 if not logged in
      */
     public function getTimeRemaining(): int
     {
@@ -126,7 +166,11 @@ class AdminAuth
     }
 
     /**
-     * Gibt Session-Informationen für Debug-Zwecke zurück
+     * Get detailed session information for debugging
+     * 
+     * Returns comprehensive session state including timestamps and timeout info.
+     * 
+     * @return array Session information array, empty if not logged in
      */
     public function getSessionInfo(): array
     {

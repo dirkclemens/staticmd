@@ -3,13 +3,21 @@
 namespace StaticMD\Admin;
 
 /**
- * Admin-Controller
- * Verarbeitet alle Admin-Anfragen
+ * Admin Controller
+ * 
+ * Handles all administrative operations including content management,
+ * file operations, settings, and backup functionality.
  */
 class AdminController {
     private array $config;
     private AdminAuth $auth;
 
+    /**
+     * Constructor
+     * 
+     * @param array $config Application configuration
+     * @param AdminAuth $auth Authentication handler instance
+     */
     public function __construct(array $config, AdminAuth $auth)
     {
         $this->config = $config;
@@ -17,7 +25,9 @@ class AdminController {
     }
 
     /**
-     * Verarbeitet die aktuelle Anfrage
+     * Handle incoming HTTP request and route to appropriate action
+     * 
+     * Routes requests based on 'action' parameter to corresponding handler methods.
      */
     public function handleRequest(): void
     {
@@ -25,15 +35,15 @@ class AdminController {
         
         switch ($action) {
             case 'upload_file':
-                // Nur POST erlauben
+                // Only allow POST requests
                 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-                    echo json_encode(['success' => false, 'error' => 'Invalid request method']);
+                    echo json_encode(['success' => false, 'error' => \StaticMD\Core\I18n::t('admin.errors.invalid_request')]);
                     exit;
                 }
 
-                // Prüfe ob Datei vorhanden ist
+                // Check if file is present
                 if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
-                    echo json_encode(['success' => false, 'error' => 'No file uploaded']);
+                    echo json_encode(['success' => false, 'error' => \StaticMD\Core\I18n::t('admin.upload.no_file')]);
                     exit;
                 }
 
@@ -42,27 +52,27 @@ class AdminController {
                 $allowedExts = ['pdf', 'zip'];
                 $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
                 if (!in_array($file['type'], $allowedTypes) || !in_array($ext, $allowedExts)) {
-                    echo json_encode(['success' => false, 'error' => 'Invalid file type']);
+                    echo json_encode(['success' => false, 'error' => \StaticMD\Core\I18n::t('admin.upload.invalid_type')]);
                     exit;
                 }
 
-                // Zielverzeichnis
+                // Target directory for downloads
                 $uploadDir = $this->config['paths']['public'] . '/downloads';
                 if (!is_dir($uploadDir)) {
                     mkdir($uploadDir, 0755, true);
                 }
 
-                // Sicheren Dateinamen generieren
+                // Generate secure filename with timestamp and random component
                 $baseName = preg_replace('/[^a-zA-Z0-9_-]/', '', pathinfo($file['name'], PATHINFO_FILENAME));
                 $filename = $baseName . '_' . date('Ymd_His') . '_' . bin2hex(random_bytes(2)) . '.' . $ext;
                 $targetPath = $uploadDir . '/' . $filename;
 
-                // Datei verschieben
+                // Move uploaded file to target location
                 if (move_uploaded_file($file['tmp_name'], $targetPath)) {
-                    // Rückgabe: nur Dateiname für Editor-Tag
+                    // Return filename for editor tag insertion
                     echo json_encode(['success' => true, 'filename' => $filename]);
                 } else {
-                    echo json_encode(['success' => false, 'error' => 'Upload failed']);
+                    echo json_encode(['success' => false, 'error' => \StaticMD\Core\I18n::t('admin.upload.failed')]);
                 }
                 exit;
             case 'upload_image':
@@ -118,7 +128,10 @@ class AdminController {
     }
 
     /**
-     * Behandelt Login-Prozess
+     * Handle user login process
+     * 
+     * Processes login form submission, validates credentials via AdminAuth,
+     * and redirects to dashboard on success or shows login form with error.
      */
     private function handleLogin(): void
     {
@@ -139,7 +152,9 @@ class AdminController {
     }
 
     /**
-     * Behandelt Logout
+     * Handle user logout
+     * 
+     * Destroys session and redirects to login page with confirmation message.
      */
     private function handleLogout(): void
     {
@@ -149,7 +164,11 @@ class AdminController {
     }
 
     /**
-     * Gibt alle verfügbaren Themes im Theme-Verzeichnis zurück
+     * Get all available themes from themes directory
+     * 
+     * Scans the themes directory and returns array of theme folder names.
+     * 
+     * @return array List of available theme names
      */
     public function getAvailableThemes(): array
     {
@@ -166,26 +185,29 @@ class AdminController {
     }
 
     /**
-     * Zeigt Admin-Dashboard
+     * Display admin dashboard with statistics and recent files
+     * 
+     * Loads content statistics, calculates disk usage, and shows
+     * list of recently modified files.
      */
     private function showDashboard(): void
     {
         $this->auth->requireLogin();
         
-        // Content-Statistiken laden
+        // Load content statistics
         require_once __DIR__ . '/../core/MarkdownParser.php';
         require_once __DIR__ . '/../core/ContentLoader.php';
         $contentLoader = new \StaticMD\Core\ContentLoader($this->config);
         $allFiles = $contentLoader->listAll();
         
-        // Einstellungen laden
+        // Load settings
         $settings = $this->getSettings();
         $recentFilesCount = $settings['recent_files_count'] ?? 15;
         
-        // Statistiken berechnen
+        // Calculate statistics
         $stats = [
             'total_files' => count($allFiles),
-            // Die ersten N Dateien sind die neuesten
+            // First N files are the most recent
             'recent_files' => array_slice($allFiles, 0, $recentFilesCount),
             'disk_usage' => $this->calculateDiskUsage(),
             'public_size' => $this->calculatePublicSize(),
@@ -199,7 +221,10 @@ class AdminController {
     }
 
     /**
-     * Zeigt Content-Editor
+     * Display content editor with markdown editing interface
+     * 
+     * Loads existing content file or prepares new file template.
+     * Supports CodeMirror editor with preview functionality.
      */
     private function showEditor(): void
     {
@@ -274,18 +299,13 @@ class AdminController {
     }
 
     /**
-     * Speichert Content
+     * Save content to markdown file
+     * 
+     * Processes form submission, validates CSRF token, constructs front matter,
+     * and saves content to file. Supports both new and existing files.
      */
     private function saveContent(): void
     {
-        //DEBUG: Zeige die ersten und letzten Zeichen des Inhalts
-        if (isset($_POST['content'])) {
-            $debugContent = $_POST['content'];
-            // error_log('DEBUG: Content-Start: ' . substr($debugContent, 0, 40));
-            // error_log('DEBUG: Content-Ende: ' . substr($debugContent, -40));
-            // error_log('DEBUG: Content-RAW: ' . bin2hex(substr($debugContent, -10)));
-        }
-    
         $this->auth->requireLogin();
         
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -306,38 +326,38 @@ class AdminController {
             die(\StaticMD\Core\I18n::t('admin.errors.filename_required'));
         }
         
-        // Sichere Dateinamen erzwingen
+        // Enforce secure filename
         $file = $this->sanitizeFilename($file);
         $filePath = $this->config['paths']['content'] . '/' . $file . '.md';
         
-        // Verzeichnis erstellen falls nötig
+        // Create directory if needed
         $dir = dirname($filePath);
         if (!is_dir($dir)) {
             mkdir($dir, 0755, true);
         }
         
-        // Front Matter erstellen (Yellow CMS Format bevorzugt)
+        // Create front matter (Yellow CMS format preferred)
         $frontMatter = "---\n";
         
-        // Definiere Reihenfolge für Yellow CMS Kompatibilität
+        // Define order for Yellow CMS compatibility
         $yellowOrder = ['Title', 'TitleSlug', 'Layout', 'Tag', 'Author'];
         $standardOrder = ['date', 'description'];
         
-        // Zuerst Yellow-Felder in definierter Reihenfolge
+        // First Yellow CMS fields in defined order
         foreach ($yellowOrder as $key) {
             if (isset($meta[$key]) && !empty(trim($meta[$key]))) {
                 $frontMatter .= $key . ': ' . $meta[$key] . "\n";
             }
         }
         
-        // Dann Standard-Felder
+        // Then standard fields
         foreach ($standardOrder as $key) {
             if (isset($meta[$key]) && !empty(trim($meta[$key]))) {
                 $frontMatter .= $key . ': ' . $meta[$key] . "\n";
             }
         }
         
-        // Alle anderen Felder
+        // All other fields
         foreach ($meta as $key => $value) {
             if (!in_array($key, array_merge($yellowOrder, $standardOrder)) && !empty(trim($value))) {
                 $frontMatter .= $key . ': ' . $value . "\n";
@@ -346,14 +366,14 @@ class AdminController {
         
         $frontMatter .= "---\n\n";
         
-        // Datei speichern
+        // Save file
         $fullContent = $frontMatter . $content;
         
         if (file_put_contents($filePath, $fullContent) !== false) {
-            // Prüfen ob eine Return-URL angegeben wurde
+            // Check if return URL was provided
             $returnUrl = $_POST['return_url'] ?? '';
             if (!empty($returnUrl)) {
-                // Zurück zur ursprünglichen Seite mit Erfolgsparameter
+                // Return to original page with success parameter
                 $separator = strpos($returnUrl, '?') !== false ? '&' : '?';
                 header('Location: ' . $returnUrl . $separator . 'saved=1');
             } else {
@@ -366,7 +386,9 @@ class AdminController {
     }
 
     /**
-     * Zeigt Formular für neue Datei
+     * Display form for creating new content file
+     * 
+     * Prepares empty editor with default meta fields.
      */
     private function showNewContentForm(): void
     {
@@ -385,17 +407,20 @@ class AdminController {
     }
 
     /**
-     * Löscht Content-Datei
+     * Delete content file
+     * 
+     * Handles file deletion with security checks and return URL support.
+     * Validates CSRF token and prevents path traversal attacks.
      */
     private function deleteContent(): void
     {
         $this->auth->requireLogin();
         
-        // GET oder POST erlauben für Dateimanager-Kompatibilität
+        // Allow GET or POST for file manager compatibility
         $file = $_REQUEST['file'] ?? '';
         $csrfToken = $_REQUEST['token'] ?? $_REQUEST['csrf_token'] ?? '';
         
-        // Einfache Return-URL-Behandlung
+        // Handle return URL with fallback
         $returnUrl = '/admin'; // Default
         if (isset($_REQUEST['return_url'])) {
             $returnUrl = urldecode($_REQUEST['return_url']);
@@ -403,7 +428,7 @@ class AdminController {
             $returnUrl = urldecode($_REQUEST['return']);
         }
         
-        // Sicherheitscheck: Nur lokale URLs erlauben
+        // Security check: only allow local URLs
         if (!str_starts_with($returnUrl, '/admin')) {
             $returnUrl = '/admin';
         }
@@ -418,7 +443,7 @@ class AdminController {
             exit;
         }
         
-        // Sicherheit: Pfad-Traversal verhindern
+        // Security: prevent path traversal
         $file = $this->sanitizeFilename($file);
         if (strpos($file, '..') !== false) {
             header('Location: ' . $returnUrl . '?error=invalid_file');
@@ -427,7 +452,7 @@ class AdminController {
         
         $filePath = $this->config['paths']['content'] . '/' . $file . '.md';
         
-        // Prüfen ob Datei existiert und löschbar ist
+        // Check if file exists and is deletable
         if (!file_exists($filePath)) {
             header('Location: ' . $returnUrl . '?error=file_not_found');
             exit;
@@ -438,7 +463,7 @@ class AdminController {
             exit;
         }
         
-        // Datei löschen
+        // Delete file
         if (unlink($filePath)) {
             header('Location: ' . $returnUrl . '?message=deleted');
         } else {
@@ -449,7 +474,9 @@ class AdminController {
     }
 
     /**
-     * Zeigt Dateimanager
+     * Display file manager with hierarchical file tree
+     * 
+     * Shows all content files in a tree structure with edit/delete actions.
      */
     private function showFileManager(): void
     {
@@ -460,14 +487,19 @@ class AdminController {
         $contentLoader = new \StaticMD\Core\ContentLoader($this->config);
         $allFiles = $contentLoader->listAll();
         
-        // Hierarchische Struktur erstellen
+        // Generate hierarchical structure
         $fileTree = $this->generateHierarchicalFileList($allFiles);
         
         include __DIR__ . '/templates/files.php';
     }
     
     /**
-     * Generiert hierarchische Dateiliste als Baum
+     * Generate hierarchical file list as tree structure
+     * 
+     * Converts flat file list into nested tree structure for display.
+     * 
+     * @param array $files Flat list of files from ContentLoader
+     * @return array Nested tree structure
      */
     private function generateHierarchicalFileList(array $files): array
     {
@@ -477,7 +509,7 @@ class AdminController {
             $parts = explode('/', $file['route']);
             $current = &$tree;
             
-            // Pfad aufbauen
+            // Build path incrementally
             $path = '';
             for ($i = 0; $i < count($parts); $i++) {
                 $part = $parts[$i];
@@ -493,20 +525,20 @@ class AdminController {
                     ];
                 }
                 
-                // Bei letztem Teil: Dateidaten anhängen
+                // At last part: attach file data
                 if ($i === count($parts) - 1) {
-                    // WICHTIG: Nur als 'file' setzen wenn es noch kein Ordner mit Kindern ist
+                    // Only set as 'file' if it's not already a folder with children
                     if (empty($current[$part]['children'])) {
                         $current[$part]['type'] = 'file';
                     } else {
-                        // Wenn bereits Kinder vorhanden sind, ist es ein Ordner mit index.md
-                        // In diesem Fall die Datei als spezielle Eigenschaft des Ordners speichern
+                        // If children exist, it's a folder with index.md
+                        // Store file as special property of folder
                         $current[$part]['index_file'] = $file;
-                        $current[$part]['type'] = 'folder'; // Bleibt ein Ordner
+                        $current[$part]['type'] = 'folder';
                     }
                     $current[$part]['file_data'] = $file;
                 } else {
-                    // Nur als Ordner setzen wenn es noch keine Datei ist
+                    // Only set as folder if not already a file
                     if ($current[$part]['type'] !== 'file' || !empty($current[$part]['children'])) {
                         $current[$part]['type'] = 'folder';
                     }
@@ -515,14 +547,18 @@ class AdminController {
             }
         }
         
-        // Ordner und Dateien getrennt sortieren
+        // Sort folders and files separately
         $this->sortFileTree($tree);
         
         return $tree;
     }
     
     /**
-     * Sortiert Dateibaum: Ordner zuerst, dann Dateien (beide alphabetisch)
+     * Sort file tree: folders first, then files (both alphabetically)
+     * 
+     * Recursively sorts tree structure with folders prioritized.
+     * 
+     * @param array $tree Tree structure to sort (passed by reference)
      */
     private function sortFileTree(array &$tree): void
     {
@@ -536,16 +572,20 @@ class AdminController {
             $typeA = $tree[$a]['type'];
             $typeB = $tree[$b]['type'];
             
-            // Ordner zuerst
+            // Folders first
             if ($typeA !== $typeB) {
                 return $typeA === 'folder' ? -1 : 1;
             }
             
-            // Gleicher Typ: alphabetisch
+            // Same type: alphabetical
             return strcasecmp($a, $b);
         });
-    }    /**
-     * Berechnet Festplattenverbrauch
+    }
+
+    /**
+     * Calculate disk usage of content directory
+     * 
+     * @return string Formatted size string (e.g., "5.2 MB")
      */
     private function calculateDiskUsage(): string
     {
@@ -556,7 +596,9 @@ class AdminController {
     }
     
     /**
-     * Berechnet die Größe des /public/ Verzeichnisses
+     * Calculate size of public directory
+     * 
+     * @return string Formatted size string (e.g., "12.8 MB")
      */
     private function calculatePublicSize(): string
     {
@@ -567,7 +609,10 @@ class AdminController {
     }
 
     /**
-     * Rekursive Verzeichnisgröße berechnen
+     * Calculate directory size recursively
+     * 
+     * @param string $dir Directory path
+     * @return int Size in bytes
      */
     private function getDirSize(string $dir): int
     {
@@ -590,7 +635,11 @@ class AdminController {
     }
 
     /**
-     * Formatiert Bytes als lesbare Größe
+     * Format bytes as human-readable size
+     * 
+     * @param int $bytes Size in bytes
+     * @param int $precision Decimal precision (default: 2)
+     * @return string Formatted size string
      */
     private function formatBytes(int $bytes, int $precision = 2): string
     {
@@ -604,21 +653,26 @@ class AdminController {
     }
 
     /**
-     * Sucht nach der entsprechenden Content-Datei (wie in ContentLoader)
+     * Find content file path matching route (similar to ContentLoader logic)
+     * 
+     * Tries multiple possible file paths for a given route.
+     * 
+     * @param string $route Content route
+     * @return string|null File path if found, null otherwise
      */
     private function findContentFile(string $route): ?string
     {
         $contentDir = $this->config['paths']['content'];
         $extension = $this->config['markdown']['file_extension'];
         
-        // Mögliche Pfade ausprobieren
+        // Try possible paths
         $possiblePaths = [
             $contentDir . '/' . $route . $extension,
             $contentDir . '/' . $route . '/index' . $extension,
             $contentDir . '/' . $route . '/page' . $extension
         ];
         
-        // Für root "/" auch index.md und home.md prüfen
+        // For root "/" also check index.md and home.md
         if ($route === 'index') {
             array_unshift($possiblePaths, $contentDir . '/index' . $extension);
             array_push($possiblePaths, $contentDir . '/home' . $extension);
@@ -634,27 +688,34 @@ class AdminController {
     }
 
     /**
-     * Bereinigt Dateinamen für Sicherheit
+     * Sanitize filename for security
+     * 
+     * Removes dangerous characters and prevents path traversal attacks.
+     * 
+     * @param string $filename Filename to sanitize
+     * @return string Sanitized filename
      */
     private function sanitizeFilename(string $filename): string
     {
-        // Nur erlaubte Zeichen: a-z, A-Z, 0-9, -, _, /
+        // Only allow: a-z, A-Z, 0-9, -, _, /
         $filename = preg_replace('/[^a-zA-Z0-9\-_\/]/', '', $filename);
         
-        // Mehrfache Slashes entfernen
+        // Remove multiple slashes
         $filename = preg_replace('/\/+/', '/', $filename);
         
-        // Führende und abschließende Slashes entfernen
+        // Remove leading and trailing slashes
         $filename = trim($filename, '/');
         
-        // Path-Traversal verhindern
+        // Prevent path traversal
         $filename = str_replace(['..', './'], '', $filename);
         
         return $filename;
     }
 
     /**
-     * Zeigt Einstellungsseite
+     * Display settings page
+     * 
+     * Shows system settings form with current values and backup options.
      */
     private function showSettings(): void
     {
@@ -667,7 +728,10 @@ class AdminController {
     }
 
     /**
-     * Speichert Einstellungen
+     * Save system settings
+     * 
+     * Validates and saves settings to JSON file. Includes validation
+     * for themes, numeric limits, and security policies.
      */
     private function saveSettings(): void
     {
@@ -719,7 +783,11 @@ class AdminController {
     }
 
     /**
-     * Lädt Einstellungen aus Datei
+     * Load settings from JSON file
+     * 
+     * Merges saved settings with defaults to ensure all keys exist.
+     * 
+     * @return array Settings array with defaults
      */
     private function getSettings(): array
     {
@@ -755,7 +823,10 @@ class AdminController {
     }
 
     /**
-     * Speichert Einstellungen in Datei
+     * Save settings to JSON file
+     * 
+     * @param array $settings Settings to save
+     * @return bool True on success, false on failure
      */
     private function saveSettingsToFile(array $settings): bool
     {
@@ -767,13 +838,19 @@ class AdminController {
     }
 
     /**
-     * Parst Navigation-Reihenfolge aus Eingabe
+     * Parse navigation order from input
+     * 
+     * Supports both JSON format (from SortableJS drag & drop)
+     * and text format (line-based with optional priorities).
+     * 
+     * @param string $input Navigation order input string
+     * @return array Parsed navigation order array
      */
     private function parseNavigationOrder(string $input): array
     {
         $order = [];
         
-        // Prüfe ob es JSON ist (von SortableJS Drag & Drop)
+        // Check if input is JSON (from SortableJS Drag & Drop)
         if (!empty($input) && $input[0] === '{') {
             $decoded = json_decode($input, true);
             if (is_array($decoded)) {
@@ -781,7 +858,7 @@ class AdminController {
             }
         }
         
-        // Fallback: Alte Text-basierte Eingabe parsen
+        // Fallback: parse old text-based input
         $lines = explode("\n", trim($input));
         $priority = 1;
         
@@ -789,7 +866,7 @@ class AdminController {
             $line = trim($line);
             if (empty($line)) continue;
             
-            // Format: "section" oder "section:priority"
+            // Format: "section" or "section:priority"
             if (strpos($line, ':') !== false) {
                 [$section, $prio] = explode(':', $line, 2);
                 $order[trim($section)] = (int)trim($prio);
@@ -802,56 +879,62 @@ class AdminController {
     }
 
     /**
-     * Behandelt Bild-Upload für Editor (AJAX)
+     * Handle image upload for editor (AJAX)
+     * 
+     * Processes image uploads, validates file types, and returns
+     * filename for markdown insertion.
      */
     private function handleImageUpload(): void
     {
         $this->auth->requireLogin();
         header('Content-Type: application/json; charset=utf-8');
 
-        // Nur POST erlauben
+        // Only allow POST requests
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            echo json_encode(['success' => false, 'error' => 'Invalid request method']);
+            echo json_encode(['success' => false, 'error' => \StaticMD\Core\I18n::t('admin.errors.invalid_request')]);
             exit;
         }
 
-        // Prüfe ob Datei vorhanden ist
+        // Check if file is present
         if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
-            echo json_encode(['success' => false, 'error' => 'No file uploaded']);
+            echo json_encode(['success' => false, 'error' => \StaticMD\Core\I18n::t('admin.upload.no_file')]);
             exit;
         }
 
         $file = $_FILES['image'];
         $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
         if (!in_array($file['type'], $allowedTypes)) {
-            echo json_encode(['success' => false, 'error' => 'Invalid file type']);
+            echo json_encode(['success' => false, 'error' => \StaticMD\Core\I18n::t('admin.upload.invalid_type')]);
             exit;
         }
 
-        // Zielverzeichnis
-        $uploadDir = $this->config['paths']['public'] . '/images'; // Physisch
+        // Target directory for images
+        $uploadDir = $this->config['paths']['public'] . '/images';
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0755, true);
         }
 
-        // Sicheren Dateinamen generieren
+        // Generate secure filename with timestamp
         $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
         $baseName = preg_replace('/[^a-zA-Z0-9_-]/', '', pathinfo($file['name'], PATHINFO_FILENAME));
         $filename = $baseName . '_' . date('Ymd_His') . '_' . bin2hex(random_bytes(2)) . '.' . $ext;
         $targetPath = $uploadDir . '/' . $filename;
 
-        // Datei verschieben
+        // Move uploaded file
         if (move_uploaded_file($file['tmp_name'], $targetPath)) {
-            // Rückgabe: nur Dateiname für Editor-Tag
+            // Return filename for editor tag insertion
             echo json_encode(['success' => true, 'filename' => $filename]);
         } else {
-            echo json_encode(['success' => false, 'error' => 'Upload failed']);
+            echo json_encode(['success' => false, 'error' => \StaticMD\Core\I18n::t('admin.upload.failed')]);
         }
         exit;
     }
 
     /**
-     * Validiert Robots-Policy-Wert
+     * Validate robots policy value
+     * 
+     * @param string $policy Policy to validate
+     * @return string Valid policy or default 'index,follow'
      */
     private function validateRobotsPolicy(string $policy): string
     {
@@ -866,14 +949,18 @@ class AdminController {
     }
     
     /**
-     * Berechnet Statistiken für das Backup (Anzahl Dateien und Größe)
+     * Calculate backup statistics (file count and total size)
+     * 
+     * Analyzes all directories included in backup to provide size estimate.
+     * 
+     * @return array Statistics array with 'files', 'size', and 'size_formatted'
      */
     private function calculateBackupStats(): array
     {
         $totalFiles = 0;
         $totalSize = 0;
         
-        // Content-Ordner analysieren
+        // Analyze content folder
         $contentPath = $this->config['paths']['content'];
         if (is_dir($contentPath)) {
             $stats = $this->analyzeDirectory($contentPath);
@@ -881,21 +968,21 @@ class AdminController {
             $totalSize += $stats['size'];
         }
         
-        // System-Einstellungen
+        // System settings file
         $systemPath = $this->config['paths']['system'];
         if (file_exists($systemPath . '/settings.json')) {
             $totalFiles++;
             $totalSize += filesize($systemPath . '/settings.json');
         }
         
-        // Config-Datei
+        // Config file
         $configPath = __DIR__ . '/../../config.php';
         if (file_exists($configPath)) {
             $totalFiles++;
             $totalSize += filesize($configPath);
         }
         
-        // Themes analysieren
+        // Analyze themes
         $themesPath = $this->config['paths']['themes'];
         if (is_dir($themesPath)) {
             $stats = $this->analyzeDirectory($themesPath);
@@ -903,7 +990,7 @@ class AdminController {
             $totalSize += $stats['size'];
         }
         
-        // Public Assets analysieren
+        // Analyze public assets
         $publicPath = $this->config['paths']['public'];
         foreach (['images', 'downloads', 'assets'] as $subdir) {
             $path = $publicPath . '/' . $subdir;
@@ -922,7 +1009,10 @@ class AdminController {
     }
     
     /**
-     * Analysiert ein Verzeichnis rekursiv und gibt Datei-Anzahl und Größe zurück
+     * Analyze directory recursively and return file count and size
+     * 
+     * @param string $path Directory path to analyze
+     * @return array Array with 'files' count and 'size' in bytes
      */
     private function analyzeDirectory(string $path): array
     {
@@ -941,7 +1031,7 @@ class AdminController {
             
             foreach ($iterator as $file) {
                 if ($file->isFile()) {
-                    // Bestimmte Dateien ausschließen
+                    // Exclude certain system files
                     $filename = $file->getFilename();
                     if (in_array($filename, ['.DS_Store', 'Thumbs.db', '.gitignore'])) {
                         continue;
@@ -952,7 +1042,7 @@ class AdminController {
                 }
             }
         } catch (\Exception $e) {
-            // Bei Fehlern einfach 0 zurückgeben
+            // Return zeros on error
             return ['files' => 0, 'size' => 0];
         }
         
@@ -960,7 +1050,10 @@ class AdminController {
     }
     
     /**
-     * Erstellt ein Backup aller wichtigen Dateien
+     * Create complete backup of all important files
+     * 
+     * Generates ZIP archive containing content, settings, themes, and assets.
+     * Excludes sensitive data like password hashes.
      */
     private function createBackup(): void
     {
@@ -978,38 +1071,38 @@ class AdminController {
         }
         
         try {
-            // Prüfe ob ZIP-Extension verfügbar ist
+            // Check if ZIP extension is available
             if (!class_exists('\ZipArchive')) {
-                throw new \Exception('ZIP-Extension ist nicht verfügbar. Bitte installieren Sie php-zip.');
+                throw new \Exception(\StaticMD\Core\I18n::t('admin.backup.zip_not_available'));
             }
             
-            // Backup-Dateiname mit Zeitstempel
+            // Backup filename with timestamp
             $timestamp = date('Y-m-d_H-i-s');
             $backupFilename = "staticmd_backup_{$timestamp}.zip";
             $backupPath = sys_get_temp_dir() . '/' . $backupFilename;
             
-            // ZIP-Archiv erstellen
+            // Create ZIP archive
             $zip = new \ZipArchive();
             if ($zip->open($backupPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== TRUE) {
-                throw new \Exception('Konnte ZIP-Archiv nicht erstellen');
+                throw new \Exception(\StaticMD\Core\I18n::t('admin.backup.create_failed'));
             }
             
-            // Content-Ordner hinzufügen
+            // Add content folder
             $this->addDirectoryToZip($zip, $this->config['paths']['content'], 'content/');
             
-            // System-Einstellungen hinzufügen
+            // Add system settings
             $systemPath = $this->config['paths']['system'];
             if (file_exists($systemPath . '/settings.json')) {
                 $zip->addFile($systemPath . '/settings.json', 'system/settings.json');
             }
             
-            // Config-Datei hinzufügen (ohne Passwort-Hash aus Sicherheitsgründen)
+            // Add config file (without password hash for security)
             $this->addConfigToZip($zip);
             
-            // Themes hinzufügen
+            // Add themes
             $this->addDirectoryToZip($zip, $this->config['paths']['themes'], 'system/themes/');
             
-            // Public Assets hinzufügen
+            // Add public assets
             $publicPath = $this->config['paths']['public'];
             if (is_dir($publicPath . '/images')) {
                 $this->addDirectoryToZip($zip, $publicPath . '/images', 'public/images/');
@@ -1021,13 +1114,13 @@ class AdminController {
                 $this->addDirectoryToZip($zip, $publicPath . '/assets', 'public/assets/');
             }
             
-            // README für Backup hinzufügen
+            // Add README for backup
             $readme = $this->generateBackupReadme($timestamp);
             $zip->addFromString('README.md', $readme);
             
             $zip->close();
             
-            // Backup zum Download anbieten
+            // Offer backup for download
             if (file_exists($backupPath)) {
                 header('Content-Type: application/zip');
                 header('Content-Disposition: attachment; filename="' . $backupFilename . '"');
@@ -1036,10 +1129,10 @@ class AdminController {
                 header('Pragma: no-cache');
                 
                 readfile($backupPath);
-                unlink($backupPath); // Temporäre Datei löschen
+                unlink($backupPath); // Delete temporary file
                 exit;
             } else {
-                throw new \Exception('Backup-Datei konnte nicht erstellt werden');
+                throw new \Exception(\StaticMD\Core\I18n::t('admin.backup.file_not_created'));
             }
             
         } catch (\Exception $e) {
@@ -1050,7 +1143,11 @@ class AdminController {
     }
     
     /**
-     * Fügt ein Verzeichnis rekursiv zum ZIP-Archiv hinzu
+     * Add directory recursively to ZIP archive
+     * 
+     * @param \ZipArchive $zip ZIP archive instance
+     * @param string $sourcePath Source directory path
+     * @param string $zipPath Path within ZIP archive
      */
     private function addDirectoryToZip(\ZipArchive $zip, string $sourcePath, string $zipPath): void
     {
@@ -1070,7 +1167,7 @@ class AdminController {
             if ($file->isDir()) {
                 $zip->addEmptyDir($relativePath);
             } else {
-                // Bestimmte Dateien ausschließen
+                // Exclude certain system files
                 $filename = $file->getFilename();
                 if (in_array($filename, ['.DS_Store', 'Thumbs.db', '.gitignore'])) {
                     continue;
@@ -1082,7 +1179,11 @@ class AdminController {
     }
     
     /**
-     * Fügt eine bereinigte Config-Datei zum ZIP hinzu
+     * Add sanitized config file to ZIP archive
+     * 
+     * Removes password hash from config for security.
+     * 
+     * @param \ZipArchive $zip ZIP archive instance
      */
     private function addConfigToZip(\ZipArchive $zip): void
     {
@@ -1093,7 +1194,7 @@ class AdminController {
         
         $configContent = file_get_contents($configPath);
         
-        // Passwort-Hash durch Platzhalter ersetzen
+        // Replace password hash with placeholder
         $configContent = preg_replace(
             "/('password'\s*=>\s*')[^']*(')/",
             "$1*** REMOVED FOR SECURITY ***$2",
@@ -1104,7 +1205,10 @@ class AdminController {
     }
     
     /**
-     * Generiert eine README-Datei für das Backup
+     * Generate README file for backup
+     * 
+     * @param string $timestamp Backup creation timestamp
+     * @return string README content
      */
     private function generateBackupReadme(string $timestamp): string
     {

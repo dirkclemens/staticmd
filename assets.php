@@ -284,5 +284,5 @@ if (isset($_SERVER['HTTP_RANGE']) && filesize($realPath) > 1024 * 1024) { // > 1
 readfile($realPath);
 
 // Logging für Monitoring (optional)
-error_log('Assets Success: ' . $sanitizedPath . ' - Size: ' . filesize($realPath) . ' - Type: ' . $mimeType);
+//error_log('Assets Success: ' . $sanitizedPath . ' - Size: ' . filesize($realPath) . ' - Type: ' . $mimeType);
 ?>

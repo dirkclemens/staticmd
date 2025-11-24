@@ -241,6 +241,16 @@ return [
             'delete_modal_confirm' => 'Löschen',
             'bulk_delete_confirm' => 'Sind Sie sicher, dass Sie {count} Datei(en) löschen möchten?'
         ],
+        'upload' => [
+            'no_file' => 'Keine Datei hochgeladen.',
+            'invalid_type' => 'Ungültiger Dateityp.',
+            'failed' => 'Upload fehlgeschlagen.'
+        ],
+        'backup' => [
+            'zip_not_available' => 'ZIP-Extension ist nicht verfügbar. Bitte installieren Sie php-zip.',
+            'create_failed' => 'Konnte ZIP-Archiv nicht erstellen.',
+            'file_not_created' => 'Backup-Datei konnte nicht erstellt werden.'
+        ],
         'editor' => [
             'file_route_placeholder' => 'z.B. meine-seite oder blog/artikel',
             'title_placeholder' => 'Seitentitel',
