@@ -46,7 +46,7 @@ staticMD/
 │   ├── renderers/         # Content renderers
 │   │   ├── FolderOverviewRenderer.php
 │   │   └── BlogListRenderer.php
-│   ├── themes/            # 9 frontend themes
+│   ├── themes/            # 8 frontend themes
 │   │   ├── bootstrap/
 │   │   ├── solarized-light/
 │   │   ├── solarized-dark/
@@ -55,10 +55,9 @@ staticMD/
 │   │   ├── github-light/
 │   │   ├── github-dark/
 │   │   ├── static-md/
-│   │   └── adcore/
 │   ├── lang/              # Internationalization
-│   │   ├── de.php                # German translations
-│   │   └── en.php                # English translations
+│   │   ├── de.php         # German translations
+│   │   └── en.php         # English translations
 │   └── settings.json      # Site configuration
 └── public/                # Public assets
     ├── assets/            # General assets
