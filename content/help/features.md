@@ -79,32 +79,6 @@ Tag: features, documentation
 - ✅ **Admin-only Content**: Conditional content display
 - ✅ **Session-based Authentication**: Secure admin access
 
-## Project Structure
-```
-staticMD/
-├── index.php                 # Frontend entry point
-├── config.php               # Main configuration
-├── .htaccess               # Apache rewrite rules
-├── assets.php              # Asset delivery system  
-├── robots.php              # Dynamic robots.txt
-├── content/                # Markdown content
-│   ├── index.md
-│   ├── about/
-│   ├── blog/
-│   └── help/
-├── system/                 # Core system
-│   ├── core/              # Core classes
-│   ├── admin/             # Admin interface
-│   ├── themes/            # Frontend themes
-│   ├── lang/              # Language files
-│   └── settings.json      # Site settings
-└── public/                # Public assets
-    ├── assets/            # General assets
-    │   └── galleries/     # Gallery images
-    ├── images/            # Uploaded images
-    └── downloads/         # PDF/ZIP files
-```
-
 ## Shortcodes / Markdown Features
 
 ### ✅ Implemented Shortcodes

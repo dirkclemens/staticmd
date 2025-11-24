@@ -26,34 +26,6 @@ StaticMD is a professional PHP-based CMS for Markdown content with Bootstrap fro
 
 ---
 
-## 📦 Project Structure
-```
-staticMD/
-├── index.php                 # Frontend entry point
-├── config.php               # Main configuration
-├── assets.php              # Asset delivery system
-├── robots.php              # Dynamic robots.txt generator
-├── .htaccess               # Apache URL rewriting
-├── content/                # Markdown content
-│   ├── index.md
-│   ├── about/
-│   ├── blog/
-│   └── help/
-├── system/                 # Core system
-│   ├── core/              # Application logic
-│   ├── admin/             # Admin interface
-│   ├── themes/            # 9 frontend themes
-│   ├── lang/              # Internationalization
-│   └── settings.json      # Site configuration
-└── public/                # Public assets
-    ├── assets/            # General assets
-    │   └── galleries/     # Gallery images (NEW)
-    ├── images/            # Uploaded images
-    └── downloads/         # PDF/ZIP files
-```
-
----
-
 ## 📝 Markdown Features
 
 ### ✅ Shortcodes (All Implemented)
