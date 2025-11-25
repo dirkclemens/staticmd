@@ -314,7 +314,14 @@ return [
             ],
             'emoji_categories' => [
                 'activities' => 'Activities'
-            ]
+            ],
+            'path_validation_title' => 'Path Validation',
+            'path_exists' => 'File already exists',
+            'path_exists_message' => 'A file with this path already exists. Please choose a different filename.',
+            'path_new' => 'New path will be created',
+            'path_new_message' => 'The following new path will be created',
+            'similar_paths' => 'Similar existing paths found',
+            'create_anyway' => 'Create anyway'
         ]
     ]
 ];

@@ -467,7 +467,7 @@ $nonce = SecurityHeaders::getNonce();
                 indentUnit: 4,
                 tabSize: 4,
                 extraKeys: {
-                    "Ctrl-S": function() { document.getElementById('editorForm').submit(); },
+                    "Ctrl-S": function() { submitEditorForm(); },
                     "F11": function() { toggleFullscreen(); },
                     "Ctrl-F": "find",
                     "Ctrl-H": "replace"                    
@@ -819,7 +819,169 @@ $nonce = SecurityHeaders::getNonce();
         <input type="hidden" name="file" value="">
     </form>
     
+    <!-- Path Validation Modal -->
+    <div class="modal fade" id="pathValidationModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-exclamation-circle text-warning me-2"></i>
+                        <?= __('admin.editor.path_validation_title') ?>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="pathExistsWarning" class="alert alert-danger d-none">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        <strong><?= __('admin.editor.path_exists') ?></strong>
+                        <p class="mb-0 mt-2"><?= __('admin.editor.path_exists_message') ?></p>
+                    </div>
+                    
+                    <div id="pathNewConfirm" class="alert alert-info d-none">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong><?= __('admin.editor.path_new') ?></strong>
+                        <p class="mb-0 mt-2"><?= __('admin.editor.path_new_message') ?>:</p>
+                        <code class="d-block mt-2 p-2 bg-light border rounded" id="newPathDisplay"></code>
+                    </div>
+                    
+                    <div id="pathSuggestions" class="d-none">
+                        <p class="mb-2"><?= __('admin.editor.similar_paths') ?>:</p>
+                        <ul id="pathSuggestionsList" class="list-unstyled"></ul>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <?= __('admin.common.cancel') ?>
+                    </button>
+                    <button type="button" class="btn btn-primary" id="proceedWithSave" onclick="proceedWithSave()">
+                        <i class="bi bi-check-circle me-1"></i>
+                        <?= __('admin.editor.create_anyway') ?>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <script nonce="<?= $nonce ?>">
+        let validationModal = null;
+        let formSubmitPending = false;
+        const originalPath = '<?= htmlspecialchars($file) ?>';
+        
+        // Helper function to submit form (used by Ctrl-S and submit button)
+        function submitEditorForm() {
+            // Sync CodeMirror content back to textarea
+            if (typeof editor !== 'undefined' && editor) {
+                editor.save();
+            }
+            // Trigger form submit event (will be caught by our validator)
+            const form = document.getElementById('editorForm');
+            const submitEvent = new Event('submit', { cancelable: true, bubbles: true });
+            form.dispatchEvent(submitEvent);
+        }
+        
+        // Form submit handler - validate path for new or changed files
+        document.addEventListener('DOMContentLoaded', function() {
+            const editorForm = document.getElementById('editorForm');
+            const fileInput = document.querySelector('input[name="file"]');
+            
+            validationModal = new bootstrap.Modal(document.getElementById('pathValidationModal'));
+            
+            editorForm.addEventListener('submit', function(e) {
+                const currentPath = fileInput.value.trim();
+                
+                // Sync CodeMirror content
+                if (typeof editor !== 'undefined' && editor) {
+                    editor.save();
+                }
+                
+                // Skip validation if already confirmed
+                if (formSubmitPending) {
+                    formSubmitPending = false;
+                    return true;
+                }
+                
+                // Validate if path has changed or is new
+                if (currentPath !== originalPath) {
+                    e.preventDefault();
+                    validatePathBeforeSave();
+                    return false;
+                }
+            });
+        });
+        
+        // Validate path and show modal if needed
+        function validatePathBeforeSave() {
+            const fileInput = document.querySelector('input[name="file"]');
+            const path = fileInput.value.trim();
+            
+            if (!path) {
+                alert('<?= __('admin.errors.filename_required') ?>');
+                return;
+            }
+            
+            const url = '/admin?action=validate_path&path=' + encodeURIComponent(path);
+            
+            // Call validation endpoint
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        // File already exists
+                        showPathExistsWarning(path);
+                    } else {
+                        // Path is new
+                        showNewPathConfirmation(path);
+                    }
+                })
+                .catch(error => {
+                    console.error('Path validation error:', error);
+                    // On error, allow submit
+                    submitFormDirectly();
+                });
+        }
+        
+        // Show warning that file already exists
+        function showPathExistsWarning(path) {
+            document.getElementById('pathExistsWarning').classList.remove('d-none');
+            document.getElementById('pathNewConfirm').classList.add('d-none');
+            document.getElementById('pathSuggestions').classList.add('d-none');
+            document.getElementById('proceedWithSave').disabled = true;
+            
+            validationModal.show();
+        }
+                
+        // Show confirmation for completely new path
+        function showNewPathConfirmation(path) {
+            document.getElementById('pathExistsWarning').classList.add('d-none');
+            document.getElementById('pathNewConfirm').classList.remove('d-none');
+            document.getElementById('newPathDisplay').textContent = path;
+            document.getElementById('pathSuggestions').classList.add('d-none');
+            document.getElementById('proceedWithSave').disabled = false;
+            
+            validationModal.show();
+        }
+        
+        // Proceed with save after confirmation
+        function proceedWithSave() {
+            formSubmitPending = true;
+            validationModal.hide();
+            document.getElementById('editorForm').submit();
+        }
+        
+        // Submit form directly without validation
+        function submitFormDirectly() {
+            formSubmitPending = true;
+            document.getElementById('editorForm').submit();
+        }
+        
+        // Escape HTML for safe display
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
         // Delete-Funktion ausführen
         function executeDelete() {
             document.getElementById('deleteForm').submit();

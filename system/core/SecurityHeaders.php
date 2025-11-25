@@ -31,7 +31,7 @@ class SecurityHeaders
             "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
             "font-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com data:",
             "img-src 'self' data: blob: https: http:",
-            "connect-src 'self'",
+            "connect-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
             "media-src 'self'",
             "object-src 'none'",
             "base-uri 'self'",

@@ -314,7 +314,14 @@ return [
             ],
             'emoji_categories' => [
                 'activities' => 'Aktivitäten'
-            ]
+            ],
+            'path_validation_title' => 'Pfad-Validierung',
+            'path_exists' => 'Datei existiert bereits',
+            'path_exists_message' => 'Eine Datei mit diesem Pfad existiert bereits. Bitte wählen Sie einen anderen Dateinamen.',
+            'path_new' => 'Neuer Pfad wird angelegt',
+            'path_new_message' => 'Der folgende neue Pfad wird angelegt',
+            'similar_paths' => 'Ähnliche existierende Pfade gefunden',
+            'create_anyway' => 'Trotzdem anlegen'
         ]
     ]
 ];

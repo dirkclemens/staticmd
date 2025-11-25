@@ -75,7 +75,7 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     
     <!-- Favicon -->  
-    <link rel="icon" type="image/x-icon" href="/public/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
 
     <!-- Custom Theme CSS -->
     <style>

@@ -122,10 +122,61 @@ class AdminController {
                 $this->createBackup();
                 break;
                 
+            case 'validate_path':
+                $this->validatePath();
+                break;
+                
             default:
                 $this->showDashboard();
         }
     }
+
+    /**
+     * Validate path for new file
+     * 
+     * AJAX endpoint that checks if a path already exists.
+     */
+    private function validatePath(): void
+    {
+        // Set headers first
+        header('Content-Type: application/json');
+        
+        try {
+            // Check authentication
+            if (!$this->auth->isLoggedIn()) {
+                echo json_encode(['error' => 'Not authenticated', 'valid' => false]);
+                exit;
+            }
+            
+            $path = $_GET['path'] ?? '';
+            if (empty($path)) {
+                echo json_encode(['valid' => true, 'exists' => false]);
+                exit;
+            }
+            
+            $path = $this->sanitizeFilename($path);
+            $filePath = $this->config['paths']['content'] . '/' . $path . '.md';
+            
+            // Check if file already exists
+            $exists = file_exists($filePath);
+            
+            echo json_encode([
+                'valid' => !$exists,
+                'exists' => $exists,
+                'pathWillBeCreated' => !$exists && !empty($path)
+            ]);
+        } catch (\Throwable $e) {
+            error_log('Path validation error: ' . $e->getMessage());
+            echo json_encode([
+                'valid' => true,
+                'exists' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+        exit;
+    }
+    
+
 
     /**
      * Handle user login process
