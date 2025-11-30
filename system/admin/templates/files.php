@@ -1,7 +1,8 @@
 <?php
+$controller = $this;
 $pageTitle = __('admin.files.title');
-$currentUser = $this->auth->getUsername();
-$timeRemaining = $this->auth->getTimeRemaining();
+$currentUser = $controller->auth->getUsername();
+$timeRemaining = $controller->auth->getTimeRemaining();
 
 // Helper function for path-safe URL encoding
 function encodeUrlPath($path) {
@@ -231,7 +232,7 @@ $nonce = SecurityHeaders::getNonce();
                         <?php if (!empty($fileTree)): ?>
                             <div class="file-tree">
                                 <?php 
-                                function renderFileTreeNode($name, $item, $level = 0) {
+                                function renderFileTreeNode($name, $item, $level = 0, $controller = null) {
                                     $indent = str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;', $level);
                                     
                                     if ($item['type'] === 'folder') {
@@ -285,6 +286,13 @@ $nonce = SecurityHeaders::getNonce();
                                             echo '<a href="/admin?action=edit&file=' . urlencode($indexFile['route']) . '&return_url=' . urlencode('/admin?action=files') . '" class="btn btn-outline-primary" title="' . \StaticMD\Core\I18n::t('admin.files.edit_tooltip') . '"><i class="bi bi-pencil"></i></a>';
                                             echo '<button class="btn btn-outline-danger" onclick="confirmDelete(\'' . htmlspecialchars($indexFile['route']) . '\')" title="' . \StaticMD\Core\I18n::t('admin.files.delete_tooltip') . '"><i class="bi bi-trash"></i></button>';
                                             echo '</div>';
+                                            // Rename/Move Inline-Formular
+                                            echo '<form method="POST" action="/admin?action=rename" class="d-inline-block ms-2" style="max-width:220px;">';
+                                            echo '<input type="hidden" name="csrf_token" value="' . htmlspecialchars($controller ? $controller->getAuth()->generateCSRFToken() : '') . '">';
+                                            echo '<input type="hidden" name="old_path" value="' . htmlspecialchars($indexFile['route']) . '">';
+                                            echo '<input type="text" name="new_path" class="form-control form-control-sm d-inline-block" style="width:120px;" placeholder="Neuer Name/Pfad" required> ';
+                                            echo '<button type="submit" class="btn btn-outline-secondary btn-sm" title="Umbenennen/Verschieben"><i class="bi bi-arrows-move"></i></button>';
+                                            echo '</form>';
                                             echo '</div>';
                                             echo '</div>';
                                             echo '</div>';
@@ -293,7 +301,7 @@ $nonce = SecurityHeaders::getNonce();
                                         
                                         // Dann alle anderen Kinder
                                         foreach ($item['children'] as $childName => $child) {
-                                            renderFileTreeNode($childName, $child, $level + 1);
+                                            renderFileTreeNode($childName, $child, $level + 1, $controller);
                                         }
                                         echo '</div>';
                                         echo '</div>';
@@ -328,6 +336,13 @@ $nonce = SecurityHeaders::getNonce();
                                         echo '<a href="/admin?action=edit&file=' . urlencode($file['route']) . '&return_url=' . urlencode('/admin?action=files') . '" class="btn btn-outline-primary" title="' . \StaticMD\Core\I18n::t('admin.files.edit_tooltip') . '"><i class="bi bi-pencil"></i></a>';
                                         echo '<button class="btn btn-outline-danger" onclick="confirmDelete(\'' . htmlspecialchars($file['route']) . '\')" title="' . \StaticMD\Core\I18n::t('admin.files.delete_tooltip') . '"><i class="bi bi-trash"></i></button>';
                                         echo '</div>';
+                                        // Rename/Move Inline-Formular
+                                        echo '<form method="POST" action="/admin?action=rename" class="d-inline-block ms-2" style="max-width:220px;">';
+                                        echo '<input type="hidden" name="csrf_token" value="' . htmlspecialchars($controller ? $controller->getAuth()->generateCSRFToken() : '') . '">';
+                                        echo '<input type="hidden" name="old_path" value="' . htmlspecialchars($file['route']) . '">';
+                                        echo '<input type="text" name="new_path" class="form-control form-control-sm d-inline-block" style="width:120px;" placeholder="Neuer Name/Pfad" required> ';
+                                        echo '<button type="submit" class="btn btn-outline-secondary btn-sm" title="Umbenennen/Verschieben"><i class="bi bi-arrows-move"></i></button>';
+                                        echo '</form>';
                                         echo '</div>';
                                         echo '</div>';
                                         echo '</div>';
@@ -336,7 +351,7 @@ $nonce = SecurityHeaders::getNonce();
                                 }
                                 
                                 foreach ($fileTree as $name => $item) {
-                                    renderFileTreeNode($name, $item);
+                                    renderFileTreeNode($name, $item, 0, $controller);
                                 }
                                 ?>
                             </div>
@@ -491,7 +506,7 @@ $nonce = SecurityHeaders::getNonce();
             document.getElementById('deleteModalQuestion').innerHTML = questionText;
             
             // Einfache, direkte URL-Konstruktion ohne komplexe Kodierung
-            const deleteUrl = `/admin?action=delete&file=${encodeURIComponent(fileName)}&token=<?= htmlspecialchars($this->auth->generateCSRFToken()) ?>&return_url=/admin%3Faction%3Dfiles`;
+            const deleteUrl = `/admin?action=delete&file=${encodeURIComponent(fileName)}&token=<?= htmlspecialchars($controller->getAuth()->generateCSRFToken()) ?>&return_url=/admin%3Faction%3Dfiles`;
             
             console.log('Delete URL:', deleteUrl); // Debug output
             console.log('Expected return to: /admin?action=files');

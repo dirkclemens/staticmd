@@ -13,6 +13,14 @@ class AdminController {
     private AdminAuth $auth;
 
     /**
+     * Öffentlicher Getter für Auth-Objekt
+     */
+    public function getAuth(): AdminAuth
+    {
+        return $this->auth;
+    }
+
+    /**
      * Constructor
      * 
      * @param array $config Application configuration
@@ -34,6 +42,9 @@ class AdminController {
         $action = $_GET['action'] ?? 'dashboard';
         
         switch ($action) {
+            case 'rename':
+                $this->renameFile();
+                break;
             case 'upload_file':
                 // Only allow POST requests
                 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -1286,4 +1297,92 @@ class AdminController {
                "4. Testen Sie Ihre Installation\n\n" .
                "**Wichtig:** Das Admin-Passwort wurde aus Sicherheitsgründen entfernt und muss neu gesetzt werden.\n";
     }
+
+    /**
+     * Rename or move a content file
+     *
+     * Handles file renaming/moving with security checks, CSRF validation, authentication,
+     * path validation, and error handling. Returns status and error message as JSON.
+     */
+    public function renameFile(): void
+    {
+        try {
+            // Authentifizierung prüfen
+            if (!$this->auth->isLoggedIn()) {
+                header('Location: /admin?action=files&error=not_authenticated');
+                exit;
+            }
+
+            // CSRF-Token prüfen
+            $csrfToken = $_POST['csrf_token'] ?? $_REQUEST['csrf_token'] ?? '';
+            if (!$this->auth->verifyCSRFToken($csrfToken)) {
+                header('Location: /admin?action=files&error=csrf_invalid');
+                exit;
+            }
+
+            // Ursprungs- und Zielpfad prüfen
+            $oldPath = $_POST['old_path'] ?? $_REQUEST['old_path'] ?? '';
+            $newPath = $_POST['new_path'] ?? $_REQUEST['new_path'] ?? '';
+            if (empty($oldPath) || empty($newPath)) {
+                header('Location: /admin?action=files&error=missing_path');
+                exit;
+            }
+
+            // Pfade normalisieren und validieren
+            $oldPath = $this->sanitizeFilename($oldPath);
+            $newPath = $this->sanitizeFilename($newPath);
+            if (strpos($oldPath, '..') !== false || strpos($newPath, '..') !== false) {
+                header('Location: /admin?action=files&error=invalid_path');
+                exit;
+            }
+
+            $contentDir = $this->config['paths']['content'];
+            $extension = '.md';
+            $oldFile = $contentDir . '/' . $oldPath . $extension;
+
+            // Prüfe, ob die neue Datei-Endung schon vorhanden ist
+            if (strtolower(substr($newPath, -3)) === '.md') {
+                $newFile = $contentDir . '/' . $newPath;
+            } else {
+                $newFile = $contentDir . '/' . $newPath . $extension;
+            }
+
+            // Existenz prüfen
+            if (!file_exists($oldFile)) {
+                header('Location: /admin?action=files&error=source_not_found');
+                exit;
+            }
+            if (file_exists($newFile)) {
+                header('Location: /admin?action=files&error=target_exists');
+                exit;
+            }
+
+            // Schreibrechte prüfen
+            if (!is_writable(dirname($oldFile)) || !is_writable($contentDir)) {
+                header('Location: /admin?action=files&error=no_permission');
+                exit;
+            }
+
+            // Zielverzeichnis ggf. anlegen
+            $newDir = dirname($newFile);
+            if (!is_dir($newDir)) {
+                if (!mkdir($newDir, 0755, true)) {
+                    header('Location: /admin?action=files&error=mkdir_failed');
+                    exit;
+                }
+            }
+
+            // Datei verschieben/umbenennen
+            if (rename($oldFile, $newFile)) {
+                header('Location: /admin?action=files&message=rename_success');
+            } else {
+                header('Location: /admin?action=files&error=rename_failed');
+            }
+        } catch (\Throwable $e) {
+            error_log('Rename error: ' . $e->getMessage());
+            header('Location: /admin?action=files&error=exception&message=' . urlencode($e->getMessage()));
+        }
+        exit;
+    }
+
 }
