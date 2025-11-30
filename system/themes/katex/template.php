@@ -21,7 +21,7 @@ include __DIR__ . '/../shared/head.php';
 <body>
     <?php 
     // Include shared navigation
-    include __DIR__ . '/navigation.php';
+    include __DIR__ . '/../shared/navigation.php';
     ?>
 
     <!-- Hauptinhalt - Layout-spezifisch -->
@@ -35,7 +35,7 @@ include __DIR__ . '/../shared/head.php';
                 <div class="col-lg-3 col-sm-4">
                 <?php 
                 // Include shared navigation
-                include __DIR__ . '/sidebar.php';
+                include __DIR__ . '/../shared/sidebar.php';
                 ?>
                 </div>
 
