@@ -284,7 +284,7 @@ return [
             'new_page_create' => 'Neue Seite erstellen',
             'page_edit' => 'Seite bearbeiten',
             'preview' => 'Vorschau',
-            'toolbar' => 'Editor Toolbar',
+            'toolbar_label' => 'Editor Toolbar',
             'fullscreen' => 'Vollbild',
             'preview_loading' => 'Vorschau wird geladen...',
             'delete_confirm' => 'Sind Sie sicher, dass Sie die Datei löschen möchten?',
