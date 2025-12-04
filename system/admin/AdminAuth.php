@@ -28,15 +28,33 @@ class AdminAuth
      * Check if user is currently logged in and session is valid
      * 
      * Validates both session existence and timeout constraints.
+     * Implements sliding session - extends timeout on each activity.
      * 
      * @return bool True if user is authenticated and session is valid
      */
     public function isLoggedIn(): bool
     {
-        return isset($_SESSION['admin_logged_in']) 
-               && $_SESSION['admin_logged_in'] === true
-               && isset($_SESSION['admin_login_time'])
-               && (time() - $_SESSION['admin_login_time']) < $this->config['admin']['session_timeout'];
+        if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+            return false;
+        }
+        
+        if (!isset($_SESSION['admin_login_time'])) {
+            return false;
+        }
+        
+        // Prüfe Timeout basierend auf letzter Aktivität (nicht Login-Zeit)
+        $lastActivity = $_SESSION['admin_last_activity'] ?? $_SESSION['admin_login_time'];
+        $timeout = $this->config['admin']['session_timeout'] ?? 3600;
+        
+        if ((time() - $lastActivity) >= $timeout) {
+            $this->logout();
+            return false;
+        }
+        
+        // Session bei Aktivität verlängern (sliding session)
+        $_SESSION['admin_last_activity'] = time();
+        
+        return true;
     }
 
     /**
@@ -157,12 +175,15 @@ class AdminAuth
      */
     public function getTimeRemaining(): int
     {
-        if (!$this->isLoggedIn()) {
+        if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
             return 0;
         }
         
-        $elapsed = time() - $_SESSION['admin_login_time'];
-        return max(0, $this->config['admin']['session_timeout'] - $elapsed);
+        $lastActivity = $_SESSION['admin_last_activity'] ?? $_SESSION['admin_login_time'] ?? time();
+        $timeout = $this->config['admin']['session_timeout'] ?? 3600;
+        $elapsed = time() - $lastActivity;
+        
+        return max(0, $timeout - $elapsed);
     }
 
     /**

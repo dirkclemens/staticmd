@@ -40,6 +40,7 @@ return [
         'no_tags_found_short' => 'Keine Tags gefunden.',
         'no_tags_used' => 'Es wurden noch keine Tags in den Markdown-Dateien verwendet.',
         'unnamed_page' => 'Unbenannte Seite',
+        'auth_required' => 'Dieser Inhalt ist nur für angemeldete Benutzer sichtbar.',
     ],
     'common' => [
         'back_button' => 'Zurück',

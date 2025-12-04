@@ -25,7 +25,7 @@ return [
     'admin' => [
         'username' => 'admin',        
         'password' => '$2y$10$RLXuEkGUSVScmHoRGnLrIO7fgKcHU4/9CkBrFdNT46infcMfX.qOm',
-        'session_timeout' => 3600
+        'session_timeout' => 86400 // 24 hours
     ],
     
     // Theme settings

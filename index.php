@@ -41,6 +41,9 @@ require_once __DIR__ . '/system/renderers/BlogListRenderer.php';
 // Include processors
 require_once __DIR__ . '/system/processors/ShortcodeProcessor.php';
 
+// Include admin classes (for auth checks in shortcodes)
+require_once __DIR__ . '/system/admin/AdminAuth.php';
+
 // Include core classes (continued)
 require_once __DIR__ . '/system/core/NavigationBuilder.php';
 require_once __DIR__ . '/system/core/ContentLoader.php';
