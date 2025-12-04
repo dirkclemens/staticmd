@@ -290,7 +290,7 @@ function encodeUrlPath($path) {
                                                     <?= date('d.m.Y H:i', $file['modified']) ?>
                                                 </td>
                                                 <td class="table-actions">
-                                                    <a href="/admin?action=edit&file=<?= urlencode($file['route']) ?>" 
+                                                    <a href="/admin?action=edit&file=<?= urlencode($file['route']) ?>&return_url=<?= urlencode('/admin') ?>" 
                                                        class="btn btn-sm btn-outline-primary" title="<?= __('admin.dashboard.buttons.edit') ?>">
                                                         <i class="bi bi-pencil"></i>
                                                     </a>
