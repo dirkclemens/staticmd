@@ -505,11 +505,9 @@ $nonce = SecurityHeaders::getNonce();
             const questionText = deleteModalQuestionTemplate.replace('{filename}', `<strong>${fileName}</strong>`);
             document.getElementById('deleteModalQuestion').innerHTML = questionText;
             
-            // Einfache, direkte URL-Konstruktion ohne komplexe Kodierung
-            const deleteUrl = `/admin?action=delete&file=${encodeURIComponent(fileName)}&token=<?= htmlspecialchars($controller->getAuth()->generateCSRFToken()) ?>&return_url=/admin%3Faction%3Dfiles`;
-            
-            console.log('Delete URL:', deleteUrl); // Debug output
-            console.log('Expected return to: /admin?action=files');
+            // Korrekte URL-Konstruktion mit properly encodierter return_url
+            const returnUrl = encodeURIComponent('/admin?action=files');
+            const deleteUrl = `/admin?action=delete&file=${encodeURIComponent(fileName)}&token=<?= htmlspecialchars($controller->getAuth()->generateCSRFToken()) ?>&return_url=${returnUrl}`;
             
             document.getElementById('deleteConfirmBtn').href = deleteUrl;
             new bootstrap.Modal(document.getElementById('deleteModal')).show();

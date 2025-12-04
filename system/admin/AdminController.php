@@ -495,20 +495,26 @@ class AdminController {
             $returnUrl = '/admin';
         }
         
+        // Helper function to append query parameters correctly
+        $appendParam = function(string $url, string $param): string {
+            $separator = (strpos($url, '?') !== false) ? '&' : '?';
+            return $url . $separator . $param;
+        };
+        
         if (!$this->auth->verifyCSRFToken($csrfToken)) {
-            header('Location: ' . $returnUrl . '?error=csrf_invalid');
+            header('Location: ' . $appendParam($returnUrl, 'error=csrf_invalid'));
             exit;
         }
         
         if (empty($file)) {
-            header('Location: ' . $returnUrl . '?error=no_file');
+            header('Location: ' . $appendParam($returnUrl, 'error=no_file'));
             exit;
         }
         
         // Security: prevent path traversal
         $file = $this->sanitizeFilename($file);
         if (strpos($file, '..') !== false) {
-            header('Location: ' . $returnUrl . '?error=invalid_file');
+            header('Location: ' . $appendParam($returnUrl, 'error=invalid_file'));
             exit;
         }
         
@@ -516,20 +522,20 @@ class AdminController {
         
         // Check if file exists and is deletable
         if (!file_exists($filePath)) {
-            header('Location: ' . $returnUrl . '?error=file_not_found');
+            header('Location: ' . $appendParam($returnUrl, 'error=file_not_found'));
             exit;
         }
         
         if (!is_writable(dirname($filePath))) {
-            header('Location: ' . $returnUrl . '?error=no_permission');
+            header('Location: ' . $appendParam($returnUrl, 'error=no_permission'));
             exit;
         }
         
         // Delete file
         if (unlink($filePath)) {
-            header('Location: ' . $returnUrl . '?message=deleted');
+            header('Location: ' . $appendParam($returnUrl, 'message=deleted'));
         } else {
-            header('Location: ' . $returnUrl . '?error=delete_failed');
+            header('Location: ' . $appendParam($returnUrl, 'error=delete_failed'));
         }
         
         exit;
@@ -727,6 +733,13 @@ class AdminController {
         $contentDir = $this->config['paths']['content'];
         $extension = $this->config['markdown']['file_extension'];
         
+        // URL decode and normalize Unicode for route
+        $route = urldecode($route);
+        $route = urldecode($route);
+        if (class_exists('Normalizer') && function_exists('normalizer_normalize')) {
+            $route = \Normalizer::normalize($route, \Normalizer::FORM_C);
+        }
+        
         // Try possible paths
         $possiblePaths = [
             $contentDir . '/' . $route . $extension,
@@ -741,8 +754,18 @@ class AdminController {
         }
         
         foreach ($possiblePaths as $path) {
+            // Also try normalized filesystem lookup for Unicode filenames
+            $normalizedPath = $path;
+            if (class_exists('Normalizer') && function_exists('normalizer_normalize')) {
+                $normalizedPath = \Normalizer::normalize($path, \Normalizer::FORM_C);
+            }
+            
             if (file_exists($path) && is_readable($path)) {
                 return $path;
+            }
+            // Try normalized path if different
+            if ($normalizedPath !== $path && file_exists($normalizedPath) && is_readable($normalizedPath)) {
+                return $normalizedPath;
             }
         }
         
@@ -753,14 +776,25 @@ class AdminController {
      * Sanitize filename for security
      * 
      * Removes dangerous characters and prevents path traversal attacks.
+     * Unicode letters (including German umlauts) are allowed.
      * 
      * @param string $filename Filename to sanitize
      * @return string Sanitized filename
      */
     private function sanitizeFilename(string $filename): string
     {
-        // Only allow: a-z, A-Z, 0-9, -, _, /
-        $filename = preg_replace('/[^a-zA-Z0-9\-_\/]/', '', $filename);
+        // URL decode and normalize Unicode (double decode for combined characters)
+        $filename = urldecode($filename);
+        $filename = urldecode($filename);
+        
+        // Unicode normalization (NFD to NFC)
+        if (class_exists('Normalizer') && function_exists('normalizer_normalize')) {
+            $filename = \Normalizer::normalize($filename, \Normalizer::FORM_C);
+        }
+        
+        // Allow Unicode letters (\p{L}), numbers (\p{N}), -, _, /
+        // This includes German umlauts (ä, ö, ü, ß) and other Unicode letters
+        $filename = preg_replace('/[^\p{L}\p{N}\-_\/]/u', '', $filename);
         
         // Remove multiple slashes
         $filename = preg_replace('/\/+/', '/', $filename);
