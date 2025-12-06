@@ -784,6 +784,15 @@ $nonce = SecurityHeaders::getNonce();
             const deleteForm = document.getElementById('deleteForm');
             deleteForm.querySelector('input[name="file"]').value = fileName;
             
+            // Return URL: Zurück zur ursprünglichen Frontend-Seite oder Editor return_url
+            const returnUrlInput = deleteForm.querySelector('input[name="return_url"]');
+            if (returnUrlInput) {
+                // Nutze die return_url aus dem aktuellen Request, falls vorhanden
+                const urlParams = new URLSearchParams(window.location.search);
+                const currentReturnUrl = urlParams.get('return_url');
+                returnUrlInput.value = currentReturnUrl || '/admin?action=files';
+            }
+            
             new bootstrap.Modal(document.getElementById('deleteModal')).show();
         }
     </script>
@@ -817,6 +826,7 @@ $nonce = SecurityHeaders::getNonce();
     <form method="POST" action="/admin?action=delete" id="deleteForm" style="display: none;">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($this->auth->generateCSRFToken()) ?>">
         <input type="hidden" name="file" value="">
+        <input type="hidden" name="return_url" value="">
     </form>
     
     <!-- Path Validation Modal -->

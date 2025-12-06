@@ -220,8 +220,13 @@ class AdminController {
      */
     private function handleLogout(): void
     {
+        // Get last frontend URL before clearing session
+        $returnUrl = $_SESSION['last_frontend_url'] ?? '/';
+        
         $this->auth->logout();
-        header('Location: /admin?action=login&message=logged_out');
+        
+        // Redirect to last visited frontend page or homepage
+        header('Location: ' . $returnUrl);
         exit;
     }
 
@@ -451,12 +456,19 @@ class AdminController {
      * Display form for creating new content file
      * 
      * Prepares empty editor with default meta fields.
+     * Supports prefill_path parameter to prefill the file route.
      */
     private function showNewContentForm(): void
     {
         $this->auth->requireLogin();
         
-        $file = '';
+        // Check if prefill_path is provided (from admin toolbar)
+        $prefillPath = $_GET['prefill_path'] ?? '';
+        if (!empty($prefillPath)) {
+            $prefillPath = $this->sanitizeFilename($prefillPath);
+        }
+        
+        $file = $prefillPath;
         $content = '';
         $meta = [
             'title' => '',
@@ -490,8 +502,12 @@ class AdminController {
             $returnUrl = urldecode($_REQUEST['return']);
         }
         
-        // Security check: only allow local URLs
-        if (!str_starts_with($returnUrl, '/admin')) {
+        // Security check: only allow local URLs (admin or frontend)
+        if (!str_starts_with($returnUrl, '/admin') && !str_starts_with($returnUrl, '/')) {
+            $returnUrl = '/admin';
+        }
+        // Additional security: ensure it's a relative URL
+        if (preg_match('#^https?://#i', $returnUrl)) {
             $returnUrl = '/admin';
         }
         

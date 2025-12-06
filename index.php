@@ -23,6 +23,9 @@ date_default_timezone_set($config['system']['timezone']);
 // Start session
 session_start();
 
+// Store current page URL in session (for return after admin logout)
+$_SESSION['last_frontend_url'] = $_SERVER['REQUEST_URI'];
+
 // Include core classes
 require_once __DIR__ . '/system/core/I18n.php';
 require_once __DIR__ . '/system/core/Router.php';

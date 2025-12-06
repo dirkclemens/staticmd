@@ -52,7 +52,7 @@ function encodeUrlPath($path) {
                         <?= htmlspecialchars($currentUser) ?>
                     </a>
                     <ul class="dropdown-menu" style="right: 0; left: auto;">
-                        <li><a class="dropdown-item" href="/">
+                        <li><a class="dropdown-item" href="<?= htmlspecialchars($_SESSION['last_frontend_url'] ?? '/') ?>">
                             <i class="bi bi-house me-2"></i><?= __('admin.common.view_site') ?>
                         </a></li>
                         <li><hr class="dropdown-divider"></li>
@@ -114,7 +114,7 @@ function encodeUrlPath($path) {
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="/">
+                            <a class="nav-link" href="<?= htmlspecialchars($_SESSION['last_frontend_url'] ?? '/') ?>">
                                 <i class="bi bi-eye me-2"></i>
                                 <?= __('admin.common.view_site') ?>
                             </a>
@@ -132,6 +132,16 @@ function encodeUrlPath($path) {
 
             <!-- Main content -->
             <main class="col-md-9 col-lg-10 admin-content">
+                <?php if (isset($_GET['return_to_frontend']) && !empty($_SESSION['last_frontend_url'] ?? '')): ?>
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    <i class="bi bi-arrow-left-circle me-2"></i>
+                    <a href="<?= htmlspecialchars($_SESSION['last_frontend_url']) ?>" class="alert-link">
+                        <?= __('admin.common.return_to_page') ?? 'Zurück zur Seite' ?>
+                    </a>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                <?php endif; ?>
+                
                 <?php if (isset($_GET['message'])): ?>
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     <i class="bi bi-check-circle me-2"></i>
@@ -355,6 +365,7 @@ function encodeUrlPath($path) {
     <form id="deleteForm" method="POST" action="/admin?action=delete" style="display: none;">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($this->auth->generateCSRFToken()) ?>">
         <input type="hidden" name="file" id="deleteFileInput">
+        <input type="hidden" name="return_url" value="">
     </form>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -406,6 +417,12 @@ function encodeUrlPath($path) {
             currentDeleteFile = fileRoute;
             document.getElementById('deleteFileName').textContent = fileName;
             document.getElementById('deleteFileInput').value = fileRoute;
+            
+            // Set return_url to dashboard
+            const returnUrlInput = document.getElementById('deleteForm').querySelector('input[name="return_url"]');
+            if (returnUrlInput) {
+                returnUrlInput.value = '/admin';
+            }
             
             if (!deleteModal) {
                 deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
