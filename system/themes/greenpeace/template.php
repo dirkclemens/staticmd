@@ -12,9 +12,6 @@ $currentTheme = 'greenpeace';
 // Include shared head section
 include __DIR__ . '/../shared/head.php';
 ?>
-    <!-- Bootstrap JS for Collapsible Sidebar -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
 </head>
 <body>
 <header class="header">
