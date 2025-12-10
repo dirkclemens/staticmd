@@ -63,12 +63,20 @@ class MarkdownParser
                 $listType = '';
             }
             
-            // Leere Zeilen - beenden Paragraphen
+            // Leere Zeilen oder Zeilen mit nur Leerzeichen
             if (empty($trimmedLine)) {
                 if ($inParagraph) {
                     $html .= '<p>' . $this->parseInline($paragraphContent) . "</p>\n";
                     $inParagraph = false;
                     $paragraphContent = '';
+                }
+                continue;
+            }
+            
+            // Zeilen mit nur Leerzeichen -> <br> im Paragraphen
+            if (strlen(trim($line)) === 0 && strlen($line) > 0) {
+                if ($inParagraph) {
+                    $paragraphContent .= '<br>';
                 }
                 continue;
             }
