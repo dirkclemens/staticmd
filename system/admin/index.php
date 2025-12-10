@@ -54,10 +54,10 @@ ini_set('session.gc_divisor', 1000);
 // Cache settings
 ini_set('session.cache_expire', ceil($timeout / 60));
 
-// Cookie settings: 0 = until browser closes (we handle timeout in PHP)
-// This ensures the cookie survives browser sleep/wake cycles
+// Cookie settings: Explicit 24h lifetime for reliable persistence
+// Cookie survives browser restarts and matches PHP session timeout
 session_set_cookie_params([
-    'lifetime' => 0,  // Session cookie (survives browser restarts in most browsers)
+    'lifetime' => $timeout,  // 24h cookie lifetime matches session timeout
     'path' => '/',
     'httponly' => true,
     'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on',

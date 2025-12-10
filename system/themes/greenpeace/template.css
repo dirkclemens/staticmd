@@ -124,8 +124,8 @@ body {
 .sidebar {
     padding-top: 1rem;    
     position: sticky;
-    /* top: 80px; */
-    /* height: calc(100vh - 80px); */
+    top: 80px;
+    height: calc(100vh - 80px);
     overflow-y: auto;
     /* background-color: var(--gp-light); */
     border-radius: 0.5rem;
@@ -362,6 +362,7 @@ a:hover {
     border-radius: 8px;
     margin-bottom: 1.5rem;
     border-left: 4px solid;
+    max-width: 80%;
 }
 
 .alert-success {

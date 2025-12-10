@@ -28,13 +28,18 @@ ini_set('session.gc_divisor', 1000);
 
 // Start session with consistent cookie settings
 session_set_cookie_params([
-    'lifetime' => 0,  // Session cookie (survives browser sleep/wake)
+    'lifetime' => $timeout,  // 24h cookie lifetime matches session timeout
     'path' => '/',
     'httponly' => true,
     'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on',
     'samesite' => 'Strict'
 ]);
 session_start();
+
+// Update admin activity on every frontend request when logged in
+if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true) {
+    $_SESSION['admin_last_activity'] = time();
+}
 
 // Store current page URL in session (for return after admin logout)
 $_SESSION['last_frontend_url'] = $_SERVER['REQUEST_URI'];
