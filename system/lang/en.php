@@ -15,7 +15,7 @@ return [
         'search_results_count_with_time' => '{count} results for "{query}" ({time} seconds)',
         'search_no_results' => 'No results found for "{query}".',
         'search_suggestions' => 'Try different search terms or check your spelling.',
-        'content_overview' => 'Overview of all content in this area ({pages} pages',
+        'content_overview' => 'Overview of all content in this area: {pages} pages',
         'folder_overview_title' => '{folder} - Overview',
         'folder_overview_description' => 'Overview of all pages in {folder} section',
         'back_link' => 'Back',

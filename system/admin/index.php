@@ -41,12 +41,23 @@ SecurityHeaders::setAllSecurityHeaders('admin');
 
 // Session configuration (must be set BEFORE session_start())
 $timeout = $config['admin']['session_timeout'];
+
+// Set PHP session lifetime parameters
+// gc_maxlifetime: How long session data is kept server-side
 ini_set('session.gc_maxlifetime', $timeout);
-ini_set('session.cookie_lifetime', $timeout);
+
+// gc_probability/gc_divisor: Make garbage collection less aggressive
+// Default is 1/100, we set to 1/1000 to reduce premature cleanup
+ini_set('session.gc_probability', 1);
+ini_set('session.gc_divisor', 1000);
+
+// Cache settings
 ini_set('session.cache_expire', ceil($timeout / 60));
 
+// Cookie settings: 0 = until browser closes (we handle timeout in PHP)
+// This ensures the cookie survives browser sleep/wake cycles
 session_set_cookie_params([
-    'lifetime' => $timeout,
+    'lifetime' => 0,  // Session cookie (survives browser restarts in most browsers)
     'path' => '/',
     'httponly' => true,
     'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on',

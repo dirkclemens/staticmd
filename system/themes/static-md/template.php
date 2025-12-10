@@ -70,7 +70,7 @@ include __DIR__ . '/../shared/head.php';
                     <?php if (isset($_GET['saved'])): ?>
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         <i class="bi bi-check-circle me-2"></i>
-                        Die Seite wurde erfolgreich gespeichert.
+                        &nbsp;Die Seite wurde erfolgreich gespeichert.
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                     <?php endif; ?>

@@ -243,7 +243,8 @@ class AdminController {
         $themes = [];
         if (is_dir($themesDir)) {
             foreach (scandir($themesDir) as $entry) {
-                if ($entry[0] !== '.' && is_dir($themesDir . '/' . $entry)) {
+                // Exclude hidden folders, 'shared' folder, and non-directories
+                if ($entry[0] !== '.' && $entry !== 'shared' && is_dir($themesDir . '/' . $entry)) {
                     $themes[] = $entry;
                 }
             }

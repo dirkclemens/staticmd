@@ -77,15 +77,21 @@ function renderNavTree($subfolders, $currentRoute, $level = 0) {
         
         if ($hasChildren) {
             // Ordner mit Unterverzeichnissen
-            $html .= $indent . '<a href="/' . \StaticMD\Themes\ThemeHelper::encodeUrlPath($folder['route']) . '" ' . "\n";
-            $html .= $indent . '   class="list-group-item list-group-item-action ' . ($isActive ? 'active' : '') . '" ' . "\n";
-            $html .= $indent . '   data-bs-toggle="collapse" ' . "\n";
-            $html .= $indent . '   data-bs-target="#' . $collapseId . '" ' . "\n";
-            $html .= $indent . '   aria-expanded="' . ($isActive ? 'true' : 'false') . '">' . "\n";
-            $html .= $indent . '    <i class="bi bi-folder' . ($isActive ? '-open' : '') . ' me-2"></i> ' . "\n";
-            $html .= $indent . '    ' . htmlspecialchars($folder['title']) . "\n";
-            $html .= $indent . '    <i class="bi bi-chevron-down float-end"></i>' . "\n";
-            $html .= $indent . '</a>' . "\n";
+            $html .= $indent . '<div class="list-group-item list-group-item-action p-0 d-flex ' . ($isActive ? 'active' : '') . '">' . "\n";
+            $html .= $indent . '    <a href="/' . \StaticMD\Themes\ThemeHelper::encodeUrlPath($folder['route']) . '" ' . "\n";
+            $html .= $indent . '       class="flex-grow-1 text-decoration-none text-reset px-3 py-2"' . "\n";
+            $html .= $indent . '       style="color: inherit !important;">' . "\n";
+            $html .= $indent . '        <i class="bi bi-folder' . ($isActive ? '-open' : '') . ' me-2"></i> ' . "\n";
+            $html .= $indent . '        ' . htmlspecialchars($folder['title']) . "\n";
+            $html .= $indent . '    </a>' . "\n";
+            $html .= $indent . '    <button class="btn btn-link text-reset p-2 sidebar-toggle" ' . "\n";
+            $html .= $indent . '            data-bs-toggle="collapse" ' . "\n";
+            $html .= $indent . '            data-bs-target="#' . $collapseId . '" ' . "\n";
+            $html .= $indent . '            aria-expanded="' . ($isActive ? 'true' : 'false') . '" ' . "\n";
+            $html .= $indent . '            aria-label="Toggle submenu">' . "\n";
+            $html .= $indent . '        <i class="bi bi-chevron-down"></i>' . "\n";
+            $html .= $indent . '    </button>' . "\n";
+            $html .= $indent . '</div>' . "\n";
             
             // Unterverzeichnisse rekursiv
             $html .= $indent . '<div class="collapse ' . ($isActive ? 'show' : '') . '" id="' . $collapseId . '">' . "\n";
@@ -129,15 +135,21 @@ function renderNavTree($subfolders, $currentRoute, $level = 0) {
                                     
                                     <?php if ($hasSubfolders): ?>
                                         <!-- Ordner mit Unterverzeichnissen - Kollabierbar -->
-                                        <a href="/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($nav['route']) ?>" 
-                                           class="list-group-item list-group-item-action <?= $isActive ? 'active' : '' ?>"
-                                           data-bs-toggle="collapse" 
-                                           data-bs-target="#collapse-<?= htmlspecialchars($section) ?>"
-                                           aria-expanded="<?= $isActive ? 'true' : 'false' ?>">
-                                            <i class="bi bi-folder<?= $isActive ? '-open' : '' ?> me-2"></i> 
-                                            <?= htmlspecialchars($nav['title']) ?>
-                                            <i class="bi bi-chevron-down float-end"></i>
-                                        </a>
+                                        <div class="list-group-item list-group-item-action p-0 d-flex <?= $isActive ? 'active' : '' ?>">
+                                            <a href="/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($nav['route']) ?>" 
+                                               class="flex-grow-1 text-decoration-none text-reset px-3 py-2"
+                                               style="color: inherit !important;">
+                                                <i class="bi bi-folder<?= $isActive ? '-open' : '' ?> me-2"></i> 
+                                                <?= htmlspecialchars($nav['title']) ?>
+                                            </a>
+                                            <button class="btn btn-link text-reset p-2 sidebar-toggle" 
+                                                    data-bs-toggle="collapse" 
+                                                    data-bs-target="#collapse-<?= htmlspecialchars($section) ?>"
+                                                    aria-expanded="<?= $isActive ? 'true' : 'false' ?>"
+                                                    aria-label="Toggle submenu">
+                                                <i class="bi bi-chevron-down"></i>
+                                            </button>
+                                        </div>
                                         
                                         <!-- Unterverzeichnisse (rekursiv) -->
                                         <div class="collapse <?= $isActive ? 'show' : '' ?>" id="collapse-<?= htmlspecialchars($section) ?>">

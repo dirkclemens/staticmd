@@ -20,7 +20,20 @@ $config = require_once __DIR__ . '/config.php';
 // Set timezone
 date_default_timezone_set($config['system']['timezone']);
 
-// Start session
+// Session configuration for frontend (must match admin settings)
+$timeout = $config['admin']['session_timeout'] ?? 86400;
+ini_set('session.gc_maxlifetime', $timeout);
+ini_set('session.gc_probability', 1);
+ini_set('session.gc_divisor', 1000);
+
+// Start session with consistent cookie settings
+session_set_cookie_params([
+    'lifetime' => 0,  // Session cookie (survives browser sleep/wake)
+    'path' => '/',
+    'httponly' => true,
+    'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on',
+    'samesite' => 'Strict'
+]);
 session_start();
 
 // Store current page URL in session (for return after admin logout)

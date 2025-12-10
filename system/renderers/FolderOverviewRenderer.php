@@ -150,7 +150,7 @@ class FolderOverviewRenderer
     private static function renderFiles(array $files): string
     {
         $html = '<div class="files-section">';
-        $html .= '<h2><i class="bi bi-file-earmark-text me-2"></i>' . I18n::t('core.pages') . '</h2>';
+        // $html .= '<h2><i class="bi bi-file-earmark-text me-2"></i>' . I18n::t('core.pages') . '</h2>';
         
         // Dateien spaltenweise in 3 Spalten aufteilen
         $columns = self::distributeItemsInColumns($files, 3);
