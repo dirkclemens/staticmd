@@ -62,6 +62,7 @@ return [
             'save' => 'Speichern',
             'delete' => 'Löschen',
             'back_to_dashboard' => 'Zurück zum Dashboard',
+            'keyboard_shortcuts' => 'Tastenkombinationen',
         ],
         'login' => [
             'title' => 'Bitte melden Sie sich an',

@@ -120,6 +120,15 @@ function encodeUrlPath($path) {
                             </a>
                         </li>
                         
+                        <hr class="my-3">
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="/help/editor-shortcuts" target="_blank">
+                                <i class="bi bi-keyboard me-2"></i>
+                                <?= __('admin.common.keyboard_shortcuts') ?>
+                            </a>
+                        </li>
+                        
                         <li class="nav-item">
                             <a class="nav-link" href="/admin?action=logout">
                                 <i class="bi bi-box-arrow-right me-2"></i>

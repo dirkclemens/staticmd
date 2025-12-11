@@ -70,6 +70,10 @@ $nonce = SecurityHeaders::getNonce();
                             <i class="bi bi-house me-2"></i><?= __('admin.common.view_site') ?>
                         </a></li>
                         <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="/help/editor-shortcuts" target="_blank">
+                            <i class="bi bi-keyboard me-2"></i><?= __('admin.common.keyboard_shortcuts') ?>
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="/admin?action=logout">
                             <i class="bi bi-box-arrow-right me-2"></i><?= __('admin.common.logout') ?>
                         </a></li>
@@ -448,6 +452,7 @@ $nonce = SecurityHeaders::getNonce();
         document.addEventListener('DOMContentLoaded', function() {
             // Theme-Name für CodeMirror anpassen
             let cmTheme = '<?= htmlspecialchars($editorTheme) ?>';
+            // spezielle Fälle behandeln, hier wg. Leerzeichen im Namen
             switch(cmTheme) {
                 case 'solarized-light':
                     cmTheme = 'solarized light';
@@ -467,10 +472,47 @@ $nonce = SecurityHeaders::getNonce();
                 indentUnit: 4,
                 tabSize: 4,
                 extraKeys: {
+                    "Ctrl-Z": "undo",                    // Rückgängig
+                    "Ctrl-Y": "redo",                    // Wiederherstellen
+                    "Ctrl-Shift-Z": "redo",              // Alternative für Redo
+                    "Ctrl-A": "selectAll",               // Alles markieren
+                    "Ctrl-X": "cut",                     // Ausschneiden (meist Browser-Default)
+                    "Ctrl-C": "copy",                    // Kopieren (meist Browser-Default)
+                    "Ctrl-V": "paste",                   // Einfügen (meist Browser-Default)
                     "Ctrl-S": function() { submitEditorForm(); },
+                    "Cmd-S": function() { submitEditorForm(); },  // macOS
                     "F11": function() { toggleFullscreen(); },
+                    "Esc": function() { toggleFullscreen(); },  // Vollbild verlassen
                     "Ctrl-F": "find",
-                    "Ctrl-H": "replace"                    
+                    "Cmd-F": "find",  // macOS
+                    "F3": "findNext",  // Weitersuchen (vorwärts)
+                    "Ctrl-G": "findNext",
+                    "Shift-F3": "findPrev",  // Weitersuchen (rückwärts)
+                    "Ctrl-Shift-G": "findPrev",
+                    "Ctrl-H": "replace",
+                    "Cmd-Alt-F": "replace",  // macOS
+                    "Ctrl-D": function(cm) { cm.execCommand("deleteLine"); },  // Zeile löschen
+                    "Ctrl-/": function(cm) { cm.toggleComment(); },  // Kommentar umschalten
+                    "Cmd-/": function(cm) { cm.toggleComment(); },  // macOS
+                    "Alt-Up": "swapLineUp",  // Zeile nach oben verschieben
+                    "Alt-Down": "swapLineDown",  // Zeile nach unten verschieben
+                    "Ctrl-Space": "autocomplete",  // Autovervollständigung
+                    // Markdown-spezifische Shortcuts
+                    "Ctrl-B": function(cm) { insertMarkdown('**', '**'); },  // Bold
+                    "Cmd-B": function(cm) { insertMarkdown('**', '**'); },   // Bold (macOS)
+                    "Ctrl-I": function(cm) { insertMarkdown('*', '*'); },    // Italic
+                    "Cmd-I": function(cm) { insertMarkdown('*', '*'); },     // Italic (macOS)
+                    "Ctrl-K": function(cm) { insertMarkdown('`', '`'); },    // Inline Code
+                    "Cmd-K": function(cm) { insertMarkdown('`', '`'); },     // Inline Code (macOS)
+                    "Ctrl-L": function(cm) { insertMarkdown('[', '](url)'); },  // Link
+                    "Cmd-L": function(cm) { insertMarkdown('[', '](url)'); },    // Link (macOS)
+                    "Ctrl-Shift-D": "duplicateLine",     // Zeile duplizieren
+                    "Ctrl-[": "indentLess",              // Einzug verringern
+                    "Ctrl-]": "indentMore",              // Einzug erhöhen
+                    "Tab": "indentMore",                 // Einzug mit Tab
+                    "Shift-Tab": "indentLess",           // Einzug zurück
+                    "Ctrl-K Ctrl-U": "toUpperCase",      // Großbuchstaben
+                    "Ctrl-K Ctrl-L": "toLowerCase"      // Kleinbuchstaben
                 }
             });
 
@@ -613,42 +655,63 @@ $nonce = SecurityHeaders::getNonce();
             setTimeout(() => editor.refresh(), 50);
         }
         
-        // Markdown zu HTML (einfache Client-side Konvertierung)
+        // Server-seitiges Preview mit vollständigem MarkdownParser + Shortcodes
         function updatePreview() {
             const content = editor.getValue();
-            const html = parseMarkdown(content);
-            document.getElementById('previewContent').innerHTML = html;
-        }
-        
-        // Einfacher Markdown-Parser für Vorschau
-        function parseMarkdown(text) {
-            // Überschriften
-            text = text.replace(/^### (.*$)/gim, '<h3>$1</h3>');
-            text = text.replace(/^## (.*$)/gim, '<h2>$1</h2>');
-            text = text.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+            const previewElement = document.getElementById('previewContent');
+            const fileRoute = document.getElementById('file').value || '/';
             
-            // Fett und Kursiv
-            text = text.replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>');
-            text = text.replace(/\*(.*)\*/gim, '<em>$1</em>');
+            // Loading-Indikator anzeigen
+            previewElement.innerHTML = '<div class="text-center p-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><p class="mt-2 text-muted"><?= __('admin.editor.preview_loading') ?></p></div>';
             
-            // Code
-            text = text.replace(/`(.*?)`/gim, '<code>$1</code>');
-            
-            // Links
-            text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/gim, '<a href="$2">$1</a>');
-            
-            // Zeilenumbrüche zu Paragraphen
-            // text = text.replace(/\n\n/gim, '</p><p>');
-            // text = '<p>' + text + '</p>';
-            
-            // Listen (einfach)
-            text = text.replace(/^\- (.*$)/gim, '<li>$1</li>');
-            text = text.replace(/(<li>.*<\/li>)/gims, '<ul>$1</ul>');
-            
-            // Horizontale Linie
-            text = text.replace(/^---?$/gim, '<hr />');
-
-            return text;
+            // AJAX-Request an Preview-Endpoint
+            fetch('/system/admin/preview.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify({
+                    content: content,
+                    route: fileRoute
+                })
+            })
+            .then(response => {
+                // Auch bei Fehler-Status versuchen, JSON zu lesen (für detaillierte Fehlermeldung)
+                return response.json().then(data => {
+                    if (!response.ok) {
+                        data.httpStatus = response.status;
+                        data.httpStatusText = response.statusText;
+                    }
+                    return data;
+                });
+            })
+            .then(data => {
+                if (data.success) {
+                    previewElement.innerHTML = data.html;
+                } else {
+                    // Detaillierte Fehlermeldung anzeigen
+                    let errorMsg = '<div class="alert alert-danger">';
+                    errorMsg += '<h6 class="alert-heading"><i class="bi bi-exclamation-triangle me-2"></i>Preview Fehler</h6>';
+                    errorMsg += '<p><strong>Error:</strong> ' + (data.error || 'Unknown error') + '</p>';
+                    if (data.message) {
+                        errorMsg += '<p><strong>Message:</strong> ' + data.message + '</p>';
+                    }
+                    if (data.file) {
+                        errorMsg += '<p><small><strong>File:</strong> ' + data.file + ':' + data.line + '</small></p>';
+                    }
+                    if (data.trace) {
+                        errorMsg += '<details><summary>Stack Trace</summary><pre style="font-size:10px; max-height:200px; overflow:auto;">' + data.trace + '</pre></details>';
+                    }
+                    errorMsg += '</div>';
+                    previewElement.innerHTML = errorMsg;
+                    console.error('Preview error:', data);
+                }
+            })
+            .catch(error => {
+                console.error('Preview fetch error:', error);
+                previewElement.innerHTML = '<div class="alert alert-danger"><i class="bi bi-exclamation-triangle me-2"></i><strong>Netzwerkfehler:</strong> ' + error.message + '<br><small>Bitte Browser-Konsole prüfen (F12)</small></div>';
+            });
         }
         
         // Markdown-Shortcuts einfügen
@@ -1001,7 +1064,12 @@ $nonce = SecurityHeaders::getNonce();
         function cancelEdit() {
             const returnUrl = '<?= htmlspecialchars($_GET['return_url'] ?? '') ?>';
             if (returnUrl) {
-                window.location.href = returnUrl;
+                // Entferne saved=1 und andere Success-Parameter aus der URL
+                const cleanUrl = returnUrl.replace(/[?&]saved=1(&|$)/g, '$1')
+                                          .replace(/[?&]message=[^&]*(&|$)/g, '$1')
+                                          .replace(/[?&]$/g, '')  // Trailing ? oder & entfernen
+                                          .replace(/\?&/g, '?');   // ?& zu ? korrigieren
+                window.location.href = cleanUrl;
             } else if ('<?= htmlspecialchars($file) ?>') {
                 window.location.href = '/<?= htmlspecialchars($file) ?>';
             } else {

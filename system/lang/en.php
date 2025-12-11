@@ -62,6 +62,7 @@ return [
             'save' => 'Save',
             'delete' => 'Delete',
             'back_to_dashboard' => 'Back to Dashboard',
+            'keyboard_shortcuts' => 'Keyboard Shortcuts',
         ],
         'login' => [
             'title' => 'Please sign in',

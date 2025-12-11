@@ -42,9 +42,25 @@ class ShortcodeProcessor
             return $placeholder;
         }, $content);
         
-        // Schütze Inline Code (`)
-        $content = preg_replace_callback('/`[^`]+`/', function($matches) use (&$codeBlocks, &$codeIndex) {
+        // Schütze Inline Code (`) - erfasst ALLE Backtick-Blöcke
+        $content = preg_replace_callback('/`[^`]*`/', function($matches) use (&$codeBlocks, &$codeIndex) {
             $placeholder = '___INLINE_CODE_' . $codeIndex . '___';
+            $codeBlocks[$placeholder] = $matches[0];
+            $codeIndex++;
+            return $placeholder;
+        }, $content);
+        
+        // Schütze HTML <code> Tags (für bereits geparsten Markdown)
+        $content = preg_replace_callback('/<code[^>]*>.*?<\/code>/s', function($matches) use (&$codeBlocks, &$codeIndex) {
+            $placeholder = '___HTML_CODE_' . $codeIndex . '___';
+            $codeBlocks[$placeholder] = $matches[0];
+            $codeIndex++;
+            return $placeholder;
+        }, $content);
+        
+        // Schütze HTML <pre> Tags (für Code-Blöcke)
+        $content = preg_replace_callback('/<pre[^>]*>.*?<\/pre>/s', function($matches) use (&$codeBlocks, &$codeIndex) {
+            $placeholder = '___HTML_PRE_' . $codeIndex . '___';
             $codeBlocks[$placeholder] = $matches[0];
             $codeIndex++;
             return $placeholder;
