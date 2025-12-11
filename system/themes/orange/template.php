@@ -7,7 +7,7 @@
 // Theme configuration
 $siteName = $config['system']['name'] ?? 'StaticMD';
 $currentRoute = $_GET['route'] ?? 'index';
-$currentTheme = 'green';
+$currentTheme = 'orange';
 
 // Include shared head section
 include __DIR__ . '/../shared/head.php';
