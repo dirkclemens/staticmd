@@ -509,6 +509,10 @@ $nonce = SecurityHeaders::getNonce();
                     "Ctrl-Shift-D": "duplicateLine",     // Zeile duplizieren
                     "Ctrl-[": "indentLess",              // Einzug verringern
                     "Ctrl-]": "indentMore",              // Einzug erhöhen
+                    "Ctrl-Alt-5": "indentLess",
+                    "Ctrl-Alt-6": "indentMore",
+                    "Cmd-Alt-5": "indentLess",
+                    "Cmd-Alt-6": "indentMore",
                     "Tab": "indentMore",                 // Einzug mit Tab
                     "Shift-Tab": "indentLess",           // Einzug zurück
                     "Ctrl-K Ctrl-U": "toUpperCase",      // Großbuchstaben
