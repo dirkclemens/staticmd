@@ -25,7 +25,7 @@ class SearchEngine
     /**
      * Durchsucht alle Markdown-Dateien nach einem Begriff
      */
-    public function search(string $query, int $limit = null): array
+    public function search(string $query, ?int $limit = null): array
     {
         if (empty(trim($query))) {
             return [];

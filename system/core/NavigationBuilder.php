@@ -26,7 +26,7 @@ class NavigationBuilder
      * @param callable $fileFinderCallback Callback zum Finden von Content-Dateien
      * @return array Array von Breadcrumb-Elementen
      */
-    public function getBreadcrumbs(string $route, callable $fileFinderCallback = null): array
+    public function getBreadcrumbs(string $route, ?callable $fileFinderCallback = null): array
     {
         $breadcrumbs = [['title' => 'Home', 'route' => '', 'url' => '/', 'is_last' => false]];
         
@@ -58,7 +58,7 @@ class NavigationBuilder
     /**
      * Ermittelt den besten Titel für einen Breadcrumb-Teil
      */
-    private function getBreadcrumbTitle(string $route, string $fallback, callable $fileFinderCallback = null): string
+    private function getBreadcrumbTitle(string $route, string $fallback, ?callable $fileFinderCallback = null): string
     {
         if (!$fileFinderCallback) {
             return TitleGenerator::fromRoute($fallback);
