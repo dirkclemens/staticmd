@@ -80,7 +80,7 @@ body { background-color: #f8f9fa; }
 
 .session-timer {
     font-size: 0.85rem;
-    color: #ffffff;
+    color: #000;
 }
 
 .table-actions {
@@ -118,8 +118,9 @@ body { background-color: #f8f9fa; }
     border-radius: 5px;
     padding: 1rem;
     background: white;
-    min-height: 400px;
-    max-height: 600px;
+    height: calc(100vh - 200px);
+    min-height: 500px;
+    max-height: none;
     overflow-y: auto;
 }
 
@@ -260,11 +261,6 @@ body { background-color: #f8f9fa; }
     border-radius: 5px;
 }
 
-.session-timer {
-    font-size: 0.85rem;
-    color: #ffc107;
-}
-
 .toolbar {
     background: #f8f9fa;
     border: 1px solid #dee2e6;
@@ -292,6 +288,7 @@ body { background-color: #f8f9fa; }
 
 .tab-content {
     position: relative;
+    height: 100%;
 }
 
 .fullscreen {
@@ -319,18 +316,8 @@ body { background-color: #f8f9fa; }
     padding: 10px;
 }
 
-.tab-content {
-    height: 100%;
-}
-
 #editorColumn, #previewColumn {
     height: 100%;
-}
-
-.preview-content {
-    height: calc(100vh - 200px);
-    min-height: 500px;
-    max-height: none;
 }
 
 /* Custom Theme Enhancements */
@@ -439,11 +426,6 @@ body { background-color: #f8f9fa; }
     opacity: 1;
 }
 
-.session-timer {
-    font-size: 0.85rem;
-    color: #ffc107;
-}
-
 .folder-header {
     background: linear-gradient(45deg, #e9ecef, #dee2e6);
     border-radius: 8px;
@@ -494,11 +476,6 @@ body { background-color: #f8f9fa; }
 
 .settings-section:last-child {
     border-bottom: none;
-}
-
-.session-timer {
-    font-size: 0.85rem;
-    color: #ffc107;
 }
 
 .form-range {

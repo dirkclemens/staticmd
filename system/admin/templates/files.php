@@ -176,7 +176,7 @@ $nonce = SecurityHeaders::getNonce();
                             <?php
                             switch ($_GET['message']) {
                                 case 'deleted':
-                                    echo \StaticMD\Core\I18n::t('admin.files.file_deleted_success');
+                                    echo __('admin.files.file_deleted_success');
                                     break;
                                 case 'saved':
                                     echo 'Datei wurde erfolgreich gespeichert.';
@@ -282,9 +282,9 @@ $nonce = SecurityHeaders::getNonce();
                                             echo '</div>';
                                             echo '<div class="file-actions">';
                                             echo '<div class="btn-group btn-group-sm" role="group">';
-                                            echo '<a href="/' . encodeUrlPath($indexFile['route']) . '" class="btn btn-outline-info" target="_blank" title="' . \StaticMD\Core\I18n::t('admin.files.view_tooltip') . '"><i class="bi bi-eye"></i></a>';
-                                            echo '<a href="/admin?action=edit&file=' . urlencode($indexFile['route']) . '&return_url=' . urlencode('/admin?action=files') . '" class="btn btn-outline-primary" title="' . \StaticMD\Core\I18n::t('admin.files.edit_tooltip') . '"><i class="bi bi-pencil"></i></a>';
-                                            echo '<button class="btn btn-outline-danger" onclick="confirmDelete(\'' . htmlspecialchars($indexFile['route']) . '\')" title="' . \StaticMD\Core\I18n::t('admin.files.delete_tooltip') . '"><i class="bi bi-trash"></i></button>';
+                                            echo '<a href="/' . encodeUrlPath($indexFile['route']) . '" class="btn btn-outline-info" target="_blank" title="' . __('admin.files.view_tooltip') . '"><i class="bi bi-eye"></i></a>';
+                                            echo '<a href="/admin?action=edit&file=' . urlencode($indexFile['route']) . '&return_url=' . urlencode('/admin?action=files') . '" class="btn btn-outline-primary" title="' . __('admin.files.edit_tooltip') . '"><i class="bi bi-pencil"></i></a>';
+                                            echo '<button class="btn btn-outline-danger" onclick="confirmDelete(\'' . htmlspecialchars($indexFile['route']) . '\')" title="' . __('admin.files.delete_tooltip') . '"><i class="bi bi-trash"></i></button>';
                                             echo '</div>';
                                             // Rename/Move Inline-Formular
                                             echo '<form method="POST" action="/admin?action=rename" class="d-inline-block ms-2" style="max-width:220px;">';
@@ -332,9 +332,9 @@ $nonce = SecurityHeaders::getNonce();
                                         echo '</div>';
                                         echo '<div class="file-actions">';
                                         echo '<div class="btn-group btn-group-sm" role="group">';
-                                        echo '<a href="/' . encodeUrlPath($file['route']) . '" class="btn btn-outline-info" target="_blank" title="' . \StaticMD\Core\I18n::t('admin.files.view_tooltip') . '"><i class="bi bi-eye"></i></a>';
-                                        echo '<a href="/admin?action=edit&file=' . urlencode($file['route']) . '&return_url=' . urlencode('/admin?action=files') . '" class="btn btn-outline-primary" title="' . \StaticMD\Core\I18n::t('admin.files.edit_tooltip') . '"><i class="bi bi-pencil"></i></a>';
-                                        echo '<button class="btn btn-outline-danger" onclick="confirmDelete(\'' . htmlspecialchars($file['route']) . '\')" title="' . \StaticMD\Core\I18n::t('admin.files.delete_tooltip') . '"><i class="bi bi-trash"></i></button>';
+                                        echo '<a href="/' . encodeUrlPath($file['route']) . '" class="btn btn-outline-info" target="_blank" title="' . __('admin.files.view_tooltip') . '"><i class="bi bi-eye"></i></a>';
+                                        echo '<a href="/admin?action=edit&file=' . urlencode($file['route']) . '&return_url=' . urlencode('/admin?action=files') . '" class="btn btn-outline-primary" title="' . __('admin.files.edit_tooltip') . '"><i class="bi bi-pencil"></i></a>';
+                                        echo '<button class="btn btn-outline-danger" onclick="confirmDelete(\'' . htmlspecialchars($file['route']) . '\')" title="' . __('admin.files.delete_tooltip') . '"><i class="bi bi-trash"></i></button>';
                                         echo '</div>';
                                         // Rename/Move Inline-Formular
                                         echo '<form method="POST" action="/admin?action=rename" class="d-inline-block ms-2" style="max-width:220px;">';
@@ -492,7 +492,7 @@ $nonce = SecurityHeaders::getNonce();
             
             if (confirm(`<?= __('admin.files.bulk_delete_confirm') ?>`.replace('{count}', selectedFiles.size) + `\n\n${fileNames}`)) {
                 // Hier würde die Bulk-Delete-Funktionalität implementiert
-                alert('<?php echo \StaticMD\Core\I18n::t('common.bulk_delete_placeholder'); ?>');
+                alert('<?php echo __('common.bulk_delete_placeholder'); ?>');
             }
         });
         
