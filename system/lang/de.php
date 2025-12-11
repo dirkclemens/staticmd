@@ -63,6 +63,7 @@ return [
             'delete' => 'Löschen',
             'back_to_dashboard' => 'Zurück zum Dashboard',
             'keyboard_shortcuts' => 'Tastenkombinationen',
+            'return_to_page' => 'Zurück zur Seite',
         ],
         'login' => [
             'title' => 'Bitte melden Sie sich an',

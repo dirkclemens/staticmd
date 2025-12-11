@@ -1,8 +1,8 @@
-/* ===== Green Theme CSS ===== */
+/* ===== Orange Theme CSS ===== */
 
 :root {
-    --gp-green: #61BA01;
-    --gp-dark-green: #4A9100;
+    --gp-orange: #ff6600;
+    --gp-dark-orange: rgb(255, 32, 0);
     --gp-text: #58596F;
     --gp-dark: #343A41;
     --gp-light: #F7F8FB;
@@ -10,11 +10,11 @@
     --gp-white: #FFF;
 }
 .pagination {
-    --bs-pagination-color: var(--gp-green);
-    --bs-pagination-hover-color: var(--gp-dark-green);
-    --bs-pagination-focus-color: var(--gp-dark-green);
-    --bs-pagination-active-bg: var(--gp-green);
-    --bs-pagination-active-border-color: var(--gp-green);
+    --bs-pagination-color: var(--gp-orange);
+    --bs-pagination-hover-color: var(--gp-dark-orange);
+    --bs-pagination-focus-color: var(--gp-dark-orange);
+    --bs-pagination-active-bg: var(--gp-orange);
+    --bs-pagination-active-border-color: var(--gp-orange);
 }
 
 /* ===== Reset & Base ===== */

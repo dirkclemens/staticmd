@@ -30,7 +30,7 @@ $nonce = SecurityHeaders::getNonce();
         }
         
         .login-header {
-            background: linear-gradient(45deg, #AC1200, #940f00ff);
+            background: linear-gradient(45deg, #61BA01, #198754);
             color: white;
             padding: 2rem;
             text-align: center;
@@ -41,19 +41,19 @@ $nonce = SecurityHeaders::getNonce();
         }
         
         .form-control:focus {
-            border-color: #AC1200;
+            border-color: #61BA01;
             box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
         }
         
         .btn-login {
-            background: linear-gradient(45deg, #AC1200, #940f00ff);
+            background: linear-gradient(45deg, #61BA01, #198754);
             border: none;
             padding: 12px 0;
             font-weight: 600;
         }
         
         .btn-login:hover {
-            background: linear-gradient(45deg, #AC1200, #940f00ff);
+            background: linear-gradient(45deg, #61BA01, #198754);
         }
         
         .alert {

@@ -1,6 +1,6 @@
 <?php
 /**
- * Green Theme 
+ * Orange Theme 
  * Layout: Header (top) → Sidebar (left: search + nav) + Content (right) → Footer (bottom)
  */
 

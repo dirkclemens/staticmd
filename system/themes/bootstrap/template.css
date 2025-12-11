@@ -81,6 +81,7 @@
         padding: 1rem;
         margin-bottom: 2rem;
         font-size: 0.9rem;
+        max-width: 80%;
     }
 
     /* Ordner-Übersicht Styles */

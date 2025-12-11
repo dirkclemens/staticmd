@@ -801,8 +801,11 @@ $nonce = SecurityHeaders::getNonce();
         
         // Backup-Formular Handler
         document.getElementById('createBackupBtn')?.addEventListener('click', function(e) {
+            e.preventDefault(); // Verhindere sofortiges Submit
+            
             const progressDiv = document.getElementById('backupProgress');
             const button = this;
+            const form = button.closest('form');
             
             // Zeige Progress
             button.style.display = 'none';
@@ -813,6 +816,11 @@ $nonce = SecurityHeaders::getNonce();
                 button.style.display = 'block';
                 progressDiv.style.display = 'none';
             }
+            
+            // Submit das Formular nach kurzer Verzögerung (damit der Progress sichtbar wird)
+            setTimeout(() => {
+                form.submit();
+            }, 100);
             
             // Option 1: Timeout nach 5 Sekunden (Download sollte bis dahin gestartet sein)
             const timeoutId = setTimeout(resetBackupUI, 5000);

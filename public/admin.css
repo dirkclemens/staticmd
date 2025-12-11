@@ -1,15 +1,39 @@
 /* dashboard.php */
 :root {
-    --admin-primary: #AC1200;
+    --admin-primary: #61BA01;
     --admin-secondary: #6c757d;
     --admin-success: #198754;
     --admin-danger: #dc3545;
     --admin-warning: #ffc107;
 }
+.btn-primary {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: #61BA01;
+    --bs-btn-border-color: #61BA01;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #198754;
+    --bs-btn-hover-border-color: #198754;
+    --bs-btn-focus-shadow-rgb: 49, 132, 253;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #198754;
+    --bs-btn-active-border-color: #198754;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: #61BA01;
+    --bs-btn-disabled-border-color: #61BA01;
+}
+a {
+    --bs-link-color: #61BA01;
+    --bs-link-hover-color: #198754;
+}
+.nav {
+    --bs-nav-link-color: var(--bs-link-color);
+}
 
 body { background-color: #f8f9fa; }
+
 .admin-header {
-    background: linear-gradient(45deg, #AC1200, #940f00ff);
+    background: linear-gradient(45deg, var(--admin-primary), var(--admin-primary) );
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 .admin-sidebar {
@@ -56,7 +80,7 @@ body { background-color: #f8f9fa; }
 
 .session-timer {
     font-size: 0.85rem;
-    color: #ffc107;
+    color: #ffffff;
 }
 
 .table-actions {
@@ -85,7 +109,7 @@ body { background-color: #f8f9fa; }
 }
 
 .CodeMirror-focused {
-    border-color: #AC1200;
+    border-color: var(--admin-primary);
     box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
 }
 
@@ -439,7 +463,7 @@ body { background-color: #f8f9fa; }
 }
 
 .search-box:focus {
-    border-color: #AC1200;
+    border-color: var(--admin-primary);
     box-shadow: 0 0 0 0.2rem rgba(100, 100, 100, 0.25);
 }
 
@@ -483,7 +507,7 @@ body { background-color: #f8f9fa; }
 
 .range-value {
     font-weight: bold;
-    color: #AC1200;
+    color: var(--admin-primary);
 }
 
 /* Theme Preview Styles */

@@ -63,6 +63,7 @@ return [
             'delete' => 'Delete',
             'back_to_dashboard' => 'Back to Dashboard',
             'keyboard_shortcuts' => 'Keyboard Shortcuts',
+            'return_to_page' => 'Return to page',
         ],
         'login' => [
             'title' => 'Please sign in',
