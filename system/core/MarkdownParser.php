@@ -442,17 +442,34 @@ class MarkdownParser
     
     /**
      * Parst eine Tabellenzeile in Zellen auf
+     * Schützt Inline-Code vor Splitting durch Pipe-Zeichen
      */
     private function parseTableRow(string $line): array
     {
         // Führende und nachfolgende Pipes entfernen
         $line = trim($line, ' |');
         
-        // In Zellen aufteilen
+        // 1. Inline-Code-Blöcke temporär durch Platzhalter ersetzen
+        $codeBlocks = [];
+        $codeIndex = 0;
+        $line = preg_replace_callback('/`([^`]+)`/', function($matches) use (&$codeBlocks, &$codeIndex) {
+            $placeholder = '___TABLE_CODE_' . $codeIndex . '___';
+            $codeBlocks[$placeholder] = $matches[0]; // Inklusive Backticks
+            $codeIndex++;
+            return $placeholder;
+        }, $line);
+        
+        // 2. In Zellen aufteilen (jetzt sicher vor Code-Blöcken)
         $cells = explode('|', $line);
         
-        // Zellen trimmen
-        return array_map('trim', $cells);
+        // 3. Code-Blöcke in jeder Zelle wiederherstellen
+        $cells = array_map(function($cell) use ($codeBlocks) {
+            $cell = trim($cell);
+            // Code-Blöcke wieder einsetzen
+            return str_replace(array_keys($codeBlocks), array_values($codeBlocks), $cell);
+        }, $cells);
+        
+        return $cells;
     }
     
     /**
