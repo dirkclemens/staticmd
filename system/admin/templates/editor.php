@@ -237,6 +237,11 @@ $nonce = SecurityHeaders::getNonce();
                                     <i class="bi bi-layout-split me-1"></i> Split
                                 </button>
                             </div>
+                            
+                            <!-- Sync Scroll Toggle (nur in Split-View sichtbar) -->
+                            <button type="button" class="btn btn-outline-success btn-sm ms-2 d-none" id="syncScrollToggle" title="Synchrones Scrollen">
+                                <i class="bi bi-arrow-down-up me-1"></i> Sync
+                            </button>
                         </div>
                         
                         <!-- Editor Toolbar -->
@@ -622,6 +627,7 @@ $nonce = SecurityHeaders::getNonce();
             currentView = view;
             const editorColumn = document.getElementById('editorColumn');
             const previewColumn = document.getElementById('previewColumn');
+            const syncButton = document.getElementById('syncScrollToggle');
             
             // Tab-Buttons aktualisieren
             document.querySelectorAll('.btn-group .btn').forEach(btn => {
@@ -637,6 +643,9 @@ $nonce = SecurityHeaders::getNonce();
                 previewColumn.className = 'col-6 d-none';
                 const editorHeight = Math.max(500, window.innerHeight - 200);
                 editor.setSize(null, editorHeight + 'px');
+                
+                // Sync-Button verstecken
+                syncButton.classList.add('d-none');
             } else if (view === 'preview') {
                 document.getElementById('previewTab').classList.remove('btn-outline-secondary');
                 document.getElementById('previewTab').classList.add('btn-primary');
@@ -644,6 +653,9 @@ $nonce = SecurityHeaders::getNonce();
                 editorColumn.className = 'col-12 d-none';
                 previewColumn.className = 'col-12';
                 updatePreview();
+                
+                // Sync-Button verstecken
+                syncButton.classList.add('d-none');
             } else if (view === 'split') {
                 document.getElementById('splitTab').classList.remove('btn-outline-info');
                 document.getElementById('splitTab').classList.add('btn-primary');
@@ -653,11 +665,95 @@ $nonce = SecurityHeaders::getNonce();
                 const editorHeight = Math.max(500, window.innerHeight - 200);
                 editor.setSize(null, editorHeight + 'px');
                 updatePreview();
+                
+                // Sync-Button anzeigen und aktivieren
+                syncButton.classList.remove('d-none');
+                if (syncScrollEnabled) {
+                    syncButton.classList.remove('btn-outline-success');
+                    syncButton.classList.add('btn-success');
+                }
+                
+                // Scroll-Listener aktivieren
+                attachScrollListeners();
             }
             
             // CodeMirror refresh nach Layout-Änderung
             setTimeout(() => editor.refresh(), 50);
         }
+        
+        // Synchrones Scrollen zwischen Editor und Preview
+        let syncScrollEnabled = true; // Standardmäßig aktiviert
+        let isScrolling = false;
+        let editorScrollListener = null;
+        let previewScrollListener = null;
+        
+        function enableSyncScroll() {
+            if (syncScrollEnabled) return;
+            syncScrollEnabled = true;
+            
+            const syncButton = document.getElementById('syncScrollToggle');
+            if (syncButton) {
+                syncButton.classList.remove('btn-outline-success');
+                syncButton.classList.add('btn-success');
+            }
+            
+            attachScrollListeners();
+        }
+        
+        function disableSyncScroll() {
+            syncScrollEnabled = false;
+            
+            const syncButton = document.getElementById('syncScrollToggle');
+            if (syncButton) {
+                syncButton.classList.remove('btn-success');
+                syncButton.classList.add('btn-outline-success');
+            }
+        }
+        
+        function attachScrollListeners() {
+            const editorScroller = editor.getScrollerElement();
+            const previewElement = document.getElementById('previewContent');
+            
+            // Editor scrollt → Preview scrollt mit
+            editorScrollListener = function() {
+                if (!syncScrollEnabled || isScrolling) return;
+                isScrolling = true;
+                
+                const editorScrollInfo = editor.getScrollInfo();
+                const scrollPercentage = editorScrollInfo.top / (editorScrollInfo.height - editorScrollInfo.clientHeight);
+                
+                const previewScrollHeight = previewElement.scrollHeight - previewElement.clientHeight;
+                previewElement.scrollTop = scrollPercentage * previewScrollHeight;
+                
+                setTimeout(() => { isScrolling = false; }, 50);
+            };
+            
+            // Preview scrollt → Editor scrollt mit
+            previewScrollListener = function() {
+                if (!syncScrollEnabled || isScrolling) return;
+                isScrolling = true;
+                
+                const scrollPercentage = previewElement.scrollTop / (previewElement.scrollHeight - previewElement.clientHeight);
+                
+                const editorScrollInfo = editor.getScrollInfo();
+                const editorScrollHeight = editorScrollInfo.height - editorScrollInfo.clientHeight;
+                editor.scrollTo(0, scrollPercentage * editorScrollHeight);
+                
+                setTimeout(() => { isScrolling = false; }, 50);
+            };
+            
+            editorScroller.addEventListener('scroll', editorScrollListener);
+            previewElement.addEventListener('scroll', previewScrollListener);
+        }
+        
+        // Sync Scroll Toggle Button
+        document.getElementById('syncScrollToggle').addEventListener('click', function() {
+            if (syncScrollEnabled) {
+                disableSyncScroll();
+            } else {
+                enableSyncScroll();
+            }
+        });
         
         // Server-seitiges Preview mit vollständigem MarkdownParser + Shortcodes
         function updatePreview() {

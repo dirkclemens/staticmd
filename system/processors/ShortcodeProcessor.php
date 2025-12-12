@@ -30,37 +30,40 @@ class ShortcodeProcessor
      */
     public function process(string $content, string $currentRoute): string
     {
+        // Generiere eindeutigen Prefix für Platzhalter (verhindert Kollisionen mit Content)
+        $uniquePrefix = '___SHORTCODE_PROTECTED_' . uniqid() . '_';
+        
         // 1. Code-Blocks temporär durch Platzhalter ersetzen
         $codeBlocks = [];
         $codeIndex = 0;
         
         // Schütze Fenced Code Blocks (```)
-        $content = preg_replace_callback('/```[\s\S]*?```/', function($matches) use (&$codeBlocks, &$codeIndex) {
-            $placeholder = '___CODE_BLOCK_' . $codeIndex . '___';
+        $content = preg_replace_callback('/```[\s\S]*?```/', function($matches) use (&$codeBlocks, &$codeIndex, $uniquePrefix) {
+            $placeholder = $uniquePrefix . 'CODE_BLOCK_' . $codeIndex . '___';
             $codeBlocks[$placeholder] = $matches[0];
             $codeIndex++;
             return $placeholder;
         }, $content);
         
         // Schütze Inline Code (`) - erfasst ALLE Backtick-Blöcke
-        $content = preg_replace_callback('/`[^`]*`/', function($matches) use (&$codeBlocks, &$codeIndex) {
-            $placeholder = '___INLINE_CODE_' . $codeIndex . '___';
+        $content = preg_replace_callback('/`[^`]*`/', function($matches) use (&$codeBlocks, &$codeIndex, $uniquePrefix) {
+            $placeholder = $uniquePrefix . 'INLINE_CODE_' . $codeIndex . '___';
             $codeBlocks[$placeholder] = $matches[0];
             $codeIndex++;
             return $placeholder;
         }, $content);
         
         // Schütze HTML <code> Tags (für bereits geparsten Markdown)
-        $content = preg_replace_callback('/<code[^>]*>.*?<\/code>/s', function($matches) use (&$codeBlocks, &$codeIndex) {
-            $placeholder = '___HTML_CODE_' . $codeIndex . '___';
+        $content = preg_replace_callback('/<code[^>]*>.*?<\/code>/s', function($matches) use (&$codeBlocks, &$codeIndex, $uniquePrefix) {
+            $placeholder = $uniquePrefix . 'HTML_CODE_' . $codeIndex . '___';
             $codeBlocks[$placeholder] = $matches[0];
             $codeIndex++;
             return $placeholder;
         }, $content);
         
         // Schütze HTML <pre> Tags (für Code-Blöcke)
-        $content = preg_replace_callback('/<pre[^>]*>.*?<\/pre>/s', function($matches) use (&$codeBlocks, &$codeIndex) {
-            $placeholder = '___HTML_PRE_' . $codeIndex . '___';
+        $content = preg_replace_callback('/<pre[^>]*>.*?<\/pre>/s', function($matches) use (&$codeBlocks, &$codeIndex, $uniquePrefix) {
+            $placeholder = $uniquePrefix . 'HTML_PRE_' . $codeIndex . '___';
             $codeBlocks[$placeholder] = $matches[0];
             $codeIndex++;
             return $placeholder;
@@ -83,7 +86,21 @@ class ShortcodeProcessor
         }, $content);
         
         // 3. Code-Blocks wieder einsetzen
-        $content = str_replace(array_keys($codeBlocks), array_values($codeBlocks), $content);
+        // WICHTIG: Sortierung nach Platzhalter-Index in ABSTEIGENDER Reihenfolge
+        // verhindert dass Platzhalter-Strings innerhalb von Code-Blocks versehentlich ersetzt werden
+        uksort($codeBlocks, function($a, $b) {
+            // Extrahiere Index aus Platzhalter-String (z.B. "___SHORTCODE_PROTECTED_xxx_HTML_CODE_5___" -> 5)
+            preg_match('/_(\d+)___$/', $a, $matchesA);
+            preg_match('/_(\d+)___$/', $b, $matchesB);
+            $indexA = isset($matchesA[1]) ? (int)$matchesA[1] : 0;
+            $indexB = isset($matchesB[1]) ? (int)$matchesB[1] : 0;
+            return $indexB - $indexA; // Absteigende Sortierung
+        });
+        
+        // Jetzt ersetzen - höhere Indizes zuerst
+        foreach ($codeBlocks as $placeholder => $originalCode) {
+            $content = str_replace($placeholder, $originalCode, $content);
+        }
         
         return $content;
     }
