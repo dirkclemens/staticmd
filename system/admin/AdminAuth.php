@@ -116,7 +116,7 @@ class AdminAuth
      * Require valid login or redirect to login page
      * 
      * Checks authentication status and redirects to login if not authenticated.
-     * Updates last activity timestamp for authenticated users.
+     * Activity tracking is handled by isLoggedIn() to avoid duplication.
      */
     public function requireLogin(): void
     {
@@ -124,9 +124,6 @@ class AdminAuth
             header('Location: /admin?action=login');
             exit;
         }
-        
-        // Track user activity without changing login time
-        $_SESSION['admin_last_activity'] = time();
     }
 
     /**

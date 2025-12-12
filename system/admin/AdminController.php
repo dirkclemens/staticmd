@@ -154,10 +154,7 @@ class AdminController {
         
         try {
             // Check authentication
-            if (!$this->auth->isLoggedIn()) {
-                echo json_encode(['error' => 'Not authenticated', 'valid' => false]);
-                exit;
-            }
+            $this->auth->requireLogin();
             
             $path = $_GET['path'] ?? '';
             if (empty($path)) {

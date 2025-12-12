@@ -11,22 +11,31 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0); // Don't display, we'll capture them
 ini_set('log_errors', 1);
 
-// Session starten für Admin-Auth Check
+// Load configuration first
+$config = require_once __DIR__ . '/../../config.php';
+
+// Session starten mit konsistenter Konfiguration
+$timeout = $config['admin']['session_timeout'];
+ini_set('session.gc_maxlifetime', $timeout);
+session_set_cookie_params([
+    'lifetime' => $timeout,
+    'path' => '/',
+    'httponly' => true,
+    'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on',
+    'samesite' => 'Strict'
+]);
 session_start();
 
-// Nur für eingeloggte Admins verfügbar
-if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+// Include AdminAuth für konsistente Auth-Prüfung
+require_once __DIR__ . '/AdminAuth.php';
+
+$auth = new \StaticMD\Admin\AdminAuth($config);
+if (!$auth->isLoggedIn()) {
     http_response_code(401);
     header('Content-Type: application/json');
-    echo json_encode(['error' => 'Unauthorized', 'debug' => 'Not logged in']);
+    echo json_encode(['error' => 'Unauthorized']);
     exit;
 }
-
-// Update admin activity
-$_SESSION['admin_last_activity'] = time();
-
-// Load configuration
-$config = require_once __DIR__ . '/../../config.php';
 
 // Include required classes
 require_once __DIR__ . '/../core/MarkdownParser.php';
@@ -40,13 +49,11 @@ require_once __DIR__ . '/../renderers/BlogListRenderer.php';
 require_once __DIR__ . '/../core/I18n.php';
 require_once __DIR__ . '/../core/NavigationBuilder.php';
 require_once __DIR__ . '/../core/ContentLoader.php';
-require_once __DIR__ . '/AdminAuth.php';
 
 use StaticMD\Core\MarkdownParser;
 use StaticMD\Processors\ShortcodeProcessor;
 use StaticMD\Utilities\FrontMatterParser;
 use StaticMD\Core\ContentLoader;
-use StaticMD\Admin\AdminAuth;
 
 // Get POST data
 $input = file_get_contents('php://input');
