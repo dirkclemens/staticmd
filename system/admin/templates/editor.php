@@ -38,7 +38,7 @@ $nonce = SecurityHeaders::getNonce();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/material.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/dialog/dialog.min.css">
     
-    <link rel="stylesheet" href="/public/admin.css">
+    <link rel="stylesheet" href="/system/admin/admin.css">
 </head>
 <body>
     <!-- Admin Header -->

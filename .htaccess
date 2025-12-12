@@ -4,9 +4,10 @@
 RewriteEngine On
 RewriteBase /
 
-# Verzeichnis-Zugriff verhindern für System-Ordner (Ausnahme: preview.php für Admin)
+# Verzeichnis-Zugriff verhindern für System-Ordner (Ausnahmen: preview.php und admin.css)
 RewriteCond %{THE_REQUEST} \s/+system/
 RewriteCond %{REQUEST_URI} !^/system/admin/preview\.php$
+RewriteCond %{REQUEST_URI} !^/system/admin/admin\.css$
 RewriteRule ^system/ - [F,L]
 
 RewriteCond %{THE_REQUEST} \s/+content/

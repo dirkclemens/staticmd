@@ -38,7 +38,7 @@ $nonce = SecurityHeaders::getNonce();
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     
-    <link rel="stylesheet" href="/public/admin.css">
+    <link rel="stylesheet" href="/system/admin/admin.css">
 </head>
 <body>
     <!-- Admin Header -->
