@@ -4,12 +4,11 @@
  * Verwendet von allen Themes und Layouts
  */
 ?>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-        <div class="container">
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container-fluid px-4">
             <a class="navbar-brand" href="/">
                 <?php if (!empty($siteLogo)): ?>
-                    <img src="<?= htmlspecialchars($siteLogo) ?>" alt="Logo" style="height: 30px;" class="me-2">
+                    <img src="<?= htmlspecialchars($siteLogo) ?>" alt="Logo" style="height: 30px;" class="site-logo me-2">
                 <?php else: ?>
                     <i class="bi bi-file-earmark-text me-2"></i>
                 <?php endif; ?>
@@ -75,17 +74,18 @@
                 </ul>
                 
                 <!-- Suchformular -->
-                <form class="d-flex me-3" action="/search" method="GET">
+                <!--form class="d-flex me-3" action="/search" method="GET">
                     <input class="form-control me-2" type="search" name="q" placeholder="Suchen..." 
                            value="<?= htmlspecialchars($_GET['q'] ?? '') ?>" style="width: 250px;">
                     <button class="btn btn-outline-primary" type="submit">
                         <i class="bi bi-search"></i>
                     </button>
-                </form>
+                </form-->
                 
+                <!-- Admin Link -->
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="/admin">
+                        <a class="nav-link" href="/admin?return_to_frontend=1">
                             <i class="bi bi-gear me-1"></i> Admin
                         </a>
                     </li>

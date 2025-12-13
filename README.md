@@ -10,7 +10,7 @@ StaticMD is a professional PHP-based CMS for Markdown content with Bootstrap fro
 
 ## 🚀 Key Features
 - ✅ **Enhanced Markdown Parser** with shortcodes, ~150 emojis, LaTeX math, accordions
-- ✅ **9 Frontend Themes** (Bootstrap, Solarized Light/Dark, Monokai Light/Dark, GitHub Light/Dark, Static-MD, AdCore)
+- ✅ **9 Frontend Themes** (e.g. Bootstrap, Solarized Light/Dark, Monokai Light/Dark, Static-MD)
 - ✅ **Gallery System** with automatic image loading, lightbox, and tag filtering
 - ✅ **CodeMirror Editor** with 5 themes, enhanced toolbar, drag&drop upload
 - ✅ **Smart Upload System** for PDF/ZIP with automatic download tag insertion

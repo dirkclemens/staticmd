@@ -9,8 +9,7 @@
         line-height: 1.6;
     }
 
-    .navbar-brand {
-        color: #d63384;
+    .navbar-brand {        
         font-weight: 400;
         font-size: 1.5rem;
     }
@@ -198,10 +197,11 @@
         font-family: monospace;
     }
 
-    footer {
-        background-color: var(--smd-secondary);
-        color: white;
-        margin-top: 3rem;
+    footer {        
+        background-color: lightgray;
+        margin-top: 1rem;
+        border-top: 1px solid var(--gp-border);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     }
 
     /* Breadcrumb Zurück-Button Stile */

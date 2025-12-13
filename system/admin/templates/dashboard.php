@@ -31,14 +31,14 @@ function encodeUrlPath($path) {
 </head>
 <body>
     <!-- Admin Header -->
-    <nav class="navbar admin-header navbar-dark">
+    <nav class="navbar admin-header navbar-expand-lg">
         <div class="container-fluid">
             <span class="navbar-brand mb-0 h1">
                 <i class="bi bi-shield-lock me-2"></i>
                 <?= __('admin.brand') ?>
             </span>
             
-            <div class="d-flex align-items-center text-white">
+            <div class="d-flex align-items-center">
                 <div class="me-3">
                     <small class="session-timer">
                         <i class="bi bi-clock me-1"></i>
@@ -47,7 +47,7 @@ function encodeUrlPath($path) {
                 </div>
                 
                 <div class="dropdown">
-                    <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                         <i class="bi bi-person-circle me-1"></i>
                         <?= htmlspecialchars($currentUser) ?>
                     </a>
@@ -116,8 +116,8 @@ function encodeUrlPath($path) {
                         <li class="nav-item">
                             <a class="nav-link" href="<?= htmlspecialchars($_SESSION['last_frontend_url'] ?? '/') ?>">
                                 <i class="bi bi-eye me-2"></i>
-                                <?= __('admin.common.view_site') ?>
-                            </a>
+                                <?= __('admin.common.view_site') ?>                                
+                            </a>                        
                         </li>            
                                                 
                         <li class="nav-item">

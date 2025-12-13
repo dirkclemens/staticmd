@@ -55,19 +55,7 @@ StaticMD offers a flexible theme system with **8 pre-installed professional them
 - **Features**: Dark background, bright accent colors
 - **Target Audience**: Developers, programmers
 
-#### 6. GitHub Light ✅
-- **Path**: `/system/themes/github-light/`
-- **Description**: Authentic GitHub look for repositories
-- **Features**: GitHub-like design, Markdown-optimized
-- **Target Audience**: Open source projects, documentation
-
-#### 7. GitHub Dark ✅
-- **Path**: `/system/themes/github-dark/`
-- **Description**: Dark GitHub variant
-- **Features**: GitHub dark mode, professional
-- **Target Audience**: Developers, modern projects
-
-#### 8. Static-MD ✅
+#### 6. Static-MD ✅
 - **Path**: `/system/themes/static-md/`
 - **Description**: Original StaticMD theme with clean design
 - **Features**: Minimal layout, fast loading, content-focused
@@ -76,7 +64,6 @@ StaticMD offers a flexible theme system with **8 pre-installed professional them
 ### Editor Themes
 
 #### CodeMirror Themes (5 Available) ✅
-- **GitHub**: Standard light editor with clean syntax highlighting
 - **Monokai**: Dark editor with vibrant colors and excellent contrast
 - **Solarized Light**: Light Solarized editor with warm, eye-friendly colors
 - **Solarized Dark**: Dark Solarized editor with muted, comfortable colors
@@ -102,8 +89,6 @@ system/themes/
 ├── solarized-dark/
 ├── monokai-light/
 ├── monokai-dark/
-├── github-light/
-├── github-dark/
 ├── static-md/
 │   ├── template.php
 │   └── template.css

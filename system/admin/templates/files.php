@@ -1,4 +1,11 @@
 <?php
+// Set security headers
+require_once __DIR__ . '/../../core/SecurityHeaders.php';
+use StaticMD\Core\SecurityHeaders;
+SecurityHeaders::setAllSecurityHeaders('admin');
+$nonce = SecurityHeaders::getNonce();
+
+// Admin layout header variables
 $controller = $this;
 $pageTitle = __('admin.files.title');
 $currentUser = $controller->auth->getUsername();
@@ -19,14 +26,6 @@ function formatBytes(int $bytes, int $precision = 2): string {
     }    
     return round($bytes, $precision) . ' ' . $units[$i];
 }
-
-?>
-<?php
-// Set security headers
-require_once __DIR__ . '/../../core/SecurityHeaders.php';
-use StaticMD\Core\SecurityHeaders;
-SecurityHeaders::setAllSecurityHeaders('admin');
-$nonce = SecurityHeaders::getNonce();
 ?>
 <!DOCTYPE html>
 <html lang="<?= htmlspecialchars(\StaticMD\Core\I18n::getLanguage()) ?>">
@@ -42,23 +41,23 @@ $nonce = SecurityHeaders::getNonce();
 </head>
 <body>
     <!-- Admin Header -->
-    <nav class="navbar admin-header navbar-dark">
+    <nav class="navbar admin-header navbar-expand-lg">
         <div class="container-fluid">
-            <a href="/admin" class="navbar-brand mb-0 h1 text-decoration-none">
+            <a href="/admin" class="navbar-brand mb-0 h1">
                 <i class="bi bi-shield-lock me-2"></i>
                 <?= __('admin.brand') ?>
             </a>
             
-            <div class="d-flex align-items-center text-white">
+            <div class="d-flex align-items-center">
                 <div class="me-3">
                     <small class="session-timer">
                         <i class="bi bi-clock me-1"></i>
-                        Session: <span id="timer"><?= gmdate('H:i:s', $timeRemaining) ?></span>
+                        <?= __('admin.common.session') ?>: <span id="timer"><?= gmdate('H:i:s', $timeRemaining) ?></span>
                     </small>
                 </div>
                 
                 <div class="dropdown">
-                    <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                         <i class="bi bi-person-circle me-1"></i>
                         <?= htmlspecialchars($currentUser) ?>
                     </a>
@@ -66,7 +65,7 @@ $nonce = SecurityHeaders::getNonce();
                         <li><a class="dropdown-item" href="/admin">
                             <i class="bi bi-speedometer2 me-2"></i><?= __('admin.common.dashboard') ?>
                         </a></li>
-                        <li><a class="dropdown-item" href="/">
+                        <li><a class="dropdown-item" href="<?= htmlspecialchars($_SESSION['last_frontend_url'] ?? '/') ?>">
                             <i class="bi bi-house me-2"></i><?= __('admin.common.view_site') ?>
                         </a></li>
                         <li><hr class="dropdown-divider"></li>
@@ -136,6 +135,7 @@ $nonce = SecurityHeaders::getNonce();
                     </ul>
                 </div>
             </nav>
+            
             <!-- Main content -->
             <main class="col-md-9 col-lg-10 admin-content">
                 <div class="card files-container">
@@ -151,21 +151,6 @@ $nonce = SecurityHeaders::getNonce();
                             <a href="/admin?action=new&return_url=<?= urlencode('/admin?action=files') ?>" class="btn btn-primary">
                                 <i class="bi bi-plus me-1"></i> <?= __('admin.files.new_page') ?>
                             </a>
-                        </div>
-                    </div>
-                    
-                    <!-- Bulk Actions -->
-                    <div class="bulk-actions" id="bulkActions">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span id="selectedCount">0 <?= __('admin.files.selected_count') ?></span>
-                            <div>
-                                <button class="btn btn-outline-danger btn-sm" id="bulkDelete">
-                                    <i class="bi bi-trash me-1"></i> <?= __('admin.files.delete_selected') ?>
-                                </button>
-                                <button class="btn btn-outline-secondary btn-sm" id="deselectAll">
-                                    <i class="bi bi-x-circle me-1"></i> <?= __('admin.files.deselect_all') ?>
-                                </button>
-                            </div>
                         </div>
                     </div>
                     
@@ -237,7 +222,7 @@ $nonce = SecurityHeaders::getNonce();
                                     
                                     if ($item['type'] === 'folder') {
                                         echo '<div class="folder-node mb-2" style="margin-left: ' . ($level * 20) . 'px;">';
-                                        echo '<div class="folder-header p-2 bg-light rounded d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#folder_' . md5($item['path']) . '" style="cursor: pointer;">';
+                                        echo '<div class="folder-header p-2 rounded d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#folder_' . md5($item['path']) . '" style="cursor: pointer;">';
                                         echo '<i class="bi bi-folder-fill me-2 text-primary"></i>';
                                         echo '<strong>' . htmlspecialchars($name) . '</strong>';
                                         
@@ -257,10 +242,7 @@ $nonce = SecurityHeaders::getNonce();
                                         // Zeige Index-Datei zuerst, falls vorhanden
                                         if ($hasIndexFile) {
                                             $indexFile = $item['index_file'];
-                                            echo '<div class="file-item p-2 d-flex align-items-center border-bottom bg-light bg-opacity-50" style="margin-left: ' . (($level + 1) * 20) . 'px;" data-filename="' . htmlspecialchars($indexFile['route']) . '">';
-                                            echo '<div class="form-check me-3">';
-                                            echo '<input class="form-check-input file-checkbox" type="checkbox" value="' . htmlspecialchars($indexFile['route']) . '" id="file_' . md5($indexFile['route']) . '">';
-                                            echo '</div>';
+                                            echo '<div class="file-item p-2 d-flex align-items-center border-bottom bg-opacity-50" style="margin-left: ' . (($level + 1) * 20) . 'px;" data-filename="' . htmlspecialchars($indexFile['route']) . '">';
                                             echo '<div class="file-icon bg-success bg-opacity-10 text-success me-3 rounded p-1">';
                                             echo '<i class="bi bi-house-fill" title="Index-Datei"></i>';
                                             echo '</div>';
@@ -309,9 +291,6 @@ $nonce = SecurityHeaders::getNonce();
                                         // File
                                         $file = $item['file_data'];
                                         echo '<div class="file-item p-2 d-flex align-items-center border-bottom" style="margin-left: ' . ($level * 20) . 'px;" data-filename="' . htmlspecialchars($file['route']) . '">';
-                                        echo '<div class="form-check me-3">';
-                                        echo '<input class="form-check-input file-checkbox" type="checkbox" value="' . htmlspecialchars($file['route']) . '" id="file_' . md5($file['route']) . '">';
-                                        echo '</div>';
                                         echo '<div class="file-icon bg-primary bg-opacity-10 text-primary me-3 rounded p-1">';
                                         echo '<i class="bi bi-file-earmark-text"></i>';
                                         echo '</div>';
@@ -400,7 +379,6 @@ $nonce = SecurityHeaders::getNonce();
     
     <script nonce="<?= $nonce ?>">
         let timeRemaining = <?= $timeRemaining ?>;
-        let selectedFiles = new Set();
         
         // Session-Timer
         function updateTimer() {
@@ -447,55 +425,6 @@ $nonce = SecurityHeaders::getNonce();
             });
         });
         
-        // Datei-Auswahl
-        document.querySelectorAll('.file-checkbox').forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-                const fileName = this.value;
-                
-                if (this.checked) {
-                    selectedFiles.add(fileName);
-                } else {
-                    selectedFiles.delete(fileName);
-                }
-                
-                updateBulkActions();
-            });
-        });
-        
-        function updateBulkActions() {
-            const count = selectedFiles.size;
-            const bulkActions = document.getElementById('bulkActions');
-            const selectedCount = document.getElementById('selectedCount');
-            
-            if (count > 0) {
-                bulkActions.classList.add('show');
-                selectedCount.textContent = `${count} <?= __('admin.files.selected_count') ?>`;
-            } else {
-                bulkActions.classList.remove('show');
-            }
-        }
-        
-        // Deselect all
-        document.getElementById('deselectAll').addEventListener('click', function() {
-            document.querySelectorAll('.file-checkbox:checked').forEach(checkbox => {
-                checkbox.checked = false;
-            });
-            selectedFiles.clear();
-            updateBulkActions();
-        });
-        
-        // Bulk delete
-        document.getElementById('bulkDelete').addEventListener('click', function() {
-            if (selectedFiles.size === 0) return;
-            
-            const fileNames = Array.from(selectedFiles).join(', ');
-            
-            if (confirm(`<?= __('admin.files.bulk_delete_confirm') ?>`.replace('{count}', selectedFiles.size) + `\n\n${fileNames}`)) {
-                // Hier würde die Bulk-Delete-Funktionalität implementiert
-                alert('<?php echo __('common.bulk_delete_placeholder'); ?>');
-            }
-        });
-        
         // JavaScript-Übersetzungen
         const deleteModalQuestionTemplate = '<?= __('admin.files.delete_modal_question') ?>';
         
@@ -515,21 +444,6 @@ $nonce = SecurityHeaders::getNonce();
         
         // Keyboard Shortcuts
         document.addEventListener('keydown', function(e) {
-            // Ctrl+A: Alle auswählen
-            if (e.ctrlKey && e.key === 'a' && e.target.tagName !== 'INPUT') {
-                e.preventDefault();
-                document.querySelectorAll('.file-checkbox').forEach(checkbox => {
-                    checkbox.checked = true;
-                    selectedFiles.add(checkbox.value);
-                });
-                updateBulkActions();
-            }
-            
-            // Escape: Deselect all
-            if (e.key === 'Escape') {
-                document.getElementById('deselectAll').click();
-            }
-            
             // Ctrl+N: New file
             if (e.ctrlKey && e.key === 'n') {
                 e.preventDefault();

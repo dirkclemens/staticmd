@@ -242,6 +242,17 @@ class MarkdownParser
      */
     private function parseInline(string $text): string
     {
+        // WICHTIG: Code-Blöcke ZUERST durch Platzhalter ersetzen, um Formatierungszeichen zu schützen
+        $codeBlocks = [];
+        $codeIndex = 0;
+        $text = preg_replace_callback('/`([^`]+)`/', function($matches) use (&$codeBlocks, &$codeIndex) {
+            $placeholder = '___CODE_BLOCK_' . $codeIndex . '___';
+            // htmlspecialchars für Code-Inhalt verwenden, um alle Zeichen sicher zu escapen
+            $codeBlocks[$placeholder] = '<code>' . htmlspecialchars($matches[1]) . '</code>';
+            $codeIndex++;
+            return $placeholder;
+        }, $text);
+        
         // Download-Tag: [download datei.zip "Alt-Text"] oder [download datei.pdf "Alt-Text"]
         $text = preg_replace_callback(
             '/\[download\s+([^\s"\]]+)\s*(?:"([^"]*)")?\]/',
@@ -306,16 +317,6 @@ class MarkdownParser
         $text = preg_replace('/\*(.*?)\*/', '<em>$1</em>', $text);
         // Kursiv: oder _Text_ (hier nicht aktiviert, um Konflikte mit Unterstrichen in Wörtern zu vermeiden)
         //$text = preg_replace('/_(.*?)_/', '<em>$1</em>', $text);
-
-        // Code-Blöcke temporär durch Platzhalter ersetzen
-        $codeBlocks = [];
-        $codeIndex = 0;
-        $text = preg_replace_callback('/`([^`]+)`/', function($matches) use (&$codeBlocks, &$codeIndex) {
-            $placeholder = '___CODE_BLOCK_' . $codeIndex . '___';
-            $codeBlocks[$placeholder] = '<code>' . $matches[1] . '</code>';
-            $codeIndex++;
-            return $placeholder;
-        }, $text);
 
         // Durchgestrichen: ~~Text~~
         $text = preg_replace('/~~(.*?)~~/', '<del>$1</del>', $text);

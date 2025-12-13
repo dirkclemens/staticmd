@@ -1,14 +1,14 @@
 <?php
 /**
- * Orange Theme 
+ * Gray Theme 
  * Layout: Header (top) → Sidebar (left: search + nav) + Content (right) → Footer (bottom)
  */
 
 // Theme configuration
 $siteName = $config['system']['name'] ?? 'StaticMD';
 $currentRoute = $_GET['route'] ?? 'index';
-$currentTheme = 'orange';
-$themeMode = 'light'; // 'light' or 'dark'
+$currentTheme = 'gray';
+$themeMode = 'dark'; // 'light' or 'dark'
 
 // Include shared head section
 include __DIR__ . '/../shared/head.php';

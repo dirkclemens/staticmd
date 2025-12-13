@@ -42,7 +42,11 @@ if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true
 }
 
 // Store current page URL in session (for return after admin logout)
-$_SESSION['last_frontend_url'] = $_SERVER['REQUEST_URI'];
+// Exclude asset requests (favicon, images, CSS, JS, etc.)
+$requestUri = $_SERVER['REQUEST_URI'];
+if (!preg_match('/\.(ico|png|jpg|jpeg|gif|svg|css|js|woff|woff2|ttf|eot)$/i', parse_url($requestUri, PHP_URL_PATH))) {
+    $_SESSION['last_frontend_url'] = $requestUri;
+}
 
 // Include core classes
 require_once __DIR__ . '/system/core/I18n.php';

@@ -9,7 +9,7 @@ $settings = [];
 if (file_exists($settingsFile)) {
     $settings = json_decode(file_get_contents($settingsFile), true) ?: [];
 }
-$editorTheme = $settings['editor_theme'] ?? 'github';
+$editorTheme = $settings['editor_theme'] ?? 'elegant';
 ?>
 <?php
 // Security Headers setzen
@@ -32,7 +32,9 @@ $nonce = SecurityHeaders::getNonce();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css">
     
     <!-- CodeMirror Themes -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/github.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/elegant.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/eclipse.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/idea.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/monokai.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/solarized.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/material.min.css">
@@ -42,14 +44,14 @@ $nonce = SecurityHeaders::getNonce();
 </head>
 <body>
     <!-- Admin Header -->
-    <nav class="navbar admin-header navbar-dark">
+    <nav class="navbar admin-header navbar-expand-lg">
         <div class="container-fluid">
             <a href="/admin" class="navbar-brand mb-0 h1 text-decoration-none">
                 <i class="bi bi-shield-lock me-2"></i>
                 <?= __('admin.brand') ?>
             </a>
             
-            <div class="d-flex align-items-center text-white">
+            <div class="d-flex align-items-center">
                 <div class="me-3">
                     <small class="session-timer">
                         <i class="bi bi-clock me-1"></i>
@@ -58,7 +60,7 @@ $nonce = SecurityHeaders::getNonce();
                 </div>
                 
                 <div class="dropdown">
-                    <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                         <i class="bi bi-person-circle me-1"></i>
                         <?= htmlspecialchars($currentUser) ?>
                     </a>
@@ -1014,7 +1016,7 @@ $nonce = SecurityHeaders::getNonce();
                         <i class="bi bi-info-circle me-2"></i>
                         <strong><?= __('admin.editor.path_new') ?></strong>
                         <p class="mb-0 mt-2"><?= __('admin.editor.path_new_message') ?>:</p>
-                        <code class="d-block mt-2 p-2 bg-light border rounded" id="newPathDisplay"></code>
+                        <code class="d-block mt-2 p-2 border rounded" id="newPathDisplay"></code>
                     </div>
                     
                     <div id="pathSuggestions" class="d-none">
@@ -1186,12 +1188,12 @@ $nonce = SecurityHeaders::getNonce();
                 const editorElement = document.querySelector('.CodeMirror');
                 if (editorElement) {
                     // Entferne alte Theme-Klassen
-                    editorElement.classList.remove('cm-s-github', 'cm-s-monokai', 'cm-s-solarized', 'cm-s-material');
+                    editorElement.classList.remove('cm-s-elegant', 'cm-s-monokai', 'cm-s-solarized', 'cm-s-material');
                     
                     // Füge neue Theme-Klasse hinzu
                     switch(themeName) {
-                        case 'github':
-                            editorElement.classList.add('cm-s-github');
+                        case 'elegant':
+                            editorElement.classList.add('cm-s-elegant');
                             break;
                         case 'monokai':
                             editorElement.classList.add('cm-s-monokai');

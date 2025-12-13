@@ -112,88 +112,88 @@ function renderNavTree($subfolders, $currentRoute, $level = 0) {
     return $html;
 }
 ?>
-                <!-- Sidebar -->
-                    <div class="sidebar">
-                        <h5><i class="bi bi-list-ul me-2"></i>Navigation</h5>
+            <!-- Sidebar -->
+                <div class="sidebar-section">
+                    <h5><i class="bi bi-list-ul me-2"></i>Navigation</h5>
+                    
+                    <?php if (!empty($navItems)): ?>
+                    <div class="list-group list-group-flush">
+                        <a href="/" class="list-group-item list-group-item-action <?= $currentRoute === 'index' ? 'active' : '' ?>">
+                            <i class="bi bi-house me-2"></i> <!-- Startseite -->
+                        </a>
                         
-                        <?php if (!empty($navItems)): ?>
-                        <div class="list-group list-group-flush">
-                            <a href="/" class="list-group-item list-group-item-action <?= $currentRoute === 'index' ? 'active' : '' ?>">
-                                <i class="bi bi-house me-2"></i> <!-- Startseite -->
-                            </a>
-                            
-                            <?php foreach ($navItems as $section => $nav): ?>
-                                <?php if ($section !== 'index'): ?>
-                                    <?php 
-                                    $isActive = strpos($currentRoute, $section) === 0;
-                                    
-                                    // Scanne Dateisystem rekursiv für alle Unterverzeichnisse
-                                    $contentPath = $config['paths']['content'] . '/' . $nav['route'];
-                                    $subfolders = getSubfolders($contentPath, $nav['route'], $config);
-                                    $hasSubfolders = !empty($subfolders);
-                                    ?>
-                                    
-                                    <?php if ($hasSubfolders): ?>
-                                        <!-- Ordner mit Unterverzeichnissen - Kollabierbar -->
-                                        <div class="list-group-item list-group-item-action p-0 d-flex <?= $isActive ? 'active' : '' ?>">
-                                            <a href="/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($nav['route']) ?>" 
-                                               class="flex-grow-1 text-decoration-none text-reset px-3 py-2"
-                                               style="color: inherit !important;">
-                                                <i class="bi bi-folder<?= $isActive ? '-open' : '' ?> me-2"></i> 
-                                                <?= htmlspecialchars($nav['title']) ?>
-                                            </a>
-                                            <button class="btn btn-link text-reset p-2 sidebar-toggle" 
-                                                    data-bs-toggle="collapse" 
-                                                    data-bs-target="#collapse-<?= htmlspecialchars($section) ?>"
-                                                    aria-expanded="<?= $isActive ? 'true' : 'false' ?>"
-                                                    aria-label="Toggle submenu">
-                                                <i class="bi bi-chevron-down"></i>
-                                            </button>
-                                        </div>
-                                        
-                                        <!-- Unterverzeichnisse (rekursiv) -->
-                                        <div class="collapse <?= $isActive ? 'show' : '' ?>" id="collapse-<?= htmlspecialchars($section) ?>">
-                                            <div class="list-group list-group-flush ms-3">
-                                                <?= renderNavTree($subfolders, $currentRoute, 0) ?>
-                                            </div>
-                                        </div>
-                                    <?php else: ?>
-                                        <!-- Einzelner Ordner ohne Unterverzeichnisse -->
+                        <?php foreach ($navItems as $section => $nav): ?>
+                            <?php if ($section !== 'index'): ?>
+                                <?php 
+                                $isActive = strpos($currentRoute, $section) === 0;
+                                
+                                // Scanne Dateisystem rekursiv für alle Unterverzeichnisse
+                                $contentPath = $config['paths']['content'] . '/' . $nav['route'];
+                                $subfolders = getSubfolders($contentPath, $nav['route'], $config);
+                                $hasSubfolders = !empty($subfolders);
+                                ?>
+                                
+                                <?php if ($hasSubfolders): ?>
+                                    <!-- Ordner mit Unterverzeichnissen - Kollabierbar -->
+                                    <div class="list-group-item list-group-item-action p-0 d-flex <?= $isActive ? 'active' : '' ?>">
                                         <a href="/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($nav['route']) ?>" 
-                                           class="list-group-item list-group-item-action <?= $isActive ? 'active' : '' ?>">
-                                            <i class="bi bi-folder me-2"></i> 
+                                            class="flex-grow-1 text-decoration-none text-reset px-3 py-2"
+                                            style="color: inherit !important;">
+                                            <i class="bi bi-folder<?= $isActive ? '-open' : '' ?> me-2"></i> 
                                             <?= htmlspecialchars($nav['title']) ?>
                                         </a>
-                                    <?php endif; ?>
+                                        <button class="btn btn-link text-reset p-2 sidebar-toggle" 
+                                                data-bs-toggle="collapse" 
+                                                data-bs-target="#collapse-<?= htmlspecialchars($section) ?>"
+                                                aria-expanded="<?= $isActive ? 'true' : 'false' ?>"
+                                                aria-label="Toggle submenu">
+                                            <i class="bi bi-chevron-down"></i>
+                                        </button>
+                                    </div>
+                                    
+                                    <!-- Unterverzeichnisse (rekursiv) -->
+                                    <div class="collapse <?= $isActive ? 'show' : '' ?>" id="collapse-<?= htmlspecialchars($section) ?>">
+                                        <div class="list-group list-group-flush ms-3">
+                                            <?= renderNavTree($subfolders, $currentRoute, 0) ?>
+                                        </div>
+                                    </div>
+                                <?php else: ?>
+                                    <!-- Einzelner Ordner ohne Unterverzeichnisse -->
+                                    <a href="/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($nav['route']) ?>" 
+                                        class="list-group-item list-group-item-action <?= $isActive ? 'active' : '' ?>">
+                                        <i class="bi bi-folder me-2"></i> 
+                                        <?= htmlspecialchars($nav['title']) ?>
+                                    </a>
+                                <?php endif; ?>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php endif; ?>
+                
+                    <hr style="margin-top: 1.5rem; margin-bottom: 1.5rem;">
+
+                    <!-- Zusätzliche Sidebar-Inhalte -->
+                    <h5><i class="bi bi-tags me-2"></i>Tags</h5>                        
+                    <div class="tag-cloud">
+                        <?php if (!isset($meta['tags']) || empty($meta['tags'])): ?>
+                            <p class="text-muted">Keine Tags verfügbar.</p>
+                        <?php else: ?>
+                            <?php foreach (explode(',', $meta['tags']) as $tag): ?>
+                                <?php $cleanTag = trim($tag); ?>
+                                <?php if (!empty($cleanTag)): ?>
+                                <a href="/tag/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($cleanTag) ?>" class="badge bg-primary text-white text-decoration-none me-1 mb-1">
+                                    <?= htmlspecialchars($cleanTag) ?>
+                                </a>
                                 <?php endif; ?>
                             <?php endforeach; ?>
-                        </div>
                         <?php endif; ?>
+                    </div>
                     
-                        <hr style="margin-top: 1.5rem; margin-bottom: 1.5rem;">
+                    <hr style="margin-top: 1.5rem; margin-bottom: 1.5rem;">
 
-                        <!-- Zusätzliche Sidebar-Inhalte -->
-                        <h5><i class="bi bi-tags me-2"></i>Tags</h5>                        
-                        <div class="tag-cloud">
-                            <?php if (!isset($meta['tags']) || empty($meta['tags'])): ?>
-                                <p class="text-muted">Keine Tags verfügbar.</p>
-                            <?php else: ?>
-                                <?php foreach (explode(',', $meta['tags']) as $tag): ?>
-                                    <?php $cleanTag = trim($tag); ?>
-                                    <?php if (!empty($cleanTag)): ?>
-                                    <a href="/tag/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($cleanTag) ?>" class="badge bg-primary text-white text-decoration-none me-1 mb-1">
-                                        <?= htmlspecialchars($cleanTag) ?>
-                                    </a>
-                                    <?php endif; ?>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </div>
-                        
-                        <hr style="margin-top: 1.5rem; margin-bottom: 1.5rem;">
-
-                        <div class="mt-2">
-                            <a href="/tag" class="btn btn-outline-primary btn-sm">
-                                <i class="bi bi-tags me-1"></i>Alle Tags anzeigen
-                            </a>
-                        </div>
-                    </div>                    
+                    <div class="mt-2">
+                        <a href="/tag" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-tags me-1"></i>Alle Tags anzeigen
+                        </a>
+                    </div>
+                </div>                    

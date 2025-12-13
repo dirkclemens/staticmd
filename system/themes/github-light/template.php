@@ -9,6 +9,8 @@
 $siteName = $config['system']['name'] ?? 'StaticMD';
 $siteUrl = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']);
 $currentRoute = $_GET['route'] ?? 'index';
+$currentTheme = 'github-light';
+$themeMode = 'light'; // 'light' or 'dark'
 
 // Load settings
 $settingsFile = $config['paths']['system'] . '/settings.json';
@@ -58,7 +60,7 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
 });
 ?>
 <!DOCTYPE html>
-<html lang="de" data-bs-theme="light">
+<html lang="de" data-bs-theme="<?= htmlspecialchars($themeMode ?? 'light') ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -80,7 +82,8 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
     <!-- Custom Theme CSS -->
     <style>
         <?php include __DIR__ . '/template.css'; ?>
-    </style>
+        <?php include __DIR__ . '/../shared/shared.css'; ?>        
+   </style>
 
     <?php if (isset($meta['css'])): ?>
     <style><?= $meta['css'] ?></style>

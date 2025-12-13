@@ -54,9 +54,6 @@ The StaticMD settings system uses JSON-based configuration with a user-friendly 
   - `solarized-dark` - Solarized Dark Theme
   - `monokai-light` - Monokai Light Theme
   - `monokai-dark` - Monokai Dark Theme
-  - `github-light` - GitHub Light Theme
-  - `github-dark` - GitHub Dark Theme
-  - `adcore` - Adcore Custom Theme
   - `static-md` - StaticMD Default Theme
 
 #### Editor Theme
@@ -65,7 +62,6 @@ The StaticMD settings system uses JSON-based configuration with a user-friendly 
 - **Default**: `"github"`
 - **Status**: ✅ **Implemented**
 - **Options**: 
-  - `github` - GitHub Light Editor
   - `monokai` - Monokai Dark Editor
   - `solarized-light` - Solarized Light Editor
   - `solarized-dark` - Solarized Dark Editor

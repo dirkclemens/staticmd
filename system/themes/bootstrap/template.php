@@ -8,6 +8,7 @@
 $siteName = $config['system']['name'] ?? 'StaticMD';
 $currentRoute = $_GET['route'] ?? 'index';
 $currentTheme = 'bootstrap';
+$themeMode = 'light'; // 'light' or 'dark'
 
 // Include shared head section
 include __DIR__ . '/../shared/head.php';
@@ -29,7 +30,7 @@ include __DIR__ . '/../shared/head.php';
             <?= $themeHelper->renderBreadcrumbs($breadcrumbs ?? []) ?>
             
             <div class="row">
-                <div class="col-lg-10">
+                <div class="col-lg-9">
                     <!-- Meta-Informationen -->
                     <?php if (!empty($meta) && ($meta['author'] ?? $meta['date'] ?? null)): ?>
                     <div class="meta-info">
@@ -85,7 +86,7 @@ include __DIR__ . '/../shared/head.php';
                 </div>
                 
                 <!-- Sidebar -->
-                <div class="col-lg-2">
+                <div class="col-lg-3">
                     <div class="sidebar">
                         <h5><i class="bi bi-list-ul me-2"></i>Navigation</h5>
                         

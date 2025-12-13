@@ -19,8 +19,8 @@ We develop a modern, user-friendly CMS that combines the simplicity of Markdown 
 ## ✨ What Makes StaticMD Special
 
 ### 🎨 Flexible Theme System
-- **7 Frontend Themes**: Bootstrap, Solarized (Light/Dark), Monokai (Light/Dark), GitHub (Light/Dark)
-- **5 Editor Themes**: GitHub, Monokai, Solarized Light/Dark, Material
+- **7 Frontend Themes**: e.g. Bootstrap, Solarized (Light/Dark), Monokai (Light/Dark)
+- **5 Editor Themes**: Monokai, Solarized Light/Dark, Material
 - **Live Theme Switching** via admin interface
 
 ### 🔧 Professional Admin Interface

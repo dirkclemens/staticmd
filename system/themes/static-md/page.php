@@ -7,6 +7,7 @@
 $siteName = $config['system']['name'] ?? 'StaticMD';
 $currentRoute = $_GET['route'] ?? 'index';
 $currentTheme = 'static-md';
+$themeMode = 'light'; // 'light' or 'dark'
 
 // Include shared head section
 include __DIR__ . '/../shared/head.php';

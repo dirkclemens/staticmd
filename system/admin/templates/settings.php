@@ -1,14 +1,15 @@
 <?php
-$pageTitle = __('admin.common.settings');
-$currentUser = $this->auth->getUsername();
-$timeRemaining = $this->auth->getTimeRemaining();
-?>
-<?php
 // Set security headers
 require_once __DIR__ . '/../../core/SecurityHeaders.php';
 use StaticMD\Core\SecurityHeaders;
 SecurityHeaders::setAllSecurityHeaders('admin');
 $nonce = SecurityHeaders::getNonce();
+
+// Admin layout header variables
+$controller = $this;
+$pageTitle = __('admin.common.settings');
+$currentUser = $controller->auth->getUsername();
+$timeRemaining = $controller->auth->getTimeRemaining();
 ?>
 <!DOCTYPE html>
 <html lang="<?= htmlspecialchars(\StaticMD\Core\I18n::getLanguage()) ?>">
@@ -41,49 +42,34 @@ $nonce = SecurityHeaders::getNonce();
             cursor: grabbing;
         }
     </style>
-    
-    <style nonce="<?= $nonce ?>">
-        #nav-items-sortable .list-group-item {
-            cursor: move;
-            transition: all 0.2s ease;
-        }
-        #nav-items-sortable .list-group-item:hover {
-            background-color: #f8f9fa;
-        }
-        #nav-items-sortable .sortable-ghost {
-            opacity: 0.4;
-            background: #e9ecef;
-        }
-        #nav-items-sortable .bi-grip-vertical {
-            cursor: grab;
-        }
-        #nav-items-sortable .bi-grip-vertical:active {
-            cursor: grabbing;
-        }
-    </style>
 </head>
 <body>
     <!-- Admin Header -->
-    <nav class="navbar admin-header navbar-dark">
+    <nav class="navbar admin-header navbar-expand-lg">
         <div class="container-fluid">
-            <a href="/admin" class="navbar-brand mb-0 h1 text-decoration-none">
+            <a href="/admin" class="navbar-brand mb-0 h1">
                 <i class="bi bi-shield-lock me-2"></i>
                 <?= __('admin.brand') ?>
             </a>
             
-            <div class="d-flex align-items-center text-white">
+            <div class="d-flex align-items-center">
                 <div class="me-3">
                     <small class="session-timer">
                         <i class="bi bi-clock me-1"></i>
                         <?= __('admin.common.session') ?>: <span id="timer"><?= gmdate('H:i:s', $timeRemaining) ?></span>
                     </small>
-                            <!-- Button ins Formular verschoben -->
+                </div>
+                
+                <div class="dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-circle me-1"></i>
+                        <?= htmlspecialchars($currentUser) ?>
                     </a>
                     <ul class="dropdown-menu" style="right: 0; left: auto;">
                         <li><a class="dropdown-item" href="/admin">
                             <i class="bi bi-speedometer2 me-2"></i><?= __('admin.common.dashboard') ?>
                         </a></li>
-                        <li><a class="dropdown-item" href="/">
+                        <li><a class="dropdown-item" href="<?= htmlspecialchars($_SESSION['last_frontend_url'] ?? '/') ?>">
                             <i class="bi bi-house me-2"></i><?= __('admin.common.view_site') ?>
                         </a></li>
                         <li><hr class="dropdown-divider"></li>
@@ -91,7 +77,7 @@ $nonce = SecurityHeaders::getNonce();
                             <i class="bi bi-box-arrow-right me-2"></i><?= __('admin.common.logout') ?>
                         </a></li>
                     </ul>
-                </div>
+                </div>            
             </div>
         </div>
     </nav>
@@ -153,6 +139,7 @@ $nonce = SecurityHeaders::getNonce();
                     </ul>
                 </div>
             </nav>
+            
             <!-- Main content -->
             <main class="col-md-9 col-lg-10 admin-content">
                 <div class="card settings-container">
@@ -338,7 +325,9 @@ $nonce = SecurityHeaders::getNonce();
                                             <div class="mb-3">
                                                 <label for="editor_theme" class="form-label"><?= __('admin.settings.editor_theme') ?></label>
                                                 <select class="form-select" id="editor_theme" name="editor_theme" onchange="previewTheme(this.value)">
-                                                    <option value="github" <?= $settings['editor_theme'] === 'github' ? 'selected' : '' ?>>GitHub (hell)</option>
+                                                    <option value="elegant" <?= $settings['editor_theme'] === 'elegant' ? 'selected' : '' ?>>Elegant</option>
+                                                    <option value="eclipse" <?= $settings['editor_theme'] === 'eclipse' ? 'selected' : '' ?>>Eclipse</option>
+                                                    <option value="idea" <?= $settings['editor_theme'] === 'idea' ? 'selected' : '' ?>>Idea</option>
                                                     <option value="monokai" <?= $settings['editor_theme'] === 'monokai' ? 'selected' : '' ?>>Monokai (dunkel)</option>
                                                     <option value="solarized-light" <?= $settings['editor_theme'] === 'solarized-light' ? 'selected' : '' ?>>Solarized Light</option>
                                                     <option value="solarized-dark" <?= $settings['editor_theme'] === 'solarized-dark' ? 'selected' : '' ?>>Solarized Dark</option>
@@ -465,7 +454,7 @@ $nonce = SecurityHeaders::getNonce();
                                         </div>
                                         
                                         <div class="col-md-4">
-                                            <div class="card bg-light">
+                                            <div class="card">
                                                 <div class="card-header">
                                                     <small class="fw-bold"><?= __('admin.settings.current_navigation') ?></small>
                                                 </div>
@@ -663,7 +652,7 @@ $nonce = SecurityHeaders::getNonce();
                                     </div>
                                     
                                     <div class="col-md-4">
-                                        <div class="card bg-light">
+                                        <div class="card">
                                             <div class="card-body text-center">
                                                 <i class="bi bi-download fs-1 text-primary mb-3"></i>
                                                 <h6><?= __('admin.settings.backup.create_backup') ?></h6>
@@ -746,7 +735,7 @@ $nonce = SecurityHeaders::getNonce();
             const preview = document.getElementById('theme-preview');
             
             // Entferne alle Theme-Klassen
-            preview.classList.remove('theme-github', 'theme-monokai', 'theme-solarized-light', 'theme-solarized-dark', 'theme-material');
+            preview.classList.remove('theme-elegant', 'theme-eclipse', 'theme-idea', 'theme-monokai', 'theme-solarized-light', 'theme-solarized-dark', 'theme-material');
             
             // Füge neue Theme-Klasse hinzu
             if (themeName) {

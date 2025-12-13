@@ -1,14 +1,14 @@
 <?php
 /**
- * Bootstrap Theme - Gallery Layout
+ * orange Theme - Gallery Layout
  * Spezielles Layout für Bildergalerien mit responsivem Grid
  */
 
 // Theme configuration
 $siteName = $config['system']['name'] ?? 'StaticMD';
 $currentRoute = $_GET['route'] ?? 'index';
-$currentTheme = 'bootstrap';
-$themeMode = 'light'; // 'light' or 'dark'
+$currentTheme = 'black';
+$themeMode = 'dark'; // 'light' or 'dark'
 
 // Include shared head section
 include __DIR__ . '/../shared/head.php';
@@ -18,24 +18,26 @@ include __DIR__ . '/../shared/head.php';
 
     <!-- Custom Gallery CSS -->
     <style>
+        .content {
+            padding: 0 2rem;
+            min-height: 60vh;
+        }
+
         /* Gallery-spezifische Styles */
         .gallery-header {
             text-align: center;
-            margin-bottom: 3rem;
-            padding: 2rem 0;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            margin-bottom: 0.1rem;
+            padding: 0.1rem 0;
+            /* background: linear-gradient(135deg, #f8f9fa 0%, #eee 100%); */
             border-radius: 0.5rem;
         }
         
         .gallery-header h1 {
-            color: var(--bs-primary);
-            margin-bottom: 1rem;
-            font-size: 2.5rem;
-            font-weight: 300;
+            margin-bottom: 0.1rem;
         }
         
         .gallery-grid {
-            margin: 2rem 0;
+            margin: 0.2rem 0;
         }
         
         .gallery-item {
@@ -108,7 +110,7 @@ include __DIR__ . '/../shared/head.php';
         }
         
         .gallery-filter {
-            margin-bottom: 2rem;
+            margin-bottom: 0.1rem;
             text-align: center;
         }
         
@@ -129,10 +131,9 @@ include __DIR__ . '/../shared/head.php';
         /* Auto-Gallery Styles (für [gallery] Shortcode) */
         .auto-gallery-info {
             text-align: center;
-            padding: 1rem;
-            background-color: #f8f9fa;
+            padding: 0.1rem;
             border-radius: 0.5rem;
-            margin-bottom: 2rem;
+            margin-bottom: 0.1rem;
         }
         
         /* Direkte Bilder im Gallery-Container (vor JavaScript-Verarbeitung) */
@@ -173,10 +174,25 @@ include __DIR__ . '/../shared/head.php';
     </style>
 </head>
 <body>
-    <?php 
-    // Include shared navigation
-    include __DIR__ . '/../shared/navigation.php';
-    ?>
+    <header class="header">
+        <div class="header-content">
+            <a class="logo" href="/">
+                <?php if (!empty($siteLogo)): ?>
+                    <img src="<?= htmlspecialchars($siteLogo) ?>" alt="Logo" class="site-logo me-2">
+                <?php else: ?>
+                    <i class="bi bi-file-earmark-text me-2"></i>
+                <?php endif; ?>
+                <?= htmlspecialchars($siteName) ?>
+            </a>
+
+            <div class="sidebar-search">
+                <form action="/search" method="get">
+                    <input type="search" name="q" placeholder="Suche..." value="<?= htmlspecialchars($_GET['q']??'') ?>">
+                </form>
+            </div>
+            <a href="/admin?return_to_frontend=1" class="btn" title="Admin Dashboard"><i class="bi bi-gear"></i>&nbsp;Admin</a>
+        </div>
+    </header>
     
     <!-- Main Content -->
     <div class="content-wrapper">
@@ -195,24 +211,7 @@ include __DIR__ . '/../shared/head.php';
                 <?php endif; ?>
             </div>
             <?php endif; ?>
-            
-            <!-- Gallery Filter (falls Tags vorhanden) -->
-            <?php if (isset($meta['tags'])): ?>
-            <div class="gallery-filter">
-                <button class="btn btn-outline-primary active" data-filter="all">
-                    <i class="bi bi-grid me-1"></i> Alle anzeigen
-                </button>
-                <?php foreach (explode(',', $meta['tags']) as $tag): ?>
-                    <?php $cleanTag = trim($tag); ?>
-                    <?php if (!empty($cleanTag)): ?>
-                    <button class="btn btn-outline-secondary" data-filter="<?= htmlspecialchars(strtolower($cleanTag)) ?>">
-                        <?= htmlspecialchars($cleanTag) ?>
-                    </button>
-                    <?php endif; ?>
-                <?php endforeach; ?>
-            </div>
-            <?php endif; ?>
-            
+                        
             <!-- Erfolgsmeldung nach Speichern -->
             <?php if (isset($_GET['saved'])): ?>
             <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -248,10 +247,25 @@ include __DIR__ . '/../shared/head.php';
     <?php 
     // Admin-Toolbar mit geteilter Komponente
     include __DIR__ . '/../shared/admin-toolbar.php';
-    
-    // Footer mit geteilter Komponente
-    include __DIR__ . '/../shared/footer.php'; 
-    
+    ?>
+
+    <footer class="footer">
+    <div class="footer-content">
+    <div class="footer-logo"><i class="bi bi-leaf"></i> 
+        <a class="logo" href="/">
+            <?php if (!empty($siteLogo)): ?>
+                <img src="<?= htmlspecialchars($siteLogo) ?>" alt="Logo" class="site-logo me-2">
+            <?php else: ?>
+                <i class="bi bi-file-earmark-text me-2"></i>
+            <?php endif; ?>
+            <?= htmlspecialchars($siteName) ?>
+        </a>
+    </div>
+    <div class="footer-text">Powered by <a href="https://github.com/dirkclemens/staticmd" target="_blank">StaticMD</a> &copy; <?= date('Y') ?></div>
+    </div>
+    </footer>
+
+    <?php
     // Scripts mit geteilter Komponente (vereinfacht für Blog)
     include __DIR__ . '/../shared/scripts.php'; 
     ?>

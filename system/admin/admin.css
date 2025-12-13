@@ -1,39 +1,26 @@
-/* dashboard.php */
 :root {
     --admin-primary: #61BA01;
-    --admin-secondary: #6c757d;
-    --admin-success: #198754;
-    --admin-danger: #dc3545;
+    --admin-secondary: #198754;
+    --admin-success: #28a745;
+    --admin-info: #17a2b8;
     --admin-warning: #ffc107;
+    --admin-danger: #dc3545;
+    --admin-light: #f8f9fa;
+    --admin-dark: #343a40;
 }
-.btn-primary {
-    --bs-btn-color: #fff;
-    --bs-btn-bg: #61BA01;
-    --bs-btn-border-color: #61BA01;
-    --bs-btn-hover-color: #fff;
-    --bs-btn-hover-bg: #198754;
-    --bs-btn-hover-border-color: #198754;
-    --bs-btn-focus-shadow-rgb: 49, 132, 253;
-    --bs-btn-active-color: #fff;
-    --bs-btn-active-bg: #198754;
-    --bs-btn-active-border-color: #198754;
-    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-    --bs-btn-disabled-color: #fff;
-    --bs-btn-disabled-bg: #61BA01;
-    --bs-btn-disabled-border-color: #61BA01;
-}
+
 a {
     --bs-link-color: #61BA01;
     --bs-link-hover-color: #198754;
 }
 .nav {
     --bs-nav-link-color: var(--bs-link-color);
-}
+} 
 
-body { background-color: #f8f9fa; }
+body { background-color: #f8f9fa; } 
 
 .admin-header {
-    background: linear-gradient(45deg, var(--admin-primary), var(--admin-primary) );
+    /* background: linear-gradient(45deg, var(--admin-primary), var(--admin-primary) ); */
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 .admin-sidebar {
@@ -42,9 +29,23 @@ body { background-color: #f8f9fa; }
     height: calc(100vh - 76px);
     overflow-y: auto;
 }
-
 .admin-content {
     padding: 2rem;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.85rem;
+}
+
+.nav-pills .nav-link {
+    border-radius: 10px;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.nav-pills .nav-link.active {
+    background-color: var(--admin-primary);
 }
 
 .stat-card {
@@ -68,28 +69,13 @@ body { background-color: #f8f9fa; }
     font-size: 1.5rem;
 }
 
-.nav-pills .nav-link {
-    border-radius: 10px;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-}
-
-.nav-pills .nav-link.active {
-    background-color: var(--admin-primary);
+.table-actions {
+    white-space: nowrap;
 }
 
 .session-timer {
     font-size: 0.85rem;
     color: #000;
-}
-
-.table-actions {
-    white-space: nowrap;
-}
-
-.btn-sm {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.85rem;
 }
 
 /* editor.php */
@@ -100,17 +86,12 @@ body { background-color: #f8f9fa; }
     box-shadow: 0 4px 6px rgba(0,0,0,0.07);
 }
 
-.CodeMirror {
-    border: 1px solid #dee2e6;
-    border-radius: 5px;
-    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-    font-size: 14px;
-    line-height: 1.5;
-}
+/* editor.php */
 
-.CodeMirror-focused {
-    border-color: var(--admin-primary);
-    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+.editor-container {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.07);
 }
 
 .preview-content {
@@ -122,6 +103,69 @@ body { background-color: #f8f9fa; }
     min-height: 500px;
     max-height: none;
     overflow-y: auto;
+}
+
+.meta-form .form-control {
+    border-radius: 5px;
+}
+
+.toolbar {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-bottom: none;
+    border-radius: 5px 5px 0 0;
+    padding: 0.5rem;
+}
+
+.toolbar .btn {
+    margin-right: 0.25rem;
+    margin-bottom: 0.25rem;
+}
+
+.preview-tab {
+    display: none;
+}
+
+.preview-tab.active {
+    display: block;
+}
+
+.editor-tab.active {
+    display: block;
+}
+
+.tab-content {
+    position: relative;
+    height: 100%;
+}
+
+.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    background: white;
+    padding: 1rem;
+}
+
+.fullscreen .CodeMirror {
+    height: calc(100vh - 150px);
+}
+
+/* Full height editor layout */
+.editor-full-height {
+    height: calc(100vh - 200px); /* Subtract header and toolbar height */
+    min-height: 500px;
+}
+
+.editor-container .card-body {
+    padding: 10px;
+}
+
+#editorColumn, #previewColumn {
+    height: 100%;
 }
 
 /* Preview Content Styling - matches frontend themes */
@@ -257,70 +301,100 @@ body { background-color: #f8f9fa; }
     border-bottom: 1px solid #e1e4e8;
 }
 
-.meta-form .form-control {
-    border-radius: 5px;
-}
+/* files.php */
 
-.toolbar {
-    background: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-bottom: none;
-    border-radius: 5px 5px 0 0;
-    padding: 0.5rem;
-}
-
-.toolbar .btn {
-    margin-right: 0.25rem;
-    margin-bottom: 0.25rem;
-}
-
-.preview-tab {
-    display: none;
-}
-
-.preview-tab.active {
-    display: block;
-}
-
-.editor-tab.active {
-    display: block;
-}
-
-.tab-content {
-    position: relative;
-    height: 100%;
-}
-
-.fullscreen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 9999;
+.files-container {
     background: white;
-    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.07);
 }
 
-.fullscreen .CodeMirror {
-    height: calc(100vh - 150px);
+.file-item {
+    transition: all 0.2s ease;
+    border: none;
+    border-bottom: 1px solid #f0f0f0;
+    padding: 6px;
 }
 
-/* Full height editor layout */
-.editor-full-height {
-    height: calc(100vh - 200px); /* Subtract header and toolbar height */
-    min-height: 500px;
+.file-item:hover {
+    background-color: #f8f9fa;
 }
 
-.editor-container .card-body {
-    padding: 10px;
+.file-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-size: 1.2rem;
 }
 
-#editorColumn, #previewColumn {
-    height: 100%;
+.file-actions {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.file-item:hover .file-actions {
+    opacity: 1;
+}
+
+.folder-header {
+    background: var(--bs-card-cap-bg);
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.search-box {
+    border-radius: var(--bs-border-radius);
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.search-box:focus {
+    border-color: var(--admin-primary);
+    box-shadow: 0 0 0 0.2rem rgba(100, 100, 100, 0.25);
+}
+
+/* settings.php */
+
+.settings-container {
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+}
+
+.settings-section {
+    border-bottom: 1px solid #e9ecef;
+    padding: 1.5rem 0;
+}
+
+.settings-section:last-child {
+    border-bottom: none;
+}
+
+.form-range {
+    margin: 0.5rem 0;
+}
+
+.range-value {
+    font-weight: bold;
+    color: var(--admin-primary);
 }
 
 /* Custom Theme Enhancements */
+.CodeMirror {
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.CodeMirror-focused {
+    border-color: var(--admin-primary);
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
 .CodeMirror.cm-s-github {
     background: #ffffff;
     color: #24292e;
@@ -388,122 +462,92 @@ body { background-color: #f8f9fa; }
     border-left-color: #eeffff;
 }
 
-/* files.php */
-
-.files-container {
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.07);
-}
-
-.file-item {
-    transition: all 0.2s ease;
-    border: none;
-    border-bottom: 1px solid #f0f0f0;
-    padding: 6px;
-}
-
-.file-item:hover {
-    background-color: #f8f9fa;
-}
-
-.file-icon {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 6px;
-    font-size: 1.2rem;
-}
-
-.file-actions {
-    opacity: 0;
-    transition: opacity 0.2s ease;
-}
-
-.file-item:hover .file-actions {
-    opacity: 1;
-}
-
-.folder-header {
-    background: linear-gradient(45deg, #e9ecef, #dee2e6);
-    border-radius: 8px;
-    margin-bottom: 0.5rem;
-}
-
-.accordion-item {
-    border: none;
-    /* border-bottom: 1px solid #e9ecef; */
-    background-color: white; 
-}
-
-.search-box {
-    border-radius: 25px;
-    border: 2px solid #e9ecef;
-    transition: all 0.3s ease;
-}
-
-.search-box:focus {
-    border-color: var(--admin-primary);
-    box-shadow: 0 0 0 0.2rem rgba(100, 100, 100, 0.25);
-}
-
-.bulk-actions {
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    display: none;
-}
-
-.bulk-actions.show {
-    display: block;
-}
-
-/* settings.php */
-
-.settings-container {
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.07);
-}
-
-.settings-section {
-    border-bottom: 1px solid #e9ecef;
-    padding: 1.5rem 0;
-}
-
-.settings-section:last-child {
-    border-bottom: none;
-}
-
-.form-range {
-    margin: 0.5rem 0;
-}
-
-.range-value {
-    font-weight: bold;
-    color: var(--admin-primary);
-}
-
 /* Theme Preview Styles */
 #theme-preview {
     min-height: 80px;
     transition: all 0.3s ease;
 }
 
-/* GitHub Theme */
-.theme-github {
+/* Elegant Theme - Clean, Professional Light Theme */
+.theme-elegant {
     background-color: #ffffff;
     color: #24292e;
-    border-color: #e1e4e8;
+    border: 1px solid #e1e4e8;
+    border-radius: 6px;
+    padding: 1rem;
 }
-.theme-github .theme-keyword { color: #d73a49; }
-.theme-github .theme-function { color: #6f42c1; }
-.theme-github .theme-string { color: #032f62; }
-.theme-github .theme-comment { color: #6a737d; }
-.theme-github .theme-text { color: #24292e; }
+.theme-elegant .theme-keyword { 
+    color: #880000; 
+    font-weight: 600;
+}
+.theme-elegant .theme-function { 
+    color: #6f42c1; 
+    font-weight: 500;
+}
+.theme-elegant .theme-string { 
+    color: #032f62; 
+}
+.theme-elegant .theme-comment { 
+    color: #228822; 
+    font-style: italic;
+}
+.theme-elegant .theme-text { 
+    color: #24292e; 
+}
+
+/* Eclipse Theme - Classic Java IDE Style */
+.theme-eclipse {
+    background-color: #ffffff;
+    color: #24292e;
+    border: 1px solid #e1e4e8;
+    border-radius: 6px;
+    padding: 1rem;
+}
+.theme-eclipse .theme-keyword { 
+    color: #7F0055; 
+    font-weight: bold;
+}
+.theme-eclipse .theme-function { 
+    color: #0000ff; 
+    font-weight: 500;
+}
+.theme-eclipse .theme-string { 
+    color: #2A00FF; 
+}
+.theme-eclipse .theme-comment { 
+    color: #3F7F5F; 
+    font-style: italic;
+}
+.theme-eclipse .theme-text { 
+    color: #24292e; 
+}
+
+/* Idea Theme - IntelliJ IDEA Inspired */
+.theme-idea {
+    background-color: #ffffff;
+    color: #24292e;
+    border: 1px solid #e1e4e8;
+    border-radius: 6px;
+    padding: 1rem;
+}
+.theme-idea .theme-keyword { 
+    color: #0033b3; 
+    font-weight: bold;
+}
+.theme-idea .theme-function { 
+    color: #00627a; 
+    font-weight: 500;
+}
+.theme-idea .theme-string { 
+    color: #067d17; 
+}
+.theme-idea .theme-comment { 
+    color: #8c8c8c; 
+    font-style: italic;
+}
+.theme-idea .theme-text { 
+    color: #24292e; 
+}
 
 /* Monokai Theme */
 .theme-monokai {

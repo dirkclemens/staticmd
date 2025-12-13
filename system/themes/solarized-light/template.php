@@ -9,6 +9,8 @@
 $siteName = $config['system']['name'] ?? 'StaticMD';
 $siteUrl = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']);
 $currentRoute = $_GET['route'] ?? 'index';
+$currentTheme = 'solarized-light';
+$themeMode = 'light'; // 'light' or 'dark'
 
 // Load settings
 $settingsFile = $config['paths']['system'] . '/settings.json';
@@ -58,7 +60,7 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
 });
 ?>
 <!DOCTYPE html>
-<html lang="de" data-bs-theme="light">
+<html lang="de" data-bs-theme="<?= htmlspecialchars($themeMode ?? 'light') ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -80,6 +82,7 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
     <!-- Custom Theme CSS -->
     <style>
         <?php include __DIR__ . '/template.css'; ?>
+        <?php include __DIR__ . '/../shared/shared.css'; ?>        
     </style>
 
     <?php if (isset($meta['css'])): ?>
@@ -170,7 +173,7 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
             <?= $themeHelper->renderBreadcrumbs($breadcrumbs ?? []) ?>
             
             <div class="row">
-                <div class="col-lg-8">
+                <div class="col-lg-12">
                     <!-- Meta-Informationen -->
                     <?php if (!empty($meta) && ($meta['author'] ?? $meta['date'] ?? null)): ?>
                     <div class="meta-info">
@@ -226,52 +229,7 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
                 </div>
                 
                 <!-- Sidebar -->
-                <div class="col-lg-4">
-                    <div class="sidebar">
-                        <h5><i class="bi bi-list-ul me-2"></i>Navigation</h5>
-                        
-                        <?php if (!empty($navItems)): ?>
-                        <div class="list-group list-group-flush">
-                            <a href="/" class="list-group-item list-group-item-action <?= $currentRoute === 'index' ? 'active' : '' ?>">
-                                <i class="bi bi-house me-2"></i> 
-                            </a>
-                            
-                            <?php foreach ($navItems as $section => $nav): ?>
-                                <?php if ($section !== 'index'): ?>
-                                <a href="/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($nav['route']) ?>" class="list-group-item list-group-item-action <?= strpos($currentRoute, $section) === 0 ? 'active' : '' ?>">
-                                    <i class="bi bi-folder me-2"></i> <?= htmlspecialchars($nav['title']) ?>
-                                    <?php if (!empty($nav['pages'])): ?>
-                                    <span class="badge bg-secondary float-end"><?= count($nav['pages']) ?></span>
-                                    <?php endif; ?>
-                                </a>
-                                <?php endif; ?>
-                            <?php endforeach; ?>
-                        </div>
-                        <?php endif; ?>
-                    </div>
-                    
-                    <!-- Zusätzliche Sidebar-Inhalte -->
-                    <?php if (isset($meta['tags'])): ?>
-                    <div class="sidebar mt-4">
-                        <h5><i class="bi bi-tags me-2"></i>Tags</h5>
-                        <div class="tag-cloud">
-                            <?php foreach (explode(',', $meta['tags']) as $tag): ?>
-                                <?php $cleanTag = trim($tag); ?>
-                                <?php if (!empty($cleanTag)): ?>
-                                <a href="/tag/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($cleanTag) ?>" class="badge bg-primary text-white text-decoration-none me-1 mb-1">
-                                    <?= htmlspecialchars($cleanTag) ?>
-                                </a>
-                                <?php endif; ?>
-                            <?php endforeach; ?>
-                        </div>
-                        <div class="mt-2">
-                            <a href="/tag" class="btn btn-outline-primary btn-sm">
-                                <i class="bi bi-tags me-1"></i>Alle Tags anzeigen
-                            </a>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-                </div>
+                
             </div>
         </div>
     </div>

@@ -8,10 +8,15 @@
 $siteName = $config['system']['name'] ?? 'StaticMD';
 $currentRoute = $_GET['route'] ?? 'index';
 $currentTheme = 'katex';
+$themeMode = 'light'; // 'light' or 'dark'
 
 // Include shared head section
 include __DIR__ . '/../shared/head.php';
 ?>
+<style>
+    <?php include __DIR__ . '/../shared/shared.css'; ?>        
+</style>
+
 <!-- insert custom css here -->
 
     <!-- KaTeX CSS -->

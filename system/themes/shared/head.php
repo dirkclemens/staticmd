@@ -34,7 +34,7 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
 
 ?>
 <!DOCTYPE html>
-<html lang="de" data-bs-theme="light">
+<html lang="de" data-bs-theme="<?= htmlspecialchars($themeMode ?? 'light') ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -55,6 +55,9 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
     
     <!-- Theme CSS -->
     <style>
+        <!-- Shared CSS for all themes, can be overwritten by theme-specific CSS -->
+        <?php include __DIR__ . '/shared.css'; ?>
+
         <?php 
         // Include theme-specific CSS
         $themeCssPath = __DIR__ . '/../' . ($currentTheme ?? 'bootstrap') . '/template.css';
@@ -64,6 +67,7 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
         ?>
     </style>        
 
+    <!-- Custom CSS from page meta -->
     <?php if (isset($meta['css'])): ?>
     <style><?= $meta['css'] ?></style>
     <?php endif; ?>
