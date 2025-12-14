@@ -81,7 +81,7 @@ function renderNavTree($subfolders, $currentRoute, $level = 0) {
             $html .= $indent . '    <a href="/' . \StaticMD\Themes\ThemeHelper::encodeUrlPath($folder['route']) . '" ' . "\n";
             $html .= $indent . '       class="flex-grow-1 text-decoration-none text-reset px-3 py-2"' . "\n";
             $html .= $indent . '       style="color: inherit !important;">' . "\n";
-            $html .= $indent . '        <i class="bi bi-folder' . ($isActive ? '-open' : '') . ' me-2"></i> ' . "\n";
+            $html .= $indent . '        <i class="bi bi-folder me-2"></i> ' . "\n";
             $html .= $indent . '        ' . htmlspecialchars($folder['title']) . "\n";
             $html .= $indent . '    </a>' . "\n";
             $html .= $indent . '    <button class="btn btn-link text-reset p-2 sidebar-toggle" ' . "\n";
@@ -139,7 +139,7 @@ function renderNavTree($subfolders, $currentRoute, $level = 0) {
                                         <a href="/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($nav['route']) ?>" 
                                             class="flex-grow-1 text-decoration-none text-reset px-3 py-2"
                                             style="color: inherit !important;">
-                                            <i class="bi bi-folder<?= $isActive ? '-open' : '' ?> me-2"></i> 
+                                            <i class="bi bi-folder me-2"></i> 
                                             <?= htmlspecialchars($nav['title']) ?>
                                         </a>
                                         <button class="btn btn-link text-reset p-2 sidebar-toggle" 
@@ -173,7 +173,7 @@ function renderNavTree($subfolders, $currentRoute, $level = 0) {
                     <hr style="margin-top: 1.5rem; margin-bottom: 1.5rem;">
 
                     <!-- Zusätzliche Sidebar-Inhalte -->
-                    <h5><i class="bi bi-tags me-2"></i>Tags</h5>                        
+                    <h4><i class="bi bi-tags me-2"></i>Tags</h4>                        
                     <div class="tag-cloud">
                         <?php if (!isset($meta['tags']) || empty($meta['tags'])): ?>
                             <p class="text-muted">Keine Tags verfügbar.</p>

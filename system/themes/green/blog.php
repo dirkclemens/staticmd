@@ -1,13 +1,13 @@
 <?php
 /**
- * Bootstrap Theme - Blog Template (Modular)
+ * Green Theme - Blog Template (Modular)
  * Vereinfachte Darstellung für Blog-Listen
  */
 
 // Theme configuration
 $siteName = $config['system']['name'] ?? 'StaticMD';
 $currentRoute = $_GET['route'] ?? 'index';
-$currentTheme = 'bootstrap';
+$currentTheme = 'green';
 $themeMode = 'light'; // 'light' or 'dark'
 
 // Include shared head section

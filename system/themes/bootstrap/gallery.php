@@ -18,24 +18,26 @@ include __DIR__ . '/../shared/head.php';
 
     <!-- Custom Gallery CSS -->
     <style>
+        .content {
+            padding: 0 2rem;
+            min-height: 60vh;
+        }
+
         /* Gallery-spezifische Styles */
         .gallery-header {
             text-align: center;
-            margin-bottom: 3rem;
-            padding: 2rem 0;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            margin-bottom: 0.1rem;
+            padding: 0.1rem 0;
+            /* background: linear-gradient(135deg, #f8f9fa 0%, #eee 100%); */
             border-radius: 0.5rem;
         }
         
         .gallery-header h1 {
-            color: var(--bs-primary);
-            margin-bottom: 1rem;
-            font-size: 2.5rem;
-            font-weight: 300;
+            margin-bottom: 0.1rem;
         }
         
         .gallery-grid {
-            margin: 2rem 0;
+            margin: 0.2rem 0;
         }
         
         .gallery-item {
@@ -108,7 +110,7 @@ include __DIR__ . '/../shared/head.php';
         }
         
         .gallery-filter {
-            margin-bottom: 2rem;
+            margin-bottom: 0.1rem;
             text-align: center;
         }
         
@@ -129,10 +131,9 @@ include __DIR__ . '/../shared/head.php';
         /* Auto-Gallery Styles (für [gallery] Shortcode) */
         .auto-gallery-info {
             text-align: center;
-            padding: 1rem;
-            background-color: #f8f9fa;
+            padding: 0.1rem;
             border-radius: 0.5rem;
-            margin-bottom: 2rem;
+            margin-bottom: 0.1rem;
         }
         
         /* Direkte Bilder im Gallery-Container (vor JavaScript-Verarbeitung) */
@@ -173,87 +174,68 @@ include __DIR__ . '/../shared/head.php';
     </style>
 </head>
 <body>
-    <?php 
-    // Include shared navigation
-    include __DIR__ . '/../shared/navigation.php';
+    <!-- Navigation -->
+    <?php
+        // Navigation mit geteilter Komponente
+        include __DIR__ . '/../shared/navigation.php'; 
     ?>
     
-    <!-- Main Content -->
-    <div class="content-wrapper">
-        <div class="container-fluid px-4">
-            <!-- Breadcrumb Navigation -->
-            <?= $themeHelper->renderBreadcrumbs($breadcrumbs ?? []) ?>
-            
-            <!-- Gallery Header -->
-
-            <?php if (isset($title) && strlen($title) > 0): ?> 
-                
-            <div class="gallery-header">
-                <h1><i class="bi bi-images me-3"></i><?= htmlspecialchars($title) ?></h1>
-                <?php if (!empty($meta['description'])): ?>
-                <p class="lead"><?= htmlspecialchars($meta['description']) ?></p>
-                <?php endif; ?>
-            </div>
+    <!-- Main Content -->    
+    <div class="container-fluid px-4 pt-4">
+        <!-- Breadcrumb Navigation -->
+        <?= $themeHelper->renderBreadcrumbs($breadcrumbs ?? []) ?>
+        
+        <!-- Gallery Header -->
+        <?php if (isset($title) && strlen($title) > 0): ?>             
+        <div class="gallery-header">
+            <h1><i class="bi bi-images me-3"></i><?= htmlspecialchars($title) ?></h1>
+            <?php if (!empty($meta['description'])): ?>
+            <p class="lead"><?= htmlspecialchars($meta['description']) ?></p>
             <?php endif; ?>
-            
-            <!-- Gallery Filter (falls Tags vorhanden) -->
-            <?php if (isset($meta['tags'])): ?>
-            <div class="gallery-filter">
-                <button class="btn btn-outline-primary active" data-filter="all">
-                    <i class="bi bi-grid me-1"></i> Alle anzeigen
-                </button>
-                <?php foreach (explode(',', $meta['tags']) as $tag): ?>
-                    <?php $cleanTag = trim($tag); ?>
-                    <?php if (!empty($cleanTag)): ?>
-                    <button class="btn btn-outline-secondary" data-filter="<?= htmlspecialchars(strtolower($cleanTag)) ?>">
-                        <?= htmlspecialchars($cleanTag) ?>
-                    </button>
-                    <?php endif; ?>
-                <?php endforeach; ?>
-            </div>
-            <?php endif; ?>
-            
-            <!-- Erfolgsmeldung nach Speichern -->
-            <?php if (isset($_GET['saved'])): ?>
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="bi bi-check-circle me-2"></i>
-                Die Galerie wurde erfolgreich gespeichert.
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-            <?php endif; ?>
-            
-            <!-- Private Seiten-Hinweis für Admins -->
-            <?php 
-            $visibility = $meta['Visibility'] ?? $meta['visibility'] ?? 'public';
-            if ($visibility === 'private'): 
-            ?>
-            <div class="alert alert-warning" role="alert">
-                <i class="bi bi-lock me-2"></i>
-                <strong>Private Galerie:</strong> Diese Galerie ist nur für angemeldete Admins sichtbar.
-            </div>
-            <?php endif; ?>
-            
-            <!-- Gallery Content -->
-            <article class="content">
-                <div class="gallery-grid">
-                    <div class="row gallery-masonry" id="gallery-container">
-                        <!-- Der Markdown-Content wird hier eingefügt -->
-                        <?= $body ?>
-                    </div>
-                </div>
-            </article>
         </div>
-    </div>    
+        <?php endif; ?>
+                    
+        <!-- Erfolgsmeldung nach Speichern -->
+        <?php if (isset($_GET['saved'])): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>
+            Die Galerie wurde erfolgreich gespeichert.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <?php endif; ?>
+        
+        <!-- Private Seiten-Hinweis für Admins -->
+        <?php 
+        $visibility = $meta['Visibility'] ?? $meta['visibility'] ?? 'public';
+        if ($visibility === 'private'): 
+        ?>
+        <div class="alert alert-warning" role="alert">
+            <i class="bi bi-lock me-2"></i>
+            <strong>Private Galerie:</strong> Diese Galerie ist nur für angemeldete Admins sichtbar.
+        </div>
+        <?php endif; ?>
+        
+        <!-- Gallery Content -->
+        <article class="content">
+            <div class="gallery-grid">
+                <div class="row gallery-masonry" id="gallery-container">
+                    <!-- Der Markdown-Content wird hier eingefügt -->
+                    <?= $body ?>
+                </div>
+            </div>
+        </article>
+    </div>
+    
 
     <?php 
-    // Admin-Toolbar mit geteilter Komponente
-    include __DIR__ . '/../shared/admin-toolbar.php';
-    
-    // Footer mit geteilter Komponente
-    include __DIR__ . '/../shared/footer.php'; 
-    
-    // Scripts mit geteilter Komponente (vereinfacht für Blog)
-    include __DIR__ . '/../shared/scripts.php'; 
+        // Admin-Toolbar mit geteilter Komponente
+        include __DIR__ . '/../shared/admin-toolbar.php';
+
+        // Footer mit geteilter Komponente
+        include __DIR__ . '/../shared/footer.php'; 
+
+        // Scripts mit geteilter Komponente (vereinfacht für Blog)
+        include __DIR__ . '/../shared/scripts.php'; 
     ?>
     <!-- GLightbox JS für Lightbox-Funktionalität -->
     <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>

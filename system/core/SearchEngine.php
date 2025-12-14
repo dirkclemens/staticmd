@@ -272,7 +272,7 @@ class SearchEngine
         
         // Header
         $html .= '<div class="search-header mb-4">';
-        $html .= '<h1><i class="bi bi-search me-2"></i>' . \StaticMD\Core\I18n::t('core.search_results_title', ['query' => htmlspecialchars($query)]) . '</h1>';
+        $html .= '<h2><i class="bi bi-search me-2"></i>' . \StaticMD\Core\I18n::t('core.search_results_title', ['query' => htmlspecialchars($query)]) . '</h2>';
         
         if (!empty($results)) {
             $html .= '<p class="lead">';
@@ -482,7 +482,7 @@ class SearchEngine
         
         // Header
         $html .= '<div class="tag-header mb-4">';
-        $html .= '<h1><i class="bi bi-tag me-2"></i>Tag: ' . htmlspecialchars($tagName) . '</h1>';
+        $html .= '<h2><i class="bi bi-tag me-2"></i>Tag: ' . htmlspecialchars($tagName) . '</h2>';
         
         if (!empty($results)) {
             $html .= '<p class="lead">';
@@ -644,7 +644,7 @@ class SearchEngine
         
         // Header
         $html .= '<div class="all-tags-header mb-4">';
-        $html .= '<h1><i class="bi bi-tags me-2"></i>Alle Tags</h1>';
+        $html .= '<h2><i class="bi bi-tags me-2"></i>Alle Tags</h2>';
         
         if (!empty($allTags)) {
             $html .= '<p class="lead">';

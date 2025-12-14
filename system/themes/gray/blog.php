@@ -1,14 +1,14 @@
 <?php
 /**
- * Bootstrap Theme - Blog Template (Modular)
+ * Gray Theme - Blog Template (Modular)
  * Vereinfachte Darstellung für Blog-Listen
  */
 
 // Theme configuration
 $siteName = $config['system']['name'] ?? 'StaticMD';
 $currentRoute = $_GET['route'] ?? 'index';
-$currentTheme = 'bootstrap';
-$themeMode = 'light'; // 'light' or 'dark'
+$currentTheme = 'gray';
+$themeMode = 'dark'; // 'light' or 'dark'
 
 // Include shared head section
 include __DIR__ . '/../shared/head.php';

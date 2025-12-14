@@ -1,7 +1,7 @@
 <?php
 /**
- * Bootstrap Theme - Haupt-Template
- * Verwendet Bootstrap 5 für modernes, responsives Design
+ * Bootstrap Theme - Bootstrap-based
+ * Modern dark theme using Bootstrap 5 components
  */
 
 // Theme configuration
@@ -13,36 +13,42 @@ $themeMode = 'light'; // 'light' or 'dark'
 // Include shared head section
 include __DIR__ . '/../shared/head.php';
 ?>
+    <!-- insert custom css here -->
 
-<!-- insert custom css here -->
+    <!-- KaTeX CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 
 </head>
 <body>
-    <?php 
-    // Include shared navigation
-    include __DIR__ . '/../shared/navigation.php';
+    <!-- Navigation -->
+    <?php
+    // Navigation mit geteilter Komponente
+    include __DIR__ . '/../shared/navigation.php'; 
     ?>
 
-    <!-- Hauptinhalt - Layout-spezifisch -->
-    <div class="content-wrapper">
-        <div class="container">
-            <!-- Breadcrumb Navigation -->
-            <?= $themeHelper->renderBreadcrumbs($breadcrumbs ?? []) ?>
-            
-            <div class="row">
-                <div class="col-lg-9">
-                    <!-- Meta-Informationen -->
-                    <?php if (!empty($meta) && ($meta['author'] ?? $meta['date'] ?? null)): ?>
-                    <div class="meta-info">
+    <!-- Main Content -->
+    <div class="container-fluid px-4">
+
+        <div class="row">
+            <!-- Content Column -->
+            <div class="col-lg-9">
+
+                <!-- Breadcrumb Navigation -->
+                <?= $themeHelper->renderBreadcrumbs($breadcrumbs ?? []) ?>
+
+                <!-- Meta Information -->
+                <?php if (!empty($meta) && ($meta['author'] ?? $meta['date'] ?? null)): ?>
+                <div class="card border-secondary mb-4">
+                    <div class="card-body">
                         <div class="row align-items-center">
                             <div class="col">
                                 <?php if (isset($meta['author'])): ?>
-                                <i class="bi bi-person me-1"></i>
+                                <i class="bi bi-person text-warning me-1"></i>
                                 <span class="me-3"><?= htmlspecialchars($meta['author']) ?></span>
                                 <?php endif; ?>
                                 
                                 <?php if (isset($meta['date'])): ?>
-                                <i class="bi bi-calendar me-1"></i>
+                                <i class="bi bi-calendar text-warning me-1"></i>
                                 <span><?= htmlspecialchars($meta['date']) ?></span>
                                 <?php endif; ?>
                             </div>
@@ -57,97 +63,119 @@ include __DIR__ . '/../shared/head.php';
                             <?php endif; ?>
                         </div>
                     </div>
-                    <?php endif; ?>
-                    
-                    <!-- Erfolgsmeldung nach Speichern -->
-                    <?php if (isset($_GET['saved'])): ?>
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <i class="bi bi-check-circle me-2"></i>
-                        &nbsp;Die Seite wurde erfolgreich gespeichert.
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                    <?php endif; ?>
-                    
-                    <!-- Private Seiten-Hinweis für Admins -->
-                    <?php 
-                    $visibility = $meta['Visibility'] ?? $meta['visibility'] ?? 'public';
-                    if ($visibility === 'private'): 
-                    ?>
-                    <div class="alert alert-warning" role="alert">
-                        <i class="bi bi-lock me-2"></i>
-                        <strong>Private Seite:</strong> Diese Seite ist nur für angemeldete Admins sichtbar.
-                    </div>
-                    <?php endif; ?>
-                    
-                    <!-- Hauptcontent -->
-                    <article class="content">
-                        <?= $body ?>
-                    </article>
                 </div>
+                <?php endif; ?>
                 
-                <!-- Sidebar -->
-                <div class="col-lg-3">
-                    <div class="sidebar">
-                        <h5><i class="bi bi-list-ul me-2"></i>Navigation</h5>
-                        
-                        <?php if (!empty($navItems)): ?>
-                        <div class="list-group list-group-flush">
-                            <a href="/" class="list-group-item list-group-item-action <?= $currentRoute === 'index' ? 'active' : '' ?>">
-                                <i class="bi bi-house me-2"></i> <!-- Startseite -->
+                <!-- Success Alert -->
+                <?php if (isset($_GET['saved'])): ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle me-2"></i>
+                    Die Seite wurde erfolgreich gespeichert.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                <?php endif; ?>
+                
+                <!-- Private Page Warning -->
+                <?php 
+                $visibility = $meta['Visibility'] ?? $meta['visibility'] ?? 'public';
+                if ($visibility === 'private'): 
+                ?>
+                <div class="alert alert-warning" role="alert">
+                    <i class="bi bi-lock me-2"></i>
+                    <strong>Private Seite:</strong> Diese Seite ist nur für angemeldete Admins sichtbar.
+                </div>
+                <?php endif; ?>
+                
+                <!-- Main Content -->
+                <article class="content">
+                    <?= $body ?>
+                </article>
+                
+                <!-- Tags -->
+                <?php if (isset($meta['tags']) && !empty(trim($meta['tags']))): ?>
+                <div class="mt-5 pt-4 border-top border-secondary">
+                    <h4 class="mb-3">
+                        <i class="bi bi-tags me-2"></i>Tags
+                    </h4>
+                    <div class="tag-cloud">
+                        <?php foreach (explode(',', $meta['tags']) as $tag): ?>
+                            <?php $cleanTag = trim($tag); ?>
+                            <?php if (!empty($cleanTag)): ?>
+                            <a href="/tag/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($cleanTag) ?>" 
+                               class="badge bg-primary me-1 mb-2 text-decoration-none">
+                                <?= htmlspecialchars($cleanTag) ?>
                             </a>
-                            
-                            <?php foreach ($navItems as $section => $nav): ?>
-                                <?php if ($section !== 'index'): ?>
-                                <a href="/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($nav['route']) ?>" class="list-group-item list-group-item-action <?= strpos($currentRoute, $section) === 0 ? 'active' : '' ?>">
-                                    <i class="bi bi-folder me-2"></i> <?= htmlspecialchars($nav['title']) ?>
-                                    <?php if (!empty($nav['pages'])): ?>
-                                    <span class="badge bg-secondary float-end"><?= count($nav['pages']) ?></span>
-                                    <?php endif; ?>
-                                </a>
-                                <?php endif; ?>
-                            <?php endforeach; ?>
-                        </div>
-                        <?php endif; ?>
-                        <div class="mt-2">
-                            <a href="/tag" class="btn btn-outline-primary btn-sm">
-                                <i class="bi bi-tags me-1"></i>Alle Tags anzeigen
-                            </a>
-                        </div>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
+            </div>
+            
+            <!-- Sidebar Column -->
+            <div class="sidebar-right col-lg-3">
+                <div class="sidebar sticky-top">
+                    <!-- Search Box -->
+                    <div class="mb-4">
+                        <form action="/search" method="GET">
+                            <div class="input-group">
+                                <input type="search" name="q" class="form-control text-light border-secondary" 
+                                       placeholder="Suchen..." value="<?= htmlspecialchars($_GET['q'] ?? '') ?>">
+                                <button class="btn border-secondary" type="submit">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </form>
                     </div>
                     
-                    <!-- Zusätzliche Sidebar-Inhalte -->
-                    <?php if (isset($meta['tags'])): ?>
-                    <div class="sidebar mt-4">
-                        <h5><i class="bi bi-tags me-2"></i>Tags</h5>
-                        <div class="tag-cloud">
-                            <?php foreach (explode(',', $meta['tags']) as $tag): ?>
-                                <?php $cleanTag = trim($tag); ?>
-                                <?php if (!empty($cleanTag)): ?>
-                                <a href="/tag/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($cleanTag) ?>" class="badge bg-primary text-white text-decoration-none me-1 mb-1">
-                                    <?= htmlspecialchars($cleanTag) ?>
-                                </a>
-                                <?php endif; ?>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-                    <?php endif; ?>
+                    <!-- Navigation -->
+                    <?php include __DIR__ . '/../shared/sidebar.php'; ?>
                 </div>
             </div>
         </div>
     </div>
 
-    <?php 
-    // Admin-Toolbar mit geteilter Komponente
-    include __DIR__ . '/../shared/admin-toolbar.php';
+    <?php
+        // Admin Toolbar mit geteilter Komponente
+        include __DIR__ . '/../shared/admin-toolbar.php'; 
+    ?>
     
-    // Footer mit geteilter Komponente
-    include __DIR__ . '/../shared/footer.php'; 
-    
-    // Scripts mit geteilter Komponente
-    include __DIR__ . '/../shared/scripts.php'; 
+    <?php
+        // Footer mit geteilter Komponente
+        include __DIR__ . '/../shared/footer.php'; 
+    ?>
+
+    <?php
+        // Scripts mit geteilter Komponente
+        include __DIR__ . '/../shared/scripts.php'; 
     ?>    
 
-    <!-- insert custom javascript here -->
-    
+    <!-- KaTeX JS -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+        
+    <script>
+        // Code syntax highlighting (simple)
+        document.querySelectorAll('pre code').forEach(block => {
+            block.classList.add('language-' + (block.className.match(/language-(\w+)/) || ['', 'text'])[1]);
+        });
+        
+        // KaTeX Math Rendering
+        document.addEventListener("DOMContentLoaded", function() {
+            if (typeof renderMathInElement !== 'undefined') {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError : false
+                });
+            }
+        });
+
+    document.querySelectorAll('.alert-dismissible .btn-close').forEach(btn=>{btn.addEventListener('click',function(){this.parentElement.style.display='none'})});
+    </script>
 </body>
 </html>

@@ -154,7 +154,7 @@ class ThemeHelper
             return '';
         }
         
-        $html = '<nav aria-label="breadcrumb" class="mb-4">';
+        $html = '<nav aria-label="breadcrumb" class="my-4">';
         $html .= '<ol class="breadcrumb">';
         
         foreach ($breadcrumbs as $breadcrumb) {

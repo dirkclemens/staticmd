@@ -1,12 +1,12 @@
 <?php
 /**
- * Bootstrap Theme - Page Template (Modular)
+ * Green Theme - Page Template (Modular)
  */
 
 // Theme configuration
 $siteName = $config['system']['name'] ?? 'StaticMD';
 $currentRoute = $_GET['route'] ?? 'index';
-$currentTheme = 'bootstrap';
+$currentTheme = 'green';
 $themeMode = 'light'; // 'light' or 'dark'
 
 // Include shared head section

@@ -4,7 +4,7 @@
  * Verwendet von allen Themes und Layouts
  */
 ?>
-    <nav class="navbar navbar-expand-lg sticky-top">
+    <nav class="navbar-<?= $themeMode ?? 'dark' ?> bg-<?= $themeMode ?? 'dark' ?> navbar navbar-expand-lg py-4">
         <div class="container-fluid px-4">
             <a class="navbar-brand" href="/">
                 <?php if (!empty($siteLogo)): ?>
@@ -75,11 +75,13 @@
                 
                 <!-- Suchformular -->
                 <!--form class="d-flex me-3" action="/search" method="GET">
-                    <input class="form-control me-2" type="search" name="q" placeholder="Suchen..." 
-                           value="<?= htmlspecialchars($_GET['q'] ?? '') ?>" style="width: 250px;">
-                    <button class="btn btn-outline-primary" type="submit">
-                        <i class="bi bi-search"></i>
-                    </button>
+                    <div class="input-group">
+                        <input type="search" name="q" class="form-control border-secondary" 
+                                placeholder="Suchen..." value="<?= htmlspecialchars($_GET['q'] ?? '') ?>" style="width: 250px;">
+                        <button class="btn border-secondary" type="submit">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
                 </form-->
                 
                 <!-- Admin Link -->

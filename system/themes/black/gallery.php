@@ -1,6 +1,6 @@
 <?php
 /**
- * orange Theme - Gallery Layout
+ * black Theme - Gallery Layout
  * Spezielles Layout für Bildergalerien mit responsivem Grid
  */
 
@@ -174,100 +174,68 @@ include __DIR__ . '/../shared/head.php';
     </style>
 </head>
 <body>
-    <header class="header">
-        <div class="header-content">
-            <a class="logo" href="/">
-                <?php if (!empty($siteLogo)): ?>
-                    <img src="<?= htmlspecialchars($siteLogo) ?>" alt="Logo" class="site-logo me-2">
-                <?php else: ?>
-                    <i class="bi bi-file-earmark-text me-2"></i>
-                <?php endif; ?>
-                <?= htmlspecialchars($siteName) ?>
-            </a>
-
-            <div class="sidebar-search">
-                <form action="/search" method="get">
-                    <input type="search" name="q" placeholder="Suche..." value="<?= htmlspecialchars($_GET['q']??'') ?>">
-                </form>
-            </div>
-            <a href="/admin?return_to_frontend=1" class="btn" title="Admin Dashboard"><i class="bi bi-gear"></i>&nbsp;Admin</a>
-        </div>
-    </header>
+    <!-- Navigation -->
+    <?php
+        // Navigation mit geteilter Komponente
+        include __DIR__ . '/../shared/navigation.php'; 
+    ?>
     
-    <!-- Main Content -->
-    <div class="content-wrapper">
-        <div class="container-fluid px-4">
-            <!-- Breadcrumb Navigation -->
-            <?= $themeHelper->renderBreadcrumbs($breadcrumbs ?? []) ?>
-            
-            <!-- Gallery Header -->
-
-            <?php if (isset($title) && strlen($title) > 0): ?> 
-                
-            <div class="gallery-header">
-                <h1><i class="bi bi-images me-3"></i><?= htmlspecialchars($title) ?></h1>
-                <?php if (!empty($meta['description'])): ?>
-                <p class="lead"><?= htmlspecialchars($meta['description']) ?></p>
-                <?php endif; ?>
-            </div>
+    <!-- Main Content -->    
+    <div class="container-fluid px-4 pt-4">
+        <!-- Breadcrumb Navigation -->
+        <?= $themeHelper->renderBreadcrumbs($breadcrumbs ?? []) ?>
+        
+        <!-- Gallery Header -->
+        <?php if (isset($title) && strlen($title) > 0): ?>             
+        <div class="gallery-header">
+            <h1><i class="bi bi-images me-3"></i><?= htmlspecialchars($title) ?></h1>
+            <?php if (!empty($meta['description'])): ?>
+            <p class="lead"><?= htmlspecialchars($meta['description']) ?></p>
             <?php endif; ?>
-                        
-            <!-- Erfolgsmeldung nach Speichern -->
-            <?php if (isset($_GET['saved'])): ?>
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="bi bi-check-circle me-2"></i>
-                Die Galerie wurde erfolgreich gespeichert.
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-            <?php endif; ?>
-            
-            <!-- Private Seiten-Hinweis für Admins -->
-            <?php 
-            $visibility = $meta['Visibility'] ?? $meta['visibility'] ?? 'public';
-            if ($visibility === 'private'): 
-            ?>
-            <div class="alert alert-warning" role="alert">
-                <i class="bi bi-lock me-2"></i>
-                <strong>Private Galerie:</strong> Diese Galerie ist nur für angemeldete Admins sichtbar.
-            </div>
-            <?php endif; ?>
-            
-            <!-- Gallery Content -->
-            <article class="content">
-                <div class="gallery-grid">
-                    <div class="row gallery-masonry" id="gallery-container">
-                        <!-- Der Markdown-Content wird hier eingefügt -->
-                        <?= $body ?>
-                    </div>
-                </div>
-            </article>
         </div>
-    </div>    
+        <?php endif; ?>
+                    
+        <!-- Erfolgsmeldung nach Speichern -->
+        <?php if (isset($_GET['saved'])): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>
+            Die Galerie wurde erfolgreich gespeichert.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <?php endif; ?>
+        
+        <!-- Private Seiten-Hinweis für Admins -->
+        <?php 
+        $visibility = $meta['Visibility'] ?? $meta['visibility'] ?? 'public';
+        if ($visibility === 'private'): 
+        ?>
+        <div class="alert alert-warning" role="alert">
+            <i class="bi bi-lock me-2"></i>
+            <strong>Private Galerie:</strong> Diese Galerie ist nur für angemeldete Admins sichtbar.
+        </div>
+        <?php endif; ?>
+        
+        <!-- Gallery Content -->
+        <article class="content">
+            <div class="gallery-grid">
+                <div class="row gallery-masonry" id="gallery-container">
+                    <!-- Der Markdown-Content wird hier eingefügt -->
+                    <?= $body ?>
+                </div>
+            </div>
+        </article>
+    </div>
+    
 
     <?php 
-    // Admin-Toolbar mit geteilter Komponente
-    include __DIR__ . '/../shared/admin-toolbar.php';
-    ?>
+        // Admin-Toolbar mit geteilter Komponente
+        include __DIR__ . '/../shared/admin-toolbar.php';
 
-    <footer class="footer">
-    <div class="footer-content">
-    <div class="footer-logo"><i class="bi bi-leaf"></i> 
-        <a class="logo" href="/">
-            <?php if (!empty($siteLogo)): ?>
-                <img src="<?= htmlspecialchars($siteLogo) ?>" alt="Logo" class="site-logo me-2">
-            <?php else: ?>
-                <i class="bi bi-file-earmark-text me-2"></i>
-            <?php endif; ?>
-            <?= htmlspecialchars($siteName) ?>
-        </a>
-    </div>
-    <div class="footer-text">Powered by <a href="https://github.com/dirkclemens/staticmd" target="_blank">StaticMD</a> &copy; <?= date('Y') ?></div>
-    </div>
-    </footer>
+        // Footer mit geteilter Komponente
+        include __DIR__ . '/../shared/footer.php'; 
 
-    <?php
-    // Scripts mit geteilter Komponente (vereinfacht für Blog)
-    include __DIR__ . '/../shared/scripts.php'; 
+        // Scripts mit geteilter Komponente (vereinfacht für Blog)
+        include __DIR__ . '/../shared/scripts.php'; 
     ?>
     <!-- GLightbox JS für Lightbox-Funktionalität -->
     <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
