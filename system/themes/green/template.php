@@ -151,11 +151,7 @@ include __DIR__ . '/../shared/head.php';
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
         
     <script>
-        // Code syntax highlighting (simple)
-        document.querySelectorAll('pre code').forEach(block => {
-            block.classList.add('language-' + (block.className.match(/language-(\w+)/) || ['', 'text'])[1]);
-        });
-        
+
         // KaTeX Math Rendering
         document.addEventListener("DOMContentLoaded", function() {
             if (typeof renderMathInElement !== 'undefined') {
@@ -171,7 +167,7 @@ include __DIR__ . '/../shared/head.php';
             }
         });
 
-    document.querySelectorAll('.alert-dismissible .btn-close').forEach(btn=>{btn.addEventListener('click',function(){this.parentElement.style.display='none'})});
+        document.querySelectorAll('.alert-dismissible .btn-close').forEach(btn=>{btn.addEventListener('click',function(){this.parentElement.style.display='none'})});
     </script>
 </body>
 </html>

@@ -8,7 +8,7 @@
     <footer class="py-4">
         <div class="container-fluid px-4">
             <div class="row">
-                <div class="col-md-4 text-md-start"">
+                <div class="col-md-4 text-md-start">
                     <p class="mb-1">&copy; <?= date('Y') ?> <?= htmlspecialchars($siteName) ?></p>
                     <p class="mb-0">
                         <small class="">Powered by StaticMD</small>
@@ -21,7 +21,7 @@
                         <div class="input-group">
                             <input type="search" name="q" class="form-control border-secondary" 
                                     placeholder="Suchen..." value="<?= htmlspecialchars($_GET['q'] ?? '') ?>" style="width: 250px;">
-                            <button class="btn border-secondary" type="submit">
+                            <button class="btn btn-outline-warning" type="submit">
                                 <i class="bi bi-search"></i>
                             </button>
                         </div>

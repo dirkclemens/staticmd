@@ -53,10 +53,20 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     
+    <!-- Highlight.js CSS for Syntax Highlighting -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css"> -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/base16/solarized-light.css"> -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/base16/one-<?= $themeMode ?>.css"> -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/base16/github.css"> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/stackoverflow-<?= $themeMode ?>.min.css">
+
     <!-- Theme CSS -->
     <style>
-        <!-- Shared CSS for all themes, can be overwritten by theme-specific CSS -->
-        <?php include __DIR__ . '/shared.css'; ?>
+        <?php 
+
+        // Include shared CSS
+        include __DIR__ . '/shared.css'; 
+        ?>
 
         <?php 
         // Include theme-specific CSS
