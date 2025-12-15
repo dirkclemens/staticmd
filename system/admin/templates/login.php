@@ -6,7 +6,7 @@ SecurityHeaders::setAllSecurityHeaders('admin');
 $nonce = SecurityHeaders::getNonce();
 ?>
 <!DOCTYPE html>
-<html lang="<?= htmlspecialchars(\StaticMD\Core\I18n::getLanguage()) ?>">
+<html lang="<?= htmlspecialchars(\StaticMD\Core\I18n::getLanguage()) ?>" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,10 +22,14 @@ $nonce = SecurityHeaders::getNonce();
             align-items: center;
         }
         
+        [data-bs-theme="dark"] body {
+            background: linear-gradient(135deg, #1a1d21 0%, #2d3236 100%);
+        }
+        
         .login-container {
-            background: white;
+            background: var(--admin-card-bg);
             border-radius: 15px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            box-shadow: 0 15px 35px var(--admin-border);
             overflow: hidden;
         }
         
@@ -68,6 +72,11 @@ $nonce = SecurityHeaders::getNonce();
             <div class="col-md-6 col-lg-4">
                 <div class="login-container">
                     <div class="login-header">
+                        <div class="text-end mb-2">
+                            <button id="theme-toggle" class="btn btn-sm btn-light" title="Theme wechseln">
+                                <i class="bi bi-moon-fill" id="theme-icon"></i>
+                            </button>
+                        </div>
                         <h3 class="mb-2">
                             <i class="bi bi-shield-lock me-2"></i>
                             <?= __('admin.brand') ?>
@@ -137,5 +146,35 @@ $nonce = SecurityHeaders::getNonce();
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const htmlElement = document.documentElement;
+        
+        // Load saved theme or default to light
+        const savedTheme = localStorage.getItem('adminTheme') || 'light';
+        htmlElement.setAttribute('data-bs-theme', savedTheme);
+        updateThemeIcon(savedTheme);
+        
+        themeToggle.addEventListener('click', function() {
+            const currentTheme = htmlElement.getAttribute('data-bs-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            htmlElement.setAttribute('data-bs-theme', newTheme);
+            localStorage.setItem('adminTheme', newTheme);
+            updateThemeIcon(newTheme);
+        });
+        
+        function updateThemeIcon(theme) {
+            if (theme === 'dark') {
+                themeIcon.classList.remove('bi-moon-fill');
+                themeIcon.classList.add('bi-sun-fill');
+            } else {
+                themeIcon.classList.remove('bi-sun-fill');
+                themeIcon.classList.add('bi-moon-fill');
+            }
+        }
+    </script>
 </body>
 </html>

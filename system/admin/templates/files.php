@@ -28,6 +28,7 @@ function formatBytes(int $bytes, int $precision = 2): string {
 }
 ?>
 <!DOCTYPE html>
+<html lang="<?= htmlspecialchars(\StaticMD\Core\I18n::getLanguage()) ?>" data-bs-theme="light">
 <html lang="<?= htmlspecialchars(\StaticMD\Core\I18n::getLanguage()) ?>">
 <head>
     <meta charset="UTF-8">
@@ -56,6 +57,11 @@ function formatBytes(int $bytes, int $precision = 2): string {
                     </small>
                 </div>
                 
+                <!-- Theme Toggle Button -->
+                <button id="theme-toggle" class="btn btn-link me-3" title="Theme wechseln">
+                    <i class="bi bi-moon-fill" id="theme-icon"></i>
+                </button>
+                                
                 <div class="dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                         <i class="bi bi-person-circle me-1"></i>
@@ -453,6 +459,35 @@ function formatBytes(int $bytes, int $precision = 2): string {
         
         // Fokus auf Suchfeld bei Seitenladen
         document.getElementById('searchFiles').focus();
+        
+        // Theme toggle functionality (shared across all admin pages)
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const htmlElement = document.documentElement;
+        
+        // Load saved theme or default to light
+        const savedTheme = localStorage.getItem('adminTheme') || 'light';
+        htmlElement.setAttribute('data-bs-theme', savedTheme);
+        updateThemeIcon(savedTheme);
+        
+        themeToggle.addEventListener('click', function() {
+            const currentTheme = htmlElement.getAttribute('data-bs-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            htmlElement.setAttribute('data-bs-theme', newTheme);
+            localStorage.setItem('adminTheme', newTheme);
+            updateThemeIcon(newTheme);
+        });
+        
+        function updateThemeIcon(theme) {
+            if (theme === 'dark') {
+                themeIcon.classList.remove('bi-moon-fill');
+                themeIcon.classList.add('bi-sun-fill');
+            } else {
+                themeIcon.classList.remove('bi-sun-fill');
+                themeIcon.classList.add('bi-moon-fill');
+            }
+        }
     </script>
 </body>
 </html>

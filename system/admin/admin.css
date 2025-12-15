@@ -7,25 +7,50 @@
     --admin-danger: #dc3545;
     --admin-light: #f8f9fa;
     --admin-dark: #343a40;
+    --admin-bg: #f8f9fa;
+    --admin-card-bg: #ffffff;
+    --admin-text: #212529;
+    --admin-border: rgba(0,0,0,0.1);
+    --bs-table-hover-bg: #e9ecef;
+}
+
+/* Dark mode variables */
+[data-bs-theme="dark"] {
+    --admin-primary: #7DD416;
+    --admin-secondary: #20c997;
+    --admin-bg: #212529;
+    --admin-card-bg: #2b3035;
+    --admin-text: #dee2e6;
+    --admin-border: rgba(255,255,255,0.1);
+    --bs-table-hover-bg: #343a40;
 }
 
 a {
     --bs-link-color: #61BA01;
     --bs-link-hover-color: #198754;
 }
+
+[data-bs-theme="dark"] a {
+    --bs-link-color: #7DD416;
+    --bs-link-hover-color: #9FE552;
+}
+
 .nav {
     --bs-nav-link-color: var(--bs-link-color);
 } 
 
-body { background-color: #f8f9fa; } 
+body { 
+    background-color: var(--admin-bg);
+    color: var(--admin-text);
+} 
 
 .admin-header {
     /* background: linear-gradient(45deg, var(--admin-primary), var(--admin-primary) ); */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px var(--admin-border);
 }
 .admin-sidebar {
-    background: white;
-    box-shadow: 2px 0 4px rgba(0,0,0,0.1);
+    background: var(--admin-card-bg);
+    box-shadow: 2px 0 4px var(--admin-border);
     height: calc(100vh - 76px);
     overflow-y: auto;
 }
@@ -51,8 +76,9 @@ body { background-color: #f8f9fa; }
 .stat-card {
     border: none;
     border-radius: 15px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+    box-shadow: 0 4px 6px var(--admin-border);
     transition: transform 0.2s ease;
+    background-color: var(--admin-card-bg);
 }
 
 .stat-card:hover {
@@ -75,30 +101,35 @@ body { background-color: #f8f9fa; }
 
 .session-timer {
     font-size: 0.85rem;
-    color: #000;
+    color: var(--admin-text);
+}
+
+/* Theme toggle button */
+#theme-toggle {
+    border: none;
+    background: transparent;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+#theme-toggle:hover {
+    transform: scale(1.1);
 }
 
 /* editor.php */
 
 .editor-container {
-    background: white;
+    background: var(--admin-card-bg);
     border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.07);
-}
-
-/* editor.php */
-
-.editor-container {
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+    box-shadow: 0 4px 6px var(--admin-border);
 }
 
 .preview-content {
-    border: 1px solid #dee2e6;
+    border: 1px solid var(--admin-border);
     border-radius: 5px;
     padding: 1rem;
-    background: white;
+    background: var(--admin-card-bg);
     height: calc(100vh - 200px);
     min-height: 500px;
     max-height: none;
@@ -110,8 +141,8 @@ body { background-color: #f8f9fa; }
 }
 
 .toolbar {
-    background: #f8f9fa;
-    border: 1px solid #dee2e6;
+    background-color: var(--bs-table-hover-bg) !important;
+    border: 1px solid var(--bs-table-hover-bg) !important;
     border-bottom: none;
     border-radius: 5px 5px 0 0;
     padding: 0.5rem;
@@ -304,7 +335,7 @@ body { background-color: #f8f9fa; }
 /* files.php */
 
 .files-container {
-    background: white;
+    background: transparent;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.07);
 }
@@ -317,7 +348,7 @@ body { background-color: #f8f9fa; }
 }
 
 .file-item:hover {
-    background-color: #f8f9fa;
+    background-color: var(--bs-table-hover-bg);
 }
 
 .file-icon {
@@ -381,6 +412,10 @@ body { background-color: #f8f9fa; }
     color: var(--admin-primary);
 }
 
+.list-group-item:hover {
+    background-color: var(--bs-table-hover-bg) !important;
+}
+
 /* Custom Theme Enhancements */
 .CodeMirror {
     border: 1px solid #dee2e6;
@@ -418,6 +453,44 @@ body { background-color: #f8f9fa; }
 .CodeMirror.cm-s-material {
     background: #263238;
     color: #eeffff;
+}
+
+/* Material Theme - Markdown-specific tokens (not included in CDN theme) */
+.CodeMirror.cm-s-material .cm-header {
+    color: #82aaff;
+    font-weight: bold;
+}
+
+.CodeMirror.cm-s-material .cm-strong {
+    color: #c792ea;
+    font-weight: bold;
+}
+
+.CodeMirror.cm-s-material .cm-em {
+    color: #c792ea;
+    font-style: italic;
+}
+
+.CodeMirror.cm-s-material .cm-link {
+    color: #89ddff;
+}
+
+.CodeMirror.cm-s-material .cm-url {
+    color: #f07178;
+}
+
+.CodeMirror.cm-s-material .cm-quote {
+    color: #546e7a;
+    font-style: italic;
+}
+
+.CodeMirror.cm-s-material .cm-formatting-list {
+    color: #89ddff;
+}
+
+.CodeMirror.cm-s-material .cm-formatting-code,
+.CodeMirror.cm-s-material .cm-formatting-code-block {
+    color: #c3e88d;
 }
 
 /* Theme-specific line number styling */

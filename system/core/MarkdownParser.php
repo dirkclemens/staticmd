@@ -24,6 +24,7 @@ class MarkdownParser
         $inCodeBlock = false;
         $inList = false;
         $listType = '';
+        $listStack = []; // Stack für verschachtelte Listen
         
         $inParagraph = false;
         $paragraphContent = '';
@@ -57,8 +58,12 @@ class MarkdownParser
             }
 
             // End lists if necessary
-            if ($inList && !$this->isListItem($trimmedLine)) {
-                $html .= "</$listType>\n";
+            if ($inList && !$this->isListItem($line)) {
+                // Schließe alle offenen Listen mit ihren li-Elementen
+                while (!empty($listStack)) {
+                    $closingType = array_pop($listStack);
+                    $html .= "</li>\n</$closingType>\n";
+                }
                 $inList = false;
                 $listType = '';
             }
@@ -136,8 +141,8 @@ class MarkdownParser
                 continue;
             }
             
-            // Listen
-            if ($this->isListItem($trimmedLine)) {
+            // Listen (mit Unterstützung für Verschachtelung)
+            if ($this->isListItem($line)) {
                 // Paragraph beenden falls aktiv
                 if ($inParagraph) {
                     $html .= '<p>' . $this->parseInline($paragraphContent) . "</p>\n";
@@ -145,20 +150,56 @@ class MarkdownParser
                     $paragraphContent = '';
                 }
                 
+                // Berechne Einrückungstiefe (Markdown-Standard: 4 Leerzeichen = 1 Ebene)
+                $indent = strlen($line) - strlen(ltrim($line));
+                $indentLevel = intdiv($indent, 4);
+                
+                // Bestimme Listentyp
+                $trimmedLine = ltrim($line);
                 $isOrdered = preg_match('/^\d+\./', $trimmedLine);
                 $newListType = $isOrdered ? 'ol' : 'ul';
                 
+                // Liste starten oder Ebene anpassen
                 if (!$inList) {
+                    // Erste Liste öffnen
                     $html .= "<$newListType>\n";
+                    $listStack[] = $newListType;
                     $inList = true;
                     $listType = $newListType;
-                } elseif ($listType !== $newListType) {
-                    $html .= "</$listType>\n<$newListType>\n";
-                    $listType = $newListType;
+                } else {
+                    $currentLevel = count($listStack) - 1;
+                    
+                    if ($indentLevel > $currentLevel) {
+                        // Tiefere Ebene - neue Unterliste(n) öffnen
+                        for ($j = $currentLevel; $j < $indentLevel; $j++) {
+                            $html .= "\n<$newListType>\n";
+                            $listStack[] = $newListType;
+                        }
+                    } elseif ($indentLevel < $currentLevel) {
+                        // Höhere Ebene - Listen schließen
+                        for ($j = $currentLevel; $j > $indentLevel; $j--) {
+                            $closingType = array_pop($listStack);
+                            $html .= "</li>\n</$closingType>\n";
+                        }
+                        // Schließe auch das vorherige <li> auf der Ziel-Ebene
+                        $html .= "</li>\n";
+                    } else {
+                        // Gleiche Ebene - vorheriges <li> schließen
+                        $html .= "</li>\n";
+                    }
+                    
+                    // Listentyp-Wechsel auf gleicher Ebene
+                    if (!empty($listStack) && end($listStack) !== $newListType) {
+                        $oldType = array_pop($listStack);
+                        $html .= "</$oldType>\n<$newListType>\n";
+                        $listStack[] = $newListType;
+                    }
                 }
                 
+                // Listenelement hinzufügen
                 $text = preg_replace('/^(\*|\+|-|\d+\.)\s+/', '', $trimmedLine);
-                $html .= '<li>' . $this->parseInline($text) . "</li>\n";
+                $html .= '<li>' . $this->parseInline($text);
+                
                 continue;
             }
             
@@ -221,7 +262,11 @@ class MarkdownParser
         
         // Close open lists
         if ($inList) {
-            $html .= "</$listType>\n";
+            // Schließe alle noch offenen Listen mit ihren li-Elementen
+            while (!empty($listStack)) {
+                $closingType = array_pop($listStack);
+                $html .= "</li>\n</$closingType>\n";
+            }
         }
         
         // Offene Code-Blöcke schließen
@@ -324,7 +369,7 @@ class MarkdownParser
         // Emojis: :emoji_name: -> 🎉 (jetzt sicher außerhalb von Code-Blöcken)
         $text = preg_replace_callback('/:([a-z_+-]+):/', [$this, 'parseEmojiSafe'], $text);
 
-        // Auto-Links: URLs automatisch zu klickbaren Links konvertieren (außerhalb von Code-Blöcken)
+        // Auto-Links konvertieren (außerhalb von Code-Blöcken)
         $text = $this->parseAutoLinks($text, $codeBlocks);
 
         // Links: [Text](URL) - jetzt auch für automatisch generierte Links
@@ -371,7 +416,8 @@ class MarkdownParser
      */
     private function isListItem(string $line): bool
     {
-        return preg_match('/^(\*|\+|-|\d+\.)\s+/', trim($line));
+        // Akzeptiere auch eingerückte Listenpunkte (max 20 Leerzeichen für Verschachtelung)
+        return preg_match('/^\s{0,20}(\*|\+|-|\d+\.)\s+/', $line);
     }
     
     /**

@@ -19,7 +19,7 @@ SecurityHeaders::setAllSecurityHeaders('admin');
 $nonce = SecurityHeaders::getNonce();
 ?>
 <!DOCTYPE html>
-<html lang="<?= htmlspecialchars(\StaticMD\Core\I18n::getLanguage()) ?>">
+<html lang="<?= htmlspecialchars(\StaticMD\Core\I18n::getLanguage()) ?>" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -59,6 +59,11 @@ $nonce = SecurityHeaders::getNonce();
                     </small>
                 </div>
                 
+                <!-- Theme Toggle Button -->
+                <button id="theme-toggle" class="btn btn-link me-3" title="Theme wechseln">
+                    <i class="bi bi-moon-fill" id="theme-icon"></i>
+                </button>
+                                
                 <div class="dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                         <i class="bi bi-person-circle me-1"></i>
@@ -1212,6 +1217,35 @@ $nonce = SecurityHeaders::getNonce();
                 
                 // Editor refresh nach Theme-Änderung
                 setTimeout(() => editor.refresh(), 50);
+            }
+        }
+        
+        // Theme toggle functionality (shared across all admin pages)
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const htmlElement = document.documentElement;
+        
+        // Load saved theme or default to light
+        const savedTheme = localStorage.getItem('adminTheme') || 'light';
+        htmlElement.setAttribute('data-bs-theme', savedTheme);
+        updateThemeIcon(savedTheme);
+        
+        themeToggle.addEventListener('click', function() {
+            const currentTheme = htmlElement.getAttribute('data-bs-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            htmlElement.setAttribute('data-bs-theme', newTheme);
+            localStorage.setItem('adminTheme', newTheme);
+            updateThemeIcon(newTheme);
+        });
+        
+        function updateThemeIcon(theme) {
+            if (theme === 'dark') {
+                themeIcon.classList.remove('bi-moon-fill');
+                themeIcon.classList.add('bi-sun-fill');
+            } else {
+                themeIcon.classList.remove('bi-sun-fill');
+                themeIcon.classList.add('bi-moon-fill');
             }
         }
     </script>
