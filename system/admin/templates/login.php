@@ -73,7 +73,7 @@ $nonce = SecurityHeaders::getNonce();
                 <div class="login-container">
                     <div class="login-header">
                         <div class="text-end mb-2">
-                            <button id="theme-toggle" class="btn btn-sm btn-light" title="Theme wechseln">
+                            <button id="theme-toggle" class="btn btn-sm btn-light" title="<?= \StaticMD\Core\I18n::t('core.theme_toggle') ?>">
                                 <i class="bi bi-moon-fill" id="theme-icon"></i>
                             </button>
                         </div>

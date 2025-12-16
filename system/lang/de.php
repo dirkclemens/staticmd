@@ -20,6 +20,7 @@ return [
         'folder_overview_description' => 'Übersicht aller Seiten im Bereich {folder}',
         'back_link' => 'Zurück',
         'overview' => 'Übersicht',
+        'theme_toggle' => 'Theme wechseln',
         'subfolders' => 'Unterordner',
         'pages' => 'Seiten',
         'pages_lowercase' => 'Seiten',

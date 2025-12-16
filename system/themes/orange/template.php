@@ -113,7 +113,7 @@ include __DIR__ . '/../shared/head.php';
                 
                 <!-- Tags -->
                 <?php if (isset($meta['tags']) && !empty(trim($meta['tags']))): ?>
-                <div class="mt-5 pt-4 border-top border-secondary">
+                <div class="my-4 py-4 border-top border-secondary">
                     <h4 class="mb-3">
                         <i class="bi bi-tags me-2"></i>Tags
                     </h4>
@@ -122,7 +122,7 @@ include __DIR__ . '/../shared/head.php';
                             <?php $cleanTag = trim($tag); ?>
                             <?php if (!empty($cleanTag)): ?>
                             <a href="/tag/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($cleanTag) ?>" 
-                               class="badge bg-primary me-1 mb-2 text-decoration-none">
+                               class="badge rounded-pill text-bg-primary text-decoration-none">
                                 <?= htmlspecialchars($cleanTag) ?>
                             </a>
                             <?php endif; ?>

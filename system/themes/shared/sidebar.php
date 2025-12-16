@@ -79,17 +79,17 @@ function renderNavTree($subfolders, $currentRoute, $level = 0) {
             // Ordner mit Unterverzeichnissen
             $html .= $indent . '<div class="list-group-item list-group-item-action p-0 d-flex ' . ($isActive ? 'active' : '') . '">' . "\n";
             $html .= $indent . '    <a href="/' . \StaticMD\Themes\ThemeHelper::encodeUrlPath($folder['route']) . '" ' . "\n";
-            $html .= $indent . '       class="flex-grow-1 text-decoration-none text-reset px-3 py-2"' . "\n";
+            $html .= $indent . '       class="flex-grow-1 text-decoration-none text-reset px-3 py-0"' . "\n";
             $html .= $indent . '       style="color: inherit !important;">' . "\n";
             $html .= $indent . '        <i class="bi bi-folder me-2"></i> ' . "\n";
             $html .= $indent . '        ' . htmlspecialchars($folder['title']) . "\n";
             $html .= $indent . '    </a>' . "\n";
-            $html .= $indent . '    <button class="btn btn-link text-reset p-2 sidebar-toggle" ' . "\n";
+            $html .= $indent . '    <button class="btn btn-link text-reset p-2 sidebar-toggle' . (!$isActive ? ' collapsed' : '') . '" ' . "\n";
             $html .= $indent . '            data-bs-toggle="collapse" ' . "\n";
             $html .= $indent . '            data-bs-target="#' . $collapseId . '" ' . "\n";
             $html .= $indent . '            aria-expanded="' . ($isActive ? 'true' : 'false') . '" ' . "\n";
             $html .= $indent . '            aria-label="Toggle submenu">' . "\n";
-            $html .= $indent . '        <i class="bi bi-chevron-down"></i>' . "\n";
+            $html .= $indent . '        <i class="bi bi-caret-right-fill"></i>' . "\n";
             $html .= $indent . '    </button>' . "\n";
             $html .= $indent . '</div>' . "\n";
             
@@ -119,7 +119,7 @@ function renderNavTree($subfolders, $currentRoute, $level = 0) {
                     <?php if (!empty($navItems)): ?>
                     <div class="list-group list-group-flush">
                         <a href="/" class="list-group-item list-group-item-action <?= $currentRoute === 'index' ? 'active' : '' ?>">
-                            <i class="bi bi-house me-2"></i> <!-- Startseite -->
+                            <i class="bi bi-house me-2"></i> Home<!-- Startseite -->
                         </a>
                         
                         <?php foreach ($navItems as $section => $nav): ?>
@@ -137,17 +137,17 @@ function renderNavTree($subfolders, $currentRoute, $level = 0) {
                                     <!-- Ordner mit Unterverzeichnissen - Kollabierbar -->
                                     <div class="list-group-item list-group-item-action p-0 d-flex <?= $isActive ? 'active' : '' ?>">
                                         <a href="/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($nav['route']) ?>" 
-                                            class="flex-grow-1 text-decoration-none text-reset px-3 py-2"
+                                            class="flex-grow-1 text-decoration-none text-reset px-3 py-0"
                                             style="color: inherit !important;">
                                             <i class="bi bi-folder me-2"></i> 
                                             <?= htmlspecialchars($nav['title']) ?>
                                         </a>
-                                        <button class="btn btn-link text-reset p-2 sidebar-toggle" 
+                                        <button class="btn btn-link text-reset p-2 sidebar-toggle<?= !$isActive ? ' collapsed' : '' ?>" 
                                                 data-bs-toggle="collapse" 
                                                 data-bs-target="#collapse-<?= htmlspecialchars($section) ?>"
                                                 aria-expanded="<?= $isActive ? 'true' : 'false' ?>"
                                                 aria-label="Toggle submenu">
-                                            <i class="bi bi-chevron-down"></i>
+                                            <i class="bi bi-caret-right-fill"></i>
                                         </button>
                                     </div>
                                     
@@ -181,7 +181,7 @@ function renderNavTree($subfolders, $currentRoute, $level = 0) {
                             <?php foreach (explode(',', $meta['tags']) as $tag): ?>
                                 <?php $cleanTag = trim($tag); ?>
                                 <?php if (!empty($cleanTag)): ?>
-                                <a href="/tag/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($cleanTag) ?>" class="badge bg-primary text-white text-decoration-none me-1 mb-1">
+                                <a href="/tag/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($cleanTag) ?>" class="badge rounded-pill text-bg-primary text-decoration-none me-1 mb-1">
                                     <?= htmlspecialchars($cleanTag) ?>
                                 </a>
                                 <?php endif; ?>
@@ -191,7 +191,7 @@ function renderNavTree($subfolders, $currentRoute, $level = 0) {
                     
                     <hr style="margin-top: 1.5rem; margin-bottom: 1.5rem;">
 
-                    <div class="mt-2">
+                    <div class="my-2">
                         <a href="/tag" class="btn btn-outline-primary btn-sm">
                             <i class="bi bi-tags me-1"></i>Alle Tags anzeigen
                         </a>

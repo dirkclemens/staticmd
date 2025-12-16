@@ -328,7 +328,7 @@ class SearchEngine
                     $html .= '<div class="mb-1">';
                     foreach ($tags as $tag) {
                         if (!empty($tag)) {
-                            $html .= '<a href="/tag/' . urlencode($tag) . '" class="badge bg-secondary me-1 text-decoration-none">' . htmlspecialchars($tag) . '</a>';
+                            $html .= '<a href="/tag/' . urlencode($tag) . '" class="badge rounded-pill bg-secondary me-1 text-decoration-none">' . htmlspecialchars($tag) . '</a>';
                         }
                     }
                     $html .= '</div>';
@@ -531,7 +531,7 @@ class SearchEngine
                         if (!empty($tag)) {
                             $isCurrentTag = strcasecmp($tag, $tagName) === 0;
                             $badgeClass = $isCurrentTag ? 'bg-primary' : 'bg-secondary';
-                            $html .= '<a href="/tag/' . urlencode($tag) . '" class="badge ' . $badgeClass . ' me-1 text-decoration-none">' . htmlspecialchars($tag) . '</a>';
+                            $html .= '<a href="/tag/' . urlencode($tag) . '" class="badge rounded-pill ' . $badgeClass . ' me-1 text-decoration-none">' . htmlspecialchars($tag) . '</a>';
                         }
                     }
                     $html .= '</div>';
@@ -665,13 +665,13 @@ class SearchEngine
             foreach ($allTags as $tag => $count) {
                 // Tag-Größe basierend auf Häufigkeit (wie in ContentLoader)
                 $size = min(3, max(1, (int)floor($count / 2) + 1));
-                $badgeClass = $size === 1 ? 'bg-secondary' : ($size === 2 ? 'bg-primary' : 'bg-success');
+                $badgeClass = $size === 1 ? 'text-bg-secondary' : ($size === 2 ? 'text-bg-primary' : 'text-bg-success');
                 
                 //$fontSize = number_format(0.8 + $size * 0.15, 2);
-                //$html .= '<a href="/tag/' . urlencode($tag) . '" class="badge ' . $badgeClass . ' me-2 mb-2 text-decoration-none" style="font-size: ' . $fontSize . 'rem;">';
-                $html .= '<a href="/tag/' . urlencode($tag) . '" class="badge ' . $badgeClass . ' me-2 mb-2 text-decoration-none">';
+                //$html .= '<a href="/tag/' . urlencode($tag) . '" class="badge rounded-pill ' . $badgeClass . ' me-2 mb-2 text-decoration-none" style="font-size: ' . $fontSize . 'rem;">';
+                $html .= '<a href="/tag/' . urlencode($tag) . '" class="badge rounded-pill ' . $badgeClass . ' me-2 mb-2 text-decoration-none">';
                 $html .= htmlspecialchars($tag);
-                $html .= ' <span class="badge bg-light text-dark ms-1">' . $count . '</span>';
+                $html .= ' <span class="badge rounded-pill badge-pill-color ms-1">' . $count . '</span>';
                 $html .= '</a>';
             }
             

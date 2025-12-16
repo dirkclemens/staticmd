@@ -1,13 +1,13 @@
 <?php
 /**
- * Green Theme - Bootstrap-based
+ * Monokai Theme - Bootstrap-based
  * Modern light theme using Bootstrap 5 components
  */
 
 // Theme configuration
 $siteName = $config['system']['name'] ?? 'StaticMD';
 $currentRoute = $_GET['route'] ?? 'index';
-$currentTheme = 'green';
+$currentTheme = 'monokai';
 $themeMode = 'light';
 
 // Include shared head section
@@ -150,8 +150,7 @@ include __DIR__ . '/../shared/head.php';
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
         
-    <script>
-
+    <script>        
         // KaTeX Math Rendering
         document.addEventListener("DOMContentLoaded", function() {
             if (typeof renderMathInElement !== 'undefined') {

@@ -20,6 +20,7 @@ return [
         'folder_overview_description' => 'Overview of all pages in {folder} section',
         'back_link' => 'Back',
         'overview' => 'Overview',
+        'theme_toggle' => 'Toggle theme',
         'subfolders' => 'Subfolders',
         'pages' => 'Pages',
         'pages_lowercase' => 'pages',

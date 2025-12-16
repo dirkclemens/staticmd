@@ -102,7 +102,7 @@ include __DIR__ . '/../shared/head.php';
                             <?php $cleanTag = trim($tag); ?>
                             <?php if (!empty($cleanTag)): ?>
                             <a href="/tag/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($cleanTag) ?>" 
-                               class="badge bg-primary me-1 mb-2 text-decoration-none">
+                               class="badge rounded-pill text-bg-primary text-decoration-none">
                                 <?= htmlspecialchars($cleanTag) ?>
                             </a>
                             <?php endif; ?>

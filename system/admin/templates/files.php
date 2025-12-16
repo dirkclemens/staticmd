@@ -58,10 +58,10 @@ function formatBytes(int $bytes, int $precision = 2): string {
                 </div>
                 
                 <!-- Theme Toggle Button -->
-                <button id="theme-toggle" class="btn btn-link me-3" title="Theme wechseln">
+                <button id="theme-toggle" class="btn btn-link me-3" title="<?= \StaticMD\Core\I18n::t('core.theme_toggle') ?>">
                     <i class="bi bi-moon-fill" id="theme-icon"></i>
                 </button>
-                                
+
                 <div class="dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                         <i class="bi bi-person-circle me-1"></i>
@@ -236,9 +236,9 @@ function formatBytes(int $bytes, int $precision = 2): string {
                                         $childCount = count($item['children']);
                                         $hasIndexFile = isset($item['index_file']);
                                         if ($hasIndexFile) {
-                                            echo '<span class="badge bg-success ms-2" title="Ordner mit Index-Datei">' . $childCount . ' + index</span>';
+                                            echo '<span class="badge rounded-pill bg-success ms-2" title="Ordner mit Index-Datei">' . $childCount . ' + index</span>';
                                         } else {
-                                            echo '<span class="badge bg-secondary ms-2">' . $childCount . '</span>';
+                                            echo '<span class="badge rounded-pill bg-secondary ms-2">' . $childCount . '</span>';
                                         }
                                         echo '<i class="bi bi-chevron-down ms-auto"></i>';
                                         echo '</div>';

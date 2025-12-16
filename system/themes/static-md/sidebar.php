@@ -169,7 +169,7 @@ function renderNavTree($subfolders, $currentRoute, $level = 0) {
                             <?php foreach (explode(',', $meta['tags']) as $tag): ?>
                                 <?php $cleanTag = trim($tag); ?>
                                 <?php if (!empty($cleanTag)): ?>
-                                <a href="/tag/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($cleanTag) ?>" class="badge bg-primary text-white text-decoration-none me-1 mb-1">
+                                <a href="/tag/<?= \StaticMD\Themes\ThemeHelper::encodeUrlPath($cleanTag) ?>" class="badge rounded-pill text-bg-primary text-decoration-none me-1 mb-1">
                                     <?= htmlspecialchars($cleanTag) ?>
                                 </a>
                                 <?php endif; ?>

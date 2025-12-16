@@ -80,7 +80,7 @@ class BlogListRenderer
             $tags = array_map('trim', explode(',', $item['tags']));
             foreach ($tags as $tag) {
                 if (!empty($tag)) {
-                    $html .= '<a href="/tag/' . urlencode($tag) . '" class="badge bg-secondary me-1 text-decoration-none">';
+                    $html .= '<a href="/tag/' . urlencode($tag) . '" class="badge rounded-pill bg-secondary me-1 text-decoration-none">';
                     $html .= htmlspecialchars($tag);
                     $html .= '</a>';
                 }
@@ -211,11 +211,11 @@ class BlogListRenderer
         foreach ($tagCounts as $tag => $count) {
             // Tag size based on frequency
             $size = min(3, max(1, (int)floor($count / 2) + 1));
-            $badgeClass = $size === 1 ? 'bg-secondary' : ($size === 2 ? 'bg-primary' : 'bg-success');
+            $badgeClass = $size === 1 ? 'text-bg-secondary' : ($size === 2 ? 'text-bg-primary' : 'text-bg-success');
             
-            $html .= '<a href="/tag/' . urlencode($tag) . '" class="badge ' . $badgeClass . ' me-2 mb-2 text-decoration-none">';
+            $html .= '<a href="/tag/' . urlencode($tag) . '" class="badge rounded-pill ' . $badgeClass . ' me-2 mb-2 text-decoration-none">';
             $html .= htmlspecialchars($tag);
-            $html .= ' <span class="badge bg-light text-dark ms-1">' . $count . '</span>';
+            $html .= ' <span class="badge rounded-pill badge-pill-color ms-1">' . $count . '</span>';
             $html .= '</a>';
         }
         

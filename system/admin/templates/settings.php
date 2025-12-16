@@ -61,7 +61,7 @@ $timeRemaining = $controller->auth->getTimeRemaining();
                 </div>
                 
                 <!-- Theme Toggle Button -->
-                <button id="theme-toggle" class="btn btn-link me-3" title="Theme wechseln">
+                <button id="theme-toggle" class="btn btn-link me-3" title="<?= \StaticMD\Core\I18n::t('core.theme_toggle') ?>">
                     <i class="bi bi-moon-fill" id="theme-icon"></i>
                 </button>
 
@@ -443,7 +443,7 @@ $timeRemaining = $controller->auth->getTimeRemaining();
                                                             <i class="bi bi-grip-vertical me-2 text-muted"></i>
                                                             <strong><?= htmlspecialchars($section) ?></strong>
                                                         </span>
-                                                        <span class="badge bg-primary" title="<?= __('admin.settings.navigation_position') ?>"><?= $index + 1 ?></span>
+                                                        <span class="badge text-bg-primary" title="<?= __('admin.settings.navigation_position') ?>"><?= $index + 1 ?></span>
                                                     </div>
                                                     <?php endforeach; ?>
                                                 </div>
@@ -493,7 +493,7 @@ $timeRemaining = $controller->auth->getTimeRemaining();
                                                             
                                                             // Duplikate entfernen (falls sowohl Ordner als auch Datei existieren)
                                                             $sections = array_unique($sections);
-                                                            
+
                                                             if (!empty($sections)) {
                                                                 // Sortiere Sections nach aktueller Navigation-Order
                                                                 usort($sections, function($a, $b) use ($currentOrder) {
@@ -512,7 +512,7 @@ $timeRemaining = $controller->auth->getTimeRemaining();
                                                                     $priority = $currentOrder[$section] ?? 'auto';
                                                                     $badgeClass = isset($currentOrder[$section]) ? 'text-bg-primary' : 'text-bg-secondary';
                                                                     echo '<div class="d-flex justify-content-between align-items-center mb-1">';
-                                                                    echo '<span class="badge ' . $badgeClass . '">' . htmlspecialchars($section) . '</span>';
+                                                                    echo '<span class="badge ' . $badgeClass . ' px-3 py-2">' . htmlspecialchars($section) . '</span>';
                                                                     echo '<small class="text-muted ms-2">(' . $priority . ')</small>';
                                                                     echo '</div>';
                                                                 }

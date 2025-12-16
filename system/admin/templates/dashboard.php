@@ -47,7 +47,7 @@ function encodeUrlPath($path) {
                 </div>
                 
                 <!-- Theme Toggle Button -->
-                <button id="theme-toggle" class="btn btn-link me-3" title="Theme wechseln">
+                <button id="theme-toggle" class="btn btn-link me-3" title="<?= \StaticMD\Core\I18n::t('core.theme_toggle') ?>">
                     <i class="bi bi-moon-fill" id="theme-icon"></i>
                 </button>
                 

@@ -91,6 +91,13 @@
                             <i class="bi bi-gear me-1"></i> Admin
                         </a>
                     </li>
+
+                    <li class="nav-item">                    
+                        <!-- Theme Toggle Button -->
+                        <button id="theme-toggle" class="btn btn-link me-3" title="<?= \StaticMD\Core\I18n::t('core.theme_toggle') ?>">
+                            <i class="bi bi-moon-fill" id="theme-icon"></i>
+                        </button>                
+                    </li>
                 </ul>
             </div>
         </div>

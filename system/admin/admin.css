@@ -1,6 +1,6 @@
 :root {
-    --admin-primary: #61BA01;
-    --admin-secondary: #198754;
+    --admin-primary: #00A819;
+    --admin-secondary: #61BA01;
     --admin-success: #28a745;
     --admin-info: #17a2b8;
     --admin-warning: #ffc107;
@@ -26,8 +26,8 @@
 }
 
 a {
-    --bs-link-color: #61BA01;
-    --bs-link-hover-color: #198754;
+    --bs-link-color: #00A819;
+    --bs-link-hover-color: #61BA01;
 }
 
 [data-bs-theme="dark"] a {

@@ -1,4 +1,4 @@
-/* ===== Orange Theme CSS - Bootstrap-based ===== */
+/* ===== Solarized Theme CSS - Bootstrap-based ===== */
 
 /* https://getbootstrap.com/docs/5.3/customize/css-variables/ */
 /* https://getbootstrap.com/docs/5.3/customize/color/ */
@@ -6,54 +6,54 @@
 
 :root,
 [data-bs-theme=light] {
-  --bs-primary: #fe9500; 
-  --bs-primary-rgb: 254, 149, 0;
-  --bs-secondary: #f60 !important;  
-  --bs-secondary-rgb: 255, 102, 0;
-  --bs-secondary-bg: #FFFFFF !important;
-  --bs-secondary-bg-rgb: 255, 255, 255;
-  --bs-tertiary-bg: #f8f9fa;
-  --bs-tertiary-bg-rgb: 248, 249, 250;
-  --bs-card-bg: #dee2e6;
-  --bs-body-color: #666666;
-  --bs-body-color-rgb: 102, 102, 102;
-  --bs-body-bg: #ededed;
-  --bs-body-bg-rgb: 237, 237, 237;
-  --bs-code-color: #AC1200;
-  --bs-link-color: #fe9500;
-  --bs-link-color-rgb: 254, 149, 0;
-  --bs-link-hover-color: #fe9500;
-  --bs-link-hover-color-rgb: 254, 149, 0;
-  --bs-border-color: #fe9500;
-  --bs-border-color-translucent: rgba(254, 149, 0, 0.5);
-  --bs-nav-link-color: #fe9500 !important;
-  --bs-border-secondary: #ffc107;   
-  --bs-border-secondary-rgb: 255, 193, 7;
+  --bs-primary: #268bd2; 
+  --bs-primary-rgb: 38, 139, 210;
+  --bs-secondary: #2aa198;  
+  --bs-secondary-rgb: 42, 161, 152;
+  --bs-secondary-bg: #fdf6e3;
+  --bs-secondary-bg-rgb: 253, 246, 227;
+  --bs-tertiary-bg: #eee8d5;
+  --bs-tertiary-bg-rgb: 238, 232, 213;
+  --bs-card-bg: #eee8d5;
+  --bs-body-color: #657b83;
+  --bs-body-color-rgb: 101, 123, 131;
+  --bs-body-bg: #fdf6e3;
+  --bs-body-bg-rgb: 253, 246, 227;
+  --bs-code-color: #dc322f;
+  --bs-link-color: #268bd2;
+  --bs-link-color-rgb: 38, 139, 210;
+  --bs-link-hover-color: #2aa198;
+  --bs-link-hover-color-rgb: 42, 161, 152;
+  --bs-border-color: #93a1a1;
+  --bs-border-color-translucent: rgba(147, 161, 161, 0.5);
+  --bs-nav-link-color: #268bd2 !important;
+  --bs-border-secondary: #b58900;   
+  --bs-border-secondary-rgb: 181, 137, 0;
 }
 [data-bs-theme=dark] {
-  --bs-primary: #ff9f1a;
-  --bs-primary-rgb: 255, 159, 26;
-  --bs-secondary: #ffb84d;              
-  --bs-secondary-rgb: 255, 184, 77;
-  --bs-secondary-bg: #4a4a4a; 
-  --bs-secondary-bg-rgb: 74, 74, 74;
-  --bs-tertiary-bg: #5a5a5a;
-  --bs-tertiary-bg-rgb: 90, 90, 90;
-  --bs-card-bg: #6a6a6a;
-  --bs-body-color: #f0f0f0;
-  --bs-body-color-rgb: 240, 240, 240;
-  --bs-body-bg: #3a3a3a;
-  --bs-body-bg-rgb: 58, 58, 58;
-  --bs-code-color: #ffcc80;
-  --bs-link-color: #ff9f1a;
-  --bs-link-color-rgb: 255, 159, 26;
-  --bs-link-hover-color: #ffb84d;
-  --bs-link-hover-color-rgb: 255, 184, 77;
-  --bs-border-color: #ff9f1a;
-  --bs-border-color-translucent: rgba(255, 159, 26, 0.5);
-  --bs-nav-link-color: #ff9f1a !important;
-  --bs-border-secondary: #ffb84d;
-  --bs-border-secondary-rgb: 255, 184, 77;
+  --bs-primary: #268bd2;
+  --bs-primary-rgb: 38, 139, 210;
+  --bs-secondary: #2aa198;              
+  --bs-secondary-rgb: 42, 161, 152;
+  --bs-secondary-bg: #002b36; 
+  --bs-secondary-bg-rgb: 0, 43, 54;
+  --bs-tertiary-bg: #073642;
+  --bs-tertiary-bg-rgb: 7, 54, 66;
+  --bs-card-bg: #073642;
+  --bs-body-color: #839496;
+  --bs-body-color-rgb: 131, 148, 150;
+  --bs-body-bg: #002b36;
+  --bs-body-bg-rgb: 0, 43, 54;
+  --bs-code-color: #dc322f;
+  --bs-link-color: #268bd2;
+  --bs-link-color-rgb: 38, 139, 210;
+  --bs-link-hover-color: #2aa198;
+  --bs-link-hover-color-rgb: 42, 161, 152;
+  --bs-border-color: #586e75;
+  --bs-border-color-translucent: rgba(88, 110, 117, 0.5);
+  --bs-nav-link-color: #268bd2 !important;
+  --bs-border-secondary: #b58900;
+  --bs-border-secondary-rgb: 181, 137, 0;
 }
 
 /* https://www.onlinewebfonts.com/package/Ultima_Pro_Black */
@@ -87,12 +87,11 @@ body {
 }
 
 /* SVG Logo Styling */
-/* https://github.com/angel-rs/css-color-filter-generator */
+/* https://angel-rs.github.io/css-color-filter-generator/ */
 .site-logo {
     height: 30px;
     width: auto;
-    /* Einfache Orange-Färbung basierend auf #fe9500 */
-    filter: brightness(0) saturate(100%) invert(60%) sepia(62%) saturate(2415%) hue-rotate(1deg) brightness(102%) contrast(105%);
+    filter: brightness(0) saturate(100%) invert(45%) sepia(78%) saturate(791%) hue-rotate(169deg) brightness(89%) contrast(83%);
 }
 
 /* Navbar */
