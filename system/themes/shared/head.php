@@ -54,11 +54,55 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     
     <!-- Highlight.js CSS for Syntax Highlighting -->
-    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css"> -->
-    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/base16/solarized-light.css"> -->
-    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/base16/one-<?= $themeMode ?>.css"> -->
-    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/base16/github.css"> -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/stackoverflow-<?= $themeMode ?>.min.css">
+    <?php
+    // Mapping von Theme zu Highlight.js Styles
+    // https://highlightjs.org/demo
+    $highlightThemes = [
+        'github' => [
+            'light' => 'github',
+            'dark' => 'github-dark'
+        ],
+        'solarized' => [
+            'light' => 'base16/solarized-light',
+            'dark' => 'base16/solarized-dark'
+        ],
+        'monokai' => [
+            'light' => 'base16/monokai',
+            'dark' => 'monokai'
+        ],
+        'black' => [
+            'light' => 'base16/monokai',
+            'dark' => 'monokai'
+        ],
+        'one-atom' => [
+            'light' => 'atom-one-light',
+            'dark' => 'atom-one-dark'
+        ],
+        'material' => [
+            'light' => 'atom-one-light',
+            'dark' => 'atom-one-dark'
+        ]
+    ];
+    
+    // Standard-Theme auswählen
+    $currentThemeKey = $currentTheme ?? 'bootstrap';
+    $mode = $themeMode ?? 'light';
+    
+    // Highlight.js Theme bestimmen
+    if (isset($highlightThemes[$currentThemeKey][$mode])) {
+        $highlightStyle = $highlightThemes[$currentThemeKey][$mode];
+    } else {
+        // Fallback: stackoverflow
+        $highlightStyle = 'stackoverflow-' . $mode . '.min';
+    }
+    
+    $highlightUrl = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/{$highlightStyle}.css";
+    
+    // Theme-Mapping als JavaScript-Variable für clientseitiges Switching
+    echo "<script>window.HIGHLIGHT_THEME_MAP = " . json_encode($highlightThemes) . ";</script>\n";
+    echo "<script>window.CURRENT_THEME = " . json_encode($currentThemeKey) . ";</script>\n";
+    ?>
+    <link rel="stylesheet" href="<?= $highlightUrl ?>" id="highlight-theme">
 
     <!-- Theme CSS -->
     <style>

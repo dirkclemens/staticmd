@@ -65,7 +65,26 @@
             htmlElement.setAttribute('data-bs-theme', newTheme);
             localStorage.setItem('adminTheme', newTheme);
             updateThemeIcon(newTheme);
+            updateHighlightTheme(newTheme);
         });
+        
+        function updateHighlightTheme(mode) {
+            const themeMap = window.HIGHLIGHT_THEME_MAP || {};
+            const currentTheme = window.CURRENT_THEME || 'bootstrap';
+            
+            let highlightStyle;
+            if (themeMap[currentTheme] && themeMap[currentTheme][mode]) {
+                highlightStyle = themeMap[currentTheme][mode];
+            } else {
+                highlightStyle = 'stackoverflow-' + mode + '.min';
+            }
+            
+            const highlightLink = document.getElementById('highlight-theme');
+            if (highlightLink) {
+                const newUrl = `https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/${highlightStyle}.css`;
+                highlightLink.href = newUrl;
+            }
+        }
         
         function updateThemeIcon(theme) {
             if (theme === 'dark') {

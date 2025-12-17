@@ -142,7 +142,7 @@ blockquote {
 .sidebar .list-group-item {
     border: none;
     background-color: transparent;
-    margin: 1px;
+    margin: 1px 0px;
     padding: 0.5rem 1rem;
     color: var(--bs-text);
     transition: all 0.2s ease;
@@ -154,13 +154,13 @@ blockquote {
 .sidebar .list-group-item:hover {
     background-color: rgba(var(--bs-primary-rgb), 0.99);
     color: var(--bs-secondary-bg);
-    border-radius: 6px;
+    border-radius: 6px !important;
 }
 
 .sidebar .list-group-item.active {
     background-color: rgba(var(--bs-primary-rgb), 0.99);
     color: var(--bs-secondary-bg);
-    border-radius: 6px;
+    border-radius: 6px !important;
 }
 
 /* ===== Accordion Styles ===== */
