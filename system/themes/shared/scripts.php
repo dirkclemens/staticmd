@@ -46,8 +46,74 @@
                 top: 0,
                 behavior: 'smooth'
             });
-        });    
+        });
 
+        // Save Markdown Content functionality
+        const savePageBtn = document.getElementById('savePageBtn');
+        if (savePageBtn) {
+            savePageBtn.addEventListener('click', async function() {
+                const btn = this;
+                const originalIcon = btn.querySelector('i');
+                const originalClass = originalIcon.className;
+                
+                try {
+                    // Get current route from meta tag or URL
+                    const route = document.querySelector('meta[name="route"]')?.content || 
+                                 window.location.pathname.replace(/^\//, '').replace(/\/$/, '');
+                    
+                    if (!route) {
+                        alert('Konnte aktuelle Route nicht ermitteln');
+                        return;
+                    }
+                    
+                    // Show loading state
+                    originalIcon.className = 'bi bi-hourglass-split';
+                    btn.disabled = true;
+                    
+                    // Fetch markdown content from API
+                    const response = await fetch(`/download.php?route=${encodeURIComponent(route)}`);
+                    
+                    if (!response.ok) {
+                        throw new Error('Download fehlgeschlagen');
+                    }
+                    
+                    // Get filename from Content-Disposition header
+                    const contentDisposition = response.headers.get('Content-Disposition');
+                    let filename = 'page.md';
+                    if (contentDisposition) {
+                        const filenameMatch = contentDisposition.match(/filename="?(.+?)"?$/);
+                        if (filenameMatch) {
+                            filename = filenameMatch[1];
+                        }
+                    }
+                    
+                    // Get content and create download
+                    const blob = await response.blob();
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    a.click();
+                    
+                    // Cleanup
+                    URL.revokeObjectURL(url);
+                    
+                    // Show success
+                    originalIcon.className = 'bi bi-check-lg';
+                    setTimeout(() => {
+                        originalIcon.className = originalClass;
+                        btn.disabled = false;
+                    }, 1500);
+                    
+                } catch (error) {
+                    console.error('Save failed:', error);
+                    alert('Fehler beim Speichern: ' + error.message);
+                    originalIcon.className = originalClass;
+                    btn.disabled = false;
+                }
+            });
+        }
+    
         // Theme toggle functionality (shared across all admin pages)
         const themeToggle = document.getElementById('theme-toggle');
         const themeIcon = document.getElementById('theme-icon');

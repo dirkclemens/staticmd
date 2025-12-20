@@ -11,6 +11,8 @@ namespace StaticMD\Admin;
 class AdminAuth
 {
     private const BRUTE_FORCE_DELAY_MICROSECONDS = 500000; // 0.5 seconds
+    private const REMEMBER_ME_COOKIE_NAME = 'staticmd_remember_me';
+    private const REMEMBER_ME_COOKIE_LIFETIME = 365 * 24 * 60 * 60; // 1 Jahr
     
     private array $config;
 
@@ -34,7 +36,12 @@ class AdminAuth
      */
     public function isLoggedIn(): bool
     {
+        // Prüfe zuerst Session
         if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+            // Wenn keine Session, prüfe Remember-Me Cookie
+            if ($this->checkRememberMeCookie()) {
+                return true; // Cookie hat Session wiederhergestellt
+            }
             return false;
         }
         
@@ -42,13 +49,16 @@ class AdminAuth
             return false;
         }
         
-        // Prüfe Timeout basierend auf letzter Aktivität (nicht Login-Zeit)
-        $lastActivity = $_SESSION['admin_last_activity'] ?? $_SESSION['admin_login_time'];
-        $timeout = $this->config['admin']['session_timeout'] ?? 3600;
-        
-        if ((time() - $lastActivity) >= $timeout) {
-            $this->logout();
-            return false;
+        // Prüfe Timeout nur wenn "Remember Me" nicht aktiv ist
+        if (!isset($_SESSION['admin_remember_me']) || $_SESSION['admin_remember_me'] !== true) {
+            // Prüfe Timeout basierend auf letzter Aktivität (nicht Login-Zeit)
+            $lastActivity = $_SESSION['admin_last_activity'] ?? $_SESSION['admin_login_time'];
+            $timeout = $this->config['admin']['session_timeout'] ?? 3600;
+            
+            if ((time() - $lastActivity) >= $timeout) {
+                $this->logout();
+                return false;
+            }
         }
         
         // Session bei Aktivität verlängern (sliding session)
@@ -68,7 +78,7 @@ class AdminAuth
      * @param string $password Plain-text password to verify
      * @return bool True if login successful, false otherwise
      */
-    public function login(string $username, string $password): bool
+    public function login(string $username, string $password, bool $rememberMe = false): bool
     {
         $validUsername = $this->config['admin']['username'];
         $validPasswordHash = $this->config['admin']['password'];
@@ -78,9 +88,15 @@ class AdminAuth
             $_SESSION['admin_username'] = $username;
             $_SESSION['admin_login_time'] = time();
             $_SESSION['admin_last_activity'] = time();
+            $_SESSION['admin_remember_me'] = $rememberMe;
             
             // Regenerate session ID to prevent session fixation attacks
             session_regenerate_id(true);
+            
+            // Setze Remember-Me Cookie wenn gewünscht
+            if ($rememberMe) {
+                $this->setRememberMeCookie($username);
+            }
             
             return true;
         }
@@ -108,6 +124,9 @@ class AdminAuth
                 $params["secure"], $params["httponly"]
             );
         }
+        
+        // Lösche Remember-Me Cookie
+        $this->deleteRememberMeCookie();
         
         session_destroy();
     }
@@ -209,7 +228,110 @@ class AdminAuth
             'session_timeout' => $this->config['admin']['session_timeout'],
             'time_remaining' => $this->getTimeRemaining(),
             'elapsed_since_login' => $currentTime - $loginTime,
-            'elapsed_since_activity' => $currentTime - $lastActivity
+            'elapsed_since_activity' => $currentTime - $lastActivity,
+            'remember_me' => $_SESSION['admin_remember_me'] ?? false
         ];
+    }
+
+    /**
+     * Setze Remember-Me Cookie mit sicherem Token
+     * 
+     * @param string $username Username für Cookie
+     */
+    private function setRememberMeCookie(string $username): void
+    {
+        // Generiere sicheren Token
+        $token = bin2hex(random_bytes(32));
+        $cookieValue = base64_encode(json_encode([
+            'username' => $username,
+            'token' => $token,
+            'created' => time()
+        ]));
+        
+        // Speichere Token-Hash in Session für spätere Validierung
+        $_SESSION['admin_remember_token'] = hash('sha256', $token);
+        
+        // Setze Cookie (1 Jahr Gültigkeit)
+        setcookie(
+            self::REMEMBER_ME_COOKIE_NAME,
+            $cookieValue,
+            [
+                'expires' => time() + self::REMEMBER_ME_COOKIE_LIFETIME,
+                'path' => '/',
+                'domain' => '',
+                'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
+                'httponly' => true,
+                'samesite' => 'Lax'
+            ]
+        );
+    }
+
+    /**
+     * Prüfe und validiere Remember-Me Cookie
+     * 
+     * @return bool True wenn Cookie gültig und Session wiederhergestellt
+     */
+    private function checkRememberMeCookie(): bool
+    {
+        if (!isset($_COOKIE[self::REMEMBER_ME_COOKIE_NAME])) {
+            return false;
+        }
+        
+        try {
+            $cookieData = json_decode(base64_decode($_COOKIE[self::REMEMBER_ME_COOKIE_NAME]), true);
+            
+            if (!$cookieData || !isset($cookieData['username'], $cookieData['token'], $cookieData['created'])) {
+                $this->deleteRememberMeCookie();
+                return false;
+            }
+            
+            // Validiere Username
+            $validUsername = $this->config['admin']['username'];
+            if ($cookieData['username'] !== $validUsername) {
+                $this->deleteRememberMeCookie();
+                return false;
+            }
+            
+            // Cookie ist gültig - stelle Session wieder her
+            $_SESSION['admin_logged_in'] = true;
+            $_SESSION['admin_username'] = $cookieData['username'];
+            $_SESSION['admin_login_time'] = time();
+            $_SESSION['admin_last_activity'] = time();
+            $_SESSION['admin_remember_me'] = true;
+            $_SESSION['admin_remember_token'] = hash('sha256', $cookieData['token']);
+            
+            // Regenerate session ID
+            session_regenerate_id(true);
+            
+            // Erneuere Cookie
+            $this->setRememberMeCookie($cookieData['username']);
+            
+            return true;
+        } catch (\Exception $e) {
+            $this->deleteRememberMeCookie();
+            return false;
+        }
+    }
+
+    /**
+     * Lösche Remember-Me Cookie
+     */
+    private function deleteRememberMeCookie(): void
+    {
+        if (isset($_COOKIE[self::REMEMBER_ME_COOKIE_NAME])) {
+            setcookie(
+                self::REMEMBER_ME_COOKIE_NAME,
+                '',
+                [
+                    'expires' => time() - 3600,
+                    'path' => '/',
+                    'domain' => '',
+                    'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
+                    'httponly' => true,
+                    'samesite' => 'Lax'
+                ]
+            );
+            unset($_COOKIE[self::REMEMBER_ME_COOKIE_NAME]);
+        }
     }
 }

@@ -40,6 +40,7 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="<?= htmlspecialchars($meta['description'] ?? 'Powered by StaticMD') ?>">
     <meta name="author" content="<?= htmlspecialchars($meta['author'] ?? '') ?>">
+    <meta name="route" content="<?= htmlspecialchars($currentRoute ?? '') ?>">
     
     <!-- SEO/Robots Meta-Tags -->
     <?= $robotsMeta ?? '' ?>

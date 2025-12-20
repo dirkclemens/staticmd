@@ -120,6 +120,19 @@ $nonce = SecurityHeaders::getNonce();
                                        required autocomplete="current-password">
                             </div>
                             
+                            <div class="mb-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="remember_me" name="remember_me" value="1">
+                                    <label class="form-check-label" for="remember_me">
+                                        <i class="bi bi-clock-history me-1"></i>
+                                        <?= __('admin.login.remember_me') ?>
+                                    </label>
+                                    <div class="form-text">
+                                        <?= __('admin.login.remember_me_help') ?>
+                                    </div>
+                                </div>
+                            </div>
+                            
                             <button type="submit" class="btn btn-primary btn-login w-100">
                                 <i class="bi bi-box-arrow-in-right me-2"></i>
                                 <?= __('admin.login.signin') ?>

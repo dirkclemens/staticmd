@@ -37,7 +37,7 @@ include __DIR__ . '/../shared/head.php';
                     <div class="mb-4">
                         <form action="/search" method="GET">
                             <div class="input-group">
-                                <input type="search" name="q" class="form-control text-light border-secondary" 
+                                <input type="search" name="q" class="form-control border-secondary" 
                                        placeholder="Suchen..." value="<?= htmlspecialchars($_GET['q'] ?? '') ?>">
                                 <button class="btn border-secondary" type="submit">
                                     <i class="bi bi-search"></i>

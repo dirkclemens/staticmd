@@ -65,11 +65,21 @@ return [
             'back_to_dashboard' => 'Back to Dashboard',
             'keyboard_shortcuts' => 'Keyboard Shortcuts',
             'return_to_page' => 'Return to page',
-        ],
+        ],        
+        'toolbar' => [
+            'edit_page' => 'Edit Page',
+            'new_page' => 'New Page',
+            'logout' => 'Logout',
+            'admin_dashboard' => 'Admin Dashboard',
+            'save_page' => 'Save Page',
+            'scroll_to_top' => 'Scroll to top'
+        ],        
         'login' => [
             'title' => 'Please sign in',
             'username' => 'Username',
             'password' => 'Password',
+            'remember_me' => 'Keep me logged in',
+            'remember_me_help' => 'You will stay logged in, even after inactivity or sleep mode',
             'signin' => 'Sign in',
             'back_to_site' => 'Back to website',
             'logged_out' => 'You have been logged out successfully.',

@@ -66,10 +66,20 @@ return [
             'keyboard_shortcuts' => 'Tastenkombinationen',
             'return_to_page' => 'Zurück zur Seite',
         ],
+        'toolbar' => [
+            'edit_page' => 'Seite bearbeiten',
+            'new_page' => 'Neue Seite',
+            'logout' => 'Abmelden',
+            'admin_dashboard' => 'Admin Dashboard',
+            'save_page' => 'Seite speichern',
+            'scroll_to_top' => 'Nach oben scrollen'
+        ],
         'login' => [
             'title' => 'Bitte melden Sie sich an',
             'username' => 'Benutzername',
             'password' => 'Passwort',
+            'remember_me' => 'Immer angemeldet bleiben',
+            'remember_me_help' => 'Sie bleiben angemeldet, auch nach Inaktivität oder Ruhemodus',
             'signin' => 'Anmelden',
             'back_to_site' => 'Zurück zur Website',
             'logged_out' => 'Sie wurden erfolgreich abgemeldet.',

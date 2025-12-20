@@ -198,8 +198,9 @@ class AdminController {
             $username = $_POST['username'] ?? '';
             $password = $_POST['password'] ?? '';
             $csrfToken = $_POST['csrf_token'] ?? '';
+            $rememberMe = isset($_POST['remember_me']) && $_POST['remember_me'] === '1';
             
-            if ($this->auth->verifyCSRFToken($csrfToken) && $this->auth->login($username, $password)) {
+            if ($this->auth->verifyCSRFToken($csrfToken) && $this->auth->login($username, $password, $rememberMe)) {
                 header('Location: /admin');
                 exit;
             } else {

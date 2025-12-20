@@ -7,7 +7,7 @@
 // Theme configuration
 $siteName = $config['system']['name'] ?? 'StaticMD';
 $currentRoute = $_GET['route'] ?? 'index';
-$currentTheme = 'orange';
+$currentTheme = 'solarized';
 $themeMode = 'light'; // 'light' or 'dark'
 
 // Include shared head section
