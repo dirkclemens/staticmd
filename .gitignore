@@ -6,7 +6,7 @@
 **/assets/*.woff2
 **/assets/galleries/*
 **/public/assets/galleries/*
-**/content/*
+**/content/*.md
 **/content/tech/*
 **/content/test/*
 **/content/photos/*
