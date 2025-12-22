@@ -11,7 +11,7 @@ use StaticMD\Admin\AdminAuth;
 
 /**
  * ShortcodeProcessor
- * Verarbeitet alle Shortcodes: [pages], [tags], [gallery], [bloglist], [folder], [auth]...[/auth]
+ * Verarbeitet alle Shortcodes: [pages], [tags], [gallery], [bloglist], [folder], [authstart]...[authstop]
  */
 class ShortcodeProcessor
 {
@@ -71,7 +71,7 @@ class ShortcodeProcessor
         
         // 2. Shortcodes verarbeiten
         
-        // Zuerst Block-Shortcodes verarbeiten: [auth]...[/auth]
+        // Zuerst Block-Shortcodes verarbeiten: [authstart]...[authstop]
         $content = $this->processAuthBlocks($content);
         
         // Dann einfache Shortcodes
@@ -355,20 +355,20 @@ class ShortcodeProcessor
     }
     
     /**
-     * Verarbeitet [auth]...[/auth] Block-Shortcodes
+     * Verarbeitet [authstart]...[authstop] Block-Shortcodes
      * Inhalt wird nur angezeigt wenn Benutzer eingeloggt ist
      * 
      * Syntax:
-     *   [auth]Dieser Inhalt ist nur für eingeloggte Nutzer sichtbar[/auth]
-     *   [auth message="Bitte anmelden"]Geschützter Inhalt[/auth]
+     *   [authstart]Dieser Inhalt ist nur für eingeloggte Nutzer sichtbar[authstop]
+     *   [authstart message="Bitte anmelden"]Geschützter Inhalt[authstop]
      * 
      * @param string $content Der zu verarbeitende Content
      * @return string Content mit verarbeiteten Auth-Blöcken
      */
     private function processAuthBlocks(string $content): string
     {
-        // Pattern für [auth] oder [auth message="..."]...[/auth]
-        $pattern = '/\[auth(?:\s+message=["\']([^"\']*)["\'])?\](.*?)\[\/auth\]/s';
+        // Pattern für [authstart] oder [authstart message="..."]...[authstop]
+        $pattern = '/\[authstart(?:\s+message=["\']([^"\']*)["\'])?\](.*?)\[authstop\]/s';
         
         return preg_replace_callback($pattern, function($matches) {
             $customMessage = $matches[1] ?? '';

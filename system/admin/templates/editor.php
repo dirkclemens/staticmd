@@ -392,6 +392,9 @@ $nonce = SecurityHeaders::getNonce();
                                 <button type="button" class="btn btn-outline-info btn-sm" id="fullscreenBtn" title="<?= __('admin.editor.fullscreen') ?>">
                                     <i class="bi bi-arrows-fullscreen"></i>
                                 </button>
+                                <button type="button" class="btn btn-outline-primary btn-sm" id="validateMarkdownBtn" onclick="validateMarkdown()" title="Markdown-Syntax prüfen">
+                                    <i class="bi bi-check2-circle me-1"></i> Syntax prüfen
+                                </button>
                                 <button type="button" class="btn btn-outline-secondary btn-sm" onclick="cancelEdit()">
                                     <i class="bi bi-x-circle me-1"></i> <?= __('admin.common.cancel') ?>
                                 </button>
@@ -456,6 +459,239 @@ $nonce = SecurityHeaders::getNonce();
             doc.replaceSelection(accordionText);
             editor.focus();
         }
+        
+        // Markdown-Syntax-Validierung
+        function validateMarkdown() {
+            const content = editor.getValue();
+            const validateBtn = document.getElementById('validateMarkdownBtn');
+            
+            // Loading state
+            validateBtn.disabled = true;
+            validateBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Prüfe...';
+            
+            // Validierung durchführen
+            setTimeout(() => {
+                const results = performMarkdownValidation(content);
+                
+                validateBtn.disabled = false;
+                validateBtn.innerHTML = '<i class="bi bi-check2-circle me-1"></i> Syntax prüfen';
+                
+                showValidationResults(results);
+            }, 300);
+        }
+        
+        function performMarkdownValidation(markdown) {
+            const issues = [];
+            const warnings = [];
+            const suggestions = [];
+            const lines = markdown.split('\n');
+            
+            let inCodeBlock = false;
+            let inFrontMatter = false;
+            const headingLevels = [];
+            
+            lines.forEach((line, index) => {
+                const lineNum = index + 1;
+                
+                // Track code blocks
+                if (line.trim().startsWith('```')) {
+                    inCodeBlock = !inCodeBlock;
+                    return;
+                }
+                
+                // Track front matter
+                if (line.trim() === '---') {
+                    if (index === 0) {
+                        inFrontMatter = true;
+                    } else if (inFrontMatter) {
+                        inFrontMatter = false;
+                    }
+                    return;
+                }
+                
+                // Skip validation in code blocks and front matter
+                if (inCodeBlock || inFrontMatter) return;
+                
+                // Check for unmatched brackets in links
+                const linkMatches = line.match(/\[([^\]]*)\]/g);
+                if (linkMatches) {
+                    linkMatches.forEach(match => {
+                        if (!match.includes('](') && !line.includes('{#')) {
+                            const nextChar = line[line.indexOf(match) + match.length];
+                            if (nextChar !== '(' && nextChar !== '[') {
+                                warnings.push(`Zeile ${lineNum}: Möglicherweise unvollständiger Link: ${match}`);
+                            }
+                        }
+                    });
+                }
+                
+                // Check for broken image syntax
+                if (line.includes('![') && !line.match(/!\[[^\]]*\]\([^)]+\)/) && !line.match(/!\[[^\]]*\]\[[^\]]+\]/) && !line.includes('[image')) {
+                    issues.push(`Zeile ${lineNum}: Unvollständige Bild-Syntax gefunden`);
+                }
+                
+                // Check for multiple spaces (common formatting issue)
+                if (line.match(/  +/) && !line.trim().startsWith('-') && !line.trim().startsWith('*')) {
+                    warnings.push(`Zeile ${lineNum}: Mehrfache Leerzeichen gefunden (möglicherweise beabsichtigt für Zeilenumbruch)`);
+                }
+                
+                // Check heading structure
+                const headingMatch = line.match(/^(#{1,6})\s+(.+)/);
+                if (headingMatch) {
+                    const level = headingMatch[1].length;
+                    headingLevels.push(level);
+                    
+                    // Check for missing space after #
+                    if (!line.match(/^#{1,6}\s/)) {
+                        issues.push(`Zeile ${lineNum}: Fehlender Leerzeichen nach # in Überschrift`);
+                    }
+                    
+                    // Warn about skipping heading levels
+                    if (headingLevels.length > 1) {
+                        const prevLevel = headingLevels[headingLevels.length - 2];
+                        if (level > prevLevel + 1) {
+                            warnings.push(`Zeile ${lineNum}: Überschriften-Level übersprungen (H${prevLevel} → H${level})`);
+                        }
+                    }
+                }
+                
+                // Check for unescaped special characters in potential issues
+                if (line.includes('_') && line.match(/\w_\w/) && !line.includes('`')) {
+                    suggestions.push(`Zeile ${lineNum}: Unterstrich '_' könnte als Kursiv interpretiert werden`);
+                }
+                
+                // Check for trailing spaces (except for intentional line breaks)
+                if (line.endsWith(' ') && !line.endsWith('  ')) {
+                    suggestions.push(`Zeile ${lineNum}: Einzelnes Leerzeichen am Zeilenende (kein Zeilenumbruch-Effekt)`);
+                }
+                
+                // Check for empty links
+                if (line.match(/\[\]\(/)) {
+                    issues.push(`Zeile ${lineNum}: Leerer Link-Text gefunden`);
+                }
+                if (line.match(/\[[^\]]+\]\(\)/)) {
+                    issues.push(`Zeile ${lineNum}: Link ohne URL gefunden`);
+                }
+                
+                // Check for unmatched bold/italic markers
+                const asterisks = (line.match(/\*/g) || []).length;
+                if (asterisks % 2 !== 0 && !line.includes('*')) {
+                    warnings.push(`Zeile ${lineNum}: Ungerade Anzahl von * (möglicherweise ungeschlossenes Bold/Italic)`);
+                }
+                
+                // Check for missing alt text in images
+                if (line.match(/!\[\]\(/)) {
+                    warnings.push(`Zeile ${lineNum}: Bild ohne Alt-Text (für Barrierefreiheit empfohlen)`);
+                }
+                
+                // Check for very long lines (readability)
+                if (line.length > 120 && !line.trim().startsWith('|')) {
+                    suggestions.push(`Zeile ${lineNum}: Sehr lange Zeile (${line.length} Zeichen) - erwäge Umbruch für bessere Lesbarkeit`);
+                }
+            });
+            
+            // Check if file ends with newline
+            if (markdown.length > 0 && !markdown.endsWith('\n')) {
+                suggestions.push('Datei endet nicht mit Zeilenumbruch (empfohlen)');
+            }
+            
+            // Check for multiple consecutive blank lines
+            if (markdown.match(/\n\n\n+/)) {
+                suggestions.push('Mehrere aufeinanderfolgende Leerzeilen gefunden (eine genügt meist)');
+            }
+            
+            return {
+                hasErrors: issues.length > 0,
+                hasWarnings: warnings.length > 0,
+                hasSuggestions: suggestions.length > 0,
+                issues: issues,
+                warnings: warnings,
+                suggestions: suggestions,
+                summary: getSummary(issues.length, warnings.length, suggestions.length)
+            };
+        }
+        
+        function getSummary(errorCount, warningCount, suggestionCount) {
+            if (errorCount === 0 && warningCount === 0 && suggestionCount === 0) {
+                return '✓ Keine Probleme gefunden! Ihr Markdown sieht gut aus.';
+            }
+            
+            const parts = [];
+            if (errorCount > 0) parts.push(`${errorCount} Fehler`);
+            if (warningCount > 0) parts.push(`${warningCount} Warnung(en)`);
+            if (suggestionCount > 0) parts.push(`${suggestionCount} Verbesserungsvorschlag/-schläge`);
+            
+            return parts.join(', ') + ' gefunden.';
+        }
+        
+        function showValidationResults(validation) {
+            const alertClass = validation.hasErrors ? 'danger' : 
+                              validation.hasWarnings ? 'warning' : 
+                              validation.hasSuggestions ? 'info' : 'success';
+            
+            const iconClass = validation.hasErrors ? 'exclamation-triangle' : 
+                             validation.hasWarnings ? 'exclamation-circle' : 
+                             validation.hasSuggestions ? 'info-circle' : 'check-circle';
+            
+            let issuesHtml = '';
+            if (validation.issues.length > 0) {
+                issuesHtml += '<div class="alert alert-danger"><h6><i class="bi bi-exclamation-triangle me-2"></i>Fehler</h6><ul class="mb-0">';
+                validation.issues.forEach(issue => {
+                    issuesHtml += `<li>${escapeHtml(issue)}</li>`;
+                });
+                issuesHtml += '</ul></div>';
+            }
+            
+            if (validation.warnings.length > 0) {
+                issuesHtml += '<div class="alert alert-warning"><h6><i class="bi bi-exclamation-circle me-2"></i>Warnungen</h6><ul class="mb-0">';
+                validation.warnings.forEach(warning => {
+                    issuesHtml += `<li>${escapeHtml(warning)}</li>`;
+                });
+                issuesHtml += '</ul></div>';
+            }
+            
+            if (validation.suggestions.length > 0) {
+                issuesHtml += '<div class="alert alert-info"><h6><i class="bi bi-lightbulb me-2"></i>Verbesserungsvorschläge</h6><ul class="mb-0">';
+                validation.suggestions.forEach(suggestion => {
+                    issuesHtml += `<li>${escapeHtml(suggestion)}</li>`;
+                });
+                issuesHtml += '</ul></div>';
+            }
+            
+            const modalHtml = `
+                <div class="modal fade" id="validationModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">
+                                    <i class="bi bi-${iconClass} text-${alertClass} me-2"></i>
+                                    Markdown Syntax-Prüfung
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="alert alert-${alertClass}">
+                                    <strong>${validation.summary}</strong>
+                                </div>
+                                ${issuesHtml}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schließen</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Remove existing modal if present
+            const existingModal = document.getElementById('validationModal');
+            if (existingModal) existingModal.remove();
+            
+            // Add new modal and show it
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            new bootstrap.Modal(document.getElementById('validationModal')).show();
+        }
+        
         let editor;
         let currentView = 'editor';
         let timeRemaining = <?= $timeRemaining ?>;
