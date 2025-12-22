@@ -1,13 +1,11 @@
 ---
 Title: 2b. Project Structure
-Author: System
-Layout: Standard
 Tag: features, documentation
+Author: System
+Visibility: public
 ---
 
-# StaticMD - Overview
-
-## 📦 Project Structure
+# 📦 Project Structure
 ```
 staticMD/
 ├── index.php                 # Frontend entry point

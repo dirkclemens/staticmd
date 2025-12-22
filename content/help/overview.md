@@ -1,37 +1,9 @@
 ---
 Title: 1. Overview
 Visibility: public
-Layout: Standard
----
-[pages /help/]
----
-# Welcome to StaticMD
-
-StaticMD is a professional PHP-based CMS for Markdown content with Bootstrap frontend and comprehensive admin interface. The software features a complete **gallery system**, **9 beautiful themes**, **advanced security**, and **45+ implemented features**.
-
-**Perfect for**: Technical documentation, wikis, blogs, knowledge bases, image galleries, and content-driven websites.
-
-**New**: Gallery layouts, enhanced shortcode system, improved security, and comprehensive backup functionality.
-
 ---
 
-## 🚀 Key Features
-- ✅ **Enhanced Markdown Parser** with shortcodes, ~150 emojis, LaTeX math, accordions
-- ✅ **9 Frontend Themes** (Bootstrap, Solarized Light/Dark, Monokai Light/Dark, GitHub Light/Dark, Static-MD, AdCore)
-- ✅ **Gallery System** with automatic image loading, lightbox, and tag filtering
-- ✅ **CodeMirror Editor** with 5 themes, enhanced toolbar, drag&drop upload
-- ✅ **Smart Upload System** for PDF/ZIP with automatic download tag insertion
-- ✅ **Image Upload** with drag&drop and automatic markdown insertion
-- ✅ **Full-text Search** with weighted relevance and tag filtering
-- ✅ **Unicode/Umlaut Support** with NFC/NFD normalization for German content
-- ✅ **Yellow CMS Compatibility** for seamless migration
-- ✅ **Professional Admin Dashboard** with statistics, file manager, backup system
-- ✅ **Advanced Security** with CSRF protection, CSP headers, session management
-- ✅ **SEO & Search Engine Control** with dynamic robots.txt and per-page settings
-- ✅ **Navigation System** with configurable ordering and breadcrumb support
-- ✅ **Shortcode System** with code-block protection and pre-processing
-
----
+# Overview
 
 ## 📝 Markdown Features
 

@@ -512,6 +512,11 @@ $nonce = SecurityHeaders::getNonce();
                 // Skip validation in code blocks and front matter
                 if (inCodeBlock || inFrontMatter) return;
                 
+                // Check for StaticMD shortcodes (valid syntax, keine Warnung)
+                if (line.match(/\[(pages|tags|folder|download|image|accordionstart|accordionstop)\s/)) {
+                    return; // Shortcodes sind gültig, keine weitere Validierung
+                }
+                
                 // Check for unmatched brackets in links
                 const linkMatches = line.match(/\[([^\]]*)\]/g);
                 if (linkMatches) {
@@ -556,7 +561,9 @@ $nonce = SecurityHeaders::getNonce();
                 }
                 
                 // Check for unescaped special characters in potential issues
-                if (line.includes('_') && line.match(/\w_\w/) && !line.includes('`')) {
+                // Aber NICHT in URLs, Links oder Bildern
+                if (line.includes('_') && line.match(/\w_\w/) && !line.includes('`') && 
+                    !line.match(/https?:\/\//) && !line.match(/\[.*\]\(.*_.*\)/) && !line.match(/!\[.*\]\(.*_.*\)/)) {
                     suggestions.push(`Zeile ${lineNum}: Unterstrich '_' könnte als Kursiv interpretiert werden`);
                 }
                 

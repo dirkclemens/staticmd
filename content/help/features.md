@@ -1,11 +1,11 @@
 ---
 Title: 2. Feature Overview
-Author: System
-Layout: Standard
 Tag: features, documentation
+Author: System
+Visibility: public
 ---
 
-# StaticMD - Feature Overview
+# Feature Overview
 
 > **Status Legend**: ✅ Fully Implemented | 🚧 In Development | ❌ Not Implemented
 

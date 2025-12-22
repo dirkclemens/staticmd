@@ -1,9 +1,9 @@
 ---
-Title: End User Documentation
+Title: 0. End User Documentation
 Visibility: public
-Layout: Standard
 ---
-# StaticMD - End User Documentation
+
+# End User Documentation
 
 Welcome to **StaticMD**, an easy-to-use content management system for creating websites with Markdown.  
 This guide will help you get started and master all features.
