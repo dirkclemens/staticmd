@@ -108,7 +108,66 @@ include __DIR__ . '/../shared/head.php';
     include __DIR__ . '/../shared/scripts.php'; 
     ?>    
 
-    <!-- insert custom javascript here -->
+    <!-- KaTeX JS -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+        
+    <script>
+        // Copy code to clipboard function
+        function copyCode(button) {
+            const codeBlock = button.previousElementSibling.querySelector('code');
+            const code = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                // Visual feedback
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<i class="bi bi-check"></i>';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalHTML;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Fehler beim Kopieren:', err);
+            });
+        }
+        
+        // Copy inline code to clipboard function
+        function copyInlineCode(button) {
+            const codeElement = button.previousElementSibling;
+            const code = codeElement.textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                // Visual feedback
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<i class="bi bi-check"></i>';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalHTML;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Fehler beim Kopieren:', err);
+            });
+        }
+        
+        // KaTeX Math Rendering
+        document.addEventListener("DOMContentLoaded", function() {
+            if (typeof renderMathInElement !== 'undefined') {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError : false
+                });
+            }
+        });
+    </script>
     
 </body>
 </html>

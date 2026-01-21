@@ -41,11 +41,11 @@ class MarkdownParser
                     $paragraphContent = '';
                 }
                 if ($inCodeBlock) {
-                    $html .= "</code></pre>\n";
+                    $html .= "</code></pre><button class=\"copy-code-btn\" onclick=\"copyCode(this)\" title=\"Code kopieren\"><i class=\"bi bi-clipboard\"></i></button></div>\n";
                     $inCodeBlock = false;
                 } else {
                     $language = trim(substr($trimmedLine, 3));
-                    $html .= '<pre><code class="language-' . htmlspecialchars($language) . '">';
+                    $html .= '<div class="code-block-wrapper"><pre><code class="language-' . htmlspecialchars($language) . '">';
                     $inCodeBlock = true;
                 }
                 continue;
@@ -293,7 +293,7 @@ class MarkdownParser
         $text = preg_replace_callback('/`([^`]+)`/', function($matches) use (&$codeBlocks, &$codeIndex) {
             $placeholder = '___CODE_BLOCK_' . $codeIndex . '___';
             // htmlspecialchars für Code-Inhalt verwenden, um alle Zeichen sicher zu escapen
-            $codeBlocks[$placeholder] = '<code>' . htmlspecialchars($matches[1]) . '</code>';
+            $codeBlocks[$placeholder] = '<span class="inline-code-wrapper"><code>' . htmlspecialchars($matches[1]) . '</code><button class="copy-inline-btn" onclick="copyInlineCode(this)" title="Code kopieren"><i class="bi bi-clipboard"></i></button></span>';
             $codeIndex++;
             return $placeholder;
         }, $text);

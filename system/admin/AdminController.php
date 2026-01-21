@@ -341,7 +341,8 @@ class AdminController {
                                 $meta[trim($key)] = trim($value, ' "\'');
                             }
                         }
-                        $content = trim($parts[2]);
+                        // Nur führende Leerzeilen entfernen, nachfolgende Leerzeilen behalten
+                        $content = ltrim($parts[2]);
                     }
                 } else {
                     $content = $rawContent;

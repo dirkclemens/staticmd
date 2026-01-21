@@ -19,6 +19,10 @@
                     <i class="bi bi-file-earmark-plus"></i>
                 </a>                
             <?php endif; ?>
+            <!-- Save Page Button -->
+            <button id="savePageBtn" class="btn btn-info rounded-circle shadow" title="<?= \StaticMD\Core\I18n::t('admin.toolbar.save_page') ?>">
+                <i class="bi bi-download"></i>
+            </button>
             <!-- Logout Button -->
             <a href="/admin?action=logout" class="btn btn-secondary rounded-circle shadow" title="<?= \StaticMD\Core\I18n::t('admin.toolbar.logout') ?>">
                 <i class="bi bi-box-arrow-right"></i>
@@ -28,10 +32,6 @@
         <a href="/admin?return_to_frontend=1" class="btn btn-primary rounded-circle shadow" title="<?= \StaticMD\Core\I18n::t('admin.toolbar.admin_dashboard') ?>">
             <i class="bi bi-gear"></i>
         </a>
-        <!-- Save Page Button -->
-        <button id="savePageBtn" class="btn btn-info rounded-circle shadow" title="<?= \StaticMD\Core\I18n::t('admin.toolbar.save_page') ?>">
-            <i class="bi bi-download"></i>
-        </button>
         <!-- Scroll to Top Button -->
         <button id="scrollTopBtn" type="button" class="scroll-to-top btn rounded-circle shadow" aria-label="<?= \StaticMD\Core\I18n::t('admin.toolbar.scroll_to_top') ?>">
             <i class="bi bi-arrow-up"></i>

@@ -513,7 +513,7 @@ $nonce = SecurityHeaders::getNonce();
                 if (inCodeBlock || inFrontMatter) return;
                 
                 // Check for StaticMD shortcodes (valid syntax, keine Warnung)
-                if (line.match(/\[(pages|tags|folder|download|image|accordionstart|accordionstop)\s/)) {
+                if (line.match(/\[(pages|tags|folder|download|image|accordionstart|accordionstop|authstart|authstop)(\s|\])/)) {
                     return; // Shortcodes sind gültig, keine weitere Validierung
                 }
                 
@@ -597,14 +597,15 @@ $nonce = SecurityHeaders::getNonce();
                 }
             });
             
-            // Check if file ends with newline
+            // Check if file ends with newline - nur als Info, kein Fehler
             if (markdown.length > 0 && !markdown.endsWith('\n')) {
-                suggestions.push('Datei endet nicht mit Zeilenumbruch (empfohlen)');
+                suggestions.push('Datei endet nicht mit Zeilenumbruch (empfohlen für Git/Unix-Systeme)');
             }
             
-            // Check for multiple consecutive blank lines
-            if (markdown.match(/\n\n\n+/)) {
-                suggestions.push('Mehrere aufeinanderfolgende Leerzeilen gefunden (eine genügt meist)');
+            // Check for multiple consecutive blank lines - toleranter
+            // Erlaube bis zu 3 aufeinanderfolgende Leerzeilen (häufig gewollt für Struktur)
+            if (markdown.match(/\n\n\n\n+/)) {
+                suggestions.push('Sehr viele aufeinanderfolgende Leerzeilen gefunden (mehr als 3)');
             }
             
             return {
@@ -773,6 +774,46 @@ $nonce = SecurityHeaders::getNonce();
                     "Ctrl-K Ctrl-U": "toUpperCase",      // Großbuchstaben
                     "Ctrl-K Ctrl-L": "toLowerCase"      // Kleinbuchstaben
                 }
+            });
+
+            // Zeilenende-Markierungen hinzufügen
+            editor.on('renderLine', function(cm, line, element) {
+                // Entferne existierende Pilcrows, falls vorhanden (bei Re-Render)
+                const existingPilcrow = element.querySelector('.cm-pilcrow');
+                if (existingPilcrow) {
+                    existingPilcrow.remove();
+                }
+                
+                // Füge Pilcrow-Zeichen am Ende jeder Zeile hinzu
+                const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+                const color = isDark ? 'rgba(128,128,128,0.5)' : 'rgba(128,128,128,0.5)';
+                
+                const pilcrow = document.createElement('span');
+                // pilcrow.textContent = '¶';
+                pilcrow.textContent = '↵'; 
+                pilcrow.className = 'cm-pilcrow';
+                pilcrow.style.cssText = `color: ${color}; font-size: 0.85em; margin-left: 2px; user-select: none; pointer-events: none;`;
+                element.appendChild(pilcrow);
+            });
+            
+            // Initiales Refresh, um alle Zeilen zu rendern
+            setTimeout(() => {
+                editor.refresh();
+            }, 100);
+            
+            // Dark mode Anpassung für Pilcrow - bei Theme-Wechsel neu rendern
+            const updatePilcrowColor = function() {
+                editor.refresh(); // Erzwingt komplettes Re-Render aller Zeilen
+            };
+            
+            // Theme-Wechsel überwachen
+            const observer = new MutationObserver(updatePilcrowColor);
+            observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-bs-theme'] });
+            
+            // Bei Scroll und Changes auch refreshen (falls Zeilen neu gerendert werden)
+            editor.on('changes', function() {
+                // Kurze Verzögerung, damit CodeMirror erst seine internen Updates macht
+                setTimeout(() => editor.refresh(), 10);
             });
 
             // Drag&Drop-Upload für Bilder (jetzt nach Initialisierung)

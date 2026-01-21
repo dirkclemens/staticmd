@@ -102,6 +102,26 @@ body {
     color: var(--bs-primary) !important;
 }
 
+h2 {
+    padding-left: 0.8rem;
+}
+h3 {
+    padding-left: 1.6rem;
+}
+h4 {
+    padding-left: 2.4rem;
+}
+h5 {
+    padding-left: 3.2rem;
+}
+h6 {
+    padding-left: 3.2rem;
+}
+p {
+    padding-left: 3.2rem;
+}
+
+
 /* Code Blocks */
 pre {
     background-color: var(--bs-tertiary-bg);
