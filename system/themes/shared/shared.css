@@ -9,6 +9,11 @@ body {
     line-height: 1.6;
 }
 
+.container, .container-fluid {
+    padding-left: 2rem;
+    padding-right: 4rem;
+}
+
 /* Navbar */
 .navbar {
     background-color: var(--bs-secondary-bg) !important;

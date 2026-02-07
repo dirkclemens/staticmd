@@ -14,7 +14,7 @@ Dokumentation aller wichtigen Entwicklungsschritte und implementierten Features.
 - **NEU**: 5 CodeMirror Editor-Themes mit Live-Vorschau
 - **NEU**: Theme-Management über Settings-Interface
 - **NEU**: Automatisches Theme-Loading über TemplateEngine
-
+ 
 ### 🔧 Admin-Interface 2.0
 - **NEU**: Delete-Funktionalität mit sicherem Bestätigungs-Modal
 - **NEU**: Return-URL Navigation für nahtlose Benutzererfahrung
