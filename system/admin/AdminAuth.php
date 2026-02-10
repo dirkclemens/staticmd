@@ -13,6 +13,9 @@ class AdminAuth
     private const BRUTE_FORCE_DELAY_MICROSECONDS = 500000; // 0.5 seconds
     private const REMEMBER_ME_COOKIE_NAME = 'staticmd_remember_me';
     private const REMEMBER_ME_COOKIE_LIFETIME = 365 * 24 * 60 * 60; // 1 Jahr
+    private const MAX_FAILED_ATTEMPTS = 5;
+    private const ATTEMPT_WINDOW_SECONDS = 900; // 15 Minuten
+    private const LOCKOUT_SECONDS = 900; // 15 Minuten
     
     private array $config;
 
@@ -80,6 +83,12 @@ class AdminAuth
      */
     public function login(string $username, string $password, bool $rememberMe = false): bool
     {
+        $clientIp = $this->getClientIp();
+        if ($this->isLoginLockedOut($username, $clientIp)) {
+            usleep(self::BRUTE_FORCE_DELAY_MICROSECONDS);
+            return false;
+        }
+
         $validUsername = $this->config['admin']['username'];
         $validPasswordHash = $this->config['admin']['password'];
 
@@ -96,12 +105,17 @@ class AdminAuth
             // Setze Remember-Me Cookie wenn gewünscht
             if ($rememberMe) {
                 $this->setRememberMeCookie($username);
+            } else {
+                $this->deleteRememberMeCookie();
             }
+
+            $this->clearLoginAttempts($username, $clientIp);
             
             return true;
         }
 
         // Failed login - add delay for brute-force protection
+        $this->recordFailedLogin($username, $clientIp);
         usleep(self::BRUTE_FORCE_DELAY_MICROSECONDS);
         
         return false;
@@ -240,30 +254,21 @@ class AdminAuth
      */
     private function setRememberMeCookie(string $username): void
     {
-        // Generiere sicheren Token
-        $token = bin2hex(random_bytes(32));
-        $cookieValue = base64_encode(json_encode([
+        $selector = bin2hex(random_bytes(9));
+        $validator = bin2hex(random_bytes(32));
+        $expires = time() + self::REMEMBER_ME_COOKIE_LIFETIME;
+
+        $tokens = $this->loadRememberMeTokens();
+        $tokens[$selector] = [
             'username' => $username,
-            'token' => $token,
-            'created' => time()
-        ]));
-        
-        // Speichere Token-Hash in Session für spätere Validierung
-        $_SESSION['admin_remember_token'] = hash('sha256', $token);
-        
-        // Setze Cookie (1 Jahr Gültigkeit)
-        setcookie(
-            self::REMEMBER_ME_COOKIE_NAME,
-            $cookieValue,
-            [
-                'expires' => time() + self::REMEMBER_ME_COOKIE_LIFETIME,
-                'path' => '/',
-                'domain' => '',
-                'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
-                'httponly' => true,
-                'samesite' => 'Lax'
-            ]
-        );
+            'validator_hash' => hash('sha256', $validator),
+            'created' => time(),
+            'last_used' => time(),
+            'expires' => $expires
+        ];
+        $this->saveRememberMeTokens($tokens);
+
+        $this->setRememberMeCookieValue($selector, $validator, $expires);
     }
 
     /**
@@ -278,34 +283,59 @@ class AdminAuth
         }
         
         try {
-            $cookieData = json_decode(base64_decode($_COOKIE[self::REMEMBER_ME_COOKIE_NAME]), true);
-            
-            if (!$cookieData || !isset($cookieData['username'], $cookieData['token'], $cookieData['created'])) {
+            $cookieData = $this->decodeRememberMeCookie($_COOKIE[self::REMEMBER_ME_COOKIE_NAME]);
+
+            if (!$cookieData || empty($cookieData['selector']) || empty($cookieData['validator'])) {
                 $this->deleteRememberMeCookie();
                 return false;
             }
-            
-            // Validiere Username
+
+            if (!empty($cookieData['expires']) && (int) $cookieData['expires'] < time()) {
+                $this->removeRememberMeToken($cookieData['selector']);
+                $this->deleteRememberMeCookie();
+                return false;
+            }
+
+            $tokens = $this->loadRememberMeTokens();
+            $tokenRecord = $tokens[$cookieData['selector']] ?? null;
+            if (!$tokenRecord) {
+                $this->deleteRememberMeCookie();
+                return false;
+            }
+
+            if (($tokenRecord['expires'] ?? 0) < time()) {
+                $this->removeRememberMeToken($cookieData['selector']);
+                $this->deleteRememberMeCookie();
+                return false;
+            }
+
             $validUsername = $this->config['admin']['username'];
-            if ($cookieData['username'] !== $validUsername) {
+            if (($tokenRecord['username'] ?? '') !== $validUsername) {
+                $this->removeRememberMeToken($cookieData['selector']);
                 $this->deleteRememberMeCookie();
                 return false;
             }
-            
+
+            $validatorHash = hash('sha256', $cookieData['validator']);
+            if (!hash_equals($tokenRecord['validator_hash'] ?? '', $validatorHash)) {
+                $this->removeRememberMeToken($cookieData['selector']);
+                $this->deleteRememberMeCookie();
+                return false;
+            }
+
             // Cookie ist gültig - stelle Session wieder her
             $_SESSION['admin_logged_in'] = true;
-            $_SESSION['admin_username'] = $cookieData['username'];
+            $_SESSION['admin_username'] = $tokenRecord['username'];
             $_SESSION['admin_login_time'] = time();
             $_SESSION['admin_last_activity'] = time();
             $_SESSION['admin_remember_me'] = true;
-            $_SESSION['admin_remember_token'] = hash('sha256', $cookieData['token']);
-            
+
             // Regenerate session ID
             session_regenerate_id(true);
-            
-            // Erneuere Cookie
-            $this->setRememberMeCookie($cookieData['username']);
-            
+
+            // Erneuere Token + Cookie (Rotation)
+            $this->rotateRememberMeToken($cookieData['selector'], $tokenRecord['username']);
+
             return true;
         } catch (\Exception $e) {
             $this->deleteRememberMeCookie();
@@ -319,6 +349,10 @@ class AdminAuth
     private function deleteRememberMeCookie(): void
     {
         if (isset($_COOKIE[self::REMEMBER_ME_COOKIE_NAME])) {
+            $cookieData = $this->decodeRememberMeCookie($_COOKIE[self::REMEMBER_ME_COOKIE_NAME]);
+            if (!empty($cookieData['selector'])) {
+                $this->removeRememberMeToken($cookieData['selector']);
+            }
             setcookie(
                 self::REMEMBER_ME_COOKIE_NAME,
                 '',
@@ -332,6 +366,215 @@ class AdminAuth
                 ]
             );
             unset($_COOKIE[self::REMEMBER_ME_COOKIE_NAME]);
+        }
+    }
+
+    private function setRememberMeCookieValue(string $selector, string $validator, int $expires): void
+    {
+        $cookieValue = base64_encode(json_encode([
+            'selector' => $selector,
+            'validator' => $validator,
+            'expires' => $expires
+        ]));
+
+        setcookie(
+            self::REMEMBER_ME_COOKIE_NAME,
+            $cookieValue,
+            [
+                'expires' => $expires,
+                'path' => '/',
+                'domain' => '',
+                'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
+                'httponly' => true,
+                'samesite' => 'Lax'
+            ]
+        );
+    }
+
+    private function decodeRememberMeCookie(string $cookieValue): ?array
+    {
+        $decoded = base64_decode($cookieValue, true);
+        if ($decoded === false) {
+            return null;
+        }
+
+        $data = json_decode($decoded, true);
+        if (!is_array($data)) {
+            return null;
+        }
+
+        return $data;
+    }
+
+    private function rotateRememberMeToken(string $oldSelector, string $username): void
+    {
+        $tokens = $this->loadRememberMeTokens();
+        unset($tokens[$oldSelector]);
+
+        $selector = bin2hex(random_bytes(9));
+        $validator = bin2hex(random_bytes(32));
+        $expires = time() + self::REMEMBER_ME_COOKIE_LIFETIME;
+
+        $tokens[$selector] = [
+            'username' => $username,
+            'validator_hash' => hash('sha256', $validator),
+            'created' => time(),
+            'last_used' => time(),
+            'expires' => $expires
+        ];
+
+        $this->saveRememberMeTokens($tokens);
+        $this->setRememberMeCookieValue($selector, $validator, $expires);
+    }
+
+    private function removeRememberMeToken(string $selector): void
+    {
+        $tokens = $this->loadRememberMeTokens();
+        if (isset($tokens[$selector])) {
+            unset($tokens[$selector]);
+            $this->saveRememberMeTokens($tokens);
+        }
+    }
+
+    private function loadRememberMeTokens(): array
+    {
+        $path = $this->getRememberMeTokenStorePath();
+        if (!file_exists($path)) {
+            return [];
+        }
+
+        $data = json_decode(file_get_contents($path), true);
+        if (!is_array($data)) {
+            return [];
+        }
+
+        $now = time();
+        foreach ($data as $selector => $record) {
+            if (!is_array($record) || ($record['expires'] ?? 0) < $now) {
+                unset($data[$selector]);
+            }
+        }
+
+        return $data;
+    }
+
+    private function saveRememberMeTokens(array $tokens): void
+    {
+        $path = $this->getRememberMeTokenStorePath();
+        file_put_contents($path, json_encode($tokens, JSON_PRETTY_PRINT), LOCK_EX);
+        @chmod($path, 0600);
+    }
+
+    private function getRememberMeTokenStorePath(): string
+    {
+        $adminPath = rtrim($this->config['paths']['admin'], '/');
+        return $adminPath . '/remember_tokens.json';
+    }
+
+    private function getClientIp(): string
+    {
+        return $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    }
+
+    private function getLoginAttemptsPath(): string
+    {
+        $adminPath = rtrim($this->config['paths']['admin'], '/');
+        return $adminPath . '/login_attempts.json';
+    }
+
+    private function loadLoginAttempts(): array
+    {
+        $path = $this->getLoginAttemptsPath();
+        if (!file_exists($path)) {
+            return [];
+        }
+
+        $data = json_decode(file_get_contents($path), true);
+        if (!is_array($data)) {
+            return [];
+        }
+
+        $now = time();
+        foreach ($data as $key => $record) {
+            $lastAttempt = $record['last_attempt'] ?? 0;
+            $lockedUntil = $record['locked_until'] ?? 0;
+            if ($lockedUntil > 0 && $lockedUntil >= $now) {
+                continue;
+            }
+
+            if ($lastAttempt < ($now - (self::ATTEMPT_WINDOW_SECONDS + self::LOCKOUT_SECONDS))) {
+                unset($data[$key]);
+            }
+        }
+
+        return $data;
+    }
+
+    private function saveLoginAttempts(array $attempts): void
+    {
+        $path = $this->getLoginAttemptsPath();
+        file_put_contents($path, json_encode($attempts, JSON_PRETTY_PRINT), LOCK_EX);
+        @chmod($path, 0600);
+    }
+
+    private function getAttemptKey(string $username, string $clientIp): string
+    {
+        return hash('sha256', $username . '|' . $clientIp);
+    }
+
+    private function isLoginLockedOut(string $username, string $clientIp): bool
+    {
+        $attempts = $this->loadLoginAttempts();
+        $key = $this->getAttemptKey($username, $clientIp);
+        $record = $attempts[$key] ?? null;
+        if (!$record) {
+            return false;
+        }
+
+        $lockedUntil = $record['locked_until'] ?? 0;
+        if ($lockedUntil > time()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function recordFailedLogin(string $username, string $clientIp): void
+    {
+        $attempts = $this->loadLoginAttempts();
+        $key = $this->getAttemptKey($username, $clientIp);
+        $now = time();
+
+        $record = $attempts[$key] ?? [
+            'count' => 0,
+            'first_attempt' => $now,
+            'last_attempt' => $now,
+            'locked_until' => 0
+        ];
+
+        if (($now - ($record['first_attempt'] ?? $now)) > self::ATTEMPT_WINDOW_SECONDS) {
+            $record['count'] = 0;
+            $record['first_attempt'] = $now;
+        }
+
+        $record['count'] = ($record['count'] ?? 0) + 1;
+        $record['last_attempt'] = $now;
+
+        if ($record['count'] >= self::MAX_FAILED_ATTEMPTS) {
+            $record['locked_until'] = $now + self::LOCKOUT_SECONDS;
+        }
+
+        $attempts[$key] = $record;
+        $this->saveLoginAttempts($attempts);
+    }
+
+    private function clearLoginAttempts(string $username, string $clientIp): void
+    {
+        $attempts = $this->loadLoginAttempts();
+        $key = $this->getAttemptKey($username, $clientIp);
+        if (isset($attempts[$key])) {
+            unset($attempts[$key]);
+            $this->saveLoginAttempts($attempts);
         }
     }
 }

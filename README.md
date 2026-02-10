@@ -87,11 +87,11 @@ StaticMD is a professional PHP-based CMS for Markdown content with Bootstrap fro
 ---
 
 ## 🔗 Links & Resources
-- **Live Demo**: https://flat.adcore.de/ - Experience all features live
-- **Gallery Demo**: https://flat.adcore.de/galerie-beispiel - NEW! Gallery system showcase
-- **Admin Interface**: https://flat.adcore.de/admin - Complete admin dashboard
+- **Live Demo**: https://staticmd.adcore.de/ - Experience all features live
+- **Gallery Demo**: https://staticmd.adcore.de/galerie-beispiel - NEW! Gallery system showcase
+- **Admin Interface**: https://staticmd.adcore.de/admin - Complete admin dashboard
 - **Project Repository**: https://github.com/dirkclemens/staticMD
-- **robots.txt**: https://flat.adcore.de/robots.txt - Dynamic SEO control
+- **robots.txt**: https://staticmd.adcore.de/robots.txt - Dynamic SEO control
 
 ## 🆕 Recent Updates (November 2024)
 - **Gallery System**: Complete image gallery solution with lightbox

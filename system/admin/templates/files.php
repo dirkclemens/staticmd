@@ -75,9 +75,14 @@ function formatBytes(int $bytes, int $precision = 2): string {
                             <i class="bi bi-house me-2"></i><?= __('admin.common.view_site') ?>
                         </a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="/admin?action=logout">
-                            <i class="bi bi-box-arrow-right me-2"></i><?= __('admin.common.logout') ?>
-                        </a></li>
+                        <li>
+                            <form method="POST" action="/admin?action=logout">
+                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($this->auth->generateCSRFToken()) ?>">
+                                <button type="submit" class="dropdown-item">
+                                    <i class="bi bi-box-arrow-right me-2"></i><?= __('admin.common.logout') ?>
+                                </button>
+                            </form>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -133,10 +138,13 @@ function formatBytes(int $bytes, int $precision = 2): string {
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/admin?action=logout">
-                                <i class="bi bi-box-arrow-right me-2"></i>
-                                <?= __('admin.common.logout') ?>
-                            </a>
+                            <form method="POST" action="/admin?action=logout">
+                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($this->auth->generateCSRFToken()) ?>">
+                                <button type="submit" class="nav-link btn btn-link w-100 text-start">
+                                    <i class="bi bi-box-arrow-right me-2"></i>
+                                    <?= __('admin.common.logout') ?>
+                                </button>
+                            </form>
                         </li>
                     </ul>
                 </div>

@@ -81,9 +81,14 @@ $nonce = SecurityHeaders::getNonce();
                             <i class="bi bi-keyboard me-2"></i><?= __('admin.common.keyboard_shortcuts') ?>
                         </a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="/admin?action=logout">
-                            <i class="bi bi-box-arrow-right me-2"></i><?= __('admin.common.logout') ?>
-                        </a></li>
+                        <li>
+                            <form method="POST" action="/admin?action=logout">
+                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($this->auth->generateCSRFToken()) ?>">
+                                <button type="submit" class="dropdown-item">
+                                    <i class="bi bi-box-arrow-right me-2"></i><?= __('admin.common.logout') ?>
+                                </button>
+                            </form>
+                        </li>
                     </ul>
                 </div>
             </div>

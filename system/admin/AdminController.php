@@ -218,11 +218,24 @@ class AdminController {
      */
     private function handleLogout(): void
     {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: /admin?error=invalid_request');
+            exit;
+        }
+
+        $this->auth->requireLogin();
+
+        $csrfToken = $_POST['csrf_token'] ?? '';
+        if (!$this->auth->verifyCSRFToken($csrfToken)) {
+            header('Location: /admin?error=csrf_invalid');
+            exit;
+        }
+
         // Get last frontend URL before clearing session
         $returnUrl = $_SESSION['last_frontend_url'] ?? '/';
-        
+
         $this->auth->logout();
-        
+
         // Redirect to last visited frontend page or homepage
         header('Location: ' . $returnUrl);
         exit;

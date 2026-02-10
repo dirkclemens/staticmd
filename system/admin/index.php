@@ -13,6 +13,15 @@ if (file_exists(__DIR__ . '/../../vendor/autoload.php')) {
 
 $config = require_once __DIR__ . '/../../config.php';
 
+// Enforce HTTPS for admin area
+$isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+    || (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+if (!$isHttps && !empty($_SERVER['HTTP_HOST'])) {
+    $redirectUrl = 'https://' . $_SERVER['HTTP_HOST'] . ($_SERVER['REQUEST_URI'] ?? '/');
+    header('Location: ' . $redirectUrl, true, 301);
+    exit;
+}
+
 // Include admin classes
 require_once __DIR__ . '/AdminAuth.php';
 require_once __DIR__ . '/AdminController.php';
@@ -60,7 +69,7 @@ session_set_cookie_params([
     'lifetime' => $timeout,  // 24h cookie lifetime matches session timeout
     'path' => '/',
     'httponly' => true,
-    'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on',
+    'secure' => $isHttps,
     'samesite' => 'Strict'
 ]);
 
