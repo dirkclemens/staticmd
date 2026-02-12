@@ -1,9 +1,5 @@
 <?php
 
-// DEBUG: Enable PHP error messages
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 /**
  * StaticMD - Haupteinstiegspunkt
  * Verarbeitet alle Frontend-Anfragen
@@ -17,21 +13,33 @@ if (file_exists(__DIR__ . '/vendor/autoload.php')) {
 // Load configuration
 $config = require_once __DIR__ . '/config.php';
 
+// Error reporting (configured by config.php in production)
+if ($config['system']['debug'] ?? false) {
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+}
+
 // Set timezone
 date_default_timezone_set($config['system']['timezone']);
+
+// HTTPS detection (supports proxies)
+$isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+    || (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
 
 // Session configuration for frontend (must match admin settings)
 $timeout = $config['admin']['session_timeout'] ?? 86400;
 ini_set('session.gc_maxlifetime', $timeout);
 ini_set('session.gc_probability', 1);
 ini_set('session.gc_divisor', 1000);
+ini_set('session.use_strict_mode', '1');
 
 // Start session with consistent cookie settings
 session_set_cookie_params([
     'lifetime' => $timeout,  // 24h cookie lifetime matches session timeout
     'path' => '/',
     'httponly' => true,
-    'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on',
+    'secure' => $isHttps,
     'samesite' => 'Strict'
 ]);
 session_start();

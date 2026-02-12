@@ -136,6 +136,12 @@ class AdminController {
             case 'validate_path':
                 $this->validatePath();
                 break;
+            case 'search':
+                $this->searchContent();
+                break;
+            case 'audit':
+                $this->showAuditLog();
+                break;
                 
             default:
                 $this->showDashboard();
@@ -450,6 +456,10 @@ class AdminController {
         $fullContent = $frontMatter . $content;
         
         if (file_put_contents($filePath, $fullContent) !== false) {
+            $this->auth->logEvent('content_saved', [
+                'file' => $file,
+                'path' => $filePath
+            ]);
             // Check if return URL was provided
             $returnUrl = $_POST['return_url'] ?? '';
             if (!empty($returnUrl)) {
@@ -562,6 +572,10 @@ class AdminController {
         
         // Delete file
         if (unlink($filePath)) {
+            $this->auth->logEvent('content_deleted', [
+                'file' => $file,
+                'path' => $filePath
+            ]);
             header('Location: ' . $appendParam($returnUrl, 'message=deleted'));
         } else {
             header('Location: ' . $appendParam($returnUrl, 'error=delete_failed'));
@@ -588,6 +602,138 @@ class AdminController {
         $fileTree = $this->generateHierarchicalFileList($allFiles);
         
         include __DIR__ . '/templates/files.php';
+    }
+
+    /**
+     * Display admin audit log
+     */
+    private function showAuditLog(): void
+    {
+        $this->auth->requireLogin();
+
+        $limit = max(10, min(1000, (int)($_GET['limit'] ?? 200)));
+        $path = $this->auth->getAuditLogPath();
+        $entries = [];
+        $logExists = file_exists($path);
+
+        if ($logExists) {
+            $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            if (is_array($lines)) {
+                for ($i = count($lines) - 1; $i >= 0 && count($entries) < $limit; $i--) {
+                    $decoded = json_decode($lines[$i], true);
+                    if (is_array($decoded)) {
+                        $entries[] = $decoded;
+                    }
+                }
+            }
+        }
+
+        include __DIR__ . '/templates/audit.php';
+    }
+
+    /**
+     * Full-text search over content files (AJAX)
+     */
+    private function searchContent(): void
+    {
+        $this->auth->requireLogin();
+
+        header('Content-Type: application/json; charset=utf-8');
+
+        $query = trim($_GET['q'] ?? '');
+        if ($query === '' || mb_strlen($query) < 2) {
+            echo json_encode([
+                'query' => $query,
+                'count' => 0,
+                'results' => []
+            ]);
+            exit;
+        }
+
+        $query = mb_substr($query, 0, 100);
+        $contentDir = $this->config['paths']['content'];
+        $extension = $this->config['markdown']['file_extension'] ?? '.md';
+        $results = [];
+
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($contentDir, \FilesystemIterator::SKIP_DOTS)
+        );
+
+        foreach ($iterator as $fileInfo) {
+            if (!$fileInfo->isFile()) {
+                continue;
+            }
+
+            $path = $fileInfo->getPathname();
+            if (!str_ends_with($path, $extension)) {
+                continue;
+            }
+
+            $raw = file_get_contents($path);
+            if ($raw === false) {
+                continue;
+            }
+
+            if (stripos($raw, $query) === false) {
+                continue;
+            }
+
+            $parsed = \StaticMD\Utilities\FrontMatterParser::parse($raw);
+            $title = $parsed['meta']['title'] ?? $parsed['meta']['Title'] ?? '';
+            $content = $parsed['content'] ?? '';
+
+            $relative = substr($path, strlen($contentDir) + 1);
+            $route = preg_replace('/' . preg_quote($extension, '/') . '$/', '', $relative);
+            $route = str_replace('\\', '/', $route);
+
+            $results[] = [
+                'route' => $route,
+                'title' => $title,
+                'snippet' => $this->buildSnippet($content, $query),
+                'modified' => $fileInfo->getMTime()
+            ];
+        }
+
+        usort($results, function (array $a, array $b) {
+            return ($b['modified'] ?? 0) <=> ($a['modified'] ?? 0);
+        });
+
+        $settings = $this->getSettings();
+        $limit = max(10, min(200, (int)($settings['search_result_limit'] ?? 50)));
+        $results = array_slice($results, 0, $limit);
+
+        echo json_encode([
+            'query' => $query,
+            'count' => count($results),
+            'results' => $results
+        ]);
+        exit;
+    }
+
+    private function buildSnippet(string $text, string $query): string
+    {
+        $plain = trim(preg_replace('/\s+/', ' ', strip_tags($text)));
+        if ($plain === '') {
+            return '';
+        }
+
+        $pos = mb_stripos($plain, $query);
+        $radius = 80;
+
+        if ($pos === false) {
+            $snippet = mb_substr($plain, 0, 160);
+            return mb_strlen($plain) > 160 ? $snippet . '…' : $snippet;
+        }
+
+        $start = max(0, $pos - $radius);
+        $snippet = mb_substr($plain, $start, 160);
+        if ($start > 0) {
+            $snippet = '…' . $snippet;
+        }
+        if (($start + 160) < mb_strlen($plain)) {
+            $snippet .= '…';
+        }
+        return $snippet;
     }
     
     /**
@@ -900,6 +1046,7 @@ class AdminController {
         ];
         
         if ($this->saveSettingsToFile($settings)) {
+            $this->auth->logEvent('settings_saved');
             header('Location: /admin?action=settings&message=settings_saved');
         } else {
             header('Location: /admin?action=settings&error=save_failed');
@@ -1244,6 +1391,9 @@ class AdminController {
             $zip->addFromString('README.md', $readme);
             
             $zip->close();
+            $this->auth->logEvent('backup_created', [
+                'file' => $backupFilename
+            ]);
             
             // Offer backup for download
             if (file_exists($backupPath)) {
@@ -1437,6 +1587,10 @@ class AdminController {
 
             // Datei verschieben/umbenennen
             if (rename($oldFile, $newFile)) {
+                $this->auth->logEvent('content_renamed', [
+                    'from' => $oldPath,
+                    'to' => $newPath
+                ]);
                 header('Location: /admin?action=files&message=rename_success');
             } else {
                 header('Location: /admin?action=files&error=rename_failed');

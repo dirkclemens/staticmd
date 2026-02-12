@@ -9,7 +9,8 @@ return [
         'name' => 'StaticMD',
         'version' => '1.0.0',
         'timezone' => 'Europe/Berlin',
-        'charset' => 'UTF-8'
+        'charset' => 'UTF-8',
+        'debug' => false
     ],
     
     // Directory structure
@@ -18,7 +19,9 @@ return [
         'system' => __DIR__ . '/system',
         'themes' => __DIR__ . '/system/themes',
         'admin' => __DIR__ . '/system/admin',
-        'public' => __DIR__ . '/public'
+        'public' => __DIR__ . '/public',
+        // Non-web storage for auth tokens/attempts
+        'storage' => __DIR__ . '/storage'
     ],
     
     // Admin configuration

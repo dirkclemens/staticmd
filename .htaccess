@@ -10,6 +10,9 @@ RewriteCond %{REQUEST_URI} !^/system/admin/preview\.php$
 RewriteCond %{REQUEST_URI} !^/system/admin/admin\.css$
 RewriteRule ^system/ - [F,L]
 
+RewriteCond %{THE_REQUEST} \s/+storage/
+RewriteRule ^storage/ - [F,L]
+
 RewriteCond %{THE_REQUEST} \s/+content/
 RewriteRule ^content/ - [F,L]
 

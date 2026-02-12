@@ -54,6 +54,7 @@ $timeout = $config['admin']['session_timeout'];
 // Set PHP session lifetime parameters
 // gc_maxlifetime: How long session data is kept server-side
 ini_set('session.gc_maxlifetime', $timeout);
+ini_set('session.use_strict_mode', '1');
 
 // gc_probability/gc_divisor: Make garbage collection less aggressive
 // Default is 1/100, we set to 1/1000 to reduce premature cleanup

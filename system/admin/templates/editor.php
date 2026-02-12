@@ -76,6 +76,9 @@ $nonce = SecurityHeaders::getNonce();
                         <li><a class="dropdown-item" href="/">
                             <i class="bi bi-house me-2"></i><?= __('admin.common.view_site') ?>
                         </a></li>
+                        <li><a class="dropdown-item" href="/admin?action=audit">
+                            <i class="bi bi-journal-text me-2"></i>Admin Log
+                        </a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="/help/editor-shortcuts" target="_blank">
                             <i class="bi bi-keyboard me-2"></i><?= __('admin.common.keyboard_shortcuts') ?>
