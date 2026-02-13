@@ -70,11 +70,11 @@ class Application
         
     // Prepare template data
         $template = $this->config['theme']['template'] ?? 'default';
-        $templateData = [
+        $templateData = array_merge([
             'config' => $this->config,
             'content' => $content,
             'current_route' => $route
-        ];
+        ], $this->buildAuthTemplateData($content));
         
     // Render and output template
         $this->templateEngine->render($template, $templateData);
@@ -126,11 +126,11 @@ class Application
         
     // Prepare template data
         $template = $this->config['theme']['template'] ?? 'default';
-        $templateData = [
+        $templateData = array_merge([
             'config' => $this->config,
             'content' => $content,
             'current_route' => 'search'
-        ];
+        ], $this->buildAuthTemplateData($content));
         
         $this->templateEngine->render($template, $templateData);
     }
@@ -164,11 +164,11 @@ class Application
         
     // Prepare template data
         $template = $this->config['theme']['template'] ?? 'default';
-        $templateData = [
+        $templateData = array_merge([
             'config' => $this->config,
             'content' => $content,
             'current_route' => 'tag'
-        ];
+        ], $this->buildAuthTemplateData($content));
         
         $this->templateEngine->render($template, $templateData);
     }
@@ -212,11 +212,11 @@ class Application
         
     // Prepare template data
         $template = $this->config['theme']['template'] ?? 'default';
-        $templateData = [
+        $templateData = array_merge([
             'config' => $this->config,
             'content' => $content,
             'current_route' => $route
-        ];
+        ], $this->buildAuthTemplateData($content));
         
         $this->templateEngine->render($template, $templateData);
     }
@@ -239,5 +239,24 @@ class Application
         $adminAuth = new \StaticMD\Admin\AdminAuth($this->config);
         
         return $adminAuth->isLoggedIn();
+    }
+
+    /**
+     * Provides consistent auth context for frontend templates.
+     */
+    private function buildAuthTemplateData(array $content): array
+    {
+        require_once $this->config['paths']['system'] . '/admin/AdminAuth.php';
+        $adminAuth = new \StaticMD\Admin\AdminAuth($this->config);
+        $isLoggedIn = $adminAuth->isLoggedIn();
+        // Keep compatibility with existing toolbar behavior:
+        // show edit/new when content context exposes a file_path key (file or folder overview).
+        $canEditCurrentPage = $isLoggedIn && isset($content['file_path']);
+
+        return [
+            'is_admin_logged_in' => $isLoggedIn,
+            'can_edit_current_page' => $canEditCurrentPage,
+            'admin_csrf_token' => $isLoggedIn ? $adminAuth->generateCSRFToken() : ''
+        ];
     }
 }

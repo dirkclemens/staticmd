@@ -112,14 +112,6 @@ function encodeUrlPath($path) {
                                 <?= __('admin.common.editor') ?>
                             </a>
                         </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link <?= ($_GET['action'] ?? '') === 'audit' ? 'active' : '' ?>" 
-                               href="/admin?action=audit">
-                                <i class="bi bi-journal-text me-2"></i>
-                                Admin Log
-                            </a>
-                        </li>
                         
                         <hr class="my-3">
                         

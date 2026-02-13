@@ -18,7 +18,6 @@ class AdminAuth
     private const LOCKOUT_SECONDS = 900; // 15 Minuten
     
     private array $config;
-    private const AUDIT_LOG_FILENAME = 'admin_audit.log';
 
     /**
      * Constructor
@@ -86,9 +85,6 @@ class AdminAuth
     {
         $clientIp = $this->getClientIp();
         if ($this->isLoginLockedOut($username, $clientIp)) {
-            $this->logEvent('login_locked', [
-                'username' => $username
-            ]);
             usleep(self::BRUTE_FORCE_DELAY_MICROSECONDS);
             return false;
         }
@@ -105,8 +101,6 @@ class AdminAuth
             
             // Regenerate session ID to prevent session fixation attacks
             session_regenerate_id(true);
-            // Rotate CSRF token on login
-            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
             
             // Setze Remember-Me Cookie wenn gewünscht
             if ($rememberMe) {
@@ -116,19 +110,12 @@ class AdminAuth
             }
 
             $this->clearLoginAttempts($username, $clientIp);
-            $this->logEvent('login_success', [
-                'username' => $username,
-                'remember_me' => $rememberMe
-            ]);
             
             return true;
         }
 
         // Failed login - add delay for brute-force protection
         $this->recordFailedLogin($username, $clientIp);
-        $this->logEvent('login_failed', [
-            'username' => $username
-        ]);
         usleep(self::BRUTE_FORCE_DELAY_MICROSECONDS);
         
         return false;
@@ -141,11 +128,7 @@ class AdminAuth
      */
     public function logout(): void
     {
-        $this->logEvent('logout', [
-            'username' => $_SESSION['admin_username'] ?? null
-        ]);
         $_SESSION = [];
-        unset($_SESSION['csrf_token']);
         
         // Delete session cookie if cookie-based sessions are enabled
         if (ini_get("session.use_cookies")) {
@@ -484,7 +467,8 @@ class AdminAuth
 
     private function getRememberMeTokenStorePath(): string
     {
-        return $this->getStoragePath('remember_tokens.json');
+        $adminPath = rtrim($this->config['paths']['admin'], '/');
+        return $adminPath . '/remember_tokens.json';
     }
 
     private function getClientIp(): string
@@ -494,47 +478,8 @@ class AdminAuth
 
     private function getLoginAttemptsPath(): string
     {
-        return $this->getStoragePath('login_attempts.json');
-    }
-
-    private function getStoragePath(string $filename): string
-    {
-        $storagePath = $this->config['paths']['storage'] ?? null;
-        if (!$storagePath) {
-            $adminPath = rtrim($this->config['paths']['admin'], '/');
-            $storagePath = $adminPath;
-        }
-
-        if (!is_dir($storagePath)) {
-            @mkdir($storagePath, 0700, true);
-        }
-
-        return rtrim($storagePath, '/') . '/' . $filename;
-    }
-
-    public function logEvent(string $event, array $context = []): void
-    {
-        try {
-            $record = [
-                'ts' => date('c'),
-                'event' => $event,
-                'ip' => $this->getClientIp(),
-                'user' => $_SESSION['admin_username'] ?? ($context['username'] ?? null),
-                'context' => $context
-            ];
-
-            $path = $this->getStoragePath(self::AUDIT_LOG_FILENAME);
-            $line = json_encode($record, JSON_UNESCAPED_SLASHES) . PHP_EOL;
-            file_put_contents($path, $line, FILE_APPEND | LOCK_EX);
-            @chmod($path, 0600);
-        } catch (\Throwable $e) {
-            // Never break auth flow due to audit logging
-        }
-    }
-
-    public function getAuditLogPath(): string
-    {
-        return $this->getStoragePath(self::AUDIT_LOG_FILENAME);
+        $adminPath = rtrim($this->config['paths']['admin'], '/');
+        return $adminPath . '/login_attempts.json';
     }
 
     private function loadLoginAttempts(): array

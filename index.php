@@ -44,11 +44,6 @@ session_set_cookie_params([
 ]);
 session_start();
 
-// Update admin activity on every frontend request when logged in
-if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true) {
-    $_SESSION['admin_last_activity'] = time();
-}
-
 // Store current page URL in session (for return after admin logout)
 // Exclude asset requests (favicon, images, CSS, JS, etc.)
 $requestUri = $_SERVER['REQUEST_URI'];

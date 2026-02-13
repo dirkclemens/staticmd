@@ -123,13 +123,6 @@ function formatBytes(int $bytes, int $precision = 2): string {
                                 <?= __('admin.common.editor') ?>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link <?= ($_GET['action'] ?? '') === 'audit' ? 'active' : '' ?>" 
-                               href="/admin?action=audit">
-                                <i class="bi bi-journal-text me-2"></i>
-                                Admin Log
-                            </a>
-                        </li>
                         <hr class="my-3">
                         <li class="nav-item">
                             <a class="nav-link <?= ($_GET['action'] ?? '') === 'settings' ? 'active' : '' ?>" 
@@ -235,22 +228,6 @@ function formatBytes(int $bytes, int $precision = 2): string {
                     <?php endif; ?>
                     
                     <div class="card-body">
-                        <div class="mb-4">
-                            <h6 class="mb-2">
-                                <i class="bi bi-search me-1"></i>
-                                Content Search
-                            </h6>
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="searchContent" 
-                                       placeholder="<?= __('admin.files.search_placeholder') ?>">
-                                <button class="btn btn-outline-secondary" type="button" id="searchContentClear">
-                                    Clear
-                                </button>
-                            </div>
-                            <div class="form-text">Searches titles and content (min. 2 characters).</div>
-                            <div class="mt-3" id="searchResults"></div>
-                        </div>
-
                         <?php if (!empty($fileTree)): ?>
                             <div class="file-tree">
                                 <?php 
@@ -460,81 +437,6 @@ function formatBytes(int $bytes, int $precision = 2): string {
                 const hasVisibleFiles = searchTerm === '' || visibleFiles.length > 0;
                 section.style.display = hasVisibleFiles ? 'block' : 'none';
             });
-        });
-
-        // Content-Suche (Full-Text)
-        const searchContentInput = document.getElementById('searchContent');
-        const searchContentClear = document.getElementById('searchContentClear');
-        const searchResults = document.getElementById('searchResults');
-        let searchTimeoutId = null;
-
-        function renderSearchResults(data) {
-            searchResults.innerHTML = '';
-
-            if (!data || !Array.isArray(data.results) || data.results.length === 0) {
-                if (data && data.query && data.query.length >= 2) {
-                    searchResults.innerHTML = '<div class="text-muted">No matches found.</div>';
-                }
-                return;
-            }
-
-            const list = document.createElement('div');
-            list.className = 'list-group';
-
-            data.results.forEach(result => {
-                const item = document.createElement('a');
-                item.className = 'list-group-item list-group-item-action';
-                item.href = `/admin?action=edit&file=${encodeURIComponent(result.route)}`;
-
-                const title = document.createElement('div');
-                title.className = 'fw-semibold';
-                title.textContent = result.title ? result.title : result.route;
-
-                const meta = document.createElement('div');
-                meta.className = 'small text-muted';
-                meta.textContent = result.route;
-
-                const snippet = document.createElement('div');
-                snippet.className = 'small';
-                snippet.textContent = result.snippet || '';
-
-                item.appendChild(title);
-                item.appendChild(meta);
-                item.appendChild(snippet);
-                list.appendChild(item);
-            });
-
-            searchResults.appendChild(list);
-        }
-
-        function runContentSearch(query) {
-            if (!query || query.length < 2) {
-                searchResults.innerHTML = '';
-                return;
-            }
-
-            fetch(`/admin?action=search&q=${encodeURIComponent(query)}`, {
-                headers: { 'Accept': 'application/json' }
-            })
-                .then(resp => resp.ok ? resp.json() : null)
-                .then(data => renderSearchResults(data))
-                .catch(() => {
-                    searchResults.innerHTML = '<div class="text-muted">Search failed.</div>';
-                });
-        }
-
-        searchContentInput.addEventListener('input', function(e) {
-            const query = e.target.value.trim();
-            if (searchTimeoutId) {
-                clearTimeout(searchTimeoutId);
-            }
-            searchTimeoutId = setTimeout(() => runContentSearch(query), 250);
-        });
-
-        searchContentClear.addEventListener('click', function() {
-            searchContentInput.value = '';
-            searchResults.innerHTML = '';
-            searchContentInput.focus();
         });
         
         // JavaScript-Übersetzungen

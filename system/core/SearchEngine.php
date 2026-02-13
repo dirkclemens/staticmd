@@ -52,7 +52,7 @@ class SearchEngine
         }
 
         // Alle Dateien rekursiv durchsuchen
-        $this->searchInDirectory($contentDir, $contentDir, $extension, $query, $results, $limit);
+        $this->searchInDirectory($contentDir, $contentDir, $extension, $query, $results);
 
         // Nach Relevanz sortieren
         usort($results, function($a, $b) {
@@ -65,26 +65,22 @@ class SearchEngine
     /**
      * Rekursive Verzeichnis-Durchsuchung
      */
-    private function searchInDirectory(string $dir, string $baseDir, string $extension, string $query, array &$results, int $limit): void
+    private function searchInDirectory(string $dir, string $baseDir, string $extension, string $query, array &$results): void
     {
-        if (count($results) >= $limit) {
-            return;
-        }
-
         if (!is_dir($dir)) {
             return;
         }
 
         $items = scandir($dir);
         foreach ($items as $item) {
-            if ($item === '.' || $item === '..' || count($results) >= $limit) {
+            if ($item === '.' || $item === '..') {
                 continue;
             }
 
             $fullPath = $dir . '/' . $item;
 
             if (is_dir($fullPath)) {
-                $this->searchInDirectory($fullPath, $baseDir, $extension, $query, $results, $limit);
+                $this->searchInDirectory($fullPath, $baseDir, $extension, $query, $results);
             } elseif (is_file($fullPath) && str_ends_with($item, $extension)) {
                 $result = $this->searchInFile($fullPath, $baseDir, $extension, $query);
                 if ($result !== null) {
@@ -112,6 +108,12 @@ class SearchEngine
         $parsed = FrontMatterParser::parse($content);
         $meta = $parsed['meta'];
         $bodyContent = $parsed['content'];
+
+        // Respect visibility policy: private pages only for logged-in admins
+        $visibility = strtolower((string)($meta['Visibility'] ?? $meta['visibility'] ?? 'public'));
+        if ($visibility === 'private' && !$this->shouldShowPrivateContent()) {
+            return null;
+        }
 
         // Suche in verschiedenen Bereichen
         $queryLower = strtolower($query);
@@ -160,7 +162,7 @@ class SearchEngine
 
         // Route aus Dateipfad generieren
         $relativePath = str_replace($baseDir . '/', '', $filePath);
-        $route = str_replace($extension, '', $relativePath);
+        $route = $this->normalizeRouteFromPath($relativePath, $extension);
 
         // Titel generieren falls nicht vorhanden
         if (empty($title)) {
@@ -423,6 +425,12 @@ class SearchEngine
         $parsed = FrontMatterParser::parse($content);
         $meta = $parsed['meta'];
         $bodyContent = $parsed['content'];
+
+        // Respect visibility policy: private pages only for logged-in admins
+        $visibility = strtolower((string)($meta['Visibility'] ?? $meta['visibility'] ?? 'public'));
+        if ($visibility === 'private' && !$this->shouldShowPrivateContent()) {
+            return null;
+        }
         
         // Tags prüfen
         $tags = $meta['Tag'] ?? $meta['tags'] ?? '';
@@ -446,7 +454,7 @@ class SearchEngine
         
         // Route aus Dateipfad generieren
         $relativePath = str_replace($baseDir . '/', '', $filePath);
-        $route = str_replace($extension, '', $relativePath);
+        $route = $this->normalizeRouteFromPath($relativePath, $extension);
         
         // Titel und andere Metadaten
         $title = $meta['Title'] ?? $meta['title'] ?? TitleGenerator::fromRoute($route);
@@ -619,6 +627,12 @@ class SearchEngine
         // Front Matter parsen
         $parsed = FrontMatterParser::parse($content);
         $meta = $parsed['meta'];
+
+        // Respect visibility policy: private pages only for logged-in admins
+        $visibility = strtolower((string)($meta['Visibility'] ?? $meta['visibility'] ?? 'public'));
+        if ($visibility === 'private' && !$this->shouldShowPrivateContent()) {
+            return;
+        }
         
         // Tags extrahieren
         $tags = $meta['Tag'] ?? $meta['tags'] ?? '';
@@ -633,6 +647,33 @@ class SearchEngine
                 $allTags[$tag] = ($allTags[$tag] ?? 0) + 1;
             }
         }
+    }
+
+    /**
+     * Private content is visible only to authenticated admins.
+     */
+    private function shouldShowPrivateContent(): bool
+    {
+        $adminAuthFile = $this->config['paths']['system'] . '/admin/AdminAuth.php';
+        if (!file_exists($adminAuthFile)) {
+            return false;
+        }
+
+        require_once $adminAuthFile;
+        $adminAuth = new \StaticMD\Admin\AdminAuth($this->config);
+        return $adminAuth->isLoggedIn();
+    }
+
+    /**
+     * Normalizes markdown file path to canonical route.
+     */
+    private function normalizeRouteFromPath(string $relativePath, string $extension): string
+    {
+        $route = preg_replace('/' . preg_quote($extension, '/') . '$/', '', $relativePath) ?? $relativePath;
+        $route = str_replace('\\', '/', $route);
+        $route = preg_replace('#/(index|page)$#', '', $route) ?? $route;
+        $route = trim($route, '/');
+        return $route === '' ? 'index' : $route;
     }
     
     /**

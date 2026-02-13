@@ -16,7 +16,7 @@ Dieses Verzeichnis enthält modularisierte HTML-Komponenten, die von allen Theme
 
 ### admin-toolbar.php
 - Floating Admin-Toolbar (nur wenn eingeloggt)
-- **Variablen:** `$_SESSION['admin_logged_in']`, `$currentRoute`
+- **Variablen:** `$is_admin_logged_in`, `$can_edit_current_page`, `$admin_csrf_token`, `$currentRoute`
 - **Features:** Dashboard-Link, Bearbeiten-Button
 
 ### footer.php
