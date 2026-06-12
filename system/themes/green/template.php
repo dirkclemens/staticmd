@@ -150,7 +150,7 @@ include __DIR__ . '/../shared/head.php';
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
         
-    <script>
+    <script nonce="<?= $nonce ?>">
         // Copy code to clipboard function
         function copyCode(button) {
             const codeBlock = button.previousElementSibling.querySelector('code');

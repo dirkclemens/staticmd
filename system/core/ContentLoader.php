@@ -21,6 +21,7 @@ class ContentLoader
     private MarkdownParser $parser;
     private ShortcodeProcessor $shortcodeProcessor;
     private NavigationBuilder $navigationBuilder;
+    private ContentCache $cache;
 
     public function __construct(array $config)
     {
@@ -28,6 +29,9 @@ class ContentLoader
         $this->parser = new MarkdownParser();
         $this->shortcodeProcessor = new ShortcodeProcessor($config, $this);
         $this->navigationBuilder = new NavigationBuilder($config);
+        // Fallback für ältere config.php ohne 'storage'-Pfad
+        $storagePath = $config['paths']['storage'] ?? dirname(__DIR__, 2) . '/storage';
+        $this->cache = new ContentCache($storagePath);
     }
 
     /**
@@ -50,18 +54,29 @@ class ContentLoader
         }
 
         $rawContent = file_get_contents($contentPath);
+
+        // Pages with [authstart] blocks render differently per login state — skip cache
+        $cacheable = !str_contains($rawContent, '[authstart]');
+
+        if ($cacheable) {
+            $cached = $this->cache->get($contentPath);
+            if ($cached !== null) {
+                return $cached;
+            }
+        }
+
         $parsed = FrontMatterParser::parse($rawContent);
-        
+
         // Process shortcodes BEFORE Markdown parsing
         $contentWithShortcodes = $this->shortcodeProcessor->process($parsed['content'], $route);
-        
+
         // Convert Markdown to HTML
         $htmlContent = $this->parser->parse($contentWithShortcodes);
-        
+
         // Process accordion shortcodes after Markdown parsing
         $htmlContent = $this->processAccordionShortcodes($htmlContent);
-        
-        return [
+
+        $result = [
             'title' => $parsed['meta']['title'] ?? '',
             'content' => $htmlContent,
             'meta' => $parsed['meta'],
@@ -69,6 +84,12 @@ class ContentLoader
             'file_path' => $contentPath,
             'visibility' => $parsed['meta']['Visibility'] ?? $parsed['meta']['visibility'] ?? 'public'
         ];
+
+        if ($cacheable) {
+            $this->cache->set($contentPath, $result);
+        }
+
+        return $result;
     }
     
     /**

@@ -10,6 +10,7 @@ $config = require_once __DIR__ . '/config.php';
 // Include utilities
 require_once __DIR__ . '/system/utilities/FrontMatterParser.php';
 require_once __DIR__ . '/system/utilities/UnicodeNormalizer.php';
+require_once __DIR__ . '/system/admin/AdminAuth.php';
 
 use StaticMD\Utilities\FrontMatterParser;
 use StaticMD\Utilities\UnicodeNormalizer;
@@ -23,22 +24,25 @@ if (empty($route)) {
     exit;
 }
 
-// Normalize route (handle Unicode/Umlauts)
+// Normalize route (handle Unicode/Umlauts) and strip path traversal sequences
 $route = UnicodeNormalizer::normalize($route);
+$route = str_replace(['..', './'], '', $route);
 $route = trim($route, '/');
 
 // Build file path
-$contentPath = $config['paths']['content'];
+$contentPath = realpath($config['paths']['content']);
 $possiblePaths = [
-    $contentPath . '/' . $route . '.md',
-    $contentPath . '/' . $route . '/index.md'
+    $config['paths']['content'] . '/' . $route . '.md',
+    $config['paths']['content'] . '/' . $route . '/index.md'
 ];
 
 // Find the file
 $filePath = null;
 foreach ($possiblePaths as $path) {
-    if (file_exists($path)) {
-        $filePath = $path;
+    $realPath = realpath($path);
+    // Containment check: resolved path must stay inside the content directory
+    if ($realPath !== false && $contentPath !== false && str_starts_with($realPath, $contentPath . DIRECTORY_SEPARATOR)) {
+        $filePath = $realPath;
         break;
     }
 }
@@ -51,6 +55,25 @@ if (!$filePath) {
 
 // Read file content
 $rawContent = file_get_contents($filePath);
+
+// Enforce visibility: private pages are not downloadable by unauthenticated users
+$meta = FrontMatterParser::extractMeta($rawContent);
+$visibility = $meta['Visibility'] ?? $meta['visibility'] ?? 'public';
+if ($visibility === 'private') {
+    // Start session to check admin login state (matching index.php session config)
+    $timeout = $config['admin']['session_timeout'] ?? 86400;
+    ini_set('session.gc_maxlifetime', $timeout);
+    session_set_cookie_params(['lifetime' => $timeout, 'path' => '/', 'httponly' => true, 'samesite' => 'Strict']);
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    $adminAuth = new \StaticMD\Admin\AdminAuth($config);
+    if (!$adminAuth->isLoggedIn()) {
+        http_response_code(404);
+        echo json_encode(['error' => 'File not found']);
+        exit;
+    }
+}
 
 // Extract content without front-matter
 $markdownContent = FrontMatterParser::extractContent($rawContent);

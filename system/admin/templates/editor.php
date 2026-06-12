@@ -345,6 +345,29 @@ $nonce = SecurityHeaders::getNonce();
                             <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertAccordion()" title="<?php echo __('admin.editor.toolbar.accordion'); ?>">
                                 <i class="bi bi-arrows-collapse"></i>
                             </button>
+                            <!-- Auth-Block -->
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertAuthBlock()" title="<?php echo __('admin.editor.toolbar.auth_block'); ?>">
+                                <i class="bi bi-shield-lock"></i>
+                            </button>
+
+                            <div class="vr mx-2"></div>
+
+                            <!-- Shortcodes -->
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertShortcodePages()" title="<?php echo __('admin.editor.toolbar.shortcode_pages'); ?>">
+                                <i class="bi bi-collection"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertShortcodeTags()" title="<?php echo __('admin.editor.toolbar.shortcode_tags'); ?>">
+                                <i class="bi bi-tags"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertShortcodeFolder()" title="<?php echo __('admin.editor.toolbar.shortcode_folder'); ?>">
+                                <i class="bi bi-folder2-open"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertShortcodeGallery()" title="<?php echo __('admin.editor.toolbar.shortcode_gallery'); ?>">
+                                <i class="bi bi-images"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertShortcodeBloglist()" title="<?php echo __('admin.editor.toolbar.shortcode_bloglist'); ?>">
+                                <i class="bi bi-newspaper"></i>
+                            </button>
 
                             <!-- Emojis -->
                             <div class="btn-group" role="group">
@@ -464,7 +487,46 @@ $nonce = SecurityHeaders::getNonce();
             doc.replaceSelection(accordionText);
             editor.focus();
         }
-        
+
+        function insertAuthBlock() {
+            if (!editor) return;
+            const doc = editor.getDoc();
+            const selected = doc.getSelection();
+            const inner = selected || 'Dieser Inhalt ist nur für eingeloggte Benutzer sichtbar.';
+            doc.replaceSelection('\n[authstart]\n' + inner + '\n[authstop]\n');
+            editor.focus();
+        }
+
+        function insertShortcodePages() {
+            if (!editor) return;
+            editor.getDoc().replaceSelection('\n[pages /pfad/ 10]\n');
+            editor.focus();
+        }
+
+        function insertShortcodeTags() {
+            if (!editor) return;
+            editor.getDoc().replaceSelection('\n[tags /pfad/ 20]\n');
+            editor.focus();
+        }
+
+        function insertShortcodeFolder() {
+            if (!editor) return;
+            editor.getDoc().replaceSelection('\n[folder /pfad/ 10]\n');
+            editor.focus();
+        }
+
+        function insertShortcodeGallery() {
+            if (!editor) return;
+            editor.getDoc().replaceSelection('\n[gallery ordnername]\n');
+            editor.focus();
+        }
+
+        function insertShortcodeBloglist() {
+            if (!editor) return;
+            editor.getDoc().replaceSelection('\n[bloglist /pfad/ 10]\n');
+            editor.focus();
+        }
+
         // Markdown-Syntax-Validierung
         function validateMarkdown() {
             const content = editor.getValue();
@@ -827,8 +889,10 @@ $nonce = SecurityHeaders::getNonce();
                 if (!e.dataTransfer || !e.dataTransfer.files || e.dataTransfer.files.length === 0) return;
                 const file = e.dataTransfer.files[0];
                 const formData = new FormData();
+                const csrfToken = document.querySelector('#editorForm [name="csrf_token"]')?.value ?? '';
                 if (file.type.match(/^image\//)) {
                     formData.append('image', file);
+                    formData.append('csrf_token', csrfToken);
                     fetch('/admin?action=upload_image', {
                         method: 'POST',
                         body: formData
@@ -852,6 +916,7 @@ $nonce = SecurityHeaders::getNonce();
                     file.name.endsWith('.zip')
                 ) {
                     formData.append('file', file);
+                    formData.append('csrf_token', csrfToken);
                     fetch('/admin?action=upload_file', {
                         method: 'POST',
                         body: formData

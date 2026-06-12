@@ -4,6 +4,40 @@ Dokumentation aller wichtigen Entwicklungsschritte und implementierten Features.
 
 ---
 
+## Version 2.2.0 - Security & Architecture Hardening (2026-06-11)
+
+### 🔒 Security Hardening
+- **CSP Nonces**: Activated per-request nonce in `Content-Security-Policy` header; removed `unsafe-inline` for scripts. Every `<script>` tag in all themes and admin templates now carries `nonce="<?= $nonce ?>"`.
+- **SameSite: Strict**: Upgraded Remember-Me and session cookies from `Lax` to `Strict` in `AdminAuth`.
+- **HTTPS Redirect**: Added `.htaccess` rule forcing HTTPS (with localhost/127.x/::1 exception for local dev).
+- **backup/ directory blocked**: `.htaccess` now denies all access to the `backup/` directory.
+- **generate_password_hash.php blocked**: Blocked via `.htaccess` `<Files>` rule.
+- **Debug exception rule removed**: Removed the `# Debug-Dateien temporär erlauben` `.htaccess` exception.
+- **Upload MIME validation**: Both file upload handlers now use `finfo_file()` for real MIME detection instead of relying on client-provided content type.
+- **img-src CSP**: Restricted from `https: http:` to `https:` only.
+- **preview.php stack trace**: Removed `file`, `line`, `trace` fields from error JSON response.
+- **Download path traversal**: Added `realpath()` containment check and `Visibility: private` enforcement in `download.php`.
+- **Public directory PHP blocking**: Added `.htaccess` files in `public/images/` and `public/downloads/` to deny PHP execution.
+
+### 🏗️ Architecture Improvements
+- **PSR-4 Autoloader** (`system/autoload.php`): Replaces all manual `require_once` chains. Maps `StaticMD\Namespace\ClassName` → `system/namespace/ClassName.php` (directory segments lowercased, class filename preserves case). Supports sub-namespaces (`StaticMD\Admin\Controllers\*` → `system/admin/controllers/`).
+- **AdminController split**: Decomposed 1,473-line monolith into focused sub-controllers in `system/admin/controllers/`:
+  - `FileController` — editor, save, new file, delete, rename, path validation, filename sanitization
+  - `DashboardController` — dashboard statistics, file manager, hierarchical tree builder
+  - `SettingsController` — settings CRUD, theme enumeration, backup statistics
+  - `BackupController` — ZIP archive creation and download
+  - `UploadController` — file upload (PDF/ZIP) and image upload (JPEG/PNG/GIF/WebP)
+  - `AdminController` reduced to thin router (140 lines) delegating to sub-controllers
+- **Audit Log** (`system/core/AuditLog.php`): Append-only JSON-Lines log at `storage/audit.log`. Records `login`, `login_failed`, `logout`, `save_file`, `delete_file`, `rename_file`, `upload_file`, `upload_image`, `create_backup`, `save_settings` with timestamp, username, IP, and action-specific details. Viewer accessible via `?action=audit_log` in the admin UI with action-type filter and user filter.
+- **Storage directory** (`storage/`): Moved `login_attempts.json` and `remember_tokens.json` from project root into `storage/`. Added fallback path derivation so remote deployments without `config['paths']['storage']` still work.
+- **Content caching** (`system/core/ContentCache.php`): File-based cache serialised to `storage/cache/`, keyed by `md5(filepath)` with `filemtime` invalidation. Pages containing `[authstart]` are excluded from caching.
+
+### ✏️ Editor Enhancements
+- **Auth block toolbar button**: Added `[authstart]...[authstop]` insert button (shield icon) to the editor toolbar.
+- **Shortcode toolbar block**: Added dedicated toolbar section with insert buttons for all five shortcodes: `[pages]`, `[tags]`, `[folder]`, `[gallery]`, `[bloglist]`.
+
+---
+
 ## Version 2.0.0 - Major Update (2025-10-26)
 
 ### 🎨 Theme-System Revolution

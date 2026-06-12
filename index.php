@@ -5,10 +5,8 @@
  * Verarbeitet alle Frontend-Anfragen
  */
 
-// Include autoloader (if Composer is installed)
-if (file_exists(__DIR__ . '/vendor/autoload.php')) {
-    require_once __DIR__ . '/vendor/autoload.php';
-}
+// Autoloader
+require_once __DIR__ . '/system/autoload.php';
 
 // Load configuration
 $config = require_once __DIR__ . '/config.php';
@@ -50,33 +48,6 @@ $requestUri = $_SERVER['REQUEST_URI'];
 if (!preg_match('/\.(ico|png|jpg|jpeg|gif|svg|css|js|woff|woff2|ttf|eot)$/i', parse_url($requestUri, PHP_URL_PATH))) {
     $_SESSION['last_frontend_url'] = $requestUri;
 }
-
-// Include core classes
-require_once __DIR__ . '/system/core/I18n.php';
-require_once __DIR__ . '/system/core/Router.php';
-require_once __DIR__ . '/system/core/MarkdownParser.php';
-
-// Include utilities
-require_once __DIR__ . '/system/utilities/FrontMatterParser.php';
-require_once __DIR__ . '/system/utilities/UnicodeNormalizer.php';
-require_once __DIR__ . '/system/utilities/TitleGenerator.php';
-require_once __DIR__ . '/system/utilities/UrlHelper.php';
-
-// Include renderers
-require_once __DIR__ . '/system/renderers/FolderOverviewRenderer.php';
-require_once __DIR__ . '/system/renderers/BlogListRenderer.php';
-
-// Include processors
-require_once __DIR__ . '/system/processors/ShortcodeProcessor.php';
-
-// Include admin classes (for auth checks in shortcodes)
-require_once __DIR__ . '/system/admin/AdminAuth.php';
-
-// Include core classes (continued)
-require_once __DIR__ . '/system/core/NavigationBuilder.php';
-require_once __DIR__ . '/system/core/ContentLoader.php';
-require_once __DIR__ . '/system/core/TemplateEngine.php';
-require_once __DIR__ . '/system/core/Application.php';
 
 // Load settings
 $settingsFile = __DIR__ . '/system/settings.json';

@@ -362,7 +362,7 @@ class AdminAuth
                     'domain' => '',
                     'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
                     'httponly' => true,
-                    'samesite' => 'Lax'
+                    'samesite' => 'Strict'
                 ]
             );
             unset($_COOKIE[self::REMEMBER_ME_COOKIE_NAME]);
@@ -386,7 +386,7 @@ class AdminAuth
                 'domain' => '',
                 'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
                 'httponly' => true,
-                'samesite' => 'Lax'
+                'samesite' => 'Strict'
             ]
         );
     }
@@ -465,10 +465,16 @@ class AdminAuth
         @chmod($path, 0600);
     }
 
+    private function getStoragePath(): string
+    {
+        // Fallback für ältere config.php ohne 'storage'-Pfad
+        $path = $this->config['paths']['storage'] ?? dirname(__DIR__, 2) . '/storage';
+        return rtrim($path, '/');
+    }
+
     private function getRememberMeTokenStorePath(): string
     {
-        $adminPath = rtrim($this->config['paths']['admin'], '/');
-        return $adminPath . '/remember_tokens.json';
+        return $this->getStoragePath() . '/remember_tokens.json';
     }
 
     private function getClientIp(): string
@@ -478,8 +484,7 @@ class AdminAuth
 
     private function getLoginAttemptsPath(): string
     {
-        $adminPath = rtrim($this->config['paths']['admin'], '/');
-        return $adminPath . '/login_attempts.json';
+        return $this->getStoragePath() . '/login_attempts.json';
     }
 
     private function loadLoginAttempts(): array

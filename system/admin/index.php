@@ -7,9 +7,7 @@
  */
 
 // Autoloader and configuration
-if (file_exists(__DIR__ . '/../../vendor/autoload.php')) {
-    require_once __DIR__ . '/../../vendor/autoload.php';
-}
+require_once __DIR__ . '/../autoload.php';
 
 $config = require_once __DIR__ . '/../../config.php';
 
@@ -21,28 +19,6 @@ if (!$isHttps && !empty($_SERVER['HTTP_HOST'])) {
     header('Location: ' . $redirectUrl, true, 301);
     exit;
 }
-
-// Include admin classes
-require_once __DIR__ . '/AdminAuth.php';
-require_once __DIR__ . '/AdminController.php';
-require_once __DIR__ . '/../core/I18n.php';
-require_once __DIR__ . '/../core/SecurityHeaders.php';
-
-// Include utilities (needed by AdminController for ContentLoader)
-require_once __DIR__ . '/../utilities/FrontMatterParser.php';
-require_once __DIR__ . '/../utilities/UnicodeNormalizer.php';
-require_once __DIR__ . '/../utilities/TitleGenerator.php';
-require_once __DIR__ . '/../utilities/UrlHelper.php';
-
-// Include renderers
-require_once __DIR__ . '/../renderers/FolderOverviewRenderer.php';
-require_once __DIR__ . '/../renderers/BlogListRenderer.php';
-
-// Include processors
-require_once __DIR__ . '/../processors/ShortcodeProcessor.php';
-
-// Include NavigationBuilder
-require_once __DIR__ . '/../core/NavigationBuilder.php';
 
 // Set security headers (admin context)
 use StaticMD\Core\SecurityHeaders;

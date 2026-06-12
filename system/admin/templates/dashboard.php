@@ -116,13 +116,20 @@ function encodeUrlPath($path) {
                         <hr class="my-3">
                         
                         <li class="nav-item">
-                            <a class="nav-link <?= ($_GET['action'] ?? '') === 'settings' ? 'active' : '' ?>" 
+                            <a class="nav-link <?= ($_GET['action'] ?? '') === 'settings' ? 'active' : '' ?>"
                                href="/admin?action=settings">
                                 <i class="bi bi-gear me-2"></i>
                                 <?= __('admin.common.settings') ?>
                             </a>
                         </li>
-                        
+                        <li class="nav-item">
+                            <a class="nav-link <?= ($_GET['action'] ?? '') === 'audit_log' ? 'active' : '' ?>"
+                               href="/admin?action=audit_log">
+                                <i class="bi bi-journal-text me-2"></i>
+                                <?= __('admin.common.audit_log') ?>
+                            </a>
+                        </li>
+
                         <li class="nav-item">
                             <a class="nav-link" href="<?= htmlspecialchars($_SESSION['last_frontend_url'] ?? '/') ?>">
                                 <i class="bi bi-eye me-2"></i>

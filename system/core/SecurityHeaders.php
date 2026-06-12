@@ -25,12 +25,13 @@ class SecurityHeaders
      */
     private static function getCSP(string $context): string
     {
+        $nonce = self::getNonce();
         $basePolicy = [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
+            "script-src 'self' 'nonce-{$nonce}' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
             "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
             "font-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com data:",
-            "img-src 'self' data: blob: https: http:",
+            "img-src 'self' data: blob: https:",
             "connect-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
             "media-src 'self'",
             "object-src 'none'",
@@ -43,7 +44,7 @@ class SecurityHeaders
         // Admin-specific adjustments
         if ($context === 'admin') {
             // CodeMirror requires eval() for syntax highlighting
-            $basePolicy[1] = "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com";
+            $basePolicy[1] = "script-src 'self' 'nonce-{$nonce}' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com";
             
             // Admin may need forms for file upload
             $basePolicy[] = "child-src 'self'";

@@ -259,7 +259,7 @@ include __DIR__ . '/../shared/head.php';
     <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
         
     <!-- Gallery Custom JS -->
-    <script>
+    <script nonce="<?= $nonce ?>">
         document.addEventListener('DOMContentLoaded', function() {
             // Gallery setup first
             setupGallery();
@@ -385,7 +385,7 @@ include __DIR__ . '/../shared/head.php';
     </script>  
     
     <?php if (isset($meta['js'])): ?>
-    <script><?= $meta['js'] ?></script>
+    <script nonce="<?= $nonce ?>"><?= $meta['js'] ?></script>
     <?php endif; ?>
 </body>
 </html>

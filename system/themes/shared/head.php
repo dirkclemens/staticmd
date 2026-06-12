@@ -100,8 +100,8 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
     $highlightUrl = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/{$highlightStyle}.css";
     
     // Theme-Mapping als JavaScript-Variable für clientseitiges Switching
-    echo "<script>window.HIGHLIGHT_THEME_MAP = " . json_encode($highlightThemes) . ";</script>\n";
-    echo "<script>window.CURRENT_THEME = " . json_encode($currentThemeKey) . ";</script>\n";
+    echo "<script nonce=\"{$nonce}\">window.HIGHLIGHT_THEME_MAP = " . json_encode($highlightThemes) . ";</script>\n";
+    echo "<script nonce=\"{$nonce}\">window.CURRENT_THEME = " . json_encode($currentThemeKey) . ";</script>\n";
     ?>
     <link rel="stylesheet" href="<?= $highlightUrl ?>" id="highlight-theme">
 

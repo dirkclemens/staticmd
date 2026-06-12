@@ -11,7 +11,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
     
     <!-- Custom JS -->
-    <script>
+    <script nonce="<?= $nonce ?>">
         // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
@@ -164,5 +164,5 @@
     </script>
     
     <?php if (isset($meta['js'])): ?>
-    <script><?= $meta['js'] ?></script>
+    <script nonce="<?= $nonce ?>"><?= $meta['js'] ?></script>
     <?php endif; ?>

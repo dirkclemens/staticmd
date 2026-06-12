@@ -11,7 +11,8 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0); // Don't display, we'll capture them
 ini_set('log_errors', 1);
 
-// Load configuration first
+// Autoloader and configuration
+require_once __DIR__ . '/../autoload.php';
 $config = require_once __DIR__ . '/../../config.php';
 
 // Session starten mit konsistenter Konfiguration
@@ -26,9 +27,6 @@ session_set_cookie_params([
 ]);
 session_start();
 
-// Include AdminAuth für konsistente Auth-Prüfung
-require_once __DIR__ . '/AdminAuth.php';
-
 $auth = new \StaticMD\Admin\AdminAuth($config);
 if (!$auth->isLoggedIn()) {
     http_response_code(401);
@@ -36,19 +34,6 @@ if (!$auth->isLoggedIn()) {
     echo json_encode(['error' => 'Unauthorized']);
     exit;
 }
-
-// Include required classes
-require_once __DIR__ . '/../core/MarkdownParser.php';
-require_once __DIR__ . '/../processors/ShortcodeProcessor.php';
-require_once __DIR__ . '/../utilities/FrontMatterParser.php';
-require_once __DIR__ . '/../utilities/TitleGenerator.php';
-require_once __DIR__ . '/../utilities/UnicodeNormalizer.php';
-require_once __DIR__ . '/../utilities/UrlHelper.php';
-require_once __DIR__ . '/../renderers/FolderOverviewRenderer.php';
-require_once __DIR__ . '/../renderers/BlogListRenderer.php';
-require_once __DIR__ . '/../core/I18n.php';
-require_once __DIR__ . '/../core/NavigationBuilder.php';
-require_once __DIR__ . '/../core/ContentLoader.php';
 
 use StaticMD\Core\MarkdownParser;
 use StaticMD\Processors\ShortcodeProcessor;
@@ -99,14 +84,12 @@ try {
     ]);
     
 } catch (Throwable $e) {
+    error_log('StaticMD preview error: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
     http_response_code(500);
     header('Content-Type: application/json');
     echo json_encode([
         'success' => false,
         'error' => 'Preview rendering failed',
-        'message' => $e->getMessage(),
-        'file' => $e->getFile(),
-        'line' => $e->getLine(),
-        'trace' => $e->getTraceAsString()
+        'message' => $e->getMessage()
     ]);
 }

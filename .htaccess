@@ -4,6 +4,13 @@
 RewriteEngine On
 RewriteBase /
 
+# HTTPS erzwingen (außer auf localhost / 127.x für lokale Entwicklung)
+RewriteCond %{HTTPS} off
+RewriteCond %{HTTP_HOST} !^localhost$ [NC]
+RewriteCond %{HTTP_HOST} !^127\. [NC]
+RewriteCond %{HTTP_HOST} !^::1$ [NC]
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
 # Verzeichnis-Zugriff verhindern für System-Ordner (Ausnahmen: preview.php und admin.css)
 RewriteCond %{THE_REQUEST} \s/+system/
 RewriteCond %{REQUEST_URI} !^/system/admin/preview\.php$
@@ -16,10 +23,8 @@ RewriteRule ^storage/ - [F,L]
 RewriteCond %{THE_REQUEST} \s/+content/
 RewriteRule ^content/ - [F,L]
 
-# Debug-Dateien temporär erlauben
-RewriteCond %{REQUEST_FILENAME} -f
-RewriteCond %{REQUEST_URI} debug
-RewriteRule ^(.*)$ - [L]
+RewriteCond %{THE_REQUEST} \s/+backup/
+RewriteRule ^backup/ - [F,L]
 
 # Assets über PHP-Handler ausliefern (funktioniert zuverlässig)
 RewriteRule ^assets/(.+)$ assets.php?asset=$1 [L,QSA]
@@ -62,6 +67,11 @@ ServerSignature Off
 </Files>
 
 <Files "composer.json">
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files "generate_password_hash.php">
     Order allow,deny
     Deny from all
 </Files>

@@ -19,6 +19,7 @@ StaticMD is a professional PHP-based CMS for Markdown content with Bootstrap fro
 - ✅ **Unicode/Umlaut Support** with NFC/NFD normalization for German content
 - ✅ **Yellow CMS Compatibility** for seamless migration
 - ✅ **Professional Admin Dashboard** with statistics, file manager, backup system
+- ✅ **Audit Log** with action history, IP tracking, and admin viewer (`?action=audit_log`)
 - ✅ **Advanced Security** with CSRF protection, CSP headers, session management
 - ✅ **SEO & Search Engine Control** with dynamic robots.txt and per-page settings
 - ✅ **Navigation System** with configurable ordering and breadcrumb support
@@ -93,9 +94,9 @@ StaticMD is a professional PHP-based CMS for Markdown content with Bootstrap fro
 - **Project Repository**: https://github.com/dirkclemens/staticMD
 - **robots.txt**: https://staticmd.adcore.de/robots.txt - Dynamic SEO control
 
-## 🆕 Recent Updates (November 2024)
-- **Gallery System**: Complete image gallery solution with lightbox
-- **Enhanced Shortcodes**: Code-block protection and improved processing
-- **Security Improvements**: Enhanced CSP and asset security
-- **Theme Expansion**: All 9 themes now support gallery layouts
-- **Backup System**: One-click complete site backup functionality
+## 🆕 Recent Updates (June 2026)
+- **Security Hardening**: CSP nonces (no `unsafe-inline`), SameSite=Strict cookies, HTTPS redirect, directory blocking, `finfo_file()` MIME validation
+- **PSR-4 Autoloader**: No Composer dependency — custom autoloader maps `StaticMD\*` namespaces to `system/`
+- **Admin Refactoring**: `AdminController` split into focused sub-controllers (`FileController`, `DashboardController`, `SettingsController`, `BackupController`, `UploadController`)
+- **Content Caching**: File-based cache in `storage/cache/` with `filemtime` invalidation; auth-gated pages excluded
+- **Editor Toolbar**: Added `[authstart]...[authstop]` button and dedicated shortcode block for all 5 shortcodes
