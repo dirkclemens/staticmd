@@ -55,8 +55,12 @@ class ContentLoader
 
         $rawContent = file_get_contents($contentPath);
 
-        // Pages with [authstart] blocks render differently per login state — skip cache
-        $cacheable = !str_contains($rawContent, '[authstart]');
+        // Pages with [authstart] blocks render differently per login state — skip cache.
+        // Pages with folder-listing shortcodes ([pages], [folder], [tags], [bloglist], [gallery])
+        // embed the current state of OTHER files/folders into their HTML. The cache key only
+        // tracks this file's own mtime, so adding/removing a listed file would never invalidate
+        // it — skip caching these too so the listing is always live.
+        $cacheable = !str_contains($rawContent, '[authstart]') && !$this->hasDynamicListingShortcode($rawContent);
 
         if ($cacheable) {
             $cached = $this->cache->get($contentPath);
@@ -92,6 +96,15 @@ class ContentLoader
         return $result;
     }
     
+    /**
+     * Prüft ob der Content einen Shortcode enthält, dessen Ausgabe vom Zustand
+     * anderer Dateien/Ordner abhängt (Ordner-Listings), statt nur vom eigenen Dateiinhalt
+     */
+    private function hasDynamicListingShortcode(string $content): bool
+    {
+        return (bool) preg_match('/\[(pages|folder|tags|bloglist|gallery)\b/i', $content);
+    }
+
     /**
      * Validiert Route-Tiefe
      */
