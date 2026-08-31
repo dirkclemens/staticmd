@@ -106,10 +106,22 @@ function renderNavTree($subfolders, $currentRoute, $level = 0) {
     return $html;
 }
 ?>
-                <!-- Sidebar -->                
-                <div class="sidebar">
+                <!-- Mobile Navigation Toggle -->
+                <button type="button" class="mobile-nav-fab btn btn-primary rounded-circle d-lg-none"
+                        data-bs-toggle="offcanvas" data-bs-target="#navOffcanvas" aria-controls="navOffcanvas"
+                        aria-label="Navigation öffnen">
+                    <i class="bi bi-list"></i>
+                </button>
+
+                <!-- Sidebar -->
+                <div class="offcanvas-lg offcanvas-start" tabindex="-1" id="navOffcanvas" aria-labelledby="navOffcanvasLabel">
+                    <div class="offcanvas-header d-lg-none">
+                        <button type="button" class="btn-close ms-auto" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                <div class="sidebar" id="navOffcanvasLabel">
                     <h5><i class="bi bi-list-ul me-2"></i>Navigation</h5>
-                    
+
                     <?php if (!empty($navItems)): ?>
                     <div class="list-group list-group-flush">
                         <a href="/" class="list-group-item list-group-item-action <?= $currentRoute === 'index' ? 'active' : '' ?>">
@@ -184,6 +196,7 @@ function renderNavTree($subfolders, $currentRoute, $level = 0) {
                             <i class="bi bi-tags me-1"></i>Alle Tags anzeigen
                         </a>
                     </div>
-                </div>                    
+                </div>
+                    </div>
+                </div>
                 <!-- End Sidebar -->
-                                            

@@ -255,6 +255,45 @@ blockquote {
     border-radius: 6px !important;
 }
 
+/* ===== Mobile Navigation (Offcanvas) ===== */
+.mobile-nav-fab {
+    position: fixed;
+    bottom: 1.25rem;
+    right: 1.25rem;
+    z-index: 1040;
+    width: 3.25rem;
+    height: 3.25rem;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.35);
+}
+
+#navOffcanvas.offcanvas-lg {
+    width: min(320px, 85vw);
+}
+
+@media (max-width: 991.98px) {
+    /* The outer sidebar column no longer needs a viewport-height reservation
+       on mobile: its real content (the nav tree) now lives in the fixed-position
+       offcanvas drawer, so a forced height here just leaves blank space. */
+    .sidebar {
+        position: static !important;
+        height: auto !important;
+        min-height: 0 !important;
+        overflow-y: visible !important;
+    }
+
+    #navOffcanvas .sidebar,
+    #navOffcanvas .sidebar-section {
+        height: auto;
+        overflow-y: visible;
+        padding-top: 0;
+    }
+}
+
 /* ===== Accordion Styles ===== */
 .accordion {
     margin: 1.5rem 0;

@@ -217,8 +217,8 @@ $nonce = SecurityHeaders::getNonce();
                                 </a>
                             </div>
                             <div class="mb-3">
-                                <button type="button" class="btn btn-outline-danger btn-sm w-100" 
-                                        onclick="confirmDelete('<?= htmlspecialchars($file) ?>')">
+                                <button type="button" class="btn btn-outline-danger btn-sm w-100"
+                                        id="confirmDeleteBtn" data-delete-file="<?= htmlspecialchars($file) ?>">
                                     <i class="bi bi-trash me-1"></i> <?= __('admin.editor.delete_file') ?>
                                 </button>
                             </div>
@@ -423,7 +423,7 @@ $nonce = SecurityHeaders::getNonce();
                                 <button type="button" class="btn btn-outline-primary btn-sm" id="validateMarkdownBtn" onclick="validateMarkdown()" title="Markdown-Syntax prüfen">
                                     <i class="bi bi-check2-circle me-1"></i> Syntax prüfen
                                 </button>
-                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="cancelEdit()">
+                                <button type="button" class="btn btn-outline-secondary btn-sm" id="cancelEditBtn">
                                     <i class="bi bi-x-circle me-1"></i> <?= __('admin.common.cancel') ?>
                                 </button>
                                 <button type="submit" class="btn btn-success btn-sm">
@@ -1338,7 +1338,7 @@ $nonce = SecurityHeaders::getNonce();
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= __('admin.common.cancel') ?></button>
-                    <button type="button" class="btn btn-danger" onclick="executeDelete()">
+                    <button type="button" class="btn btn-danger" id="executeDeleteBtn">
                         <i class="bi bi-trash me-1"></i> <?= __('admin.common.delete') ?>
                     </button>
                 </div>
@@ -1388,7 +1388,7 @@ $nonce = SecurityHeaders::getNonce();
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         <?= __('admin.common.cancel') ?>
                     </button>
-                    <button type="button" class="btn btn-primary" id="proceedWithSave" onclick="proceedWithSave()">
+                    <button type="button" class="btn btn-primary" id="proceedWithSave">
                         <i class="bi bi-check-circle me-1"></i>
                         <?= __('admin.editor.create_anyway') ?>
                     </button>
@@ -1418,23 +1418,23 @@ $nonce = SecurityHeaders::getNonce();
         document.addEventListener('DOMContentLoaded', function() {
             const editorForm = document.getElementById('editorForm');
             const fileInput = document.querySelector('input[name="file"]');
-            
+
             validationModal = new bootstrap.Modal(document.getElementById('pathValidationModal'));
-            
+
             editorForm.addEventListener('submit', function(e) {
                 const currentPath = fileInput.value.trim();
-                
+
                 // Sync CodeMirror content
                 if (typeof editor !== 'undefined' && editor) {
                     editor.save();
                 }
-                
+
                 // Skip validation if already confirmed
                 if (formSubmitPending) {
                     formSubmitPending = false;
                     return true;
                 }
-                
+
                 // Validate if path has changed or is new
                 if (currentPath !== originalPath) {
                     e.preventDefault();
@@ -1442,6 +1442,23 @@ $nonce = SecurityHeaders::getNonce();
                     return false;
                 }
             });
+
+            // Wire up buttons whose onclick is blocked by CSP (no 'unsafe-inline' in script-src)
+            document.getElementById('proceedWithSave').addEventListener('click', proceedWithSave);
+
+            document.getElementById('cancelEditBtn').addEventListener('click', cancelEdit);
+
+            const executeDeleteBtn = document.getElementById('executeDeleteBtn');
+            if (executeDeleteBtn) {
+                executeDeleteBtn.addEventListener('click', executeDelete);
+            }
+
+            const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+            if (confirmDeleteBtn) {
+                confirmDeleteBtn.addEventListener('click', function() {
+                    confirmDelete(this.dataset.deleteFile);
+                });
+            }
         });
         
         // Validate path and show modal if needed
@@ -1499,7 +1516,9 @@ $nonce = SecurityHeaders::getNonce();
         // Proceed with save after confirmation
         function proceedWithSave() {
             formSubmitPending = true;
-            validationModal.hide();
+            if (typeof editor !== 'undefined' && editor) {
+                editor.save();
+            }
             document.getElementById('editorForm').submit();
         }
         
@@ -1602,6 +1621,16 @@ $nonce = SecurityHeaders::getNonce();
                 themeIcon.classList.add('bi-moon-fill');
             }
         }
+    </script>
+    <script nonce="<?= $nonce ?>">
+        // CSP has nonce-based script-src without 'unsafe-inline', which blocks onclick attributes.
+        // Re-register every remaining onclick attribute as an addEventListener so toolbar buttons
+        // and emoji links work. 'unsafe-eval' is permitted in the admin CSP for CodeMirror.
+        document.querySelectorAll('[onclick]').forEach(function(el) {
+            var handler = el.getAttribute('onclick');
+            el.removeAttribute('onclick');
+            el.addEventListener('click', new Function(handler));
+        });
     </script>
 </body>
 </html>
