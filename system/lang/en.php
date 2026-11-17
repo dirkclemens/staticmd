@@ -344,6 +344,21 @@ return [
                 'emoji' => 'Emoji',
                 'auto_save_placeholder' => 'Auto-save could be implemented here'
             ],
+            'text_tools' => [
+                'title' => 'Text tools (apply to selection)',
+                'header_case' => 'Letter case',
+                'header_identifier' => 'Identifiers',
+                'header_lines' => 'Lines',
+                'upper' => 'UPPERCASE',
+                'lower' => 'lowercase',
+                'sentence' => 'Sentence case',
+                'title_case' => 'Title Case',
+                'sort_lines' => 'Sort lines A–Z',
+                'unique_lines' => 'Remove duplicate lines',
+                'remove_empty_lines' => 'Remove empty lines',
+                'clean_whitespace' => 'Clean up whitespace',
+                'no_selection' => 'Please select some text first'
+            ],
             'emoji_categories' => [
                 'activities' => 'Activities'
             ],

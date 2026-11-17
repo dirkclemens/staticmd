@@ -369,6 +369,31 @@ $nonce = SecurityHeaders::getNonce();
                                 <i class="bi bi-newspaper"></i>
                             </button>
 
+                            <!-- Text-Werkzeuge (auf Markierung anwenden) -->
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" title="<?= __('admin.editor.text_tools.title') ?>">
+                                    <i class="bi bi-type"></i>
+                                </button>
+                                <ul class="dropdown-menu text-tools-dropdown">
+                                    <li><h6 class="dropdown-header"><?= __('admin.editor.text_tools.header_case') ?></h6></li>
+                                    <li><a class="dropdown-item" href="#" data-text-transform="upper"><?= __('admin.editor.text_tools.upper') ?></a></li>
+                                    <li><a class="dropdown-item" href="#" data-text-transform="lower"><?= __('admin.editor.text_tools.lower') ?></a></li>
+                                    <li><a class="dropdown-item" href="#" data-text-transform="sentence"><?= __('admin.editor.text_tools.sentence') ?></a></li>
+                                    <li><a class="dropdown-item" href="#" data-text-transform="title"><?= __('admin.editor.text_tools.title_case') ?></a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><h6 class="dropdown-header"><?= __('admin.editor.text_tools.header_identifier') ?></h6></li>
+                                    <li><a class="dropdown-item font-monospace" href="#" data-text-transform="camel">camelCase</a></li>
+                                    <li><a class="dropdown-item font-monospace" href="#" data-text-transform="snake">snake_case</a></li>
+                                    <li><a class="dropdown-item font-monospace" href="#" data-text-transform="kebab">kebab-case</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><h6 class="dropdown-header"><?= __('admin.editor.text_tools.header_lines') ?></h6></li>
+                                    <li><a class="dropdown-item" href="#" data-text-transform="sortLines"><i class="bi bi-sort-alpha-down me-2"></i><?= __('admin.editor.text_tools.sort_lines') ?></a></li>
+                                    <li><a class="dropdown-item" href="#" data-text-transform="uniqueLines"><i class="bi bi-intersect me-2"></i><?= __('admin.editor.text_tools.unique_lines') ?></a></li>
+                                    <li><a class="dropdown-item" href="#" data-text-transform="removeEmptyLines"><i class="bi bi-distribute-vertical me-2"></i><?= __('admin.editor.text_tools.remove_empty_lines') ?></a></li>
+                                    <li><a class="dropdown-item" href="#" data-text-transform="cleanWhitespace"><i class="bi bi-eraser me-2"></i><?= __('admin.editor.text_tools.clean_whitespace') ?></a></li>
+                                </ul>
+                            </div>
+
                             <!-- Emojis -->
                             <div class="btn-group" role="group">
                                 <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" title="<?php echo __('admin.editor.toolbar.emoji'); ?>">
@@ -1242,6 +1267,159 @@ $nonce = SecurityHeaders::getNonce();
             return false; // Verhindert Standard-Link-Verhalten
         }
         
+        // ---------------------------------------------------------------
+        // Text-Werkzeuge: Transformationen auf markiertem Text
+        // ---------------------------------------------------------------
+        const TEXT_TOOL_LOCALE = document.documentElement.lang || 'de';
+
+        // Wörter für Bezeichner-Formate zerlegen (erkennt auch camelCase/PascalCase, snake_case, kebab-case)
+        function splitIdentifierWords(text) {
+            return text
+                .replace(/([\p{Ll}\p{N}])(\p{Lu})/gu, '$1 $2')
+                .replace(/(\p{Lu})(\p{Lu}\p{Ll})/gu, '$1 $2')
+                .split(/[^\p{L}\p{N}]+/u)
+                .filter(Boolean)
+                .map(w => w.toLocaleLowerCase(TEXT_TOOL_LOCALE));
+        }
+
+        // Funktion zeilenweise anwenden, Einrückung und Zeilenende-Leerraum der Zeile bleiben erhalten
+        function mapLinesKeepIndent(text, fn) {
+            return text.split('\n').map(line => {
+                const m = line.match(/^(\s*)(.*?)(\s*)$/su);
+                return m[2] === '' ? line : m[1] + fn(m[2]) + m[3];
+            }).join('\n');
+        }
+
+        function capitalizeFirst(word) {
+            return word.charAt(0).toLocaleUpperCase(TEXT_TOOL_LOCALE) + word.slice(1);
+        }
+
+        // Zeilenoperationen: abschließenden Zeilenumbruch der Markierung erhalten
+        function mapLineList(text, fn) {
+            const trailingNewline = text.endsWith('\n');
+            const lines = (trailingNewline ? text.slice(0, -1) : text).split('\n');
+            return fn(lines).join('\n') + (trailingNewline ? '\n' : '');
+        }
+
+        const textTransforms = {
+            upper: { lines: false, fn: t => t.toLocaleUpperCase(TEXT_TOOL_LOCALE) },
+            lower: { lines: false, fn: t => t.toLocaleLowerCase(TEXT_TOOL_LOCALE) },
+            sentence: {
+                lines: false,
+                fn: t => t.toLocaleLowerCase(TEXT_TOOL_LOCALE)
+                    // Erster Buchstabe des Textes, jeder Zeile und nach Satzende (. ! ?)
+                    .replace(/(^|\n|[.!?]\s+)([^\p{L}\n]*)(\p{L})/gu,
+                        (m, pre, between, ch) => pre + between + ch.toLocaleUpperCase(TEXT_TOOL_LOCALE))
+            },
+            title: {
+                lines: false,
+                fn: t => t.replace(/\p{L}[\p{L}\p{M}\p{N}'’]*/gu,
+                    w => capitalizeFirst(w.toLocaleLowerCase(TEXT_TOOL_LOCALE)))
+            },
+            camel: {
+                lines: false,
+                fn: t => mapLinesKeepIndent(t, s => splitIdentifierWords(s)
+                    .map((w, i) => i === 0 ? w : capitalizeFirst(w)).join(''))
+            },
+            snake: { lines: false, fn: t => mapLinesKeepIndent(t, s => splitIdentifierWords(s).join('_')) },
+            kebab: { lines: false, fn: t => mapLinesKeepIndent(t, s => splitIdentifierWords(s).join('-')) },
+            sortLines: {
+                lines: true,
+                fn: t => {
+                    const collator = new Intl.Collator(TEXT_TOOL_LOCALE, { sensitivity: 'base', numeric: true });
+                    return mapLineList(t, lines => lines.slice().sort(collator.compare));
+                }
+            },
+            uniqueLines: {
+                lines: true,
+                // Erstes Vorkommen bleibt; Leerzeilen bleiben unangetastet
+                fn: t => mapLineList(t, lines => {
+                    const seen = new Set();
+                    return lines.filter(l => {
+                        if (l.trim() === '') return true;
+                        if (seen.has(l)) return false;
+                        seen.add(l);
+                        return true;
+                    });
+                })
+            },
+            removeEmptyLines: {
+                lines: true,
+                fn: t => mapLineList(t, lines => lines.filter(l => l.trim() !== ''))
+            },
+            cleanWhitespace: {
+                lines: true,
+                // Einrückung bleibt erhalten; mehrfache Leerzeichen/Tabs im Text -> ein Leerzeichen; Zeilenende getrimmt
+                fn: t => t.split('\n').map(line => {
+                    const indent = line.match(/^[ \t]*/)[0];
+                    return indent + line.slice(indent.length)
+                        .replace(/[\t  -   　 ]+/g, ' ')
+                        .replace(/ +$/, '');
+                }).join('\n').replace(/^[ \t]+$/gm, '')
+            }
+        };
+
+        function applyTextTransform(name) {
+            const transform = textTransforms[name];
+            if (!transform || !editor) return;
+            const doc = editor.getDoc();
+
+            let ranges = doc.listSelections().map(r => {
+                let from = CodeMirror.cmpPos(r.anchor, r.head) <= 0 ? r.anchor : r.head;
+                let to = from === r.anchor ? r.head : r.anchor;
+
+                if (CodeMirror.cmpPos(from, to) === 0) {
+                    if (transform.lines) {
+                        return null;
+                    }
+                    // Keine Markierung: Wort unter dem Cursor verwenden
+                    const word = editor.findWordAt(from);
+                    from = word.anchor;
+                    to = word.head;
+                } else if (transform.lines) {
+                    // Zeilenoperationen immer auf ganze Zeilen ausdehnen
+                    from = { line: from.line, ch: 0 };
+                    if (to.ch === 0 && to.line > from.line) {
+                        to = { line: to.line - 1, ch: doc.getLine(to.line - 1).length };
+                    } else {
+                        to = { line: to.line, ch: doc.getLine(to.line).length };
+                    }
+                }
+                return { anchor: from, head: to };
+            }).filter(Boolean);
+
+            if (ranges.length === 0 || ranges.every(r => CodeMirror.cmpPos(r.anchor, r.head) === 0)) {
+                showTextToolHint();
+                return;
+            }
+
+            editor.operation(() => {
+                doc.setSelections(ranges);
+                const results = doc.getSelections().map(transform.fn);
+                doc.replaceSelections(results, 'around', '+textTool');
+            });
+            editor.focus();
+        }
+
+        function showTextToolHint() {
+            const btn = document.querySelector('.text-tools-dropdown').previousElementSibling;
+            const tip = bootstrap.Tooltip.getOrCreateInstance(btn, {
+                title: '<?= __('admin.editor.text_tools.no_selection') ?>',
+                trigger: 'manual',
+                placement: 'bottom'
+            });
+            tip.show();
+            setTimeout(() => tip.dispose(), 2000);
+            editor.focus();
+        }
+
+        document.querySelectorAll('[data-text-transform]').forEach(item => {
+            item.addEventListener('click', e => {
+                e.preventDefault();
+                applyTextTransform(item.dataset.textTransform);
+            });
+        });
+
         // Vollbild-Modus
         function toggleFullscreen() {
             const container = document.querySelector('.editor-container');

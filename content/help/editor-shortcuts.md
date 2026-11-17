@@ -20,7 +20,7 @@ Der Markdown-Editor unterstützt zahlreiche Tastenkombinationen für effizientes
 | `Ctrl-L` / `Cmd-L` | Link einfügen | `[Text](URL)` |
 
 ## 🔍 Suchen & Navigieren
-
+  
 | Tastenkombination | Aktion |
 |-------------------|--------|
 | `Ctrl-F` / `Cmd-F` | Suchen öffnen |
@@ -61,6 +61,27 @@ Zusätzlich zu den Tastenkombinationen bietet die Toolbar Buttons für:
 - Sprungmarken
 - Accordions
 - Emojis :smile:
+- Text-Werkzeuge (Menü mit dem Schrift-Symbol)
+
+### Text-Werkzeuge
+
+Das Menü wirkt auf den **markierten Text**; mehrere Markierungen (Mehrfachcursor) werden einzeln bearbeitet. Alle Änderungen lassen sich mit `Ctrl-Z` / `Cmd-Z` rückgängig machen.
+
+| Funktion | Beispiel | Hinweis |
+|----------|----------|---------|
+| GROSSBUCHSTABEN | `straße` → `STRASSE` | ohne Markierung: Wort am Cursor |
+| kleinbuchstaben | `XML Datei` → `xml datei` | ohne Markierung: Wort am Cursor |
+| Satzanfang groß | `DAS IST GUT. noch was` → `Das ist gut. Noch was` | setzt den Rest klein (auch Substantive) |
+| Titel Case | `über den wolken` → `Über Den Wolken` | |
+| camelCase | `Hallo schöne Welt` → `halloSchöneWelt` | zeilenweise, Einrückung bleibt |
+| snake_case | `myVariableName` → `my_variable_name` | zeilenweise, Einrückung bleibt |
+| kebab-case | `my_variable Name` → `my-variable-name` | zeilenweise, Einrückung bleibt |
+| Zeilen sortieren A–Z | | deutsche Sortierung, `item2` vor `item10` |
+| Doppelte Zeilen entfernen | | erstes Vorkommen bleibt, Leerzeilen bleiben |
+| Leerzeilen entfernen | | auch Zeilen nur mit Leerzeichen/Tabs |
+| Leerzeichen bereinigen | `a   b\t c  ` → `a b c` | Einrückung bleibt; entfernt auch zwei Leerzeichen am Zeilenende (Markdown-Zeilenumbruch) |
+
+Zeilen-Funktionen wirken immer auf **ganze Zeilen** – eine teilweise markierte Zeile wird vollständig einbezogen.
 
 ### Drag & Drop
 

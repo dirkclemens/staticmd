@@ -344,6 +344,21 @@ return [
                 'emoji' => 'Emoji',
                 'auto_save_placeholder' => 'Auto-save könnte hier implementiert werden'
             ],
+            'text_tools' => [
+                'title' => 'Text-Werkzeuge (auf Markierung anwenden)',
+                'header_case' => 'Groß-/Kleinschreibung',
+                'header_identifier' => 'Bezeichner',
+                'header_lines' => 'Zeilen',
+                'upper' => 'GROSSBUCHSTABEN',
+                'lower' => 'kleinbuchstaben',
+                'sentence' => 'Satzanfang groß',
+                'title_case' => 'Titel Case',
+                'sort_lines' => 'Zeilen sortieren A–Z',
+                'unique_lines' => 'Doppelte Zeilen entfernen',
+                'remove_empty_lines' => 'Leerzeilen entfernen',
+                'clean_whitespace' => 'Leerzeichen bereinigen',
+                'no_selection' => 'Bitte zuerst Text markieren'
+            ],
             'emoji_categories' => [
                 'activities' => 'Aktivitäten'
             ],
