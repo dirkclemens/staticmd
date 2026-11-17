@@ -54,7 +54,7 @@ Auf dem Mac entspricht `Alt` der `⌥ Option`-Taste.
 Ab dem **4. Buchstaben** eines Wortes erscheint automatisch ein Popup mit Wortvorschlägen.
 
 - Vorschläge stammen aus **allen Seiten** (`content/`) und dem **aktuellen Text** – auch aus noch nicht gespeicherten Änderungen.
-- Sortierung nach **Häufigkeit**; die Zahl rechts zeigt, wie oft das Wort vorkommt.
+- Sortierung nach **Häufigkeit** – häufig verwendete Wörter stehen oben.
 - Schreibvarianten (`Wolken` / `wolken`) werden zusammengefasst, die häufigste Schreibweise wird vorgeschlagen.
 - Beginnt das getippte Wort mit einem Großbuchstaben, werden die Vorschläge ebenfalls großgeschrieben.
 

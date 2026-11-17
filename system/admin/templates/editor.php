@@ -1632,18 +1632,7 @@ $nonce = SecurityHeaders::getNonce();
                 })
                 .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], TEXT_TOOL_LOCALE))
                 .slice(0, AUTOCOMPLETE_MAX_ITEMS)
-                .map(([text, count]) => ({
-                    text: text,
-                    render: (el) => {
-                        const word = document.createElement('span');
-                        word.textContent = text;
-                        const badge = document.createElement('span');
-                        badge.className = 'hint-count';
-                        badge.textContent = count;
-                        el.appendChild(word);
-                        el.appendChild(badge);
-                    }
-                }));
+                .map(([text]) => text);
 
             if (list.length === 0) return null;
             return {
