@@ -43,6 +43,27 @@ class FileController
         exit;
     }
 
+    /**
+     * JSON-Wortliste (Wort => Häufigkeit) aller Inhaltsdateien für die Editor-Autovervollständigung
+     */
+    public function wordIndex(): void
+    {
+        $this->auth->requireLogin();
+        header('Content-Type: application/json; charset=utf-8');
+        header('Cache-Control: private, no-store');
+
+        try {
+            $storagePath = $this->config['paths']['storage'] ?? dirname(__DIR__, 3) . '/storage';
+            $index = new \StaticMD\Core\WordIndex($this->config['paths']['content'], $storagePath);
+            echo json_encode(['words' => (object) $index->get()], JSON_UNESCAPED_UNICODE);
+        } catch (\Throwable $e) {
+            error_log('Word index error: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['words' => new \stdClass(), 'error' => 'word index unavailable']);
+        }
+        exit;
+    }
+
     public function showEditor(): void
     {
         $this->auth->requireLogin();

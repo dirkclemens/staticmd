@@ -669,3 +669,30 @@ body {
 .theme-material .theme-string { color: #c3e88d; }
 .theme-material .theme-comment { color: #546e7a; }
 .theme-material .theme-text { color: #eeffff; }
+/* Editor-Autovervollständigung (CodeMirror show-hint) */
+.CodeMirror-hints {
+    z-index: 10050; /* über dem Vollbild-Editor (z-index 9999) */
+    font-family: var(--bs-font-monospace);
+    font-size: 0.9rem;
+    max-height: 16em;
+    padding: 2px;
+    border-radius: 4px;
+    background: var(--bs-body-bg);
+    border-color: var(--bs-border-color);
+}
+.CodeMirror-hint {
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5em;
+    padding: 2px 6px;
+    color: var(--bs-body-color);
+    border-radius: 3px;
+}
+li.CodeMirror-hint-active {
+    background: var(--bs-primary);
+    color: #fff;
+}
+.CodeMirror-hint .hint-count {
+    opacity: 0.55;
+    font-size: 0.8em;
+}

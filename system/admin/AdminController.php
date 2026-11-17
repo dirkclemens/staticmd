@@ -93,6 +93,9 @@ class AdminController
             case 'create_backup':
                 $this->backupCtrl->createBackup();
                 break;
+            case 'word_index':
+                $this->fileCtrl->wordIndex();
+                break;
             case 'validate_path':
                 $this->fileCtrl->validatePath();
                 break;

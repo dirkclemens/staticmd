@@ -39,6 +39,7 @@ $nonce = SecurityHeaders::getNonce();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/solarized.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/material.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/dialog/dialog.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/hint/show-hint.min.css">
     
     <link rel="stylesheet" href="/system/admin/admin.css">
 </head>
@@ -486,6 +487,7 @@ $nonce = SecurityHeaders::getNonce();
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/search/search.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/search/searchcursor.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/dialog/dialog.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/hint/show-hint.min.js"></script>
     
     <script nonce="<?= $nonce ?>">
         // Download-Tag einfügen
@@ -819,6 +821,11 @@ $nonce = SecurityHeaders::getNonce();
                 matchBrackets: true,
                 indentUnit: 4,
                 tabSize: 4,
+                hintOptions: {
+                    hint: wordHint,
+                    completeSingle: false,
+                    closeCharacters: /[^\p{L}\p{N}_]/u
+                },
                 extraKeys: {
                     "Ctrl-Z": "undo",                    // Rückgängig
                     "Ctrl-Y": "redo",                    // Wiederherstellen
@@ -830,7 +837,12 @@ $nonce = SecurityHeaders::getNonce();
                     "Ctrl-S": function() { submitEditorForm(); },
                     "Cmd-S": function() { submitEditorForm(); },  // macOS
                     "F11": function() { toggleFullscreen(); },
-                    "Esc": function() { toggleFullscreen(); },  // Vollbild verlassen
+                    "Esc": function() {                  // Vollbild verlassen (nur wenn aktiv)
+                        if (!document.querySelector('.editor-container').classList.contains('fullscreen')) {
+                            return CodeMirror.Pass;
+                        }
+                        toggleFullscreen();
+                    },
                     "Ctrl-F": "find",
                     "Cmd-F": "find",  // macOS
                     "F3": "findNext",  // Weitersuchen (vorwärts)
@@ -842,9 +854,11 @@ $nonce = SecurityHeaders::getNonce();
                     "Ctrl-D": function(cm) { cm.execCommand("deleteLine"); },  // Zeile löschen
                     "Ctrl-/": function(cm) { cm.toggleComment(); },  // Kommentar umschalten
                     "Cmd-/": function(cm) { cm.toggleComment(); },  // macOS
-                    "Alt-Up": "swapLineUp",  // Zeile nach oben verschieben
-                    "Alt-Down": "swapLineDown",  // Zeile nach unten verschieben
-                    "Ctrl-Space": "autocomplete",  // Autovervollständigung
+                    "Alt-Up": function(cm) { moveLines(cm, -1); },          // Zeile(n) nach oben verschieben
+                    "Alt-Down": function(cm) { moveLines(cm, 1); },         // Zeile(n) nach unten verschieben
+                    "Shift-Alt-Up": function(cm) { duplicateLines(cm, -1); },   // Zeile(n) nach oben duplizieren
+                    "Shift-Alt-Down": function(cm) { duplicateLines(cm, 1); },  // Zeile(n) nach unten duplizieren
+                    "Ctrl-Space": function(cm) { cm.showHint({ minChars: 1 }); },  // Autovervollständigung manuell
                     // Markdown-spezifische Shortcuts
                     "Ctrl-B": function(cm) { insertMarkdown('**', '**'); },  // Bold
                     "Cmd-B": function(cm) { insertMarkdown('**', '**'); },   // Bold (macOS)
@@ -854,7 +868,7 @@ $nonce = SecurityHeaders::getNonce();
                     "Cmd-K": function(cm) { insertMarkdown('`', '`'); },     // Inline Code (macOS)
                     "Ctrl-L": function(cm) { insertMarkdown('[', '](url)'); },  // Link
                     "Cmd-L": function(cm) { insertMarkdown('[', '](url)'); },    // Link (macOS)
-                    "Ctrl-Shift-D": "duplicateLine",     // Zeile duplizieren
+                    "Shift-Ctrl-D": function(cm) { duplicateLines(cm, 1); },  // Zeile duplizieren
                     "Ctrl-[": "indentLess",              // Einzug verringern
                     "Ctrl-]": "indentMore",              // Einzug erhöhen
                     "Ctrl-Alt-5": "indentLess",
@@ -867,6 +881,22 @@ $nonce = SecurityHeaders::getNonce();
                     "Ctrl-K Ctrl-L": "toLowerCase"      // Kleinbuchstaben
                 }
             });
+
+            // Autovervollständigung: Popup automatisch ab dem 4. Buchstaben
+            editor.on('inputRead', function(cm, change) {
+                if (cm.state.completionActive || change.origin !== '+input') return;
+                if (cm.listSelections().length > 1) return;
+                const cur = cm.getCursor();
+                const line = cm.getLine(cur.line);
+                const before = line.slice(0, cur.ch).match(/\p{L}[\p{L}\p{N}_]*$/u);
+                const after = line.charAt(cur.ch);
+                if (before && before[0].length >= AUTOCOMPLETE_MIN_CHARS && !/[\p{L}\p{N}_]/u.test(after)) {
+                    cm.showHint();
+                }
+            });
+            loadWordIndex();
+            const recountDocWords = debounce(() => countDocWords(editor), 400);
+            editor.on('changes', recountDocWords);
 
             // Zeilenende-Markierungen hinzufügen
             editor.on('renderLine', function(cm, line, element) {
@@ -1420,6 +1450,209 @@ $nonce = SecurityHeaders::getNonce();
             });
         });
 
+        // ---------------------------------------------------------------
+        // Zeilen verschieben / duplizieren (mehrere Zeilen & Mehrfachauswahl)
+        // ---------------------------------------------------------------
+
+        // Zusammenhängende Zeilenblöcke aller Markierungen (sortiert, angrenzende zusammengefasst)
+        function getSelectedLineBlocks(cm) {
+            const blocks = cm.listSelections().map(r => {
+                const from = CodeMirror.cmpPos(r.anchor, r.head) <= 0 ? r.anchor : r.head;
+                const to = from === r.anchor ? r.head : r.anchor;
+                // Markierung, die am Anfang einer Zeile endet, schließt diese Zeile nicht ein
+                const end = (to.ch === 0 && to.line > from.line) ? to.line - 1 : to.line;
+                return { start: from.line, end: end };
+            }).sort((a, b) => a.start - b.start);
+
+            const merged = [];
+            blocks.forEach(b => {
+                const last = merged[merged.length - 1];
+                if (last && b.start <= last.end + 1) {
+                    last.end = Math.max(last.end, b.end);
+                } else {
+                    merged.push({ start: b.start, end: b.end });
+                }
+            });
+            return merged;
+        }
+
+        function getLineBlockText(cm, block) {
+            return cm.getRange({ line: block.start, ch: 0 }, { line: block.end, ch: cm.getLine(block.end).length });
+        }
+
+        function shiftSelection(range, offset) {
+            return {
+                anchor: { line: range.anchor.line + offset, ch: range.anchor.ch },
+                head: { line: range.head.line + offset, ch: range.head.ch }
+            };
+        }
+
+        // dir = -1 (hoch) / +1 (runter)
+        function moveLines(cm, dir) {
+            const blocks = getSelectedLineBlocks(cm);
+            if (dir < 0 && blocks[0].start === 0) return;
+            if (dir > 0 && blocks[blocks.length - 1].end >= cm.lastLine()) return;
+
+            const selections = cm.listSelections();
+            cm.operation(() => {
+                // Zeilenanzahl bleibt pro Block gleich, daher beeinflussen sich die Blöcke nicht
+                blocks.forEach(b => {
+                    const text = getLineBlockText(cm, b);
+                    if (dir < 0) {
+                        const above = cm.getLine(b.start - 1);
+                        cm.replaceRange(text + '\n' + above,
+                            { line: b.start - 1, ch: 0 },
+                            { line: b.end, ch: cm.getLine(b.end).length }, '+moveLine');
+                    } else {
+                        const below = cm.getLine(b.end + 1);
+                        cm.replaceRange(below + '\n' + text,
+                            { line: b.start, ch: 0 },
+                            { line: b.end + 1, ch: below.length }, '+moveLine');
+                    }
+                });
+                cm.setSelections(selections.map(r => shiftSelection(r, dir)));
+            });
+            cm.scrollIntoView(null, 40);
+        }
+
+        // dir = -1: Kopie oberhalb, Markierung bleibt oben; dir = +1: Kopie unterhalb, Markierung wandert mit
+        function duplicateLines(cm, dir) {
+            const blocks = getSelectedLineBlocks(cm);
+            const selections = cm.listSelections();
+
+            cm.operation(() => {
+                // Von unten nach oben einfügen, damit Zeilennummern weiter oben gültig bleiben
+                for (let i = blocks.length - 1; i >= 0; i--) {
+                    const b = blocks[i];
+                    cm.replaceRange(getLineBlockText(cm, b) + '\n', { line: b.start, ch: 0 }, null, '+duplicateLine');
+                }
+
+                cm.setSelections(selections.map(r => {
+                    const firstLine = Math.min(r.anchor.line, r.head.line);
+                    let offset = 0;
+                    for (const b of blocks) {
+                        const len = b.end - b.start + 1;
+                        if (b.end < firstLine) {
+                            offset += len;
+                        } else {
+                            if (dir > 0) offset += len;
+                            break;
+                        }
+                    }
+                    return shiftSelection(r, offset);
+                }));
+            });
+            cm.scrollIntoView(null, 40);
+        }
+
+        // ---------------------------------------------------------------
+        // Autovervollständigung mit Wörtern aller Seiten + aktuellem Text
+        // ---------------------------------------------------------------
+        const AUTOCOMPLETE_MIN_CHARS = 4;
+        const AUTOCOMPLETE_MAX_ITEMS = 12;
+        const WORD_PATTERN = /\p{L}[\p{L}\p{N}_]*/gu;
+        let globalWordCounts = new Map();            // Wörter aller Seiten (Server)
+        let docWordCounts = null;                    // Wörter des aktuellen Texts (null = neu zählen)
+
+        function loadWordIndex() {
+            fetch('/admin?action=word_index', { credentials: 'same-origin', headers: { 'Accept': 'application/json' } })
+                .then(r => r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status)))
+                .then(data => {
+                    globalWordCounts = new Map(Object.entries((data && data.words) || {}));
+                })
+                .catch(err => console.warn('Wortindex für Autovervollständigung nicht verfügbar:', err));
+        }
+
+        function countDocWords(cm) {
+            const counts = new Map();
+            for (const w of cm.getValue().normalize('NFC').match(WORD_PATTERN) || []) {
+                if (w.length > AUTOCOMPLETE_MIN_CHARS) counts.set(w, (counts.get(w) || 0) + 1);
+            }
+            docWordCounts = counts;
+        }
+
+        // Nicht bei jedem Tastendruck zählen, sondern nach einer kurzen Tipp-Pause (siehe 'changes'-Handler)
+        function getDocWordCounts(cm) {
+            if (!docWordCounts) countDocWords(cm);
+            return docWordCounts;
+        }
+
+        // Schreibweise des getippten Präfixes übernehmen (Satzanfang groß, ALLES GROSS)
+        function adaptCase(word, prefix) {
+            if (prefix.length > 1 && prefix === prefix.toLocaleUpperCase(TEXT_TOOL_LOCALE) && prefix !== prefix.toLocaleLowerCase(TEXT_TOOL_LOCALE)) {
+                return word.toLocaleUpperCase(TEXT_TOOL_LOCALE);
+            }
+            const first = prefix.charAt(0);
+            if (first === first.toLocaleUpperCase(TEXT_TOOL_LOCALE) && first !== first.toLocaleLowerCase(TEXT_TOOL_LOCALE)) {
+                return capitalizeFirst(word);
+            }
+            return word;
+        }
+
+        function wordHint(cm, options) {
+            const cur = cm.getCursor();
+            const line = cm.getLine(cur.line);
+            const isWordChar = ch => /[\p{L}\p{N}_]/u.test(ch);
+
+            let start = cur.ch;
+            while (start > 0 && isWordChar(line.charAt(start - 1))) start--;
+            let end = cur.ch;
+            while (end < line.length && isWordChar(line.charAt(end))) end++;
+
+            const prefix = line.slice(start, cur.ch).normalize('NFC');
+            const minChars = (options && options.minChars) || AUTOCOMPLETE_MIN_CHARS;
+            if (prefix.length < minChars || !/^\p{L}/u.test(prefix)) return null;
+
+            const prefixLower = prefix.toLocaleLowerCase(TEXT_TOOL_LOCALE);
+            const currentWord = line.slice(start, end).normalize('NFC');
+            // Schreibvarianten (Wolken/wolken) zusammenfassen: Summe der Häufigkeiten, häufigste Schreibweise gewinnt
+            const groups = new Map();
+
+            const collect = (counts, isDoc) => {
+                counts.forEach((count, word) => {
+                    if (word.length <= prefix.length) return;
+                    const lower = word.toLocaleLowerCase(TEXT_TOOL_LOCALE);
+                    if (!lower.startsWith(prefixLower)) return;
+                    // Das gerade getippte Wort selbst nicht mitzählen
+                    if (isDoc && word === currentWord) count--;
+                    if (count <= 0) return;
+                    const group = groups.get(lower) || { total: 0, variants: new Map() };
+                    group.total += count;
+                    group.variants.set(word, (group.variants.get(word) || 0) + count);
+                    groups.set(lower, group);
+                });
+            };
+            collect(globalWordCounts, false);
+            collect(getDocWordCounts(cm), true);
+
+            const list = Array.from(groups.values())
+                .map(g => {
+                    const best = Array.from(g.variants.entries()).sort((a, b) => b[1] - a[1])[0][0];
+                    return [adaptCase(best, prefix), g.total];
+                })
+                .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], TEXT_TOOL_LOCALE))
+                .slice(0, AUTOCOMPLETE_MAX_ITEMS)
+                .map(([text, count]) => ({
+                    text: text,
+                    render: (el) => {
+                        const word = document.createElement('span');
+                        word.textContent = text;
+                        const badge = document.createElement('span');
+                        badge.className = 'hint-count';
+                        badge.textContent = count;
+                        el.appendChild(word);
+                        el.appendChild(badge);
+                    }
+                }));
+
+            if (list.length === 0) return null;
+            return {
+                list: list,
+                from: CodeMirror.Pos(cur.line, start),
+                to: CodeMirror.Pos(cur.line, cur.ch)
+            };
+        }
+
         // Vollbild-Modus
         function toggleFullscreen() {
             const container = document.querySelector('.editor-container');
@@ -1441,6 +1674,8 @@ $nonce = SecurityHeaders::getNonce();
         
         // ESC für Vollbild verlassen
         document.addEventListener('keydown', function(e) {
+            // Bereits von CodeMirror behandelt (z. B. Autovervollständigung schließen)
+            if (e.defaultPrevented) return;
             if (e.key === 'Escape') {
                 const container = document.querySelector('.editor-container');
                 if (container.classList.contains('fullscreen')) {

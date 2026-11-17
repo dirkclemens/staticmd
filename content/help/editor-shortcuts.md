@@ -41,10 +41,28 @@ Der Markdown-Editor unterstützt zahlreiche Tastenkombinationen für effizientes
 | Tastenkombination | Aktion |
 |-------------------|--------|
 | `Ctrl-D` | Aktuelle Zeile löschen |
-| `Alt-Up` | Zeile nach oben verschieben |
-| `Alt-Down` | Zeile nach unten verschieben |
+| `Alt-↑` / `Alt-↓` | Zeile(n) nach oben / unten verschieben – auch mehrere markierte Zeilen |
+| `Shift-Alt-↑` / `Shift-Alt-↓` | Zeile(n) nach oben / unten duplizieren |
+| `Ctrl-Shift-D` | Zeile(n) duplizieren (nach unten) |
 | `Ctrl-/` / `Cmd-/` | Kommentar umschalten |
-| `Ctrl-Space` | Autovervollständigung |
+| `Ctrl-Space` | Autovervollständigung manuell öffnen (schon ab 1 Buchstaben) |
+
+Auf dem Mac entspricht `Alt` der `⌥ Option`-Taste.
+
+## 💬 Autovervollständigung
+
+Ab dem **4. Buchstaben** eines Wortes erscheint automatisch ein Popup mit Wortvorschlägen.
+
+- Vorschläge stammen aus **allen Seiten** (`content/`) und dem **aktuellen Text** – auch aus noch nicht gespeicherten Änderungen.
+- Sortierung nach **Häufigkeit**; die Zahl rechts zeigt, wie oft das Wort vorkommt.
+- Schreibvarianten (`Wolken` / `wolken`) werden zusammengefasst, die häufigste Schreibweise wird vorgeschlagen.
+- Beginnt das getippte Wort mit einem Großbuchstaben, werden die Vorschläge ebenfalls großgeschrieben.
+
+| Taste | Aktion |
+|-------|--------|
+| `↑` / `↓` | Vorschlag auswählen |
+| `Enter` / `Tab` | Vorschlag übernehmen |
+| `Esc` | Popup schließen |
 
 ## 🎯 Editor-Features
 
