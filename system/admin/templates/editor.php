@@ -483,7 +483,7 @@ $nonce = SecurityHeaders::getNonce();
                                 <button type="button" class="btn btn-outline-secondary btn-sm" id="cancelEditBtn">
                                     <i class="bi bi-x-circle me-1"></i> <?= __('admin.common.cancel') ?>
                                 </button>
-                                <button type="submit" class="btn btn-success btn-sm">
+                                <button type="submit" class="btn btn-success btn-sm" title="<?= __('admin.editor.save_button_title') ?>">
                                     <i class="bi bi-floppy me-1"></i> <?= __('admin.common.save') ?>
                                 </button>
                             </div>
@@ -886,8 +886,8 @@ $nonce = SecurityHeaders::getNonce();
                     "Ctrl-X": "cut",                     // Ausschneiden (meist Browser-Default)
                     "Ctrl-C": "copy",                    // Kopieren (meist Browser-Default)
                     "Ctrl-V": "paste",                   // Einfügen (meist Browser-Default)
-                    "Ctrl-S": function() { submitEditorForm(); },
-                    "Cmd-S": function() { submitEditorForm(); },  // macOS
+                    "Ctrl-S": function() { saveInPlace(); },   // Speichern ohne den Editor zu verlassen
+                    "Cmd-S": function() { saveInPlace(); },    // macOS
                     "F11": function() { toggleFullscreen(); },
                     "Esc": function() {                  // Vollbild verlassen (nur wenn aktiv)
                         if (!document.querySelector('.editor-container').classList.contains('fullscreen')) {
@@ -1893,6 +1893,28 @@ $nonce = SecurityHeaders::getNonce();
     </div>
     
     <!-- Hidden Delete Form -->
+    <!-- Toast für Speichern ohne Verlassen (Strg+S / Cmd+S) – über dem Vollbild-Editor (z-index 9999) -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 10060;">
+        <div id="saveToastSuccess" class="toast align-items-center border-0 text-bg-success" role="status" aria-live="polite" aria-atomic="true" data-bs-delay="2500">
+            <div class="d-flex">
+                <div class="toast-body d-flex align-items-center gap-2">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span class="save-toast-text"></span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="<?= __('admin.editor.toast_close') ?>"></button>
+            </div>
+        </div>
+        <div id="saveToastError" class="toast align-items-center border-0 text-bg-danger" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="8000">
+            <div class="d-flex">
+                <div class="toast-body d-flex align-items-center gap-2">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <span class="save-toast-text"></span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="<?= __('admin.editor.toast_close') ?>"></button>
+            </div>
+        </div>
+    </div>
+
     <form method="POST" action="/admin?action=delete" id="deleteForm" style="display: none;">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($this->auth->generateCSRFToken()) ?>">
         <input type="hidden" name="file" value="">
@@ -1946,7 +1968,104 @@ $nonce = SecurityHeaders::getNonce();
     <script nonce="<?= $nonce ?>">
         let validationModal = null;
         let formSubmitPending = false;
-        const originalPath = '<?= htmlspecialchars($file) ?>';
+        let originalPath = '<?= htmlspecialchars($file) ?>';
+        let pendingSaveMode = 'exit';   // 'exit' = Button (speichern & verlassen), 'stay' = Strg+S
+        let saveInFlight = false;
+        let saveQueued = false;
+        const SAVE_TEXT = <?= json_encode([
+            'saved'           => __('admin.editor.save_toast'),
+            'failed'          => __('admin.editor.save_failed'),
+            'sessionExpired'  => __('admin.editor.session_expired'),
+            'fileRequired'    => __('admin.errors.filename_required'),
+        ], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?>;
+
+        // Strg+S / Cmd+S: speichern ohne den Editor zu verlassen
+        function saveInPlace() {
+            const currentPath = document.querySelector('input[name="file"]').value.trim();
+            if (!currentPath) {
+                showSaveToast(SAVE_TEXT.fileRequired, false);
+                return;
+            }
+            // Neue oder geänderte Datei: erst Pfad bestätigen lassen (gleicher Dialog wie beim Button)
+            if (currentPath !== originalPath) {
+                pendingSaveMode = 'stay';
+                validatePathBeforeSave();
+                return;
+            }
+            ajaxSave();
+        }
+
+        async function ajaxSave() {
+            if (saveInFlight) {
+                saveQueued = true;   // während des Speicherns erneut gedrückt → danach nochmal speichern
+                return;
+            }
+            saveInFlight = true;
+            if (typeof editor !== 'undefined' && editor) {
+                editor.save();
+            }
+            const form = document.getElementById('editorForm');
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    credentials: 'same-origin',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+                });
+                const isJson = (response.headers.get('Content-Type') || '').includes('application/json');
+                if (!isJson) {
+                    // z. B. Weiterleitung auf die Login-Seite
+                    throw new Error(SAVE_TEXT.sessionExpired);
+                }
+                const data = await response.json();
+                if (!response.ok || !data.success) {
+                    throw new Error(data.error || ('HTTP ' + response.status));
+                }
+
+                // Gespeicherter Pfad ist ab jetzt der aktuelle (neue Datei / umbenannt)
+                if (data.file !== originalPath) {
+                    originalPath = data.file;
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('action', 'edit');
+                    url.searchParams.set('file', data.file);
+                    history.replaceState(null, '', url);
+                }
+                if (typeof data.sessionRemaining === 'number' && typeof timeRemaining !== 'undefined') {
+                    timeRemaining = data.sessionRemaining;
+                }
+                const time = new Date().toLocaleTimeString(document.documentElement.lang || 'de',
+                    { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+                showSaveToast(SAVE_TEXT.saved.replace('{time}', time), true);
+            } catch (err) {
+                showSaveToast(SAVE_TEXT.failed + ': ' + err.message, false);
+            } finally {
+                saveInFlight = false;
+                if (saveQueued) {
+                    saveQueued = false;
+                    ajaxSave();
+                }
+            }
+        }
+
+        // Getrennte Toasts für Erfolg (2,5 s) und Fehler (8 s); erneutes show() startet die Anzeigezeit neu
+        function showSaveToast(message, success) {
+            const showEl = document.getElementById(success ? 'saveToastSuccess' : 'saveToastError');
+            const otherEl = document.getElementById(success ? 'saveToastError' : 'saveToastSuccess');
+            bootstrap.Toast.getOrCreateInstance(otherEl).hide();
+            showEl.querySelector('.save-toast-text').textContent = message;
+            bootstrap.Toast.getOrCreateInstance(showEl).show();
+        }
+
+        // Strg+S / Cmd+S auch außerhalb von CodeMirror (z. B. in den Metadaten-Feldern) abfangen
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && !e.altKey && !e.shiftKey && e.key.toLowerCase() === 's') {
+                e.preventDefault();
+                if (e.target.closest && e.target.closest('.CodeMirror')) {
+                    return; // CodeMirror-Keymap hat bereits gespeichert
+                }
+                saveInPlace();
+            }
+        });
         
         // Helper function to submit form (used by Ctrl-S and submit button)
         function submitEditorForm() {
@@ -1984,6 +2103,7 @@ $nonce = SecurityHeaders::getNonce();
                 // Validate if path has changed or is new
                 if (currentPath !== originalPath) {
                     e.preventDefault();
+                    pendingSaveMode = 'exit';
                     validatePathBeforeSave();
                     return false;
                 }
@@ -2061,6 +2181,12 @@ $nonce = SecurityHeaders::getNonce();
         
         // Proceed with save after confirmation
         function proceedWithSave() {
+            if (pendingSaveMode === 'stay') {
+                pendingSaveMode = 'exit';
+                closeValidationModal();
+                ajaxSave();
+                return;
+            }
             formSubmitPending = true;
             if (typeof editor !== 'undefined' && editor) {
                 editor.save();
@@ -2068,8 +2194,23 @@ $nonce = SecurityHeaders::getNonce();
             document.getElementById('editorForm').submit();
         }
         
+        // Dialog schließen – auch wenn er gerade noch einblendet (dann ignoriert Bootstrap hide())
+        function closeValidationModal() {
+            const modalEl = document.getElementById('pathValidationModal');
+            const hideWhenShown = () => validationModal.hide();
+            // Läuft noch die Einblend-Animation, wird nach deren Ende geschlossen
+            modalEl.addEventListener('shown.bs.modal', hideWhenShown, { once: true });
+            modalEl.addEventListener('hidden.bs.modal', () => modalEl.removeEventListener('shown.bs.modal', hideWhenShown), { once: true });
+            validationModal.hide();
+        }
+
         // Submit form directly without validation
         function submitFormDirectly() {
+            if (pendingSaveMode === 'stay') {
+                pendingSaveMode = 'exit';
+                ajaxSave();
+                return;
+            }
             formSubmitPending = true;
             document.getElementById('editorForm').submit();
         }

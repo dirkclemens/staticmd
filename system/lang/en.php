@@ -372,6 +372,11 @@ return [
                 'emoji' => 'Emoji',
                 'auto_save_placeholder' => 'Auto-save could be implemented here'
             ],
+            'save_toast' => 'Saved {time}',
+            'save_failed' => 'Saving failed',
+            'session_expired' => 'Session expired – please log in again. Your text is still in the editor.',
+            'save_button_title' => 'Save and leave the editor (Ctrl+S / Cmd+S saves without leaving)',
+            'toast_close' => 'Close',
             'blocks' => [
                 'title' => 'Insert container & alerts',
                 'header_alerts' => 'Alerts',

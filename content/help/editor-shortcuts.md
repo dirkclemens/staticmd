@@ -32,9 +32,16 @@ Der Markdown-Editor unterstützt zahlreiche Tastenkombinationen für effizientes
 
 | Tastenkombination | Aktion |
 |-------------------|--------|
-| `Ctrl-S` / `Cmd-S` | Seite speichern |
+| `Ctrl-S` / `Cmd-S` | Speichern **ohne** den Editor zu verlassen – Meldung „Gespeichert HH:MM:SS“ unten rechts |
 | `F11` | Vollbild umschalten |
 | `Esc` | Vollbild verlassen |
+
+Der Button **Speichern** speichert und **verlässt** den Editor (zurück zur Seite bzw. zum Dashboard).
+
+- `Ctrl-S` / `Cmd-S` wirkt überall auf der Editor-Seite, auch in den Feldern für Titel, Tags usw.
+- Bei einer neuen Seite oder geändertem Dateipfad erscheint vorher die übliche Pfad-Bestätigung; danach zeigt die Adresszeile die neue Datei.
+- Schlägt das Speichern fehl (z. B. Sitzung abgelaufen), erscheint eine rote Meldung – der Text bleibt im Editor erhalten.
+- Jedes Speichern verlängert die Sitzung; der Countdown oben wird zurückgesetzt.
 
 ## ✏️ Text bearbeiten
 
@@ -141,7 +148,7 @@ Die Vorschau zeigt das Ergebnis 1:1 wie im Frontend, inklusive:
 ## 💡 Tipps
 
 - Die Preview aktualisiert sich automatisch während du tippst (500ms Verzögerung)
-- `Ctrl-S` / `Cmd-S` funktioniert von überall im Editor
+- `Ctrl-S` / `Cmd-S` speichert zwischendurch, ohne den Editor zu verlassen – ideal, um regelmäßig zu sichern
 - `F3` ist der schnellste Weg zum nächsten Suchergebnis
 - Nutze `Alt-Up/Down` um Code-Zeilen schnell umzusortieren
 

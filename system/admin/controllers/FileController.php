@@ -43,6 +43,15 @@ class FileController
         exit;
     }
 
+    private function jsonResponse(int $status, array $data): never
+    {
+        http_response_code($status);
+        header('Content-Type: application/json; charset=utf-8');
+        header('Cache-Control: no-store');
+        echo json_encode($data, JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
     /**
      * JSON-Wortliste (Wort => Häufigkeit) aller Inhaltsdateien für die Editor-Autovervollständigung
      */
@@ -111,6 +120,12 @@ class FileController
 
     public function saveContent(): void
     {
+        // Strg+S / Cmd+S im Editor speichert per fetch() und erwartet JSON statt Redirect
+        $isAjax = ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest';
+
+        if ($isAjax && !$this->auth->isLoggedIn()) {
+            $this->jsonResponse(401, ['success' => false, 'error' => \StaticMD\Core\I18n::t('admin.editor.session_expired')]);
+        }
         $this->auth->requireLogin();
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -120,6 +135,9 @@ class FileController
 
         $csrfToken = $_POST['csrf_token'] ?? '';
         if (!$this->auth->verifyCSRFToken($csrfToken)) {
+            if ($isAjax) {
+                $this->jsonResponse(403, ['success' => false, 'error' => \StaticMD\Core\I18n::t('admin.errors.csrf_token_invalid')]);
+            }
             die(\StaticMD\Core\I18n::t('admin.errors.csrf_token_invalid'));
         }
 
@@ -128,6 +146,9 @@ class FileController
         $meta = $_POST['meta'] ?? [];
 
         if (empty($file)) {
+            if ($isAjax) {
+                $this->jsonResponse(400, ['success' => false, 'error' => \StaticMD\Core\I18n::t('admin.errors.filename_required')]);
+            }
             die(\StaticMD\Core\I18n::t('admin.errors.filename_required'));
         }
 
@@ -162,7 +183,22 @@ class FileController
 
         $fullContent = $frontMatter . $content;
 
-        if (file_put_contents($filePath, $fullContent) !== false) {
+        $written = file_put_contents($filePath, $fullContent) !== false;
+
+        if ($isAjax) {
+            if (!$written) {
+                $this->jsonResponse(500, ['success' => false, 'error' => \StaticMD\Core\I18n::t('admin.editor.save_failed')]);
+            }
+            $this->audit->log('save_file', $this->auth->getUsername(), ['file' => $file, 'mode' => 'in_place']);
+            $this->jsonResponse(200, [
+                'success' => true,
+                'file' => $file,
+                'savedAt' => date('c'),
+                'sessionRemaining' => $this->auth->getTimeRemaining(),
+            ]);
+        }
+
+        if ($written) {
             $this->audit->log('save_file', $this->auth->getUsername(), ['file' => $file]);
             $returnUrl = $_POST['return_url'] ?? '';
             if (!empty($returnUrl) && str_starts_with($returnUrl, '/') && !preg_match('#^https?://#i', $returnUrl)) {

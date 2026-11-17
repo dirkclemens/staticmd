@@ -143,7 +143,7 @@ The toolbar provides quick access to formatting options:
 **Additional Tools:**
 - **Fullscreen** - Maximize editor
 - **Syntax Check** - Validate your Markdown (a Markdown Linter)
-- **Save** - Save your changes
+- **Save** - Save your changes and leave the editor (use **Ctrl+S** / **Cmd+S** to save without leaving)
 - **Cancel** - Discard and return
 
 #### Keyboard Shortcuts
@@ -157,7 +157,7 @@ The toolbar provides quick access to formatting options:
 - **Ctrl+V** (Cmd+V on Mac) - Paste
 
 **File Operations:**
-- **Ctrl+S** (Cmd+S on Mac) - Save page
+- **Ctrl+S** (Cmd+S on Mac) - Save without leaving the editor; a "Saved HH:MM:SS" message appears at the bottom right. Works anywhere on the editor page, including the page settings fields. For a new page or a changed file path the usual path confirmation appears first.
 - **F11** - Toggle fullscreen
 - **Esc** - Leave fullscreen
 
@@ -884,7 +884,7 @@ Add language switcher links manually on pages.
 
 ### Best Practices
 
-- **Save frequently** - Use Ctrl+S often
+- **Save frequently** - Use Ctrl+S often; it saves without leaving the editor and extends your session
 - **Test changes** - Preview before publishing
 - **Create backups** - Before major changes
 - **Use descriptive names** - For files and folders
@@ -895,7 +895,7 @@ Add language switcher links manually on pages.
 
 | Action | Shortcut |
 |--------|----------|
-| Save page | Ctrl+S (Cmd+S) |
+| Save (stay in editor) | Ctrl+S (Cmd+S) |
 | Bold text | Ctrl+B |
 | Italic text | Ctrl+I |
 | Inline code | Ctrl+K |

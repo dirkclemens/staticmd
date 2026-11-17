@@ -372,6 +372,11 @@ return [
                 'emoji' => 'Emoji',
                 'auto_save_placeholder' => 'Auto-save könnte hier implementiert werden'
             ],
+            'save_toast' => 'Gespeichert {time}',
+            'save_failed' => 'Speichern fehlgeschlagen',
+            'session_expired' => 'Sitzung abgelaufen – bitte neu anmelden. Der Text bleibt im Editor erhalten.',
+            'save_button_title' => 'Speichern und Editor verlassen (Strg+S / Cmd+S speichert ohne zu verlassen)',
+            'toast_close' => 'Schließen',
             'blocks' => [
                 'title' => 'Container & Alerts einfügen',
                 'header_alerts' => 'Alerts',
