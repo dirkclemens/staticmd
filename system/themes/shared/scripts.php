@@ -25,6 +25,56 @@
             });
         });
 
+        // Copy-to-clipboard for code blocks and inline code.
+        // Event delegation instead of inline onclick: the nonce-based CSP blocks inline event handlers.
+        function copyTextToClipboard(text) {
+            if (navigator.clipboard && window.isSecureContext) {
+                return navigator.clipboard.writeText(text);
+            }
+            // Fallback for non-secure contexts (e.g. local http)
+            return new Promise((resolve, reject) => {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.setAttribute('readonly', '');
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
+                try {
+                    document.execCommand('copy') ? resolve() : reject(new Error('execCommand failed'));
+                } catch (e) {
+                    reject(e);
+                } finally {
+                    document.body.removeChild(ta);
+                }
+            });
+        }
+
+        document.addEventListener('click', function (e) {
+            const button = e.target.closest('.copy-code-btn, .copy-inline-btn');
+            if (!button) return;
+            e.preventDefault();
+
+            const container = button.closest('.code-block-wrapper, .inline-code-wrapper');
+            const codeElement = container ? container.querySelector('code') : null;
+            if (!codeElement) return;
+
+            copyTextToClipboard(codeElement.textContent).then(() => {
+                if (!button.dataset.originalHtml) {
+                    button.dataset.originalHtml = button.innerHTML;
+                }
+                button.innerHTML = '<i class="bi bi-check"></i>';
+                button.classList.add('copied');
+                clearTimeout(button._copyTimer);
+                button._copyTimer = setTimeout(() => {
+                    button.innerHTML = button.dataset.originalHtml;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Fehler beim Kopieren:', err);
+            });
+        });
+
         // Code syntax highlighting with Highlight.js
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('pre code').forEach((block) => {

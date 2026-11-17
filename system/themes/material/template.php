@@ -151,46 +151,6 @@ include __DIR__ . '/../shared/head.php';
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
         
     <script nonce="<?= $nonce ?>">
-        // Copy code to clipboard function
-        function copyCode(button) {
-            const codeBlock = button.previousElementSibling.querySelector('code');
-            const code = codeBlock.textContent;
-            
-            navigator.clipboard.writeText(code).then(() => {
-                // Visual feedback
-                const originalHTML = button.innerHTML;
-                button.innerHTML = '<i class="bi bi-check"></i>';
-                button.classList.add('copied');
-                
-                setTimeout(() => {
-                    button.innerHTML = originalHTML;
-                    button.classList.remove('copied');
-                }, 2000);
-            }).catch(err => {
-                console.error('Fehler beim Kopieren:', err);
-            });
-        }
-        
-        // Copy inline code to clipboard function
-        function copyInlineCode(button) {
-            const codeElement = button.previousElementSibling;
-            const code = codeElement.textContent;
-            
-            navigator.clipboard.writeText(code).then(() => {
-                // Visual feedback
-                const originalHTML = button.innerHTML;
-                button.innerHTML = '<i class="bi bi-check"></i>';
-                button.classList.add('copied');
-                
-                setTimeout(() => {
-                    button.innerHTML = originalHTML;
-                    button.classList.remove('copied');
-                }, 2000);
-            }).catch(err => {
-                console.error('Fehler beim Kopieren:', err);
-            });
-        }
-        
         // KaTeX Math Rendering
         document.addEventListener("DOMContentLoaded", function() {
             if (typeof renderMathInElement !== 'undefined') {
