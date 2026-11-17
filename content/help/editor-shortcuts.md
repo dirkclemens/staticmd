@@ -79,7 +79,25 @@ Zusätzlich zu den Tastenkombinationen bietet die Toolbar Buttons für:
 - Sprungmarken
 - Accordions
 - Emojis :smile:
+- Container & Alerts (Menü mit dem Spalten-Symbol)
 - Text-Werkzeuge (Menü mit dem Schrift-Symbol)
+
+### Container & Alerts
+
+Das Menü mit dem Spalten-Symbol fügt fertige Vorlagen ein – Details zur Syntax unter [Container-Blöcke & Alerts](/help/container-alerts).
+
+| Eintrag | Fügt ein |
+|---------|----------|
+| Hinweis / Tipp / Wichtig / Warnung / Achtung | GitHub-Alert `> [!NOTE]` … `> [!CAUTION]` |
+| Aufklappbarer Alert | `> [!TIP]- Titel` (zugeklappt) |
+| 2 Spalten / 3 Spalten / 2 Spalten 40 / 60 | `:::: columns` mit `::: column`-Blöcken |
+| Box mit Rahmen / Box zentriert | `::: {border}` bzw. `::: {border align=center}` |
+| Aufklappbarer Abschnitt | `::: details Mehr anzeigen` |
+
+- **Mit Markierung:** Der markierte Text (ganze Zeilen) wird in den Block übernommen – bei Alerts erhält jede Zeile automatisch `> `, bei Spalten landet er in der ersten Spalte.
+- **Ohne Markierung:** Die Vorlage wird unter der aktuellen Zeile eingefügt (eine leere Zeile wird ersetzt) und der Platzhalter ist markiert, sodass direkt weitergeschrieben werden kann.
+- Leerzeilen vor und nach dem Block werden automatisch ergänzt; `Ctrl-Z` macht das Einfügen in einem Schritt rückgängig.
+- **Syntax prüfen** warnt bei nicht geschlossenen `:::`.
 
 ### Text-Werkzeuge
 

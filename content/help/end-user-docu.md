@@ -136,6 +136,8 @@ The toolbar provides quick access to formatting options:
 - **HR** - Horizontal line
 - **Bookmark** - Create jump anchor
 - **Accordion** - Collapsible section
+- **Containers & Alerts** (column icon) - Insert alerts, 2/3-column layouts, boxes and collapsible sections; selected text is wrapped into the block
+- **Text Tools** (font icon) - Change case (UPPER, lower, Sentence, Title, camelCase, snake_case, kebab-case), sort lines, remove duplicate/empty lines, clean whitespace
 - **😊 Emoji** - Insert from 150+ emojis
 
 **Additional Tools:**
@@ -156,7 +158,8 @@ The toolbar provides quick access to formatting options:
 
 **File Operations:**
 - **Ctrl+S** (Cmd+S on Mac) - Save page
-- **F11** or **Esc** - Toggle fullscreen
+- **F11** - Toggle fullscreen
+- **Esc** - Leave fullscreen
 
 **Search & Replace:**
 - **Ctrl+F** (Cmd+F on Mac) - Find in document
@@ -172,9 +175,9 @@ The toolbar provides quick access to formatting options:
 
 **Line Operations:**
 - **Ctrl+D** - Delete line
-- **Ctrl+Shift+D** - Duplicate line
-- **Alt+Up** - Move line up
-- **Alt+Down** - Move line down
+- **Alt+Up** / **Alt+Down** - Move line(s) up/down (works with multi-line selections and multiple cursors)
+- **Shift+Alt+Up** / **Shift+Alt+Down** - Duplicate line(s) above/below
+- **Ctrl+Shift+D** - Duplicate line(s) below
 - **Ctrl+/** (Cmd+/ on Mac) - Toggle comment
 
 **Indentation:**
@@ -184,7 +187,10 @@ The toolbar provides quick access to formatting options:
 - **Ctrl+]** (Cmd+Alt+6 on Mac) - Increase indent
 
 **Advanced:**
-- **Ctrl+Space** - Autocomplete
+- **Ctrl+Space** - Open autocomplete manually
+
+**Autocomplete:**
+From the 4th letter of a word a popup suggests words from all pages and the current text, ranked by frequency. **↑/↓** select, **Enter**/**Tab** accept, **Esc** closes.
 - **Ctrl+K Ctrl+U** - Convert to uppercase
 - **Ctrl+K Ctrl+L** - Convert to lowercase
 
@@ -289,7 +295,11 @@ Use 3 backticks at the begin and end of the code block
 ```markdown
 > This is a quote
 > It can span multiple lines
+>
+> - and contain **any Markdown**, e.g. lists
 ```
+
+Consecutive `>` lines form one quote. A quote starting with `[!TYPE]` becomes an alert (see [Alerts and Containers](#alerts-and-containers)).
 
 ### Tables
 
@@ -347,6 +357,46 @@ Create bookmarks anywhere in your page:
 {#bookmark-name}
 This is where readers will land
 ```
+
+### Alerts and Containers {#alerts-and-containers}
+
+Highlight information with GitHub-style alerts:
+
+```markdown
+> [!NOTE]
+> Useful information.
+
+> [!WARNING] Custom title
+> Something to watch out for.
+
+> [!TIP]- Collapsed by default
+> Click the title to expand.
+```
+
+Types: `NOTE`, `TIP`, `IMPORTANT`, `WARNING`, `CAUTION`.
+
+Build layouts with `:::` container blocks (Pandoc/Quarto syntax):
+
+```markdown
+:::: {.columns gap=2rem}
+::: {.column width="40%" border align=center}
+Left column – 40 % wide, framed, centered
+:::
+::: column
+Right column
+:::
+::::
+
+::: details Show more
+Hidden content
+:::
+
+::: {.text-center .border .rounded .p-3}
+Any other name or class becomes a CSS class – Bootstrap utilities work directly.
+:::
+```
+
+The **Containers & Alerts** toolbar menu inserts all of these as templates. Full reference: [Container Blocks & Alerts](/help/container-alerts).
 
 ### Shortcodes
 

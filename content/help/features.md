@@ -24,6 +24,10 @@ Visibility: public
 ### 🛠️ Admin Interface
 - ✅ **Complete Admin Dashboard**: File statistics, recent files, system info
 - ✅ **Professional Editor**: CodeMirror with enhanced toolbar
+- ✅ **Container & Alert Menu**: Insert alerts, column layouts, boxes and collapsible sections (wraps the selection)
+- ✅ **Text Tools**: UPPER/lower/Sentence/Title case, camelCase, snake_case, kebab-case, sort/dedupe lines, clean whitespace
+- ✅ **Line Operations**: Move (`Alt+↑/↓`) and duplicate (`Shift+Alt+↑/↓`) lines, multi-line selections and multiple cursors
+- ✅ **Autocomplete**: Word suggestions from all pages + current text from the 4th letter, ranked by frequency
 - ✅ **Drag & Drop Upload**: PDF/ZIP files with automatic download tag insertion
 - ✅ **Image Upload**: Drag & drop image upload with automatic insertion
 - ✅ **Delete Function**: File deletion with confirmation dialog
@@ -38,6 +42,8 @@ Visibility: public
 - ✅ **Emoji Support**: ~150 GitHub-style emojis (`:smile:` → 😄)
 - ✅ **LaTeX Support**: Inline (`$formula$`) and block (`$$formula$$`) math
 - ✅ **Enhanced Markdown**: Headers with IDs, tables, code blocks, autolinks
+- ✅ **Alerts**: GitHub-style `> [!NOTE]`, `[!TIP]`, `[!IMPORTANT]`, `[!WARNING]`, `[!CAUTION]` with custom titles and folding
+- ✅ **Container Blocks**: Pandoc/Quarto-style `:::` fenced divs – columns, boxes, details, callouts, custom classes and attributes
 
 ### 🔍 Search & Navigation
 - ✅ **Full-text Search**: Weighted relevance search with tag filtering
@@ -115,7 +121,27 @@ Block: $$\sum_{i=1}^n x_i$$
 
 # Auto-linking
 https://example.com becomes clickable
+
+# Alerts (GitHub style)
+> [!WARNING] Optional custom title
+> Multi-line content with **Markdown**
+
+# Container blocks (Pandoc/Quarto style)
+:::: {.columns gap=2rem}
+::: {.column width="40%" border align=center}
+Left column
+:::
+::: column
+Right column
+:::
+::::
+
+::: details Show more
+Hidden content
+:::
 ```
+
+See [Container Blocks & Alerts](/help/container-alerts) for all options.
 
 ## Front Matter Support
 

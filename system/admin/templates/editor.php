@@ -354,6 +354,34 @@ $nonce = SecurityHeaders::getNonce();
                                 <i class="bi bi-shield-lock"></i>
                             </button>
 
+                            <!-- Container-Blöcke & Alerts (::: / > [!NOTE]) -->
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" title="<?= __('admin.editor.blocks.title') ?>">
+                                    <i class="bi bi-layout-split"></i>
+                                </button>
+                                <ul class="dropdown-menu blocks-dropdown">
+                                    <li><h6 class="dropdown-header"><?= __('admin.editor.blocks.header_alerts') ?></h6></li>
+                                    <li><a class="dropdown-item" href="#" data-insert-block="alert-note"><i class="bi bi-info-circle me-2 text-primary"></i><?= __('admin.editor.blocks.alert_note') ?></a></li>
+                                    <li><a class="dropdown-item" href="#" data-insert-block="alert-tip"><i class="bi bi-lightbulb me-2 text-success"></i><?= __('admin.editor.blocks.alert_tip') ?></a></li>
+                                    <li><a class="dropdown-item" href="#" data-insert-block="alert-important"><i class="bi bi-chat-square-text me-2" style="color:#8250df"></i><?= __('admin.editor.blocks.alert_important') ?></a></li>
+                                    <li><a class="dropdown-item" href="#" data-insert-block="alert-warning"><i class="bi bi-exclamation-triangle me-2 text-warning"></i><?= __('admin.editor.blocks.alert_warning') ?></a></li>
+                                    <li><a class="dropdown-item" href="#" data-insert-block="alert-caution"><i class="bi bi-exclamation-octagon me-2 text-danger"></i><?= __('admin.editor.blocks.alert_caution') ?></a></li>
+                                    <li><a class="dropdown-item" href="#" data-insert-block="alert-fold"><i class="bi bi-chevron-bar-expand me-2"></i><?= __('admin.editor.blocks.alert_fold') ?></a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><h6 class="dropdown-header"><?= __('admin.editor.blocks.header_layout') ?></h6></li>
+                                    <li><a class="dropdown-item" href="#" data-insert-block="columns-2"><i class="bi bi-layout-split me-2"></i><?= __('admin.editor.blocks.columns_2') ?></a></li>
+                                    <li><a class="dropdown-item" href="#" data-insert-block="columns-3"><i class="bi bi-layout-three-columns me-2"></i><?= __('admin.editor.blocks.columns_3') ?></a></li>
+                                    <li><a class="dropdown-item" href="#" data-insert-block="columns-40-60"><i class="bi bi-layout-sidebar me-2"></i><?= __('admin.editor.blocks.columns_40_60') ?></a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><h6 class="dropdown-header"><?= __('admin.editor.blocks.header_boxes') ?></h6></li>
+                                    <li><a class="dropdown-item" href="#" data-insert-block="box"><i class="bi bi-square me-2"></i><?= __('admin.editor.blocks.box') ?></a></li>
+                                    <li><a class="dropdown-item" href="#" data-insert-block="box-center"><i class="bi bi-text-center me-2"></i><?= __('admin.editor.blocks.box_center') ?></a></li>
+                                    <li><a class="dropdown-item" href="#" data-insert-block="details"><i class="bi bi-caret-right-square me-2"></i><?= __('admin.editor.blocks.details') ?></a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="/help/container-alerts" target="_blank"><i class="bi bi-question-circle me-2"></i><?= __('admin.editor.blocks.help') ?></a></li>
+                                </ul>
+                            </div>
+
                             <div class="vr mx-2"></div>
 
                             <!-- Shortcodes -->
@@ -1471,6 +1499,98 @@ $nonce = SecurityHeaders::getNonce();
             item.addEventListener('click', e => {
                 e.preventDefault();
                 applyTextTransform(item.dataset.textTransform);
+            });
+        });
+
+        // ---------------------------------------------------------------
+        // Container-Blöcke & Alerts einfügen (Toolbar-Menü)
+        // ---------------------------------------------------------------
+        const BLOCK_TEXT = <?= json_encode([
+            'content' => __('admin.editor.blocks.placeholder_content'),
+            'left'    => __('admin.editor.blocks.placeholder_left'),
+            'middle'  => __('admin.editor.blocks.placeholder_middle'),
+            'right'   => __('admin.editor.blocks.placeholder_right'),
+            'more'    => __('admin.editor.blocks.placeholder_more'),
+            'fold'    => __('admin.editor.blocks.placeholder_fold'),
+        ], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?>;
+        const SEL_START = '\u0001', SEL_END = '\u0002';   // markieren den Text, der danach ausgewählt wird
+        const ph = text => SEL_START + text + SEL_END;
+        const quoteLines = text => text.split('\n').map(l => l.trim() === '' ? '>' : '> ' + l).join('\n');
+        const alertBlock = type => sel => '> [!' + type + ']\n' + quoteLines(sel ?? ph(BLOCK_TEXT.content));
+
+        // sel = markierter Text (ganze Zeilen) oder null
+        const blockTemplates = {
+            'alert-note': alertBlock('NOTE'),
+            'alert-tip': alertBlock('TIP'),
+            'alert-important': alertBlock('IMPORTANT'),
+            'alert-warning': alertBlock('WARNING'),
+            'alert-caution': alertBlock('CAUTION'),
+            'alert-fold': sel => '> [!TIP]- ' + ph(BLOCK_TEXT.fold) + '\n' + quoteLines(sel ?? BLOCK_TEXT.content),
+            'columns-2': sel => ':::: columns\n::: column\n' + (sel ?? ph(BLOCK_TEXT.left)) + '\n:::\n::: column\n'
+                + BLOCK_TEXT.right + '\n:::\n::::',
+            'columns-3': sel => ':::: columns\n::: column\n' + (sel ?? ph(BLOCK_TEXT.left)) + '\n:::\n::: column\n'
+                + BLOCK_TEXT.middle + '\n:::\n::: column\n' + BLOCK_TEXT.right + '\n:::\n::::',
+            'columns-40-60': sel => ':::: {.columns gap=2rem}\n::: {.column width="40%"}\n' + (sel ?? ph(BLOCK_TEXT.left))
+                + '\n:::\n::: column\n' + BLOCK_TEXT.right + '\n:::\n::::',
+            'box': sel => '::: {border}\n' + (sel ?? ph(BLOCK_TEXT.content)) + '\n:::',
+            'box-center': sel => '::: {border align=center}\n' + (sel ?? ph(BLOCK_TEXT.content)) + '\n:::',
+            'details': sel => '::: details ' + BLOCK_TEXT.more + '\n' + (sel ?? ph(BLOCK_TEXT.content)) + '\n:::'
+        };
+
+        function insertBlock(kind) {
+            const template = blockTemplates[kind];
+            if (!template || !editor) return;
+            const doc = editor.getDoc();
+            let from, to, selected = null;
+
+            if (doc.somethingSelected()) {
+                // Markierung auf ganze Zeilen ausdehnen und umschließen
+                const r = doc.listSelections()[0];
+                const start = CodeMirror.cmpPos(r.anchor, r.head) <= 0 ? r.anchor : r.head;
+                const end = start === r.anchor ? r.head : r.anchor;
+                from = { line: start.line, ch: 0 };
+                to = (end.ch === 0 && end.line > start.line)
+                    ? { line: end.line - 1, ch: doc.getLine(end.line - 1).length }
+                    : { line: end.line, ch: doc.getLine(end.line).length };
+                selected = doc.getRange(from, to);
+            } else {
+                const cur = doc.getCursor();
+                const line = doc.getLine(cur.line);
+                // Leere Zeile ersetzen, sonst hinter der aktuellen Zeile einfügen
+                from = line.trim() === '' ? { line: cur.line, ch: 0 } : { line: cur.line, ch: line.length };
+                to = { line: cur.line, ch: line.length };
+            }
+
+            // Block braucht Leerzeilen davor und danach
+            let prefix = '';
+            if (from.ch > 0) {
+                prefix = '\n\n';
+            } else if (from.line > 0 && doc.getLine(from.line - 1).trim() !== '') {
+                prefix = '\n';
+            }
+            const suffix = (to.line < doc.lastLine() && doc.getLine(to.line + 1).trim() !== '') ? '\n' : '';
+
+            let text = prefix + template(selected) + suffix;
+            const selStart = text.indexOf(SEL_START);
+            const selEnd = text.indexOf(SEL_END);
+            text = text.replace(SEL_START, '').replace(SEL_END, '');
+
+            editor.operation(() => {
+                const base = doc.indexFromPos(from);
+                doc.replaceRange(text, from, to, '+insertBlock');
+                if (selStart >= 0 && selEnd > selStart) {
+                    doc.setSelection(doc.posFromIndex(base + selStart), doc.posFromIndex(base + selEnd - 1));
+                } else {
+                    doc.setCursor(doc.posFromIndex(base + text.length - suffix.length));
+                }
+            });
+            editor.focus();
+        }
+
+        document.querySelectorAll('[data-insert-block]').forEach(item => {
+            item.addEventListener('click', e => {
+                e.preventDefault();
+                insertBlock(item.dataset.insertBlock);
             });
         });
 

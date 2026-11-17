@@ -9,6 +9,9 @@ Layout: wiki
 
 StaticMD unterstützt **Container-Blöcke** mit `:::` (wie Pandoc, Quarto, Docusaurus, VitePress) und **Alerts** im GitHub-Stil (`> [!NOTE]`). Damit lassen sich Hinweisboxen, aufklappbare Abschnitte und mehrspaltige Layouts direkt in Markdown schreiben.
 
+> [!TIP] Einfügen per Toolbar
+> Im Editor fügt das Menü mit dem **Spalten-Symbol** alle Alerts, Spalten-Layouts, Boxen und aufklappbare Abschnitte als Vorlage ein. Ist Text markiert, wird er direkt in den Block übernommen. Siehe [Editor Tastenkombinationen](/help/editor-shortcuts).
+
 ## Alerts (GitHub-Stil)
 
 ```markdown

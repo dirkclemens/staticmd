@@ -19,6 +19,8 @@ Visibility: public
 - **150+ Emojis**: `:smile:` → 😄, `:rocket:` → 🚀, `:heart:` → ❤️
 - **LaTeX Math**: `$E=mc^2$` (inline) and `$$formula$$` (block)
 - **Auto-links**: URLs become clickable automatically
+- **Alerts**: GitHub-style `> [!NOTE]` … `> [!CAUTION]`, custom titles, collapsible
+- **Container Blocks**: `:::` fenced divs (Pandoc/Quarto) for columns, boxes, details and callouts – see [Container Blocks & Alerts](/help/container-alerts)
 - **Code Protection**: Shortcodes in `` `code blocks` `` remain as text
 
 ### ✅ Front Matter Support
