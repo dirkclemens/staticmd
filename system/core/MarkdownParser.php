@@ -17,9 +17,407 @@ class MarkdownParser
     {
         // Protect LaTeX formulas before Markdown processing
         $markdown = $this->preprocessLaTeX($markdown);
-        
-        // Zeilen in Array aufteilen
-        $lines = explode("\n", $markdown);
+
+        // Block-Ebene: Container (:::), Blockquotes und GitHub-Alerts, dazwischen normales Markdown
+        $html = $this->renderBlocks(explode("\n", $markdown), 0);
+
+        // LaTeX-Platzhalter wieder einsetzen
+        if (!empty($this->latexBlocks)) {
+            $html = str_replace(array_keys($this->latexBlocks), array_values($this->latexBlocks), $html);
+        }
+
+        return trim($html);
+    }
+
+    // ------------------------------------------------------------------
+    // Block-Ebene: Container (:::) und Blockquotes / Alerts
+    // ------------------------------------------------------------------
+
+    private const MAX_BLOCK_DEPTH = 20;
+
+    /** GitHub-Alert-Typen (Basistypen) mit Bootstrap-Icon */
+    private const ALERT_TYPES = [
+        'note'      => 'bi-info-circle',
+        'tip'       => 'bi-lightbulb',
+        'important' => 'bi-chat-square-text',
+        'warning'   => 'bi-exclamation-triangle',
+        'caution'   => 'bi-exclamation-octagon',
+    ];
+
+    /** Aliase (Obsidian, Docusaurus, VitePress, Quarto) → Basistyp */
+    private const ALERT_ALIASES = [
+        'info' => 'note', 'abstract' => 'note', 'summary' => 'note', 'tldr' => 'note',
+        'todo' => 'note', 'example' => 'note', 'quote' => 'note', 'cite' => 'note',
+        'hint' => 'tip', 'success' => 'tip', 'check' => 'tip', 'done' => 'tip',
+        'question' => 'tip', 'help' => 'tip', 'faq' => 'tip',
+        'attention' => 'warning',
+        'danger' => 'caution', 'error' => 'caution', 'failure' => 'caution',
+        'fail' => 'caution', 'missing' => 'caution', 'bug' => 'caution',
+    ];
+
+    /**
+     * Zerlegt Zeilen in Container, Blockquotes und normale Abschnitte und rendert sie.
+     * Container- und Quote-Inhalte werden rekursiv gerendert (beliebig verschachtelbar).
+     */
+    private function renderBlocks(array $lines, int $depth): string
+    {
+        $html = '';
+        $segment = [];
+        $inCode = false;
+        $count = count($lines);
+
+        for ($i = 0; $i < $count; $i++) {
+            $line = $lines[$i];
+
+            if (str_starts_with($line, '```')) {
+                $inCode = !$inCode;
+                $segment[] = $line;
+                continue;
+            }
+            if ($inCode || $depth >= self::MAX_BLOCK_DEPTH) {
+                $segment[] = $line;
+                continue;
+            }
+
+            // ::: Container öffnen
+            $info = $this->matchContainerOpen($line);
+            if ($info !== null) {
+                $html .= $this->parseLines($segment);
+                $segment = [];
+                $end = $this->findContainerEnd($lines, $i + 1);
+                $inner = array_slice($lines, $i + 1, $end - $i - 1);
+                $html .= $this->renderContainer($info, $inner, $depth + 1);
+                $i = $end;
+                continue;
+            }
+
+            // Blockquote / Alert: aufeinanderfolgende Zeilen mit > sammeln
+            if (preg_match('/^ {0,3}>/', $line)) {
+                $html .= $this->parseLines($segment);
+                $segment = [];
+                $quote = [];
+                while ($i < $count && preg_match('/^ {0,3}>/', $lines[$i])) {
+                    $quote[] = preg_replace('/^ {0,3}> ?/', '', rtrim($lines[$i], "\r"));
+                    $i++;
+                }
+                $i--;
+                $html .= $this->renderQuote($quote, $depth + 1);
+                continue;
+            }
+
+            $segment[] = $line;
+        }
+
+        return $html . $this->parseLines($segment);
+    }
+
+    /**
+     * Öffnende Container-Zeile (::: info) → Info-String, sonst null.
+     * Eine Zeile nur aus Doppelpunkten ist eine schließende Zeile.
+     */
+    private function matchContainerOpen(string $line): ?string
+    {
+        if (preg_match('/^ {0,3}:{3,}\s*(.*?)\s*:*\s*$/u', rtrim($line, "\r"), $m) && $m[1] !== '') {
+            return $m[1];
+        }
+        return null;
+    }
+
+    private function isContainerClose(string $line): bool
+    {
+        return (bool) preg_match('/^ {0,3}:{3,}\s*$/', rtrim($line, "\r"));
+    }
+
+    /**
+     * Index der passenden schließenden ::: Zeile (Verschachtelung und Code-Blöcke berücksichtigt).
+     * Fehlt sie, endet der Container am Ende des Abschnitts.
+     */
+    private function findContainerEnd(array $lines, int $start): int
+    {
+        $level = 1;
+        $inCode = false;
+        $count = count($lines);
+        for ($j = $start; $j < $count; $j++) {
+            if (str_starts_with($lines[$j], '```')) {
+                $inCode = !$inCode;
+                continue;
+            }
+            if ($inCode) {
+                continue;
+            }
+            if ($this->matchContainerOpen($lines[$j]) !== null) {
+                $level++;
+            } elseif ($this->isContainerClose($lines[$j]) && --$level === 0) {
+                return $j;
+            }
+        }
+        return $count;
+    }
+
+    /**
+     * Zerlegt den Info-String eines Containers.
+     * Unterstützt: "warning", "tip Eigener Titel", "{.columns gap=2rem}", "{#id .a .b key="v w"}",
+     * "details Mehr anzeigen {open}" und Quarto "{.callout-note title="..."}".
+     *
+     * @return array{name:string,rawName:string,title:string,id:string,classes:array,attrs:array}
+     */
+    private function parseContainerInfo(string $info): array
+    {
+        $result = ['name' => '', 'rawName' => '', 'title' => '', 'id' => '', 'classes' => [], 'attrs' => []];
+
+        // {…}-Attributblock herauslösen (darf vor oder nach Name/Titel stehen)
+        if (preg_match('/\{([^}]*)\}/u', $info, $m)) {
+            $info = trim(str_replace($m[0], ' ', $info));
+            preg_match_all('/([#.][\w-]+)|([\w-]+)\s*=\s*(?:"([^"]*)"|\'([^\']*)\'|(\S+))|([\w-]+)/u', $m[1], $tokens, PREG_SET_ORDER);
+            foreach ($tokens as $t) {
+                if (!empty($t[1])) {
+                    if ($t[1][0] === '#') {
+                        $result['id'] = substr($t[1], 1);
+                    } else {
+                        $result['classes'][] = substr($t[1], 1);
+                    }
+                } elseif (!empty($t[2])) {
+                    $value = $t[3] !== '' ? $t[3] : (($t[4] ?? '') !== '' ? $t[4] : ($t[5] ?? ''));
+                    $result['attrs'][strtolower($t[2])] = $value;
+                } elseif (!empty($t[6])) {
+                    // Attribut ohne Wert: {open}, {border}
+                    $result['attrs'][strtolower($t[6])] = 'true';
+                }
+            }
+        }
+
+        // "name Titel…" (Docusaurus / VitePress / Pandoc-Kurzform)
+        if ($info !== '' && preg_match('/^([\w-]+)(?:\s+(.*))?$/u', $info, $m)) {
+            $result['rawName'] = $m[1];
+            $result['name'] = strtolower($m[1]);
+            $result['title'] = trim($m[2] ?? '');
+        } elseif ($info !== '') {
+            $result['title'] = $info;
+        }
+
+        if ($result['name'] === '' && !empty($result['classes'])) {
+            $result['rawName'] = array_shift($result['classes']);
+            $result['name'] = strtolower($result['rawName']);
+        }
+        if (isset($result['attrs']['title'])) {
+            $result['title'] = $result['attrs']['title'];
+            unset($result['attrs']['title']);
+        }
+
+        return $result;
+    }
+
+    private function renderContainer(string $infoString, array $innerLines, int $depth): string
+    {
+        $info = $this->parseContainerInfo($infoString);
+        $name = $info['name'];
+        $inner = $this->renderBlocks($innerLines, $depth);
+
+        // Quarto: callout-note, callout-warning, …
+        $alertName = str_starts_with($name, 'callout-') ? substr($name, 8) : $name;
+        $alertType = $this->resolveAlertType($alertName);
+        if ($alertType !== null) {
+            $collapse = strtolower($info['attrs']['collapse'] ?? '');
+            unset($info['attrs']['collapse']);
+            $fold = $collapse === 'true' ? '-' : ($collapse === 'false' ? '+' : '');
+            return $this->renderAlert($alertType, $alertName, $info['title'], $inner, $fold, $info);
+        }
+
+        if ($name === 'details' || $name === 'spoiler') {
+            $open = $this->isTruthy($info['attrs']['open'] ?? '');
+            unset($info['attrs']['open']);
+            $summary = $info['title'] !== '' ? $info['title'] : $this->translate('core.blocks.details', 'Details');
+            return '<details' . $this->buildAttributes($info, ['md-details']) . ($open ? ' open' : '') . '>'
+                . '<summary>' . $this->parseInline($summary) . '</summary>'
+                . "\n<div class=\"md-details-body\">\n" . $inner . "</div></details>\n";
+        }
+
+        if ($name === 'columns') {
+            return '<div' . $this->buildAttributes($info, ['md-columns'], 'columns') . ">\n" . $inner . "</div>\n";
+        }
+
+        if ($name === 'column') {
+            return '<div' . $this->buildAttributes($info, ['md-column'], 'column') . ">\n" . $inner . "</div>\n";
+        }
+
+        // Generischer Container: Name wird zur CSS-Klasse (Pandoc-Verhalten), Titel optional
+        $classes = ['md-container'];
+        if ($info['rawName'] !== '' && preg_match('/^[A-Za-z][\w-]*$/', $info['rawName'])) {
+            $classes[] = $info['rawName'];
+        }
+        $titleHtml = $info['title'] !== ''
+            ? '<p class="md-container-title">' . $this->parseInline($info['title']) . "</p>\n"
+            : '';
+        return '<div' . $this->buildAttributes($info, $classes) . ">\n" . $titleHtml . $inner . "</div>\n";
+    }
+
+    /**
+     * Blockquote rendern; "[!TYPE]" in der ersten Zeile macht daraus einen Alert (GitHub/Obsidian).
+     */
+    private function renderQuote(array $lines, int $depth): string
+    {
+        if (!empty($lines) && preg_match('/^\s*\[!([A-Za-z]+)\]([+-]?)\s*(.*)$/u', $lines[0], $m)) {
+            $alertName = strtolower($m[1]);
+            $alertType = $this->resolveAlertType($alertName);
+            if ($alertType !== null) {
+                $inner = $this->renderBlocks(array_slice($lines, 1), $depth);
+                return $this->renderAlert($alertType, $alertName, trim($m[3]), $inner, $m[2], null);
+            }
+        }
+
+        return "<blockquote>\n" . $this->renderBlocks($lines, $depth) . "</blockquote>\n";
+    }
+
+    private function resolveAlertType(string $name): ?string
+    {
+        if (isset(self::ALERT_TYPES[$name])) {
+            return $name;
+        }
+        return self::ALERT_ALIASES[$name] ?? null;
+    }
+
+    /**
+     * Alert im GitHub-Markup (markdown-alert markdown-alert-TYPE).
+     * $fold: '' = normal, '+' = aufklappbar (offen), '-' = aufklappbar (zu)
+     */
+    private function renderAlert(string $type, string $name, string $title, string $inner, string $fold, ?array $info): string
+    {
+        if ($title === '') {
+            $title = $this->translate('core.alerts.' . $name, ucfirst($name));
+        }
+        $icon = '<i class="bi ' . self::ALERT_TYPES[$type] . '" aria-hidden="true"></i>';
+        $titleHtml = $icon . ' ' . $this->parseInline($title);
+        $info = $info ?? ['id' => '', 'classes' => [], 'attrs' => []];
+        $baseClasses = ['markdown-alert', 'markdown-alert-' . $type];
+
+        if ($fold !== '') {
+            return '<details' . $this->buildAttributes($info, $baseClasses) . ($fold === '+' ? ' open' : '') . '>'
+                . '<summary class="markdown-alert-title">' . $titleHtml . '</summary>'
+                . "\n<div class=\"markdown-alert-body\">\n" . $inner . "</div></details>\n";
+        }
+
+        return '<div' . $this->buildAttributes($info, $baseClasses) . ' role="note">'
+            . '<p class="markdown-alert-title">' . $titleHtml . "</p>\n"
+            . $inner . "</div>\n";
+    }
+
+    /**
+     * Baut id/class/style/data-* Attribute aus geparsten Container-Infos.
+     * Bekannte Schlüssel werden in CSS übersetzt, alle Werte werden validiert und escaped.
+     */
+    private function buildAttributes(array $info, array $baseClasses, string $role = ''): string
+    {
+        $classes = $baseClasses;
+        foreach ($info['classes'] as $class) {
+            if (preg_match('/^[A-Za-z_][\w-]*$/', $class)) {
+                $classes[] = $class;
+            }
+        }
+
+        $styles = [];
+        $data = [];
+        foreach ($info['attrs'] as $key => $value) {
+            switch ($key) {
+                case 'align':
+                    if (in_array($value, ['left', 'center', 'right', 'justify'], true)) {
+                        $styles[] = 'text-align: ' . $value;
+                    }
+                    break;
+                case 'valign':
+                    $map = ['top' => 'flex-start', 'center' => 'center', 'middle' => 'center', 'bottom' => 'flex-end', 'stretch' => 'stretch'];
+                    if (isset($map[$value])) {
+                        $styles[] = ($role === 'columns' ? 'align-items: ' : 'align-self: ') . $map[$value];
+                    }
+                    break;
+                case 'width':
+                    if ($css = $this->sanitizeCssValue($value)) {
+                        $styles[] = $role === 'column' ? 'flex: 0 1 ' . $css : 'width: ' . $css . '; max-width: 100%';
+                    }
+                    break;
+                case 'border':
+                case 'frame':
+                    $classes[] = 'md-border';
+                    if (!$this->isTruthy($value) && ($css = $this->sanitizeCssValue($value))) {
+                        $styles[] = 'border: ' . $css;
+                    }
+                    break;
+                case 'gap':
+                case 'padding':
+                case 'color':
+                    if ($css = $this->sanitizeCssValue($value)) {
+                        $styles[] = $key . ': ' . $css;
+                    }
+                    break;
+                case 'bg':
+                case 'background':
+                    if ($css = $this->sanitizeCssValue($value)) {
+                        $styles[] = 'background: ' . $css;
+                    }
+                    break;
+                case 'radius':
+                    if ($css = $this->sanitizeCssValue($value)) {
+                        $styles[] = 'border-radius: ' . $css;
+                    }
+                    break;
+                case 'style':
+                    foreach (explode(';', $value) as $declaration) {
+                        if (preg_match('/^\s*([a-z-]+)\s*:\s*(.+?)\s*$/i', $declaration, $d) && ($css = $this->sanitizeCssValue($d[2]))) {
+                            $styles[] = strtolower($d[1]) . ': ' . $css;
+                        }
+                    }
+                    break;
+                default:
+                    if (preg_match('/^[a-z][\w-]*$/', $key)) {
+                        $data[$key] = $value;
+                    }
+            }
+        }
+
+        $out = '';
+        if ($info['id'] !== '' && preg_match('/^[A-Za-z][\w-]*$/', $info['id'])) {
+            $out .= ' id="' . htmlspecialchars($info['id']) . '"';
+        }
+        $out .= ' class="' . htmlspecialchars(implode(' ', array_unique($classes))) . '"';
+        if ($styles) {
+            $out .= ' style="' . htmlspecialchars(implode('; ', $styles)) . '"';
+        }
+        foreach ($data as $key => $value) {
+            $out .= ' data-' . htmlspecialchars($key) . '="' . htmlspecialchars($value) . '"';
+        }
+        return $out;
+    }
+
+    /**
+     * Erlaubt nur einfache CSS-Werte (Längen, Farben, Schlüsselwörter, calc/rgb/var) – kein url(), keine Ausdrücke.
+     */
+    private function sanitizeCssValue(string $value): ?string
+    {
+        $value = trim($value);
+        if ($value === '' || strlen($value) > 100) {
+            return null;
+        }
+        if (!preg_match('/^[#\w\s.,%()+\-\/*]+$/', $value) || preg_match('/url\s*\(|expression|javascript|@import/i', $value)) {
+            return null;
+        }
+        return $value;
+    }
+
+    private function isTruthy(string $value): bool
+    {
+        return in_array(strtolower($value), ['true', '1', 'yes', 'ja', 'on'], true);
+    }
+
+    private function translate(string $key, string $fallback): string
+    {
+        $value = I18n::t($key);
+        return $value === $key ? $fallback : $value;
+    }
+
+    /**
+     * Parst einen Abschnitt ohne Container/Blockquotes (klassische Zeilenverarbeitung)
+     */
+    private function parseLines(array $lines): string
+    {
         $html = '';
         $inCodeBlock = false;
         $inList = false;
@@ -274,12 +672,7 @@ class MarkdownParser
             $html .= "</code></pre>\n";
         }
         
-        // LaTeX-Platzhalter wieder einsetzen
-        if (!empty($this->latexBlocks)) {
-            $html = str_replace(array_keys($this->latexBlocks), array_values($this->latexBlocks), $html);
-        }
-        
-        return trim($html);
+        return $html;
     }
     
     /**

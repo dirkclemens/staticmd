@@ -111,6 +111,9 @@ uksort($navItems, function($a, $b) use ($navigationOrder) {
 
         // Include shared CSS
         include __DIR__ . '/shared.css'; 
+
+        // Container-Blöcke (:::), Spalten, Details und GitHub-Alerts
+        include __DIR__ . '/markdown-blocks.css';
         ?>
 
         <?php 

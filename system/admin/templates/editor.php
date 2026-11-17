@@ -42,6 +42,9 @@ $nonce = SecurityHeaders::getNonce();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/hint/show-hint.min.css">
     
     <link rel="stylesheet" href="/system/admin/admin.css">
+
+    <!-- Container-Blöcke und Alerts für die Vorschau (inline, da /system/ per .htaccess gesperrt ist) -->
+    <style><?php include __DIR__ . '/../../themes/shared/markdown-blocks.css'; ?></style>
 </head>
 <body>
     <!-- Admin Header -->
@@ -583,6 +586,7 @@ $nonce = SecurityHeaders::getNonce();
             let inCodeBlock = false;
             let inFrontMatter = false;
             const headingLevels = [];
+            const containerStack = [];   // Zeilennummern offener ::: Container
             
             lines.forEach((line, index) => {
                 const lineNum = index + 1;
@@ -605,6 +609,20 @@ $nonce = SecurityHeaders::getNonce();
                 
                 // Skip validation in code blocks and front matter
                 if (inCodeBlock || inFrontMatter) return;
+
+                // ::: Container (Pandoc/Quarto) – öffnende Zeile hat Text, schließende nur Doppelpunkte
+                if (/^ {0,3}:{3,}\s*$/.test(line)) {
+                    if (containerStack.length === 0) {
+                        warnings.push(`Zeile ${lineNum}: Schließendes ::: ohne geöffneten Container`);
+                    } else {
+                        containerStack.pop();
+                    }
+                    return;
+                }
+                if (/^ {0,3}:{3,}\s*\S/.test(line)) {
+                    containerStack.push(lineNum);
+                    return;
+                }
                 
                 // Check for StaticMD shortcodes (valid syntax, keine Warnung)
                 if (line.match(/\[(pages|tags|folder|download|image|accordionstart|accordionstop|authstart|authstop)(\s|\])/)) {
@@ -615,6 +633,8 @@ $nonce = SecurityHeaders::getNonce();
                 const linkMatches = line.match(/\[([^\]]*)\]/g);
                 if (linkMatches) {
                     linkMatches.forEach(match => {
+                        // [!NOTE], [!TIP] … sind GitHub-Alerts, keine Links
+                        if (/^\[![A-Za-z]+\]$/.test(match)) return;
                         if (!match.includes('](') && !line.includes('{#')) {
                             const nextChar = line[line.indexOf(match) + match.length];
                             if (nextChar !== '(' && nextChar !== '[') {
@@ -696,6 +716,10 @@ $nonce = SecurityHeaders::getNonce();
                 suggestions.push('Datei endet nicht mit Zeilenumbruch (empfohlen für Git/Unix-Systeme)');
             }
             
+            containerStack.forEach(lineNum => {
+                warnings.push(`Zeile ${lineNum}: Container ::: wird nicht geschlossen (endet am Dateiende)`);
+            });
+
             // Check for multiple consecutive blank lines - toleranter
             // Erlaube bis zu 3 aufeinanderfolgende Leerzeilen (häufig gewollt für Struktur)
             if (markdown.match(/\n\n\n\n+/)) {

@@ -255,6 +255,9 @@ class SearchEngine
         
         // Blockquotes
         $content = preg_replace('/^\s*>\s*/m', '', $content);
+        // Container-Zeilen (:::) und Alert-Marker ([!NOTE]) entfernen
+        $content = preg_replace('/^ {0,3}:{3,}.*$/m', '', $content);
+        $content = preg_replace('/\[![A-Za-z]+\][+-]?/', '', $content);
         
         // Horizontale Linien
         $content = preg_replace('/^[\-\*_]{3,}$/m', '', $content);
