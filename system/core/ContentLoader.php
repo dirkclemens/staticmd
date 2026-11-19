@@ -77,9 +77,6 @@ class ContentLoader
         // Convert Markdown to HTML
         $htmlContent = $this->parser->parse($contentWithShortcodes);
 
-        // Process accordion shortcodes after Markdown parsing
-        $htmlContent = $this->processAccordionShortcodes($htmlContent);
-
         $result = [
             'title' => $parsed['meta']['title'] ?? '',
             'content' => $htmlContent,
@@ -269,60 +266,6 @@ class ContentLoader
             }
         }
         return '';
-    }
-
-    /**
-     * Verarbeitet Accordion-Shortcodes (nach Markdown-Parsing)
-     */
-    private function processAccordionShortcodes(string $content): string
-    {
-        $patterns = [
-            '/(?:<p>)?\[(spoilerstart)\s+([a-zA-Z0-9_-]+)\s+"([^"]+)"\](?:<\/p>)?([\s\S]*?)(?:<p>)?\[spoilerstop(?:\s+[^\]]*?)?\](?:<\/p>)?/i',
-            '/(?:<p>)?\[(accordionstart)\s+([a-zA-Z0-9_-]+)\s+"([^"]+)"\](?:<\/p>)?([\s\S]*?)(?:<p>)?\[accordionstop(?:\s+[^\]]*?)?\](?:<\/p>)?/i'
-        ];
-        
-        foreach ($patterns as $pattern) {
-            $content = preg_replace_callback($pattern, function($matches) {
-                $id = $matches[2];
-                $title = $matches[3];
-                $accordionContent = trim($matches[4]);
-                return $this->generateAccordionHTML($id, $title, $accordionContent);
-            }, $content);
-        }
-        
-        return $content;
-    }
-
-    /**
-     * Generiert Bootstrap 5 Accordion HTML
-     */
-    private function generateAccordionHTML(string $id, string $title, string $content): string
-    {
-        $accordionId = 'accordion-' . $id;
-        $collapseId = 'collapse-' . $id;
-        $headingId = 'heading-' . $id;
-        $safeTitle = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
-        $htmlContent = trim($content);
-        
-        return sprintf('
-<div class="accordion mb-3" id="%s">
-  <div class="accordion-item">
-    <h3 class="accordion-header" id="%s">
-      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#%s" aria-expanded="false" aria-controls="%s">
-        %s
-      </button>
-    </h3>
-    <div id="%s" class="accordion-collapse collapse" aria-labelledby="%s" data-bs-parent="#%s">
-      <div class="accordion-body">
-        %s
-      </div>
-    </div>
-  </div>
-</div>
-',
-            $accordionId, $headingId, $collapseId, $collapseId, $safeTitle,
-            $collapseId, $headingId, $accordionId, $htmlContent
-        );
     }
 
     /**

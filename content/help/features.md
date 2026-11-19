@@ -58,7 +58,7 @@ Visibility: public
 - ✅ **`[tags /path/ limit]`**: Tag clouds with frequency-based sizing
 - ✅ **`[folder /path/ limit]`**: Horizontal subfolder navigation
 - ✅ **`[gallery folder]`**: Automatic image galleries with lightbox
-- ✅ **`[accordion*]`**: Bootstrap 5 collapsible accordions
+- ✅ **`[accordion*]`**: Collapsible sections (alias for `::: details`, nestable)
 - ✅ **`[download file.pdf "Alt"]`**: Download links with Bootstrap icons
 - ✅ **`[image name.png "Alt" - 50%]`**: Yellow CMS image syntax
 - ✅ **Code-Block Protection**: Shortcodes in code blocks remain as text

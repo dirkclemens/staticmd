@@ -155,9 +155,12 @@ Creates tag clouds with all available tags from a directory.
 
 ## Layout Shortcodes
 
-### [accordionstart] / [accordionstop] - Bootstrap Accordions
+### [accordionstart] / [accordionstop] - Collapsible Sections
 
-Creates collapsible Bootstrap 5 accordion areas.
+Creates a collapsible section. Since the introduction of container blocks the shortcode is an alias for `::: details` and renders as a native `<details>` element (no JavaScript required). `[spoilerstart]` / `[spoilerstop]` behave identically.
+
+> [!TIP]
+> For new content prefer `::: details Title` – see [Container Blocks & Alerts](/help/container-alerts). Both syntaxes can be mixed and nested.
 
 #### Syntax
 ```markdown
@@ -167,8 +170,8 @@ Content of the accordion area...
 ```
 
 #### Parameters
-- **`id`**: Unique ID for the accordion (letters/numbers only)
-- **`"Title"`**: Visible title of the accordion header
+- **`id`**: ID of the section (letters, numbers, `-`, `_`); becomes the anchor `#accordion-id`
+- **`"Title"`**: Visible title (inline Markdown allowed)
 
 #### Example
 ```markdown
@@ -187,10 +190,11 @@ Connection to database...
 ```
 
 #### Features
-- **Bootstrap 5 compatible**: Modern accordion styles
-- **Full Markdown**: Markdown syntax is processed within
-- **Unique IDs**: Prevents conflicts with multiple accordions
-- **Responsive Design**: Mobile-optimized display
+- **Native `<details>`**: Works in every theme, no JavaScript needed
+- **Full Markdown**: Markdown syntax (including alerts and `:::` containers) is processed within
+- **Live preview**: Rendered in the editor preview as well
+- **Code-block safe**: Shortcodes inside code blocks stay plain text
+- **Equivalent**: `[accordionstart id "Title"]` … `[accordionstop]` = `::: details Title {#accordion-id}` … `:::`
 
 #### Nested Accordions
 ```markdown

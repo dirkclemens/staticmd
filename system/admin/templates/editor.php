@@ -537,13 +537,9 @@ $nonce = SecurityHeaders::getNonce();
             doc.replaceSelection(anchorText);
             editor.focus();
         }
-        // Accordion-Shortcode einfügen
+        // Aufklappbaren Abschnitt einfügen (::: details; ersetzt den alten [accordionstart]-Shortcode)
         function insertAccordion() {
-            if (!editor) return;
-            const doc = editor.getDoc();
-            const accordionText = '\n[accordionstart id "Titel"]\n\n[accordionstop id]\n';
-            doc.replaceSelection(accordionText);
-            editor.focus();
+            insertBlock('details');
         }
 
         function insertAuthBlock() {

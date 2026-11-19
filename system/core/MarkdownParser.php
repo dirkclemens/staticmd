@@ -117,15 +117,22 @@ class MarkdownParser
      */
     private function matchContainerOpen(string $line): ?string
     {
-        if (preg_match('/^ {0,3}:{3,}\s*(.*?)\s*:*\s*$/u', rtrim($line, "\r"), $m) && $m[1] !== '') {
+        $line = rtrim($line, "\r");
+        if (preg_match('/^ {0,3}:{3,}\s*(.*?)\s*:*\s*$/u', $line, $m) && $m[1] !== '') {
             return $m[1];
+        }
+        // Legacy-Shortcode [accordionstart id "Titel"] / [spoilerstart …] → ::: details
+        if (preg_match('/^ {0,3}\[(?:accordion|spoiler)start\s+([A-Za-z0-9_-]+)\s+"([^"]+)"\]\s*$/i', $line, $m)) {
+            return 'details {#accordion-' . $m[1] . ' title="' . $m[2] . '"}';
         }
         return null;
     }
 
     private function isContainerClose(string $line): bool
     {
-        return (bool) preg_match('/^ {0,3}:{3,}\s*$/', rtrim($line, "\r"));
+        $line = rtrim($line, "\r");
+        return (bool) preg_match('/^ {0,3}:{3,}\s*$/', $line)
+            || (bool) preg_match('/^ {0,3}\[(?:accordion|spoiler)stop(?:\s+[^\]]*)?\]\s*$/i', $line);
     }
 
     /**

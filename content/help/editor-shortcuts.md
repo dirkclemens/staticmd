@@ -84,7 +84,7 @@ Zusätzlich zu den Tastenkombinationen bietet die Toolbar Buttons für:
 - Tabellen
 - Horizontale Linie
 - Sprungmarken
-- Accordions
+- Aufklappbarer Abschnitt (fügt `::: details` ein)
 - Emojis :smile:
 - Container & Alerts (Menü mit dem Spalten-Symbol)
 - Text-Werkzeuge (Menü mit dem Schrift-Symbol)

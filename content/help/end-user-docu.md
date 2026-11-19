@@ -461,7 +461,7 @@ Provide downloadable files:
 Lorem ipsum dolor sit amet, consectetur adipiscing elit ...
 [accordionstop section1]
 
-Create expandable content sections:
+Create expandable content sections (equivalent to `::: details Title` – see [Container Blocks & Alerts](/help/container-alerts)):
 ```markdown
 [accordionstart section1 "Click to expand"]
 Lorem ipsum dolor sit amet, consectetur adipiscing elit ...

@@ -115,6 +115,8 @@ Sichtbarer Inhalt
 Versteckter Inhalt
 :::
 
+Der ältere Shortcode `[accordionstart id "Titel"]` … `[accordionstop]` (ebenso `[spoilerstart]`) ist ein Alias dafür und erzeugt exakt dasselbe – `::: details Titel {#accordion-id}`. Bestehende Seiten funktionieren also unverändert weiter, lassen sich jetzt auch verschachteln und erscheinen in der Editor-Vorschau.
+
 ### Spalten
 
 Äußerer Container `columns`, darin je Spalte ein `column`. Der äußere Container braucht **mehr Doppelpunkte** als die inneren, damit klar ist, welches `:::` was schließt.
