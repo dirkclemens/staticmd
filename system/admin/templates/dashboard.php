@@ -319,7 +319,8 @@ function encodeUrlPath($path) {
                                                         <i class="bi bi-eye"></i>
                                                     </a>
                                                     <button type="button" class="btn btn-sm btn-outline-danger" 
-                                                            onclick="confirmDelete('<?= htmlspecialchars($file['route']) ?>', '<?= htmlspecialchars(basename($file['file'])) ?>')" 
+                                                            data-delete-route="<?= htmlspecialchars($file['route'], ENT_QUOTES) ?>"
+                                                            data-delete-name="<?= htmlspecialchars(basename($file['file']), ENT_QUOTES) ?>" 
                                                             title="<?= __('admin.dashboard.buttons.delete') ?>">
                                                         <i class="bi bi-trash"></i>
                                                     </button>
@@ -423,6 +424,15 @@ function encodeUrlPath($path) {
         let deleteModal;
         let currentDeleteFile = '';
         
+        // Inline-onclick wird von der CSP blockiert → Event-Delegation
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('[data-delete-route]');
+            if (btn) {
+                e.preventDefault();
+                confirmDelete(btn.dataset.deleteRoute, btn.dataset.deleteName || btn.dataset.deleteRoute);
+            }
+        });
+
         function confirmDelete(fileRoute, fileName) {
             currentDeleteFile = fileRoute;
             document.getElementById('deleteFileName').textContent = fileName;

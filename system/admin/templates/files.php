@@ -287,7 +287,7 @@ function formatBytes(int $bytes, int $precision = 2): string {
                                             echo '<div class="btn-group btn-group-sm" role="group">';
                                             echo '<a href="/' . encodeUrlPath($indexFile['route']) . '" class="btn btn-outline-info" target="_blank" title="' . __('admin.files.view_tooltip') . '"><i class="bi bi-eye"></i></a>';
                                             echo '<a href="/admin?action=edit&file=' . urlencode($indexFile['route']) . '&return_url=' . urlencode('/admin?action=files') . '" class="btn btn-outline-primary" title="' . __('admin.files.edit_tooltip') . '"><i class="bi bi-pencil"></i></a>';
-                                            echo '<button class="btn btn-outline-danger" onclick="confirmDelete(\'' . htmlspecialchars($indexFile['route']) . '\')" title="' . __('admin.files.delete_tooltip') . '"><i class="bi bi-trash"></i></button>';
+                                            echo '<button type="button" class="btn btn-outline-danger" data-delete-route="' . htmlspecialchars($indexFile['route'], ENT_QUOTES) . '" title="' . __('admin.files.delete_tooltip') . '"><i class="bi bi-trash"></i></button>';
                                             echo '</div>';
                                             // Rename/Move Inline-Formular
                                             echo '<form method="POST" action="/admin?action=rename" class="d-inline-block ms-2" style="max-width:220px;">';
@@ -334,7 +334,7 @@ function formatBytes(int $bytes, int $precision = 2): string {
                                         echo '<div class="btn-group btn-group-sm" role="group">';
                                         echo '<a href="/' . encodeUrlPath($file['route']) . '" class="btn btn-outline-info" target="_blank" title="' . __('admin.files.view_tooltip') . '"><i class="bi bi-eye"></i></a>';
                                         echo '<a href="/admin?action=edit&file=' . urlencode($file['route']) . '&return_url=' . urlencode('/admin?action=files') . '" class="btn btn-outline-primary" title="' . __('admin.files.edit_tooltip') . '"><i class="bi bi-pencil"></i></a>';
-                                        echo '<button class="btn btn-outline-danger" onclick="confirmDelete(\'' . htmlspecialchars($file['route']) . '\')" title="' . __('admin.files.delete_tooltip') . '"><i class="bi bi-trash"></i></button>';
+                                        echo '<button type="button" class="btn btn-outline-danger" data-delete-route="' . htmlspecialchars($file['route'], ENT_QUOTES) . '" title="' . __('admin.files.delete_tooltip') . '"><i class="bi bi-trash"></i></button>';
                                         echo '</div>';
                                         // Rename/Move Inline-Formular
                                         echo '<form method="POST" action="/admin?action=rename" class="d-inline-block ms-2" style="max-width:220px;">';
@@ -447,21 +447,32 @@ function formatBytes(int $bytes, int $precision = 2): string {
         });
         
         // JavaScript-Übersetzungen
-        const deleteModalQuestionTemplate = '<?= __('admin.files.delete_modal_question') ?>';
+        const deleteModalQuestionTemplate = <?= json_encode(__('admin.files.delete_modal_question'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE) ?>;
         
-        // Einzelne Datei löschen
+        // Einzelne Datei löschen (Inline-onclick wird von der CSP blockiert → Event-Delegation)
         function confirmDelete(fileName) {
-            // Update modal question with filename
-            const questionText = deleteModalQuestionTemplate.replace('{filename}', `<strong>${fileName}</strong>`);
-            document.getElementById('deleteModalQuestion').innerHTML = questionText;
+            // Frage mit Dateinamen aufbauen – ohne innerHTML, damit der Name nicht als HTML interpretiert wird
+            const question = document.getElementById('deleteModalQuestion');
+            const [before, after = ''] = deleteModalQuestionTemplate.split('{filename}');
+            const strong = document.createElement('strong');
+            strong.textContent = fileName;
+            question.replaceChildren(before, strong, after);
             
             // Korrekte URL-Konstruktion mit properly encodierter return_url
             const returnUrl = encodeURIComponent('/admin?action=files');
             const deleteUrl = `/admin?action=delete&file=${encodeURIComponent(fileName)}&token=<?= htmlspecialchars($controller->getAuth()->generateCSRFToken()) ?>&return_url=${returnUrl}`;
             
             document.getElementById('deleteConfirmBtn').href = deleteUrl;
-            new bootstrap.Modal(document.getElementById('deleteModal')).show();
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('deleteModal')).show();
         }
+
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('[data-delete-route]');
+            if (btn) {
+                e.preventDefault();
+                confirmDelete(btn.dataset.deleteRoute);
+            }
+        });
         
         // Keyboard Shortcuts
         document.addEventListener('keydown', function(e) {

@@ -267,7 +267,7 @@ $timeRemaining = $controller->auth->getTimeRemaining();
                                                 </label>
                                                 <input type="range" class="form-range" id="recent_files_count" name="recent_files_count"
                                                     min="5" max="50" value="<?= $settings['recent_files_count'] ?>"
-                                                    oninput="document.getElementById('recent_files_value').textContent = this.value">
+                                                    data-value-target="recent_files_value">
                                                 <div class="form-text"><?= __('admin.settings.recent_files_count_help') ?></div>
                                             </div>
                                         </div>
@@ -279,7 +279,7 @@ $timeRemaining = $controller->auth->getTimeRemaining();
                                                 </label>
                                                 <input type="range" class="form-range" id="search_result_limit" name="search_result_limit"
                                                     min="10" max="200" step="10" value="<?= $settings['search_result_limit'] ?? 50 ?>"
-                                                    oninput="document.getElementById('search_result_limit_value').textContent = this.value">
+                                                    data-value-target="search_result_limit_value">
                                                 <div class="form-text"><?= __('admin.search.result_limit_help') ?></div>
                                             </div>
                                         </div>
@@ -344,7 +344,7 @@ $timeRemaining = $controller->auth->getTimeRemaining();
                                         <div class="col-md-6">
                                             <div class="mb-3">
                                                 <label for="editor_theme" class="form-label"><?= __('admin.settings.editor_theme') ?></label>
-                                                <select class="form-select" id="editor_theme" name="editor_theme" onchange="previewTheme(this.value)">
+                                                <select class="form-select" id="editor_theme" name="editor_theme">
                                                     <option value="elegant" <?= $settings['editor_theme'] === 'elegant' ? 'selected' : '' ?>>Elegant</option>
                                                     <option value="eclipse" <?= $settings['editor_theme'] === 'eclipse' ? 'selected' : '' ?>>Eclipse</option>
                                                     <option value="idea" <?= $settings['editor_theme'] === 'idea' ? 'selected' : '' ?>>Idea</option>
@@ -379,7 +379,7 @@ $timeRemaining = $controller->auth->getTimeRemaining();
                                                 </label>
                                                 <input type="range" class="form-range" id="auto_save_interval" name="auto_save_interval" 
                                                     min="30" max="300" step="30" value="<?= $settings['auto_save_interval'] ?>"
-                                                    oninput="document.getElementById('auto_save_value').textContent = this.value">
+                                                    data-value-target="auto_save_value">
                                                 <div class="form-text"><?= __('admin.settings.auto_save_interval_help') ?></div>
                                             </div>
                                         </div>
@@ -763,6 +763,17 @@ $timeRemaining = $controller->auth->getTimeRemaining();
             }
         }
         
+        // Inline-Handler werden von der CSP blockiert → Listener hier registrieren
+        document.querySelectorAll('input[type="range"][data-value-target]').forEach(function(input) {
+            input.addEventListener('input', function() {
+                const target = document.getElementById(input.dataset.valueTarget);
+                if (target) target.textContent = input.value;
+            });
+        });
+        document.getElementById('editor_theme')?.addEventListener('change', function() {
+            previewTheme(this.value);
+        });
+
         // Initial theme preview laden
         document.addEventListener('DOMContentLoaded', function() {
             const currentTheme = document.getElementById('editor_theme').value;
