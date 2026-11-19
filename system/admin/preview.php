@@ -66,6 +66,8 @@ try {
     
     // Parse Markdown
     $parser = new MarkdownParser();
+    // Vorschau ist nur für eingeloggte Admins erreichbar (siehe Login-Prüfung oben) → ::: auth-Inhalt zeigen
+    $parser->setAuthChecker(fn(): bool => true);
     $html = $parser->parse($content);
     
     // Process Shortcodes

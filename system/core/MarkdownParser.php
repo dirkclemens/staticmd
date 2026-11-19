@@ -9,12 +9,77 @@ namespace StaticMD\Core;
 class MarkdownParser
 {
     private array $latexBlocks = [];
+
+    /** @var callable|null Liefert true, wenn der Besucher eingeloggt ist (für ::: auth) */
+    private $authChecker = null;
+    private ?bool $authState = null;
+    private bool $authBlockUsed = false;
+
+    /**
+     * Setzt die Login-Prüfung für ::: auth-Blöcke.
+     * Ohne Prüfung gilt der Besucher als nicht eingeloggt (geschützter Inhalt wird nie ausgegeben).
+     */
+    public function setAuthChecker(?callable $checker): void
+    {
+        $this->authChecker = $checker;
+        $this->authState = null;
+    }
+
+    /**
+     * true, wenn der zuletzt geparste Inhalt einen ::: auth-Block enthielt
+     * (die Ausgabe hängt dann vom Login-Status ab und darf nicht gecacht werden)
+     */
+    public function usedAuthBlocks(): bool
+    {
+        return $this->authBlockUsed;
+    }
+
+    /**
+     * Entfernt geschützte Blöcke (::: auth … :::) aus Markdown,
+     * z. B. für Suchindex und Textvorschauen, die nicht vom Login-Status abhängen dürfen.
+     */
+    public function stripAuthBlocks(string $markdown): string
+    {
+        $lines = explode("\n", $markdown);
+        $out = [];
+        $inCode = false;
+        $count = count($lines);
+        for ($i = 0; $i < $count; $i++) {
+            $line = $lines[$i];
+            if (str_starts_with($line, '```')) {
+                $inCode = !$inCode;
+                $out[] = $line;
+                continue;
+            }
+            if (!$inCode && ($info = $this->matchContainerOpen($line)) !== null
+                && $this->parseContainerInfo($info)['name'] === 'auth') {
+                $i = $this->findContainerEnd($lines, $i + 1);
+                continue;
+            }
+            $out[] = $line;
+        }
+        return implode("\n", $out);
+    }
+
+    private function isAuthenticated(): bool
+    {
+        if ($this->authState === null) {
+            try {
+                $this->authState = $this->authChecker !== null && (bool) ($this->authChecker)();
+            } catch (\Throwable $e) {
+                $this->authState = false;
+            }
+        }
+        return $this->authState;
+    }
     
     /**
      * Konvertiert Markdown zu HTML
      */
     public function parse(string $markdown): string
     {
+        $this->authBlockUsed = false;
+
         // Protect LaTeX formulas before Markdown processing
         $markdown = $this->preprocessLaTeX($markdown);
 
@@ -117,22 +182,15 @@ class MarkdownParser
      */
     private function matchContainerOpen(string $line): ?string
     {
-        $line = rtrim($line, "\r");
-        if (preg_match('/^ {0,3}:{3,}\s*(.*?)\s*:*\s*$/u', $line, $m) && $m[1] !== '') {
+        if (preg_match('/^ {0,3}:{3,}\s*(.*?)\s*:*\s*$/u', rtrim($line, "\r"), $m) && $m[1] !== '') {
             return $m[1];
-        }
-        // Legacy-Shortcode [accordionstart id "Titel"] / [spoilerstart …] → ::: details
-        if (preg_match('/^ {0,3}\[(?:accordion|spoiler)start\s+([A-Za-z0-9_-]+)\s+"([^"]+)"\]\s*$/i', $line, $m)) {
-            return 'details {#accordion-' . $m[1] . ' title="' . $m[2] . '"}';
         }
         return null;
     }
 
     private function isContainerClose(string $line): bool
     {
-        $line = rtrim($line, "\r");
-        return (bool) preg_match('/^ {0,3}:{3,}\s*$/', $line)
-            || (bool) preg_match('/^ {0,3}\[(?:accordion|spoiler)stop(?:\s+[^\]]*)?\]\s*$/i', $line);
+        return (bool) preg_match('/^ {0,3}:{3,}\s*$/', rtrim($line, "\r"));
     }
 
     /**
@@ -218,6 +276,22 @@ class MarkdownParser
     {
         $info = $this->parseContainerInfo($infoString);
         $name = $info['name'];
+
+        // Nur für eingeloggte Benutzer: Inhalt wird für Gäste gar nicht erst gerendert
+        if ($name === 'auth') {
+            $this->authBlockUsed = true;
+            $message = $info['attrs']['message'] ?? $info['title'];
+            unset($info['attrs']['message']);
+            if (!$this->isAuthenticated()) {
+                $text = $message !== ''
+                    ? $this->parseInline($message)
+                    : htmlspecialchars($this->translate('core.auth_required', 'Dieser Inhalt ist nur für angemeldete Benutzer sichtbar.'), ENT_QUOTES, 'UTF-8');
+                return '<div class="auth-login-required alert alert-info"><i class="bi bi-lock" aria-hidden="true"></i> ' . $text . "</div>\n";
+            }
+            return '<div' . $this->buildAttributes($info, ['auth-protected-content']) . ">\n"
+                . $this->renderBlocks($innerLines, $depth) . "</div>\n";
+        }
+
         $inner = $this->renderBlocks($innerLines, $depth);
 
         // Quarto: callout-note, callout-warning, …

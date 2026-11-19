@@ -153,61 +153,9 @@ Creates tag clouds with all available tags from a directory.
 
 ---
 
-## Layout Shortcodes
+## Collapsible Sections & Layout
 
-### [accordionstart] / [accordionstop] - Collapsible Sections
-
-Creates a collapsible section. Since the introduction of container blocks the shortcode is an alias for `::: details` and renders as a native `<details>` element (no JavaScript required). `[spoilerstart]` / `[spoilerstop]` behave identically.
-
-> [!TIP]
-> For new content prefer `::: details Title` – see [Container Blocks & Alerts](/help/container-alerts). Both syntaxes can be mixed and nested.
-
-#### Syntax
-```markdown
-[accordionstart id "Title"]
-Content of the accordion area...
-[accordionstop]
-```
-
-#### Parameters
-- **`id`**: ID of the section (letters, numbers, `-`, `_`); becomes the anchor `#accordion-id`
-- **`"Title"`**: Visible title (inline Markdown allowed)
-
-#### Example
-```markdown
-[accordionstart install "Installation"]
-## Step 1: Download
-Download the latest version...
-
-## Step 2: Configuration
-Edit the config.php...
-[accordionstop]
-
-[accordionstart config "Configuration"]
-### Database Setup
-Connection to database...
-[accordionstop]
-```
-
-#### Features
-- **Native `<details>`**: Works in every theme, no JavaScript needed
-- **Full Markdown**: Markdown syntax (including alerts and `:::` containers) is processed within
-- **Live preview**: Rendered in the editor preview as well
-- **Code-block safe**: Shortcodes inside code blocks stay plain text
-- **Equivalent**: `[accordionstart id "Title"]` … `[accordionstop]` = `::: details Title {#accordion-id}` … `:::`
-
-#### Nested Accordions
-```markdown
-[accordionstart main "Main Area"]
-Introduction text...
-
-[accordionstart sub "Sub Area"]
-Detailed information...
-[accordionstop]
-
-Additional text...
-[accordionstop]
-```
+Collapsible sections, columns, boxes and alerts are no shortcodes but Markdown container blocks (`::: details Title` … `:::`) – see [Container Blocks & Alerts](/help/container-alerts).
 
 ---
 
@@ -309,10 +257,10 @@ Default values can be configured in `system/settings.json`:
 [tags /projects/ 15 cloud]
 
 ## Detailed Guides
-[accordionstart details "Installation & Setup"]
+::: details Installation & Setup
 ### Step-by-Step Guide
 [pages /help/installation/ 5]
-[accordionstop]
+:::
 ```
 
 ### Conditional Content
@@ -326,9 +274,9 @@ Default values can be configured in `system/settings.json`:
 [tags /blog/ 20]
 
 <!-- Technical documentation -->
-[accordionstart api "API Documentation"]
+::: details API Documentation
 [pages /api/ 15 list]
-[accordionstop]
+:::
 ```
 
 ### Responsive Layouts

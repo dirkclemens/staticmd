@@ -345,8 +345,8 @@ $nonce = SecurityHeaders::getNonce();
                             <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertAnchor()" title="<?php echo __('admin.editor.toolbar.anchor'); ?>">
                                 <i class="bi bi-bookmark"></i> 
                             </button>                            
-                            <!-- Accordion -->
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertAccordion()" title="<?php echo __('admin.editor.toolbar.accordion'); ?>">
+                            <!-- Aufklappbarer Abschnitt (::: details) -->
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertDetails()" title="<?php echo __('admin.editor.toolbar.details'); ?>">
                                 <i class="bi bi-arrows-collapse"></i>
                             </button>
                             <!-- Auth-Block -->
@@ -537,18 +537,14 @@ $nonce = SecurityHeaders::getNonce();
             doc.replaceSelection(anchorText);
             editor.focus();
         }
-        // Aufklappbaren Abschnitt einfügen (::: details; ersetzt den alten [accordionstart]-Shortcode)
-        function insertAccordion() {
+        // Aufklappbaren Abschnitt einfügen (::: details)
+        function insertDetails() {
             insertBlock('details');
         }
 
+        // Nur für eingeloggte Benutzer sichtbarer Block (::: auth)
         function insertAuthBlock() {
-            if (!editor) return;
-            const doc = editor.getDoc();
-            const selected = doc.getSelection();
-            const inner = selected || 'Dieser Inhalt ist nur für eingeloggte Benutzer sichtbar.';
-            doc.replaceSelection('\n[authstart]\n' + inner + '\n[authstop]\n');
-            editor.focus();
+            insertBlock('auth');
         }
 
         function insertShortcodePages() {
@@ -649,7 +645,7 @@ $nonce = SecurityHeaders::getNonce();
                 }
                 
                 // Check for StaticMD shortcodes (valid syntax, keine Warnung)
-                if (line.match(/\[(pages|tags|folder|download|image|accordionstart|accordionstop|authstart|authstop)(\s|\])/)) {
+                if (line.match(/\[(pages|tags|folder|download|image)(\s|\])/)) {
                     return; // Shortcodes sind gültig, keine weitere Validierung
                 }
                 
@@ -1508,6 +1504,7 @@ $nonce = SecurityHeaders::getNonce();
             'right'   => __('admin.editor.blocks.placeholder_right'),
             'more'    => __('admin.editor.blocks.placeholder_more'),
             'fold'    => __('admin.editor.blocks.placeholder_fold'),
+            'auth'    => __('admin.editor.blocks.placeholder_auth'),
         ], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?>;
         const SEL_START = '\u0001', SEL_END = '\u0002';   // markieren den Text, der danach ausgewählt wird
         const ph = text => SEL_START + text + SEL_END;
@@ -1530,7 +1527,8 @@ $nonce = SecurityHeaders::getNonce();
                 + '\n:::\n::: column\n' + BLOCK_TEXT.right + '\n:::\n::::',
             'box': sel => '::: {border}\n' + (sel ?? ph(BLOCK_TEXT.content)) + '\n:::',
             'box-center': sel => '::: {border align=center}\n' + (sel ?? ph(BLOCK_TEXT.content)) + '\n:::',
-            'details': sel => '::: details ' + BLOCK_TEXT.more + '\n' + (sel ?? ph(BLOCK_TEXT.content)) + '\n:::'
+            'details': sel => '::: details ' + BLOCK_TEXT.more + '\n' + (sel ?? ph(BLOCK_TEXT.content)) + '\n:::',
+            'auth': sel => '::: auth\n' + (sel ?? ph(BLOCK_TEXT.auth)) + '\n:::'
         };
 
         function insertBlock(kind) {

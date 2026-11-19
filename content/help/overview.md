@@ -12,7 +12,6 @@ Visibility: public
 - **Gallery System**: `[gallery folder-name]` - NEW! Automatic image galleries with lightbox
 - **Downloads**: `[download file.pdf "Alt-Text"]` with Bootstrap icons (PDF 📄, ZIP 📦)
 - **Images**: `[image image.jpg "Alt-Text" - 50%]` Yellow CMS syntax
-- **Interactive**: `[accordionstart id "Title"] ... [accordionstop]` Bootstrap 5 accordions
 
 ### ✅ Enhanced Markdown
 - **Headers with IDs**: `# Title {#custom-id}`

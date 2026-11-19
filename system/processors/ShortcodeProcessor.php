@@ -7,11 +7,10 @@ use StaticMD\Utilities\TitleGenerator;
 use StaticMD\Renderers\FolderOverviewRenderer;
 use StaticMD\Renderers\BlogListRenderer;
 use StaticMD\Core\I18n;
-use StaticMD\Admin\AdminAuth;
 
 /**
  * ShortcodeProcessor
- * Verarbeitet alle Shortcodes: [pages], [tags], [gallery], [bloglist], [folder], [authstart]...[authstop]
+ * Verarbeitet alle Shortcodes: [pages], [tags], [gallery], [bloglist], [folder]
  */
 class ShortcodeProcessor
 {
@@ -70,9 +69,6 @@ class ShortcodeProcessor
         }, $content);
         
         // 2. Shortcodes verarbeiten
-        
-        // Zuerst Block-Shortcodes verarbeiten: [authstart]...[authstop]
-        $content = $this->processAuthBlocks($content);
         
         // Dann einfache Shortcodes
         $pattern = '/\[([a-zA-Z]+)(?:\s+([^\]]+))?\]/';
@@ -335,63 +331,5 @@ class ShortcodeProcessor
     private function getCurrentPage(): int
     {
         return isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
-    }
-    
-    /**
-     * Prüft ob ein Benutzer im Admin eingeloggt ist
-     * Nutzt die zentrale AdminAuth-Klasse
-     * 
-     * @return bool True wenn eingeloggt, sonst false
-     */
-    private function isUserLoggedIn(): bool
-    {
-        // Session starten falls noch nicht geschehen
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        
-        $auth = new AdminAuth($this->config);
-        return $auth->isLoggedIn();
-    }
-    
-    /**
-     * Verarbeitet [authstart]...[authstop] Block-Shortcodes
-     * Inhalt wird nur angezeigt wenn Benutzer eingeloggt ist
-     * 
-     * Syntax:
-     *   [authstart]Dieser Inhalt ist nur für eingeloggte Nutzer sichtbar[authstop]
-     *   [authstart message="Bitte anmelden"]Geschützter Inhalt[authstop]
-     * 
-     * @param string $content Der zu verarbeitende Content
-     * @return string Content mit verarbeiteten Auth-Blöcken
-     */
-    private function processAuthBlocks(string $content): string
-    {
-        // Pattern für [authstart] oder [authstart message="..."]...[authstop]
-        $pattern = '/\[authstart(?:\s+message=["\']([^"\']*)["\'])?\](.*?)\[authstop\]/s';
-        
-        return preg_replace_callback($pattern, function($matches) {
-            $customMessage = $matches[1] ?? '';
-            $protectedContent = $matches[2];
-            
-            if ($this->isUserLoggedIn()) {
-                // Eingeloggt: Inhalt anzeigen mit optionalem Hinweis
-                $html = '<div class="auth-protected-content">';
-                $html .= $protectedContent;
-                $html .= '</div>';
-                return $html;
-            } else {
-                // Nicht eingeloggt: Hinweis anzeigen
-                $message = !empty($customMessage) 
-                    ? htmlspecialchars($customMessage)
-                    : I18n::t('core.auth_required', [], 'Dieser Inhalt ist nur für angemeldete Benutzer sichtbar.');
-                
-                $html = '<div class="auth-login-required alert alert-info">';
-                $html .= '<i class="bi bi-lock"></i> ';
-                $html .= $message;
-                $html .= '</div>';
-                return $html;
-            }
-        }, $content);
     }
 }

@@ -140,7 +140,8 @@ Zeilen-Funktionen wirken immer auf **ganze Zeilen** – eine teilweise markierte
 | **Split** | Editor und Vorschau nebeneinander |
 
 Die Vorschau zeigt das Ergebnis 1:1 wie im Frontend, inklusive:
-- Shortcodes (`[pages]`, `[tags]`, `[accordionstart]`)
+- Shortcodes (`[pages]`, `[tags]`, `[gallery]`)
+- Container & Alerts (`::: details`, `> [!NOTE]`)
 - Emojis (`:smile:` → 😄)
 - Yellow CMS Bildsyntax
 - Alle Markdown-Features

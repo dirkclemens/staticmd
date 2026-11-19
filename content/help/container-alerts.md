@@ -115,7 +115,19 @@ Sichtbarer Inhalt
 Versteckter Inhalt
 :::
 
-Der ältere Shortcode `[accordionstart id "Titel"]` … `[accordionstop]` (ebenso `[spoilerstart]`) ist ein Alias dafür und erzeugt exakt dasselbe – `::: details Titel {#accordion-id}`. Bestehende Seiten funktionieren also unverändert weiter, lassen sich jetzt auch verschachteln und erscheinen in der Editor-Vorschau.
+### Nur für eingeloggte Benutzer
+
+```markdown
+::: auth
+Interner Inhalt
+:::
+
+::: auth Bitte [anmelden](/admin), um diesen Abschnitt zu sehen
+Interner Inhalt
+:::
+```
+
+Gäste sehen statt des Inhalts nur einen Hinweis (Standardtext oder der Text hinter `auth`, alternativ `{message="…"}`). Der geschützte Inhalt wird für Gäste gar nicht erst erzeugt, nicht gecacht und erscheint weder in der Suche noch in Seitenvorschauen.
 
 ### Spalten
 
@@ -182,6 +194,7 @@ Attribute stehen in geschweiften Klammern: `{#id .klasse schlüssel=wert schlüs
 | `style` | Freies CSS (nur einfache Werte, kein `url()`) | `style="font-size: 1.2rem"` |
 | `open` | Details aufgeklappt anzeigen | `{open}` |
 | `collapse` | Quarto: Alert aufklappbar (`true` = zu, `false` = offen) | `collapse="true"` |
+| `message` | `auth`: Hinweis für nicht eingeloggte Besucher | `{message="Bitte anmelden"}` |
 
 Unbekannte Attribute werden als `data-*`-Attribute ausgegeben.
 

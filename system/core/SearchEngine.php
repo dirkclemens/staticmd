@@ -13,6 +13,8 @@ use StaticMD\Utilities\UrlHelper;
 class SearchEngine
 {
     private array $config;
+    private ?MarkdownParser $markdownParser = null;
+    private ?bool $showPrivate = null;
     private ContentLoader $contentLoader;
 
     public function __construct(array $config)
@@ -107,7 +109,7 @@ class SearchEngine
         // Front Matter parsen
         $parsed = FrontMatterParser::parse($content);
         $meta = $parsed['meta'];
-        $bodyContent = $parsed['content'];
+        $bodyContent = $this->withoutProtectedBlocks($parsed['content']);
 
         // Respect visibility policy: private pages only for logged-in admins
         $visibility = strtolower((string)($meta['Visibility'] ?? $meta['visibility'] ?? 'public'));
@@ -427,7 +429,7 @@ class SearchEngine
         // Front Matter parsen
         $parsed = FrontMatterParser::parse($content);
         $meta = $parsed['meta'];
-        $bodyContent = $parsed['content'];
+        $bodyContent = $this->withoutProtectedBlocks($parsed['content']);
 
         // Respect visibility policy: private pages only for logged-in admins
         $visibility = strtolower((string)($meta['Visibility'] ?? $meta['visibility'] ?? 'public'));
@@ -653,9 +655,28 @@ class SearchEngine
     }
 
     /**
+     * Entfernt ::: auth-Blöcke für nicht eingeloggte Besucher,
+     * damit geschützter Inhalt weder gefunden noch in der Trefferliste angezeigt wird.
+     */
+    private function withoutProtectedBlocks(string $content): string
+    {
+        if ($this->shouldShowPrivateContent()) {
+            return $content;
+        }
+        $this->markdownParser ??= new MarkdownParser();
+        return $this->markdownParser->stripAuthBlocks($content);
+    }
+
+    /**
      * Private content is visible only to authenticated admins.
      */
     private function shouldShowPrivateContent(): bool
+    {
+        // Pro Suchlauf nur einmal prüfen (wird für jede Datei aufgerufen)
+        return $this->showPrivate ??= $this->checkAdminLogin();
+    }
+
+    private function checkAdminLogin(): bool
     {
         $adminAuthFile = $this->config['paths']['system'] . '/admin/AdminAuth.php';
         if (!file_exists($adminAuthFile)) {

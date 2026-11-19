@@ -9,7 +9,8 @@ blockquote > :last-child,
 .md-column > :last-child,
 .md-details-body > :last-child,
 .markdown-alert > :last-child,
-.markdown-alert-body > :last-child {
+.markdown-alert-body > :last-child,
+.auth-protected-content > :last-child {
     margin-bottom: 0;
 }
 
@@ -108,4 +109,30 @@ details.markdown-alert[open] > summary.markdown-alert-title::after {
 }
 details.markdown-alert:not([open]) > summary.markdown-alert-title {
     margin-bottom: 0;
+}
+
+/* --- Nur für eingeloggte Benutzer (::: auth) ---------------------------- */
+/* Hier statt in shared.css, damit auch die Editor-Vorschau das „🔒 Admin“-Label zeigt */
+.auth-protected-content {
+    border-left: 3px solid #dc3545;
+    padding: 0.5rem 1rem;
+    margin: 1rem 0;
+    background-color: rgba(220, 53, 69, 0.05);    
+    border-radius: 0 4px 4px 0;
+}
+
+.auth-protected-content::before {
+    content: "🔒 Admin";
+    display: block;
+    font-size: 0.75rem;
+    color: #dc3545;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.auth-login-required {
+    font-style: italic;
+    color: #dc3545;
 }

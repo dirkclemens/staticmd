@@ -27,6 +27,13 @@ class ContentLoader
     {
         $this->config = $config;
         $this->parser = new MarkdownParser();
+        // ::: auth-Blöcke: Login-Status über AdminAuth prüfen
+        $this->parser->setAuthChecker(function () use ($config): bool {
+            if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+                session_start();
+            }
+            return (new \StaticMD\Admin\AdminAuth($config))->isLoggedIn();
+        });
         $this->shortcodeProcessor = new ShortcodeProcessor($config, $this);
         $this->navigationBuilder = new NavigationBuilder($config);
         // Fallback für ältere config.php ohne 'storage'-Pfad
@@ -55,12 +62,12 @@ class ContentLoader
 
         $rawContent = file_get_contents($contentPath);
 
-        // Pages with [authstart] blocks render differently per login state — skip cache.
+        // Pages with ::: auth blocks render differently per login state — skip cache.
         // Pages with folder-listing shortcodes ([pages], [folder], [tags], [bloglist], [gallery])
         // embed the current state of OTHER files/folders into their HTML. The cache key only
         // tracks this file's own mtime, so adding/removing a listed file would never invalidate
         // it — skip caching these too so the listing is always live.
-        $cacheable = !str_contains($rawContent, '[authstart]') && !$this->hasDynamicListingShortcode($rawContent);
+        $cacheable = !$this->hasAuthBlock($rawContent) && !$this->hasDynamicListingShortcode($rawContent);
 
         if ($cacheable) {
             $cached = $this->cache->get($contentPath);
@@ -76,6 +83,11 @@ class ContentLoader
 
         // Convert Markdown to HTML
         $htmlContent = $this->parser->parse($contentWithShortcodes);
+
+        // Zweite Absicherung: hat der Parser tatsächlich einen ::: auth-Block gerendert, nie cachen
+        if ($this->parser->usedAuthBlocks()) {
+            $cacheable = false;
+        }
 
         $result = [
             'title' => $parsed['meta']['title'] ?? '',
@@ -93,6 +105,14 @@ class ContentLoader
         return $result;
     }
     
+    /**
+     * Prüft (bewusst großzügig) ob der Content einen login-abhängigen ::: auth-Container enthält
+     */
+    private function hasAuthBlock(string $content): bool
+    {
+        return (bool) preg_match('/^ {0,3}:{3,}[^\n]*\bauth\b/mi', $content);
+    }
+
     /**
      * Prüft ob der Content einen Shortcode enthält, dessen Ausgabe vom Zustand
      * anderer Dateien/Ordner abhängt (Ordner-Listings), statt nur vom eigenen Dateiinhalt
@@ -254,10 +274,12 @@ class ContentLoader
      */
     private function extractPreview(string $content, int $maxLength = 150): string
     {
+        // Geschützte Inhalte nie in Vorschauen (Ordner-/Blog-Listen) übernehmen
+        $content = $this->parser->stripAuthBlocks($content);
         $contentLines = explode("\n", trim($content));
         foreach ($contentLines as $line) {
             $line = trim($line);
-            if (!empty($line) && !str_starts_with($line, '#')) {
+            if (!empty($line) && !str_starts_with($line, '#') && !str_starts_with($line, ':::')) {
                 $preview = substr($line, 0, $maxLength);
                 if (strlen($line) > $maxLength) {
                     $preview .= '...';

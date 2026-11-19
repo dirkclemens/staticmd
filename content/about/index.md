@@ -34,7 +34,7 @@ We develop a modern, user-friendly CMS that combines the simplicity of Markdown 
 - **Privacy Controls**: Public/Private pages
 - **Configurable Sorting** for shortcodes
 - **Case-insensitive Sorting** for better UX
-- **Shortcodes**: `[pages]`, `[tags]`, `[accordion]` with layout options
+- **Shortcodes**: `[pages]`, `[tags]`, `[gallery]` with layout options; `:::` containers for collapsibles, columns and alerts
 
 ## 🛠️ Technology Stack
 

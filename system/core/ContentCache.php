@@ -5,7 +5,7 @@ namespace StaticMD\Core;
 /**
  * Datei-basierter Content-Cache.
  * Cache-Key: md5(Dateipfad), Invalidierung per filemtime.
- * Seiten mit [authstart]-Blöcken werden nicht gecacht,
+ * Seiten mit ::: auth-Blöcken werden nicht gecacht,
  * da deren Ausgabe vom Login-Status abhängt.
  */
 class ContentCache

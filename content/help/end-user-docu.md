@@ -135,7 +135,7 @@ The toolbar provides quick access to formatting options:
 - **Table** - Insert table
 - **HR** - Horizontal line
 - **Bookmark** - Create jump anchor
-- **Accordion** - Collapsible section
+- **Collapsible section** - Insert a `::: details` block
 - **Containers & Alerts** (column icon) - Insert alerts, 2/3-column layouts, boxes and collapsible sections; selected text is wrapped into the block
 - **Text Tools** (font icon) - Change case (UPPER, lower, Sentence, Title, camelCase, snake_case, kebab-case), sort lines, remove duplicate/empty lines, clean whitespace
 - **😊 Emoji** - Insert from 150+ emojis
@@ -455,21 +455,21 @@ Provide downloadable files:
 - Automatic file icons (📄 for PDF, 📦 for ZIP)
 - Files must be in `/public/downloads/`
 
-#### Accordions (Collapsible Sections)
+#### Collapsible Sections
 
-[accordionstart section1 "Click to expand"]
+::: details Click to expand
 Lorem ipsum dolor sit amet, consectetur adipiscing elit ...
-[accordionstop section1]
+:::
 
-Create expandable content sections (equivalent to `::: details Title` – see [Container Blocks & Alerts](/help/container-alerts)):
+Create expandable content sections with a `::: details` container (see [Container Blocks & Alerts](/help/container-alerts)):
 ```markdown
-[accordionstart section1 "Click to expand"]
+::: details Click to expand
 Lorem ipsum dolor sit amet, consectetur adipiscing elit ...
-[accordionstop section1]
+:::
 
-[accordionstart section2 "Another section"]
-More hidden content here
-[accordionstop section2]
+::: details Already open {open}
+Visible content
+:::
 ```
 
 ### Gallery Layout
@@ -492,24 +492,26 @@ Tags enable filtering in the gallery view.
 
 ### Secret content
 
-Hide content from visitors (admin only readable)
+Hide content from visitors (admin only readable) with an `auth` container. Visitors who are not logged in only see a notice; the protected text is neither delivered nor cached, and it does not appear in search results or page previews.
 
-[authstart]
+::: auth
 This text is visible for logged in users only
-[authstop]
+:::
 
 ```markdown
-[authstart]
+::: auth
 This is protected content
-[authstop]
+:::
 ```
 
-**With custom message:**
+**With custom message** (inline Markdown such as links is allowed):
 ```markdown
-[authstart message="Please login to view this content"]
+::: auth Please [log in](/admin) to view this content
 This is protected content
-[authstop]
+:::
 ```
+
+Protected blocks can contain any Markdown, including other containers, and can themselves be nested inside e.g. `::: details`. The toolbar button with the **shield icon** inserts an `auth` block.
 
 ---
 
@@ -775,7 +777,7 @@ Create complete backups of your site:
 
 **Content:**
 - Break very long pages into multiple pages
-- Use accordions for lengthy sections
+- Use collapsible sections (`::: details`) for lengthy content
 - Link between related pages
 - Keep navigation to 10-15 items max
 

@@ -303,11 +303,6 @@ body {
     text-decoration: underline;
 }
 
-/* Accordion support in preview */
-.preview-wrapper .accordion {
-    margin-bottom: 1rem;
-}
-
 /* Tag cloud support in preview */
 .preview-wrapper .tag-cloud {
     display: flex;
